@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,91 +44,91 @@ import org.jooq.ParamMode;
 import org.jooq.conf.ParamType;
 
 /**
- * A {@link Param} wrapper object that allows for lazily initialising the value
- * and its potentially required calls to custom converters.
- * <p>
- * See [#7742] for details.
+ * A {@link Param} wrapper object that allows for lazily initialising the value and its potentially
+ * required calls to custom converters.
+ *
+ * <p>See [#7742] for details.
  *
  * @author Lukas Eder
- * @deprecated - [#11061] - 3.15.0 - This type has been introduced only because
- *             we have mutable {@link Param} types. Avoid reusing this type when
- *             not needed.
+ * @deprecated - [#11061] - 3.15.0 - This type has been introduced only because we have mutable
+ *     {@link Param} types. Avoid reusing this type when not needed.
  */
 @Deprecated
 final class ConvertedVal<T> extends AbstractParamX<T> {
 
-    final AbstractParamX<?> delegate;
+  final AbstractParamX<?> delegate;
 
-    ConvertedVal(AbstractParamX<?> delegate, DataType<T> type) {
-        super(delegate.getUnqualifiedName(), type);
+  ConvertedVal(AbstractParamX<?> delegate, DataType<T> type) {
+    super(delegate.getUnqualifiedName(), type);
 
-        this.delegate = delegate instanceof ConvertedVal ? ((ConvertedVal<?>) delegate).delegate : delegate;
-    }
+    this.delegate =
+        delegate instanceof ConvertedVal ? ((ConvertedVal<?>) delegate).delegate : delegate;
+  }
 
-    // ------------------------------------------------------------------------
-    // XXX: Field API
-    // ------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
+  // XXX: Field API
+  // ------------------------------------------------------------------------
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        ctx.visit(delegate);
-    }
+  @Override
+  public final void accept(Context<?> ctx) {
+    ctx.visit(delegate);
+  }
 
-    // ------------------------------------------------------------------------
-    // XXX: Param API
-    // ------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
+  // XXX: Param API
+  // ------------------------------------------------------------------------
 
-    @Override
-    public final String getParamName() {
-        return delegate.getParamName();
-    }
+  @Override
+  public final String getParamName() {
+    return delegate.getParamName();
+  }
 
-    @Override
-    public final T getValue() {
-        return getDataType().convert(delegate.getValue());
-    }
+  @Override
+  public final T getValue() {
+    return getDataType().convert(delegate.getValue());
+  }
 
-    @Override
-    public final void setConverted0(Object value) {
-        delegate.setConverted0(value);
-    }
+  @Override
+  public final void setConverted0(Object value) {
+    delegate.setConverted0(value);
+  }
 
-    @Override
-    public final void setInline0(boolean inline) {
-        delegate.setInline0(inline);
-    }
+  @Override
+  public final void setInline0(boolean inline) {
+    delegate.setInline0(inline);
+  }
 
-    @Override
-    public final boolean isInline() {
-        return delegate.isInline();
-    }
+  @Override
+  public final boolean isInline() {
+    return delegate.isInline();
+  }
 
-    @Override
-    public final ParamType getParamType() {
-        return delegate.getParamType();
-    }
+  @Override
+  public final ParamType getParamType() {
+    return delegate.getParamType();
+  }
 
-    @Override
-    public final ParamMode getParamMode() {
-        return delegate.getParamMode();
-    }
+  @Override
+  public final ParamMode getParamMode() {
+    return delegate.getParamMode();
+  }
 
-    // -------------------------------------------------------------------------
-    // The Object API
-    // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // The Object API
+  // -------------------------------------------------------------------------
 
-    @Override
-    public String toString() {
-        return delegate.toString();
-    }
+  @Override
+  public String toString() {
+    return delegate.toString();
+  }
 
-    @Override
-    public int hashCode() {
-        return delegate.hashCode();
-    }
+  @Override
+  public int hashCode() {
+    return delegate.hashCode();
+  }
 
-    @Override
-    public boolean equals(Object that) {
-        return delegate.equals(that);
-    }
+  @Override
+  public boolean equals(Object that) {
+    return delegate.equals(that);
+  }
 }

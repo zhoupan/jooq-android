@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,43 +39,44 @@ package org.jooq.impl;
 
 import java.sql.CallableStatement;
 import java.util.Map;
-
 import org.jooq.BindingRegisterContext;
 import org.jooq.Configuration;
 import org.jooq.Converter;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 class DefaultBindingRegisterContext<U> extends AbstractScope implements BindingRegisterContext<U> {
 
-    private final CallableStatement statement;
-    private final int               index;
+  private final CallableStatement statement;
+  private final int index;
 
-    DefaultBindingRegisterContext(Configuration configuration, Map<Object, Object> data, CallableStatement statement, int index) {
-        super(configuration, data);
+  DefaultBindingRegisterContext(
+      Configuration configuration,
+      Map<Object, Object> data,
+      CallableStatement statement,
+      int index) {
+    super(configuration, data);
 
-        this.statement = statement;
-        this.index = index;
-    }
+    this.statement = statement;
+    this.index = index;
+  }
 
-    @Override
-    public final CallableStatement statement() {
-        return statement;
-    }
+  @Override
+  public final CallableStatement statement() {
+    return statement;
+  }
 
-    @Override
-    public final int index() {
-        return index;
-    }
+  @Override
+  public final int index() {
+    return index;
+  }
 
-    @Override
-    public final <T> BindingRegisterContext<T> convert(Converter<? super T, ? extends U> converter) {
-        return new DefaultBindingRegisterContext<>(configuration, data, statement, index);
-    }
+  @Override
+  public final <T> BindingRegisterContext<T> convert(Converter<? super T, ? extends U> converter) {
+    return new DefaultBindingRegisterContext<>(configuration, data, statement, index);
+  }
 
-    @Override
-    public String toString() {
-        return "DefaultBindingRegisterContext [index=" + index + "]";
-    }
+  @Override
+  public String toString() {
+    return "DefaultBindingRegisterContext [index=" + index + "]";
+  }
 }

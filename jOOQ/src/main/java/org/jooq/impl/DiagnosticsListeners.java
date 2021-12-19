@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,54 +44,46 @@ import org.jooq.DiagnosticsContext;
 import org.jooq.DiagnosticsListener;
 import org.jooq.DiagnosticsListenerProvider;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class DiagnosticsListeners implements DiagnosticsListener {
 
-    final DiagnosticsListener[] listeners;
+  final DiagnosticsListener[] listeners;
 
-    DiagnosticsListeners(DiagnosticsListenerProvider[] providers) {
-        listeners = map(providers, p -> p.provide(), DiagnosticsListener[]::new);
-    }
+  DiagnosticsListeners(DiagnosticsListenerProvider[] providers) {
+    listeners = map(providers, p -> p.provide(), DiagnosticsListener[]::new);
+  }
 
-    static final DiagnosticsListeners get(Configuration configuration) {
-        return new DiagnosticsListeners(configuration.diagnosticsListenerProviders());
-    }
+  static final DiagnosticsListeners get(Configuration configuration) {
+    return new DiagnosticsListeners(configuration.diagnosticsListenerProviders());
+  }
 
-    @Override
-    public final void tooManyRowsFetched(DiagnosticsContext ctx) {
-        for (DiagnosticsListener listener : listeners)
-            listener.tooManyRowsFetched(ctx);
-    }
+  @Override
+  public final void tooManyRowsFetched(DiagnosticsContext ctx) {
+    for (DiagnosticsListener listener : listeners) listener.tooManyRowsFetched(ctx);
+  }
 
-    @Override
-    public final void tooManyColumnsFetched(DiagnosticsContext ctx) {
-        for (DiagnosticsListener listener : listeners)
-            listener.tooManyColumnsFetched(ctx);
-    }
+  @Override
+  public final void tooManyColumnsFetched(DiagnosticsContext ctx) {
+    for (DiagnosticsListener listener : listeners) listener.tooManyColumnsFetched(ctx);
+  }
 
-    @Override
-    public final void unnecessaryWasNullCall(DiagnosticsContext ctx) {
-        for (DiagnosticsListener listener : listeners)
-            listener.unnecessaryWasNullCall(ctx);
-    }
+  @Override
+  public final void unnecessaryWasNullCall(DiagnosticsContext ctx) {
+    for (DiagnosticsListener listener : listeners) listener.unnecessaryWasNullCall(ctx);
+  }
 
-    @Override
-    public final void missingWasNullCall(DiagnosticsContext ctx) {
-        for (DiagnosticsListener listener : listeners)
-            listener.missingWasNullCall(ctx);
-    }
+  @Override
+  public final void missingWasNullCall(DiagnosticsContext ctx) {
+    for (DiagnosticsListener listener : listeners) listener.missingWasNullCall(ctx);
+  }
 
-    @Override
-    public final void duplicateStatements(DiagnosticsContext ctx) {
-        for (DiagnosticsListener listener : listeners)
-            listener.duplicateStatements(ctx);
-    }
+  @Override
+  public final void duplicateStatements(DiagnosticsContext ctx) {
+    for (DiagnosticsListener listener : listeners) listener.duplicateStatements(ctx);
+  }
 
-    @Override
-    public final void repeatedStatements(DiagnosticsContext ctx) {
-        for (DiagnosticsListener listener : listeners)
-            listener.repeatedStatements(ctx);
-    }
+  @Override
+  public final void repeatedStatements(DiagnosticsContext ctx) {
+    for (DiagnosticsListener listener : listeners) listener.repeatedStatements(ctx);
+  }
 }

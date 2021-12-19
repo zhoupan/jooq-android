@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,38 +45,39 @@ import org.jooq.Context;
 import org.jooq.DataType;
 import org.jooq.Field;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class CollatedField extends AbstractField<String> {
 
-    private final Field<?>  field;
-    private final Collation collation;
+  private final Field<?> field;
+  private final Collation collation;
 
-    CollatedField(Field<?> field, Collation collation) {
-        super(field.getQualifiedName(), type(field), field.getCommentPart(), binding(field));
+  CollatedField(Field<?> field, Collation collation) {
+    super(field.getQualifiedName(), type(field), field.getCommentPart(), binding(field));
 
-        this.field = field;
-        this.collation = collation;
-    }
+    this.field = field;
+    this.collation = collation;
+  }
 
-    @SuppressWarnings("unchecked")
-    private static final Binding<?, String> binding(Field<?> field) {
-        return field.getType() == String.class ? (Binding<?, String>) field.getBinding() : SQLDataType.VARCHAR.getBinding();
-    }
+  @SuppressWarnings("unchecked")
+  private static final Binding<?, String> binding(Field<?> field) {
+    return field.getType() == String.class
+        ? (Binding<?, String>) field.getBinding()
+        : SQLDataType.VARCHAR.getBinding();
+  }
 
-    @SuppressWarnings("unchecked")
-    private static final DataType<String> type(Field<?> field) {
-        return field.getType() == String.class ? (DataType<String>) field.getDataType() : SQLDataType.VARCHAR;
-    }
+  @SuppressWarnings("unchecked")
+  private static final DataType<String> type(Field<?> field) {
+    return field.getType() == String.class
+        ? (DataType<String>) field.getDataType()
+        : SQLDataType.VARCHAR;
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
+  @Override
+  public final void accept(Context<?> ctx) {
 
-        // [#8011] Collations are vendor-specific storage clauses, which we might need to ignore
-        if (ctx.configuration().data("org.jooq.ddl.ignore-storage-clauses") == null)
-            ctx.sql("((").visit(field).sql(") ").visit(K_COLLATE).sql(' ').visit(collation).sql(')');
-        else
-            ctx.visit(field);
-    }
+    // [#8011] Collations are vendor-specific storage clauses, which we might need to ignore
+    if (ctx.configuration().data("org.jooq.ddl.ignore-storage-clauses") == null)
+      ctx.sql("((").visit(field).sql(") ").visit(K_COLLATE).sql(' ').visit(collation).sql(')');
+    else ctx.visit(field);
+  }
 }

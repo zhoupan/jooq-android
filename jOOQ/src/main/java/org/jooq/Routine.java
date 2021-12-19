@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,172 +38,145 @@
 package org.jooq;
 
 import java.util.List;
-
-import org.jooq.exception.DataAccessException;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jooq.exception.DataAccessException;
 
 /**
  * A routine is a callable object in your RDBMS.
+ *
+ * <p>Callable objects are mainly stored procedures and stored functions. The distinction between
+ * those two object types is very subtle and not well defined across various RDBMS. In general, this
+ * can be said:
+ *
+ * <p>Procedures:
+ *
  * <p>
- * Callable objects are mainly stored procedures and stored functions. The
- * distinction between those two object types is very subtle and not well
- * defined across various RDBMS. In general, this can be said:
- * <p>
- * Procedures:
- * <p>
+ *
  * <ul>
- * <li>Are called as callable statements</li>
- * <li>Have no return value</li>
- * <li>Support OUT parameters</li>
+ *   <li>Are called as callable statements
+ *   <li>Have no return value
+ *   <li>Support OUT parameters
  * </ul>
+ *
  * Functions
+ *
  * <p>
+ *
  * <ul>
- * <li>Can be used in SQL statements</li>
- * <li>Have a return value</li>
- * <li>Don't support OUT parameters</li>
+ *   <li>Can be used in SQL statements
+ *   <li>Have a return value
+ *   <li>Don't support OUT parameters
  * </ul>
+ *
  * But there are exceptions to these rules:
+ *
  * <p>
+ *
  * <ul>
- * <li>DB2, H2, and HSQLDB don't allow for JDBC escape syntax when calling
- * functions. Functions must be used in a SELECT statement</li>
- * <li>H2 only knows functions (without OUT parameters)</li>
- * <li>Oracle functions may have OUT parameters</li>
- * <li>Oracle knows functions that mustn't be used in SQL statements</li>
- * <li>Oracle parameters can have default values (to support this, jOOQ renders
- * PL/SQL instead of the JDBC escape syntax)</li>
- * <li>Postgres only knows functions (with all features combined)</li>
- * <li>The Sybase JDBC driver doesn't handle null values correctly when using
- * the JDBC escape syntax on functions</li>
- * <li>etc...</li>
+ *   <li>DB2, H2, and HSQLDB don't allow for JDBC escape syntax when calling functions. Functions
+ *       must be used in a SELECT statement
+ *   <li>H2 only knows functions (without OUT parameters)
+ *   <li>Oracle functions may have OUT parameters
+ *   <li>Oracle knows functions that mustn't be used in SQL statements
+ *   <li>Oracle parameters can have default values (to support this, jOOQ renders PL/SQL instead of
+ *       the JDBC escape syntax)
+ *   <li>Postgres only knows functions (with all features combined)
+ *   <li>The Sybase JDBC driver doesn't handle null values correctly when using the JDBC escape
+ *       syntax on functions
+ *   <li>etc...
  * </ul>
- * <p>
- * Hence, with #852, jOOQ 1.6.8, the distinction between procedures and
- * functions becomes obsolete. All stored routines are simply referred to as
- * "Routine".
- * <p>
- * Instances of this type cannot be created directly. They are available from
- * generated code.
+ *
+ * <p>Hence, with #852, jOOQ 1.6.8, the distinction between procedures and functions becomes
+ * obsolete. All stored routines are simply referred to as "Routine".
+ *
+ * <p>Instances of this type cannot be created directly. They are available from generated code.
  *
  * @author Lukas Eder
  */
 public interface Routine<T> extends Qualified, Attachable {
 
-    // -------------------------------------------------------------------------
-    // XXX: Meta information
-    // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // XXX: Meta information
+  // -------------------------------------------------------------------------
 
+  /**
+   * The parameter representing this routine's {@link #getReturnValue()}
+   *
+   * @return The return parameter or <code>null</code> if this routine doesn't have a return value.
+   * @see #getParameters()
+   */
+  @Nullable
+  Parameter<T> getReturnParameter();
 
+  /**
+   * A list of OUT parameters passed to the stored procedure as argument. This list contains all
+   * parameters that are either OUT or INOUT in their respective order of appearance in {@link
+   * #getParameters()}.
+   *
+   * @return The list of out parameters
+   * @see #getParameters()
+   */
+  @NotNull
+  List<Parameter<?>> getOutParameters();
 
+  /**
+   * A list of IN parameters passed to the stored procedure as argument. This list contains all
+   * parameters that are either IN or INOUT in their respective order of appearance in {@link
+   * #getParameters()}.
+   *
+   * @return The list of in parameters
+   * @see #getParameters()
+   */
+  @NotNull
+  List<Parameter<?>> getInParameters();
 
+  /** @return A list of parameters passed to the stored object as argument */
+  @NotNull
+  List<Parameter<?>> getParameters();
 
+  // -------------------------------------------------------------------------
+  // XXX: Call API
+  // -------------------------------------------------------------------------
 
+  /**
+   * Execute the stored object using a {@link Configuration} object
+   *
+   * @throws DataAccessException if something went wrong executing the query
+   */
+  int execute(Configuration configuration) throws DataAccessException;
 
+  /**
+   * Execute the stored object on an underlying connection
+   *
+   * @throws DataAccessException if something went wrong executing the query
+   */
+  int execute() throws DataAccessException;
 
+  // -------------------------------------------------------------------------
+  // XXX: Call data
+  // -------------------------------------------------------------------------
 
+  /** Set the routine's IN value for an IN parameter. */
+  <Z> void setValue(Parameter<Z> parameter, Z value);
 
+  /** Set the routine's IN value for an IN parameter. */
+  <Z> void set(Parameter<Z> parameter, Z value);
 
+  /** @return The routine's OUT value for an OUT parameter. */
+  <Z> Z getValue(Parameter<Z> parameter);
 
+  /** @return The routine's IN value for an IN parameter. */
+  <Z> Z getInValue(Parameter<Z> parameter);
 
+  /** @return The routine's OUT value for an OUT parameter. */
+  <Z> Z get(Parameter<Z> parameter);
 
+  /** @return The routine's return value (if it is a function) */
+  @Nullable
+  T getReturnValue();
 
-    /**
-     * The parameter representing this routine's {@link #getReturnValue()}
-     *
-     * @return The return parameter or <code>null</code> if this routine doesn't
-     *         have a return value.
-     * @see #getParameters()
-     */
-    @Nullable
-    Parameter<T> getReturnParameter();
-
-    /**
-     * A list of OUT parameters passed to the stored procedure as argument. This
-     * list contains all parameters that are either OUT or INOUT in their
-     * respective order of appearance in {@link #getParameters()}.
-     *
-     * @return The list of out parameters
-     * @see #getParameters()
-     */
-    @NotNull
-    List<Parameter<?>> getOutParameters();
-
-    /**
-     * A list of IN parameters passed to the stored procedure as argument. This
-     * list contains all parameters that are either IN or INOUT in their
-     * respective order of appearance in {@link #getParameters()}.
-     *
-     * @return The list of in parameters
-     * @see #getParameters()
-     */
-    @NotNull
-    List<Parameter<?>> getInParameters();
-
-    /**
-     * @return A list of parameters passed to the stored object as argument
-     */
-    @NotNull
-    List<Parameter<?>> getParameters();
-
-    // -------------------------------------------------------------------------
-    // XXX: Call API
-    // -------------------------------------------------------------------------
-
-    /**
-     * Execute the stored object using a {@link Configuration} object
-     *
-     * @throws DataAccessException if something went wrong executing the query
-     */
-    int execute(Configuration configuration) throws DataAccessException;
-
-    /**
-     * Execute the stored object on an underlying connection
-     *
-     * @throws DataAccessException if something went wrong executing the query
-     */
-    int execute() throws DataAccessException;
-
-    // -------------------------------------------------------------------------
-    // XXX: Call data
-    // -------------------------------------------------------------------------
-
-    /**
-     * Set the routine's IN value for an IN parameter.
-     */
-    <Z> void setValue(Parameter<Z> parameter, Z value);
-
-    /**
-     * Set the routine's IN value for an IN parameter.
-     */
-    <Z> void set(Parameter<Z> parameter, Z value);
-
-    /**
-     * @return The routine's OUT value for an OUT parameter.
-     */
-    <Z> Z getValue(Parameter<Z> parameter);
-
-    /**
-     * @return The routine's IN value for an IN parameter.
-     */
-    <Z> Z getInValue(Parameter<Z> parameter);
-
-    /**
-     * @return The routine's OUT value for an OUT parameter.
-     */
-    <Z> Z get(Parameter<Z> parameter);
-
-    /**
-     * @return The routine's return value (if it is a function)
-     */
-    @Nullable
-    T getReturnValue();
-
-    /**
-     * @return The routine's results (if available)
-     */
-    @NotNull
-    Results getResults();
+  /** @return The routine's results (if available) */
+  @NotNull
+  Results getResults();
 }

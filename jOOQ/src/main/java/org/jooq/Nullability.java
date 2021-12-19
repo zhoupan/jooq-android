@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,7 +39,6 @@ package org.jooq;
 
 import org.jetbrains.annotations.NotNull;
 
-
 /**
  * An enum that specifies the nullability of a {@link DataType}.
  *
@@ -47,52 +46,42 @@ import org.jetbrains.annotations.NotNull;
  */
 public enum Nullability {
 
-    /**
-     * The data type is explicitly nullable.
-     */
-    @NotNull
-    @Support
-    NULL,
+  /** The data type is explicitly nullable. */
+  @NotNull
+  @Support
+  NULL,
 
-    /**
-     * The data type is explicitly not nullable.
-     */
-    @NotNull
-    @Support
-    NOT_NULL,
+  /** The data type is explicitly not nullable. */
+  @NotNull
+  @Support
+  NOT_NULL,
 
-    /**
-     * Default behaviour for data types.
-     * <p>
-     * The interpretation of this value depends on the context in which a
-     * {@link DataType} is used:
-     * <ul>
-     * <li><code>CREATE TABLE</code>: The data type is implicitly nullable (or
-     * explicitly, if the underlying database does not support implicit
-     * nullability or defaults to implicit non-nullability).</li>
-     * <li><code>ALTER TABLE .. ALTER COLUMN .. SET TYPE</code>: The data type's
-     * nullability will not be modified by jOOQ (but it may well be modified by
-     * the database, e.g. {@link SQLDialect#MYSQL} or
-     * {@link SQLDialect#SQLSERVER}).</li>
-     * </ul>
-     */
-    @NotNull
-    @Support
-    DEFAULT;
+  /**
+   * Default behaviour for data types.
+   *
+   * <p>The interpretation of this value depends on the context in which a {@link DataType} is used:
+   *
+   * <ul>
+   *   <li><code>CREATE TABLE</code>: The data type is implicitly nullable (or explicitly, if the
+   *       underlying database does not support implicit nullability or defaults to implicit
+   *       non-nullability).
+   *   <li><code>ALTER TABLE .. ALTER COLUMN .. SET TYPE</code>: The data type's nullability will
+   *       not be modified by jOOQ (but it may well be modified by the database, e.g. {@link
+   *       SQLDialect#MYSQL} or {@link SQLDialect#SQLSERVER}).
+   * </ul>
+   */
+  @NotNull
+  @Support
+  DEFAULT;
 
-    /**
-     * Get the explicit {@link Nullability} corresponding to a boolean value.
-     */
-    @NotNull
-    public static Nullability of(boolean nullability) {
-        return nullability ? NULL : NOT_NULL;
-    }
+  /** Get the explicit {@link Nullability} corresponding to a boolean value. */
+  @NotNull
+  public static Nullability of(boolean nullability) {
+    return nullability ? NULL : NOT_NULL;
+  }
 
-    /**
-     * Whether this nullability encodes an explicitly or implicitly nullable
-     * type.
-     */
-    public boolean nullable() {
-        return this != NOT_NULL;
-    }
+  /** Whether this nullability encodes an explicitly or implicitly nullable type. */
+  public boolean nullable() {
+    return this != NOT_NULL;
+  }
 }

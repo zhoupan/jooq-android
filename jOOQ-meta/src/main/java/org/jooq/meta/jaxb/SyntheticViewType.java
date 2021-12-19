@@ -1,4 +1,40 @@
-
+/* 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Other licenses:
+ * -----------------------------------------------------------------------------
+ * Commercial licenses for this work are available. These replace the above
+ * ASL 2.0 and offer limited warranties, support, maintenance, and commercial
+ * database integrations.
+ *
+ * For more information, please visit: http://www.jooq.org/licenses
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 package org.jooq.meta.jaxb;
 
 import java.io.Serializable;
@@ -11,12 +47,11 @@ import org.jooq.util.jaxb.tools.StringAdapter;
 import org.jooq.util.jaxb.tools.XMLAppendable;
 import org.jooq.util.jaxb.tools.XMLBuilder;
 
-
 /**
- * <p>Java class for SyntheticViewType complex type.
- * 
+ * Java class for SyntheticViewType complex type.
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SyntheticViewType"&gt;
  *   &lt;complexContent&gt;
@@ -32,244 +67,198 @@ import org.jooq.util.jaxb.tools.XMLBuilder;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "SyntheticViewType", propOrder = {
+@XmlType(
+    name = "SyntheticViewType",
+    propOrder = {})
+@SuppressWarnings({"all"})
+public class SyntheticViewType implements Serializable, XMLAppendable {
 
-})
-@SuppressWarnings({
-    "all"
-})
-public class SyntheticViewType implements Serializable, XMLAppendable
-{
+  private static final long serialVersionUID = 31500L;
 
-    private final static long serialVersionUID = 31500L;
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String catalog;
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String schema;
-    @XmlElement(required = true)
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String name;
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String comment;
-    @XmlElement(required = true)
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String sql;
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String catalog;
 
-    /**
-     * The defining catalog of the view.
-     * 
-     */
-    public String getCatalog() {
-        return catalog;
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String schema;
+
+  @XmlElement(required = true)
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String name;
+
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String comment;
+
+  @XmlElement(required = true)
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String sql;
+
+  /** The defining catalog of the view. */
+  public String getCatalog() {
+    return catalog;
+  }
+
+  /** The defining catalog of the view. */
+  public void setCatalog(String value) {
+    this.catalog = value;
+  }
+
+  /** The defining schema of the view. */
+  public String getSchema() {
+    return schema;
+  }
+
+  /** The defining schema of the view. */
+  public void setSchema(String value) {
+    this.schema = value;
+  }
+
+  /** The defining name of the view. */
+  public String getName() {
+    return name;
+  }
+
+  /** The defining name of the view. */
+  public void setName(String value) {
+    this.name = value;
+  }
+
+  /** The defining comment on the view. */
+  public String getComment() {
+    return comment;
+  }
+
+  /** The defining comment on the view. */
+  public void setComment(String value) {
+    this.comment = value;
+  }
+
+  /** The defining SQL query. */
+  public String getSql() {
+    return sql;
+  }
+
+  /** The defining SQL query. */
+  public void setSql(String value) {
+    this.sql = value;
+  }
+
+  /** The defining catalog of the view. */
+  public SyntheticViewType withCatalog(String value) {
+    setCatalog(value);
+    return this;
+  }
+
+  /** The defining schema of the view. */
+  public SyntheticViewType withSchema(String value) {
+    setSchema(value);
+    return this;
+  }
+
+  /** The defining name of the view. */
+  public SyntheticViewType withName(String value) {
+    setName(value);
+    return this;
+  }
+
+  /** The defining comment on the view. */
+  public SyntheticViewType withComment(String value) {
+    setComment(value);
+    return this;
+  }
+
+  /** The defining SQL query. */
+  public SyntheticViewType withSql(String value) {
+    setSql(value);
+    return this;
+  }
+
+  @Override
+  public final void appendTo(XMLBuilder builder) {
+    builder.append("catalog", catalog);
+    builder.append("schema", schema);
+    builder.append("name", name);
+    builder.append("comment", comment);
+    builder.append("sql", sql);
+  }
+
+  @Override
+  public String toString() {
+    XMLBuilder builder = XMLBuilder.nonFormatting();
+    appendTo(builder);
+    return builder.toString();
+  }
+
+  @Override
+  public boolean equals(Object that) {
+    if (this == that) {
+      return true;
     }
-
-    /**
-     * The defining catalog of the view.
-     * 
-     */
-    public void setCatalog(String value) {
-        this.catalog = value;
+    if (that == null) {
+      return false;
     }
-
-    /**
-     * The defining schema of the view.
-     * 
-     */
-    public String getSchema() {
-        return schema;
+    if (getClass() != that.getClass()) {
+      return false;
     }
-
-    /**
-     * The defining schema of the view.
-     * 
-     */
-    public void setSchema(String value) {
-        this.schema = value;
+    SyntheticViewType other = ((SyntheticViewType) that);
+    if (catalog == null) {
+      if (other.catalog != null) {
+        return false;
+      }
+    } else {
+      if (!catalog.equals(other.catalog)) {
+        return false;
+      }
     }
-
-    /**
-     * The defining name of the view.
-     * 
-     */
-    public String getName() {
-        return name;
+    if (schema == null) {
+      if (other.schema != null) {
+        return false;
+      }
+    } else {
+      if (!schema.equals(other.schema)) {
+        return false;
+      }
     }
-
-    /**
-     * The defining name of the view.
-     * 
-     */
-    public void setName(String value) {
-        this.name = value;
+    if (name == null) {
+      if (other.name != null) {
+        return false;
+      }
+    } else {
+      if (!name.equals(other.name)) {
+        return false;
+      }
     }
-
-    /**
-     * The defining comment on the view.
-     * 
-     */
-    public String getComment() {
-        return comment;
+    if (comment == null) {
+      if (other.comment != null) {
+        return false;
+      }
+    } else {
+      if (!comment.equals(other.comment)) {
+        return false;
+      }
     }
-
-    /**
-     * The defining comment on the view.
-     * 
-     */
-    public void setComment(String value) {
-        this.comment = value;
+    if (sql == null) {
+      if (other.sql != null) {
+        return false;
+      }
+    } else {
+      if (!sql.equals(other.sql)) {
+        return false;
+      }
     }
+    return true;
+  }
 
-    /**
-     * The defining SQL query.
-     * 
-     */
-    public String getSql() {
-        return sql;
-    }
-
-    /**
-     * The defining SQL query.
-     * 
-     */
-    public void setSql(String value) {
-        this.sql = value;
-    }
-
-    /**
-     * The defining catalog of the view.
-     * 
-     */
-    public SyntheticViewType withCatalog(String value) {
-        setCatalog(value);
-        return this;
-    }
-
-    /**
-     * The defining schema of the view.
-     * 
-     */
-    public SyntheticViewType withSchema(String value) {
-        setSchema(value);
-        return this;
-    }
-
-    /**
-     * The defining name of the view.
-     * 
-     */
-    public SyntheticViewType withName(String value) {
-        setName(value);
-        return this;
-    }
-
-    /**
-     * The defining comment on the view.
-     * 
-     */
-    public SyntheticViewType withComment(String value) {
-        setComment(value);
-        return this;
-    }
-
-    /**
-     * The defining SQL query.
-     * 
-     */
-    public SyntheticViewType withSql(String value) {
-        setSql(value);
-        return this;
-    }
-
-    @Override
-    public final void appendTo(XMLBuilder builder) {
-        builder.append("catalog", catalog);
-        builder.append("schema", schema);
-        builder.append("name", name);
-        builder.append("comment", comment);
-        builder.append("sql", sql);
-    }
-
-    @Override
-    public String toString() {
-        XMLBuilder builder = XMLBuilder.nonFormatting();
-        appendTo(builder);
-        return builder.toString();
-    }
-
-    @Override
-    public boolean equals(Object that) {
-        if (this == that) {
-            return true;
-        }
-        if (that == null) {
-            return false;
-        }
-        if (getClass()!= that.getClass()) {
-            return false;
-        }
-        SyntheticViewType other = ((SyntheticViewType) that);
-        if (catalog == null) {
-            if (other.catalog!= null) {
-                return false;
-            }
-        } else {
-            if (!catalog.equals(other.catalog)) {
-                return false;
-            }
-        }
-        if (schema == null) {
-            if (other.schema!= null) {
-                return false;
-            }
-        } else {
-            if (!schema.equals(other.schema)) {
-                return false;
-            }
-        }
-        if (name == null) {
-            if (other.name!= null) {
-                return false;
-            }
-        } else {
-            if (!name.equals(other.name)) {
-                return false;
-            }
-        }
-        if (comment == null) {
-            if (other.comment!= null) {
-                return false;
-            }
-        } else {
-            if (!comment.equals(other.comment)) {
-                return false;
-            }
-        }
-        if (sql == null) {
-            if (other.sql!= null) {
-                return false;
-            }
-        } else {
-            if (!sql.equals(other.sql)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = ((prime*result)+((catalog == null)? 0 :catalog.hashCode()));
-        result = ((prime*result)+((schema == null)? 0 :schema.hashCode()));
-        result = ((prime*result)+((name == null)? 0 :name.hashCode()));
-        result = ((prime*result)+((comment == null)? 0 :comment.hashCode()));
-        result = ((prime*result)+((sql == null)? 0 :sql.hashCode()));
-        return result;
-    }
-
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = ((prime * result) + ((catalog == null) ? 0 : catalog.hashCode()));
+    result = ((prime * result) + ((schema == null) ? 0 : schema.hashCode()));
+    result = ((prime * result) + ((name == null) ? 0 : name.hashCode()));
+    result = ((prime * result) + ((comment == null) ? 0 : comment.hashCode()));
+    result = ((prime * result) + ((sql == null) ? 0 : sql.hashCode()));
+    return result;
+  }
 }

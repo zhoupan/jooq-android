@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,10 +41,10 @@ import org.jooq.impl.DSL;
 
 /**
  * A <code>DELETE</code> statement.
- * <p>
- * <strong>Example:</strong>
- * <p>
- * <code><pre>
+ *
+ * <p><strong>Example:</strong>
+ *
+ * <p><code><pre>
  * // Assuming import static org.jooq.impl.DSL.*;
  *
  * using(configuration)
@@ -52,13 +52,10 @@ import org.jooq.impl.DSL;
  *    .where(ACTOR.ACTOR_ID.in(1, 2, 3))
  *    .execute();
  * </pre></code>
- * <p>
- * Instances can be created using {@link DSL#deleteFrom(Table)},
- * {@link DSLContext#deleteFrom(Table)}, or
- * {@link DSLContext#deleteQuery(Table)} and overloads.
+ *
+ * <p>Instances can be created using {@link DSL#deleteFrom(Table)}, {@link
+ * DSLContext#deleteFrom(Table)}, or {@link DSLContext#deleteQuery(Table)} and overloads.
  *
  * @author Lukas Eder
  */
-public interface Delete<R extends Record> extends RowCountQuery {
-
-}
+public interface Delete<R extends Record> extends RowCountQuery {}

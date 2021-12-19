@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,29 +38,19 @@
 package org.jooq;
 
 import java.util.concurrent.Flow;
-import java.util.function.Consumer;
-
 import org.reactivestreams.FlowAdapters;
-import org.reactivestreams.Subscriber;
-import org.reactivestreams.Subscription;
-
 
 /**
- * A bridge from {@link java.util.concurrent.Flow.Publisher} to
- * {@link org.reactivestreams.Publisher} for compatibility purposes.
+ * A bridge from {@link java.util.concurrent.Flow.Publisher} to {@link
+ * org.reactivestreams.Publisher} for compatibility purposes.
  *
  * @author Lukas Eder
  */
 @FunctionalInterface
 public interface Publisher<T> extends org.reactivestreams.Publisher<T>, Flow.Publisher<T> {
 
-
-
-    @Override
-    default void subscribe(Flow.Subscriber<? super T> subscriber) {
-        subscribe(FlowAdapters.toSubscriber(subscriber));
-    }
-
-
+  @Override
+  default void subscribe(Flow.Subscriber<? super T> subscriber) {
+    subscribe(FlowAdapters.toSubscriber(subscriber));
+  }
 }
-

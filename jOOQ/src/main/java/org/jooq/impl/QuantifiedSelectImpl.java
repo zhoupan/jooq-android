@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,12 +37,9 @@
  */
 package org.jooq.impl;
 
-import static java.lang.Boolean.TRUE;
-// ...
 import static org.jooq.impl.DSL.select;
 import static org.jooq.impl.DSL.table;
 import static org.jooq.impl.DSL.val;
-import static org.jooq.impl.Quantifier.ANY;
 import static org.jooq.impl.Tools.visitSubquery;
 
 import org.jooq.Configuration;
@@ -54,122 +51,98 @@ import org.jooq.QueryPart;
 import org.jooq.Record;
 import org.jooq.Record1;
 import org.jooq.Select;
-import org.jooq.impl.Tools.BooleanDataKey;
 
-/**
- * @author Lukas Eder
- */
-final class QuantifiedSelectImpl<R extends Record> extends AbstractQueryPart implements QuantifiedSelect<R> {
+/** @author Lukas Eder */
+final class QuantifiedSelectImpl<R extends Record> extends AbstractQueryPart
+    implements QuantifiedSelect<R> {
 
-    final Quantifier                quantifier;
-    final Select<R>                 query;
-    final Field<? extends Object[]> array;
-    final Field<?>[]                values;
+  final Quantifier quantifier;
+  final Select<R> query;
+  final Field<? extends Object[]> array;
+  final Field<?>[] values;
 
-    QuantifiedSelectImpl(Quantifier quantifier, Select<R> query) {
-        this.quantifier = quantifier;
-        this.query = query;
-        this.array = null;
-        this.values = null;
+  QuantifiedSelectImpl(Quantifier quantifier, Select<R> query) {
+    this.quantifier = quantifier;
+    this.query = query;
+    this.array = null;
+    this.values = null;
+  }
+
+  QuantifiedSelectImpl(Quantifier quantifier, Field<? extends Object[]> array) {
+    this.quantifier = quantifier;
+    this.query = null;
+    this.array = array;
+    this.values = null;
+  }
+
+  QuantifiedSelectImpl(Quantifier quantifier, Field<?>... values) {
+    this.quantifier = quantifier;
+    this.query = null;
+    this.array = null;
+    this.values = values;
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    boolean extraParentheses = false;
+
+    switch (ctx.family()) {
+      default:
+        ctx.visit(quantifier.toKeyword());
+        ctx.sql(extraParentheses ? " ((" : " (");
+        visitSubquery(ctx, delegate(ctx.configuration()), false);
+        ctx.sql(extraParentheses ? "))" : ")");
+        break;
     }
+  }
 
-    QuantifiedSelectImpl(Quantifier quantifier, Field<? extends Object[]> array) {
-        this.quantifier = quantifier;
-        this.query = null;
-        this.array = array;
-        this.values = null;
-    }
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  private final QueryPart delegate(Configuration ctx) {
+    if (query != null) {
+      return query;
+    } else if (values != null) {
+      Select<Record1<?>> select = null;
 
-    QuantifiedSelectImpl(Quantifier quantifier, Field<?>... values) {
-        this.quantifier = quantifier;
-        this.query = null;
-        this.array = null;
-        this.values = values;
-    }
+      for (Field value : values)
+        if (select == null) select = select(value);
+        else select = select.unionAll(select(value));
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        boolean extraParentheses = false ;
+      return select;
+    } else {
+      switch (ctx.family()) {
 
-        switch (ctx.family()) {
+          // [#869] Postgres supports this syntax natively
 
+        case POSTGRES:
+          return array;
 
+          // [#869] H2 and HSQLDB can emulate this syntax by unnesting
+          // the array in a subselect
+        case H2:
+        case HSQLDB:
+          return create(ctx).select().from(table(array));
 
+          // [#1048] All other dialects emulate unnesting of arrays using
+          // UNION ALL-connected subselects
+        default:
+          {
 
+            // The Informix database has an interesting bug when quantified comparison predicates
+            // use nested derived tables with UNION ALL
+            if (array instanceof Param) {
+              Object[] values0 = ((Param<? extends Object[]>) array).getValue();
 
+              Select<Record1<Object>> select = null;
+              for (Object value : values0)
+                if (select == null) select = select(val(value));
+                else select = select.unionAll(select(val(value)));
 
-
-
-
-
-
-
-
-
-
-            default:
-                ctx.visit(quantifier.toKeyword());
-                ctx.sql(extraParentheses ? " ((" : " (");
-                visitSubquery(ctx, delegate(ctx.configuration()), false);
-                ctx.sql(extraParentheses ? "))" : ")");
-                break;
-        }
-    }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private final QueryPart delegate(Configuration ctx) {
-        if (query != null) {
-            return query;
-        }
-        else if (values != null) {
-            Select<Record1<?>> select = null;
-
-            for (Field value : values)
-                if (select == null)
-                    select = select(value);
-                else
-                    select = select.unionAll(select(value));
-
-            return select;
-        }
-        else {
-            switch (ctx.family()) {
-
-                // [#869] Postgres supports this syntax natively
-
-
-                case POSTGRES:
-                    return array;
-
-                // [#869] H2 and HSQLDB can emulate this syntax by unnesting
-                // the array in a subselect
-                case H2:
-                case HSQLDB:
-                    return create(ctx).select().from(table(array));
-
-                // [#1048] All other dialects emulate unnesting of arrays using
-                // UNION ALL-connected subselects
-                default: {
-
-                    // The Informix database has an interesting bug when quantified comparison predicates
-                    // use nested derived tables with UNION ALL
-                    if (array instanceof Param) {
-                        Object[] values0 = ((Param<? extends Object[]>) array).getValue();
-
-                        Select<Record1<Object>> select = null;
-                        for (Object value : values0)
-                            if (select == null)
-                                select = select(val(value));
-                            else
-                                select = select.unionAll(select(val(value)));
-
-                        return select;
-                    }
-                    else {
-                        return select().from(table(array));
-                    }
-                }
+              return select;
+            } else {
+              return select().from(table(array));
             }
-        }
+          }
+      }
     }
+  }
 }

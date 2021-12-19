@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,64 +39,62 @@ package org.jooq.impl;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-
 import org.jooq.CaseValueStep;
 import org.jooq.CaseWhenStep;
 import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Select;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class CaseValueStepImpl<V> implements CaseValueStep<V> {
 
-    private final Field<V> value;
+  private final Field<V> value;
 
-    CaseValueStepImpl(Field<V> value) {
-        this.value = value;
-    }
+  CaseValueStepImpl(Field<V> value) {
+    this.value = value;
+  }
 
-    @Override
-    public final <T> CaseWhenStep<V, T> when(V compareValue, T result) {
-        return when(Tools.field(compareValue, value), Tools.field(result));
-    }
+  @Override
+  public final <T> CaseWhenStep<V, T> when(V compareValue, T result) {
+    return when(Tools.field(compareValue, value), Tools.field(result));
+  }
 
-    @Override
-    public final <T> CaseWhenStep<V, T> when(V compareValue, Field<T> result) {
-        return when(Tools.field(compareValue, value), result);
-    }
+  @Override
+  public final <T> CaseWhenStep<V, T> when(V compareValue, Field<T> result) {
+    return when(Tools.field(compareValue, value), result);
+  }
 
-    @Override
-    public final <T> CaseWhenStep<V, T> when(V compareValue, Select<? extends Record1<T>> result) {
-        return when(Tools.field(compareValue, value), DSL.field(result));
-    }
+  @Override
+  public final <T> CaseWhenStep<V, T> when(V compareValue, Select<? extends Record1<T>> result) {
+    return when(Tools.field(compareValue, value), DSL.field(result));
+  }
 
-    @Override
-    public final <T> CaseWhenStep<V, T> when(Field<V> compareValue, T result) {
-        return when(compareValue, Tools.field(result));
-    }
+  @Override
+  public final <T> CaseWhenStep<V, T> when(Field<V> compareValue, T result) {
+    return when(compareValue, Tools.field(result));
+  }
 
-    @Override
-    public final <T> CaseWhenStep<V, T> when(Field<V> compareValue, Field<T> result) {
-        return new CaseWhenStepImpl<>(value, compareValue, result);
-    }
+  @Override
+  public final <T> CaseWhenStep<V, T> when(Field<V> compareValue, Field<T> result) {
+    return new CaseWhenStepImpl<>(value, compareValue, result);
+  }
 
-    @Override
-    public final <T> CaseWhenStep<V, T> when(Field<V> compareValue, Select<? extends Record1<T>> result) {
-        return when(compareValue, DSL.field(result));
-    }
+  @Override
+  public final <T> CaseWhenStep<V, T> when(
+      Field<V> compareValue, Select<? extends Record1<T>> result) {
+    return when(compareValue, DSL.field(result));
+  }
 
-    @Override
-    public final <T> CaseWhenStep<V, T> mapValues(Map<V, T> values) {
-        Map<Field<V>, Field<T>> fields = new LinkedHashMap<>();
-        values.forEach((k, v) -> fields.put(Tools.field(k, value), Tools.field(v)));
-        return mapFields(fields);
-    }
+  @Override
+  public final <T> CaseWhenStep<V, T> mapValues(Map<V, T> values) {
+    Map<Field<V>, Field<T>> fields = new LinkedHashMap<>();
+    values.forEach((k, v) -> fields.put(Tools.field(k, value), Tools.field(v)));
+    return mapFields(fields);
+  }
 
-    @Override
-    public final <T> CaseWhenStep<V, T> mapFields(Map<? extends Field<V>, ? extends Field<T>> fields) {
-        return new CaseWhenStepImpl<>(value, fields);
-    }
+  @Override
+  public final <T> CaseWhenStep<V, T> mapFields(
+      Map<? extends Field<V>, ? extends Field<T>> fields) {
+    return new CaseWhenStepImpl<>(value, fields);
+  }
 }

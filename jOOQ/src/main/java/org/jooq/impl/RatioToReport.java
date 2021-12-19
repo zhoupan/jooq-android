@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,65 +44,39 @@ import static org.jooq.impl.SQLDataType.DOUBLE;
 import static org.jooq.impl.Tools.castIfNeeded;
 
 import java.math.BigDecimal;
-
 import org.jooq.Context;
 import org.jooq.DataType;
 import org.jooq.Field;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class RatioToReport extends DefaultAggregateFunction<BigDecimal> {
-    private final Field<? extends Number> field;
+  private final Field<? extends Number> field;
 
-    RatioToReport(Field<? extends Number> field) {
-        super(N_RATIO_TO_REPORT, DECIMAL, field);
+  RatioToReport(Field<? extends Number> field) {
+    super(N_RATIO_TO_REPORT, DECIMAL, field);
 
-        this.field = field;
+    this.field = field;
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case CUBRID:
+
+      case MARIADB:
+      case MYSQL:
+      case POSTGRES:
+      case SQLITE:
+        ctx.visit(castIfNeeded(field, (DataType<?>) (ctx.family() == SQLITE ? DOUBLE : DECIMAL)))
+            .sql(" / ")
+            .visit(DSL.sum(field));
+        acceptOverClause(ctx);
+        break;
+
+      default:
+        ctx.visit(N_RATIO_TO_REPORT).sql('(').visit(field).sql(')');
+        acceptOverClause(ctx);
+        break;
     }
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            case CUBRID:
-
-
-
-
-
-
-
-
-            case MARIADB:
-            case MYSQL:
-            case POSTGRES:
-            case SQLITE:
-                ctx.visit(castIfNeeded(field, (DataType<?>) (ctx.family() == SQLITE ? DOUBLE : DECIMAL)))
-                   .sql(" / ")
-                   .visit(DSL.sum(field));
-                acceptOverClause(ctx);
-                break;
-
-            default:
-                ctx.visit(N_RATIO_TO_REPORT).sql('(').visit(field).sql(')');
-                acceptOverClause(ctx);
-                break;
-        }
-    }
+  }
 }

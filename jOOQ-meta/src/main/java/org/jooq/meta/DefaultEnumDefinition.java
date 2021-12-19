@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,50 +41,49 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 public class DefaultEnumDefinition extends AbstractDefinition implements EnumDefinition {
 
-    private final List<String> literals;
-    private final boolean isSynthetic;
+  private final List<String> literals;
+  private final boolean isSynthetic;
 
-    public DefaultEnumDefinition(SchemaDefinition schema, String name, String comment) {
-        this(schema, name, comment, false);
-    }
+  public DefaultEnumDefinition(SchemaDefinition schema, String name, String comment) {
+    this(schema, name, comment, false);
+  }
 
-    public DefaultEnumDefinition(SchemaDefinition schema, String name, String comment, boolean isSynthetic) {
-        super(schema.getDatabase(), schema, name, comment);
+  public DefaultEnumDefinition(
+      SchemaDefinition schema, String name, String comment, boolean isSynthetic) {
+    super(schema.getDatabase(), schema, name, comment);
 
-        this.literals = new ArrayList<>();
-        this.isSynthetic = isSynthetic;
-    }
+    this.literals = new ArrayList<>();
+    this.isSynthetic = isSynthetic;
+  }
 
-    @Override
-    public List<Definition> getDefinitionPath() {
-        List<Definition> result = new ArrayList<>();
+  @Override
+  public List<Definition> getDefinitionPath() {
+    List<Definition> result = new ArrayList<>();
 
-        result.addAll(getSchema().getDefinitionPath());
-        result.add(this);
+    result.addAll(getSchema().getDefinitionPath());
+    result.add(this);
 
-        return result;
-    }
+    return result;
+  }
 
-    public void addLiteral(String literal) {
-        literals.add(literal);
-    }
+  public void addLiteral(String literal) {
+    literals.add(literal);
+  }
 
-    public void addLiterals(String... literal) {
-        literals.addAll(Arrays.asList(literal));
-    }
+  public void addLiterals(String... literal) {
+    literals.addAll(Arrays.asList(literal));
+  }
 
-    @Override
-    public List<String> getLiterals() {
-        return literals;
-    }
+  @Override
+  public List<String> getLiterals() {
+    return literals;
+  }
 
-    @Override
-    public boolean isSynthetic() {
-        return isSynthetic;
-    }
+  @Override
+  public boolean isSynthetic() {
+    return isSynthetic;
+  }
 }

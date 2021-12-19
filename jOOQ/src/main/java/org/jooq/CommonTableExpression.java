@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,16 +37,15 @@
  */
 package org.jooq;
 
-
 /**
  * A common table expression.
- * <p>
- * A common table expression is a table that can be supplied to
- * <code>WITH</code> clauses. It may or may not be defined recursively.
- * <p>
- * <strong>Example:</strong>
- * <p>
- * <code><pre>
+ *
+ * <p>A common table expression is a table that can be supplied to <code>WITH</code> clauses. It may
+ * or may not be defined recursively.
+ *
+ * <p><strong>Example:</strong>
+ *
+ * <p><code><pre>
  * // Assuming import static org.jooq.impl.DSL.*;
  *
  * Table&lt;?&gt; t = name("t").fields("v").as(select(one()));
@@ -56,11 +55,9 @@ package org.jooq;
  *    .from(t)
  *    .fetch();
  * </pre></code>
- * <p>
- * Instances can be created using {@link Name#as(Select)}.
+ *
+ * <p>Instances can be created using {@link Name#as(Select)}.
  *
  * @author Lukas Eder
  */
-public interface CommonTableExpression<R extends Record> extends Table<R> {
-
-}
+public interface CommonTableExpression<R extends Record> extends Table<R> {}

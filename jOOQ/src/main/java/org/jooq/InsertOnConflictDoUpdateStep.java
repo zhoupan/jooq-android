@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,30 +37,23 @@
  */
 package org.jooq;
 
-import org.jetbrains.annotations.*;
-
-
-// ...
-// ...
 import static org.jooq.SQLDialect.CUBRID;
-// ...
 import static org.jooq.SQLDialect.DERBY;
-// ...
 import static org.jooq.SQLDialect.FIREBIRD;
 import static org.jooq.SQLDialect.H2;
 import static org.jooq.SQLDialect.HSQLDB;
-// ...
-// ...
 import static org.jooq.SQLDialect.POSTGRES;
 import static org.jooq.SQLDialect.SQLITE;
+
+import org.jetbrains.annotations.*;
 // ...
 // ...
 // ...
 
 /**
  * This type is used for the {@link Insert}'s DSL API.
- * <p>
- * Example: <code><pre>
+ *
+ * <p>Example: <code><pre>
  * DSLContext create = DSL.using(configuration);
  *
  * create.insertInto(table, field1, field2)
@@ -76,17 +69,15 @@ import static org.jooq.SQLDialect.SQLITE;
  */
 public interface InsertOnConflictDoUpdateStep<R extends Record> {
 
-    /**
-     * Add the <code>DO UPDATE</code> clause.
-     */
-    @NotNull @CheckReturnValue
-    @Support({ CUBRID, DERBY, FIREBIRD, H2, HSQLDB, POSTGRES, SQLITE })
-    InsertOnDuplicateSetStep<R> doUpdate();
+  /** Add the <code>DO UPDATE</code> clause. */
+  @NotNull
+  @CheckReturnValue
+  @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, POSTGRES, SQLITE})
+  InsertOnDuplicateSetStep<R> doUpdate();
 
-    /**
-     * Add the <code>DO NOTHING</code> clause.
-     */
-    @NotNull @CheckReturnValue
-    @Support
-    InsertReturningStep<R> doNothing();
+  /** Add the <code>DO NOTHING</code> clause. */
+  @NotNull
+  @CheckReturnValue
+  @Support
+  InsertReturningStep<R> doNothing();
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,27 +42,21 @@ import org.jetbrains.annotations.Nullable;
 
 /**
  * A directed, acyclic graph of {@link Version} objects.
- * <p>
- * The graph is exposed as {@link Iterable} in no defined iteration order.
- * <p>
- * This is EXPERIMENTAL functionality and subject to change in future jOOQ
- * versions.
+ *
+ * <p>The graph is exposed as {@link Iterable} in no defined iteration order.
+ *
+ * <p>This is EXPERIMENTAL functionality and subject to change in future jOOQ versions.
  *
  * @author Lukas Eder
  */
 @Internal
 public interface Versions extends Iterable<Version> {
 
-    /**
-     * The root version of this graph.
-     */
-    @NotNull
-    Version root();
+  /** The root version of this graph. */
+  @NotNull
+  Version root();
 
-    /**
-     * Find a version by its id, or <code>null</code>, if no such version was
-     * found.
-     */
-    @Nullable
-    Version get(String id);
+  /** Find a version by its id, or <code>null</code>, if no such version was found. */
+  @Nullable
+  Version get(String id);
 }

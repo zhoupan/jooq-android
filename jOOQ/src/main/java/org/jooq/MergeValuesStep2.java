@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,13 +40,12 @@ package org.jooq;
 import static org.jooq.SQLDialect.*;
 
 import java.util.Collection;
-
 import org.jetbrains.annotations.NotNull;
 
 /**
  * This type is used for the H2-specific variant of the {@link Merge}'s DSL API.
- * <p>
- * Example: <code><pre>
+ *
+ * <p>Example: <code><pre>
  * using(configuration)
  *       .mergeInto(table, field1, field2)
  *       .key(id)
@@ -55,54 +54,62 @@ import org.jetbrains.annotations.NotNull;
  * </pre></code>
  *
  * @author Lukas Eder
- * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link DSLContext#mergeInto(Table)}
+ * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
+ *     DSLContext#mergeInto(Table)}
  */
 @Deprecated(forRemoval = true, since = "3.14")
 public interface MergeValuesStep2<R extends Record, T1, T2> {
 
-    /**
-     * Specify a <code>VALUES</code> clause.
-     *
-     * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link DSLContext#mergeInto(Table)}
-     */
-    @Deprecated(forRemoval = true, since = "3.14")
-    @NotNull @CheckReturnValue
-    @Support({ CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES })
-    Merge<R> values(T1 value1, T2 value2);
+  /**
+   * Specify a <code>VALUES</code> clause.
+   *
+   * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
+   *     DSLContext#mergeInto(Table)}
+   */
+  @Deprecated(forRemoval = true, since = "3.14")
+  @NotNull
+  @CheckReturnValue
+  @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
+  Merge<R> values(T1 value1, T2 value2);
 
-    /**
-     * Specify a <code>VALUES</code> clause.
-     *
-     * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link DSLContext#mergeInto(Table)}
-     */
-    @Deprecated(forRemoval = true, since = "3.14")
-    @NotNull @CheckReturnValue
-    @Support({ CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES })
-    Merge<R> values(Field<T1> value1, Field<T2> value2);
+  /**
+   * Specify a <code>VALUES</code> clause.
+   *
+   * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
+   *     DSLContext#mergeInto(Table)}
+   */
+  @Deprecated(forRemoval = true, since = "3.14")
+  @NotNull
+  @CheckReturnValue
+  @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
+  Merge<R> values(Field<T1> value1, Field<T2> value2);
 
-    /**
-     * Specify a <code>VALUES</code> clause.
-     *
-     * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link DSLContext#mergeInto(Table)}
-     */
-    @Deprecated(forRemoval = true, since = "3.14")
-    @NotNull @CheckReturnValue
-    @Support({ CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES })
-    Merge<R> values(Collection<?> values);
+  /**
+   * Specify a <code>VALUES</code> clause.
+   *
+   * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
+   *     DSLContext#mergeInto(Table)}
+   */
+  @Deprecated(forRemoval = true, since = "3.14")
+  @NotNull
+  @CheckReturnValue
+  @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
+  Merge<R> values(Collection<?> values);
 
-    /**
-     * Use a <code>SELECT</code> statement as the source of values for the
-     * <code>MERGE</code> statement
-     * <p>
-     * This variant of the <code>MERGE .. SELECT</code> statement expects a
-     * select returning exactly as many fields as specified previously in the
-     * <code>INTO</code> clause:
-     * {@link DSLContext#mergeInto(Table, Field, Field)}.
-     *
-     * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link DSLContext#mergeInto(Table)}
-     */
-    @Deprecated(forRemoval = true, since = "3.14")
-    @NotNull @CheckReturnValue
-    @Support({ CUBRID, FIREBIRD, H2, HSQLDB })
-    Merge<R> select(Select<? extends Record2<T1, T2>> select);
+  /**
+   * Use a <code>SELECT</code> statement as the source of values for the <code>MERGE</code>
+   * statement
+   *
+   * <p>This variant of the <code>MERGE .. SELECT</code> statement expects a select returning
+   * exactly as many fields as specified previously in the <code>INTO</code> clause: {@link
+   * DSLContext#mergeInto(Table, Field, Field)}.
+   *
+   * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
+   *     DSLContext#mergeInto(Table)}
+   */
+  @Deprecated(forRemoval = true, since = "3.14")
+  @NotNull
+  @CheckReturnValue
+  @Support({CUBRID, FIREBIRD, H2, HSQLDB})
+  Merge<R> select(Select<? extends Record2<T1, T2>> select);
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,7 +37,6 @@
  */
 package org.jooq;
 
-
 /**
  * A record originating from a single table
  *
@@ -46,12 +45,12 @@ package org.jooq;
  */
 public interface EmbeddableRecord<R extends EmbeddableRecord<R>> extends Record {
 
-    @Override
-    R original();
+  @Override
+  R original();
 
-    @Override
-    <T> R with(Field<T> field, T value);
+  @Override
+  <T> R with(Field<T> field, T value);
 
-    @Override
-    <T, U> R with(Field<T> field, U value, Converter<? extends T, ? super U> converter);
+  @Override
+  <T, U> R with(Field<T> field, U value, Converter<? extends T, ? super U> converter);
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,53 +39,53 @@ package org.jooq.impl;
 
 import java.sql.SQLInput;
 import java.util.Map;
-
 import org.jooq.BindingGetSQLInputContext;
 import org.jooq.Configuration;
 import org.jooq.Converter;
 
-/**
- * @author Lukas Eder
- */
-class DefaultBindingGetSQLInputContext<U> extends AbstractScope implements BindingGetSQLInputContext<U> {
+/** @author Lukas Eder */
+class DefaultBindingGetSQLInputContext<U> extends AbstractScope
+    implements BindingGetSQLInputContext<U> {
 
-    private final SQLInput input;
-    private U              value;
+  private final SQLInput input;
+  private U value;
 
-    DefaultBindingGetSQLInputContext(Configuration configuration, Map<Object, Object> data, SQLInput input) {
-        super(configuration, data);
+  DefaultBindingGetSQLInputContext(
+      Configuration configuration, Map<Object, Object> data, SQLInput input) {
+    super(configuration, data);
 
-        this.input = input;
-    }
+    this.input = input;
+  }
 
-    @Override
-    public final SQLInput input() {
-        return input;
-    }
+  @Override
+  public final SQLInput input() {
+    return input;
+  }
 
-    @Override
-    public void value(U v) {
-        this.value = v;
-    }
+  @Override
+  public void value(U v) {
+    this.value = v;
+  }
 
-    final U value() {
-        return value;
-    }
+  final U value() {
+    return value;
+  }
 
-    @Override
-    public final <T> BindingGetSQLInputContext<T> convert(final Converter<? super T, ? extends U> converter) {
-        final DefaultBindingGetSQLInputContext<U> outer = this;
+  @Override
+  public final <T> BindingGetSQLInputContext<T> convert(
+      final Converter<? super T, ? extends U> converter) {
+    final DefaultBindingGetSQLInputContext<U> outer = this;
 
-        return new DefaultBindingGetSQLInputContext<T>(configuration, data, input) {
-            @Override
-            public void value(T v) {
-                outer.value(converter.from(v));
-            }
-        };
-    }
+    return new DefaultBindingGetSQLInputContext<T>(configuration, data, input) {
+      @Override
+      public void value(T v) {
+        outer.value(converter.from(v));
+      }
+    };
+  }
 
-    @Override
-    public String toString() {
-        return "DefaultBindingGetSQLInputContext [value=" + value + "]";
-    }
+  @Override
+  public String toString() {
+    return "DefaultBindingGetSQLInputContext [value=" + value + "]";
+  }
 }

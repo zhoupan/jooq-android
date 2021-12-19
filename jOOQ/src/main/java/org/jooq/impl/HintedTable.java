@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,65 +43,60 @@ import org.jooq.Name;
 import org.jooq.Record;
 import org.jooq.Table;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class HintedTable<R extends Record> extends AbstractTable<R> {
 
-    private final AbstractTable<R>    delegate;
-    private final Keyword             keywords;
-    private final QueryPartList<Name> arguments;
+  private final AbstractTable<R> delegate;
+  private final Keyword keywords;
+  private final QueryPartList<Name> arguments;
 
-    HintedTable(AbstractTable<R> delegate, String keywords, String... arguments) {
-        this(delegate, keywords, new QueryPartList<>(Tools.names(arguments)));
-    }
+  HintedTable(AbstractTable<R> delegate, String keywords, String... arguments) {
+    this(delegate, keywords, new QueryPartList<>(Tools.names(arguments)));
+  }
 
-    HintedTable(AbstractTable<R> delegate, String keywords, QueryPartList<Name> arguments) {
-        this(delegate, DSL.keyword(keywords), arguments);
-    }
+  HintedTable(AbstractTable<R> delegate, String keywords, QueryPartList<Name> arguments) {
+    this(delegate, DSL.keyword(keywords), arguments);
+  }
 
-    HintedTable(AbstractTable<R> delegate, Keyword keywords, String... arguments) {
-        this(delegate, keywords, new QueryPartList<>(Tools.names(arguments)));
-    }
+  HintedTable(AbstractTable<R> delegate, Keyword keywords, String... arguments) {
+    this(delegate, keywords, new QueryPartList<>(Tools.names(arguments)));
+  }
 
-    HintedTable(AbstractTable<R> delegate, Keyword keywords, QueryPartList<Name> arguments) {
-        super(delegate.getOptions(), delegate.getQualifiedName(), delegate.getSchema());
+  HintedTable(AbstractTable<R> delegate, Keyword keywords, QueryPartList<Name> arguments) {
+    super(delegate.getOptions(), delegate.getQualifiedName(), delegate.getSchema());
 
-        this.delegate = delegate;
-        this.keywords = keywords;
-        this.arguments = arguments;
-    }
+    this.delegate = delegate;
+    this.keywords = keywords;
+    this.arguments = arguments;
+  }
 
-    @Override
-    public final boolean declaresTables() {
-        return true;
-    }
+  @Override
+  public final boolean declaresTables() {
+    return true;
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        ctx.visit(delegate)
-            .sql(' ').visit(keywords)
-            .sql(" (").visit(arguments)
-            .sql(')');
-    }
+  @Override
+  public final void accept(Context<?> ctx) {
+    ctx.visit(delegate).sql(' ').visit(keywords).sql(" (").visit(arguments).sql(')');
+  }
 
-    @Override
-    public final Class<? extends R> getRecordType() {
-        return delegate.getRecordType();
-    }
+  @Override
+  public final Class<? extends R> getRecordType() {
+    return delegate.getRecordType();
+  }
 
-    @Override
-    public final Table<R> as(Name alias) {
-        return new HintedTable<>(new TableAlias<>(delegate, alias), keywords, arguments);
-    }
+  @Override
+  public final Table<R> as(Name alias) {
+    return new HintedTable<>(new TableAlias<>(delegate, alias), keywords, arguments);
+  }
 
-    @Override
-    public final Table<R> as(Name alias, Name... fieldAliases) {
-        return new HintedTable<>(new TableAlias<>(delegate, alias, fieldAliases), keywords, arguments);
-    }
+  @Override
+  public final Table<R> as(Name alias, Name... fieldAliases) {
+    return new HintedTable<>(new TableAlias<>(delegate, alias, fieldAliases), keywords, arguments);
+  }
 
-    @Override
-    final FieldsImpl<R> fields0() {
-        return delegate.fields0();
-    }
+  @Override
+  final FieldsImpl<R> fields0() {
+    return delegate.fields0();
+  }
 }

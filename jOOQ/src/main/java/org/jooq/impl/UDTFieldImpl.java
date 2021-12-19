@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,6 @@
  *
  *
  */
-
 package org.jooq.impl;
 
 import org.jooq.Binding;
@@ -52,27 +51,27 @@ import org.jooq.UDTRecord;
  *
  * @author Lukas Eder
  */
-final class UDTFieldImpl<R extends UDTRecord<R>, T> extends AbstractField<T> implements UDTField<R, T> {
+final class UDTFieldImpl<R extends UDTRecord<R>, T> extends AbstractField<T>
+    implements UDTField<R, T> {
 
-    private final UDT<R> udt;
+  private final UDT<R> udt;
 
-    UDTFieldImpl(Name name, DataType<T> type, UDT<R> udt, Comment comment, Binding<?, T> binding) {
-        super(name, type, comment, binding);
+  UDTFieldImpl(Name name, DataType<T> type, UDT<R> udt, Comment comment, Binding<?, T> binding) {
+    super(name, type, comment, binding);
 
-        this.udt = udt;
+    this.udt = udt;
 
-        // [#1199] The public API of UDT returns immutable field lists
-        if (udt instanceof UDTImpl)
-            ((UDTImpl<?>) udt).fields0().add(this);
-    }
+    // [#1199] The public API of UDT returns immutable field lists
+    if (udt instanceof UDTImpl) ((UDTImpl<?>) udt).fields0().add(this);
+  }
 
-    @Override
-    public final UDT<R> getUDT() {
-        return udt;
-    }
+  @Override
+  public final UDT<R> getUDT() {
+    return udt;
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        ctx.literal(getName());
-    }
+  @Override
+  public final void accept(Context<?> ctx) {
+    ctx.literal(getName());
+  }
 }

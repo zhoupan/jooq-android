@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -52,42 +52,37 @@ import org.jooq.Select;
  */
 enum Quantifier {
 
-    /**
-     * The <code>ANY</code> quantifier
-     */
-    ANY("any"),
+  /** The <code>ANY</code> quantifier */
+  ANY("any"),
 
-    /**
-     * The <code>ALL</code> quantifier
-     */
-    ALL("all"),
+  /** The <code>ALL</code> quantifier */
+  ALL("all"),
+  ;
 
-    ;
+  private final String sql;
+  private final Keyword keyword;
 
-    private final String  sql;
-    private final Keyword keyword;
+  private Quantifier(String sql) {
+    this.sql = sql;
+    this.keyword = DSL.keyword(sql);
+  }
 
-    private Quantifier(String sql) {
-        this.sql = sql;
-        this.keyword = DSL.keyword(sql);
+  public final String toSQL() {
+    return sql;
+  }
+
+  public final Keyword toKeyword() {
+    return keyword;
+  }
+
+  public <R extends Record> QuantifiedSelect<R> apply(Select<R> select) {
+    switch (this) {
+      case ANY:
+        return any(select);
+      case ALL:
+        return all(select);
+      default:
+        throw new IllegalStateException();
     }
-
-    public final String toSQL() {
-        return sql;
-    }
-
-    public final Keyword toKeyword() {
-        return keyword;
-    }
-
-    public <R extends Record> QuantifiedSelect<R> apply(Select<R> select) {
-        switch (this) {
-            case ANY:
-                return any(select);
-            case ALL:
-                return all(select);
-            default:
-                throw new IllegalStateException();
-        }
-    }
+  }
 }

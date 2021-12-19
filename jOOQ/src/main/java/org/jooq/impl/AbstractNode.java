@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,85 +42,80 @@ import static org.jooq.tools.StringUtils.defaultIfNull;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.jooq.Node;
 import org.jooq.exception.DataDefinitionException;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 abstract class AbstractNode<N extends Node<N>> implements Node<N> {
 
-    private final String id;
-    private final String message;
+  private final String id;
+  private final String message;
 
-    AbstractNode(String id, String message) {
-        this.id = id;
-        this.message = defaultIfNull(message, "");
-    }
+  AbstractNode(String id, String message) {
+    this.id = id;
+    this.message = defaultIfNull(message, "");
+  }
 
-    @Override
-    public final String id() {
-        return id;
-    }
+  @Override
+  public final String id() {
+    return id;
+  }
 
-    @Override
-    public final String message() {
-        return message;
-    }
+  @Override
+  public final String message() {
+    return message;
+  }
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public final N root() {
-        N node = (N) this;
+  @Override
+  @SuppressWarnings("unchecked")
+  public final N root() {
+    N node = (N) this;
 
-        while (!node.parents().isEmpty())
-            node = node.parents().get(0);
+    while (!node.parents().isEmpty()) node = node.parents().get(0);
 
-        return node;
-    }
+    return node;
+  }
 
-    @SuppressWarnings("unchecked")
-    final N commonAncestor(N other) {
-        if (this.id().equals(other.id()))
-            return (N) this;
+  @SuppressWarnings("unchecked")
+  final N commonAncestor(N other) {
+    if (this.id().equals(other.id())) return (N) this;
 
-        // TODO: Find a better solution than the brute force one
-        // See e.g. https://en.wikipedia.org/wiki/Lowest_common_ancestor
+    // TODO: Find a better solution than the brute force one
+    // See e.g. https://en.wikipedia.org/wiki/Lowest_common_ancestor
 
-        Map<N, Integer> a1 = ancestors((N) this, new HashMap<>(), 1);
-        Map<N, Integer> a2 = ancestors(other, new HashMap<>(), 1);
+    Map<N, Integer> a1 = ancestors((N) this, new HashMap<>(), 1);
+    Map<N, Integer> a2 = ancestors(other, new HashMap<>(), 1);
 
-        N node = null;
-        Integer distance = null;
+    N node = null;
+    Integer distance = null;
 
-        for (Entry<N, Integer> entry : a1.entrySet()) {
-            if (a2.containsKey(entry.getKey())) {
+    for (Entry<N, Integer> entry : a1.entrySet()) {
+      if (a2.containsKey(entry.getKey())) {
 
-                // TODO: What if there are several conflicting paths?
-                if (distance == null || distance > entry.getValue()) {
-                    node = entry.getKey();
-                    distance = entry.getValue();
-                }
-            }
+        // TODO: What if there are several conflicting paths?
+        if (distance == null || distance > entry.getValue()) {
+          node = entry.getKey();
+          distance = entry.getValue();
         }
-
-        if (node == null)
-            throw new DataDefinitionException("Versions " + this.id() + " and " + other.id() + " do not have a common ancestor");
-
-        return node;
+      }
     }
 
-    private Map<N, Integer> ancestors(N node, Map<N, Integer> result, int distance) {
-        Integer previous = result.get(node);
+    if (node == null)
+      throw new DataDefinitionException(
+          "Versions " + this.id() + " and " + other.id() + " do not have a common ancestor");
 
-        if (previous == null || previous > distance) {
-            result.put(node, distance);
+    return node;
+  }
 
-            for (N parent : node.parents())
-                ancestors(parent, result, distance + 1);
-        }
+  private Map<N, Integer> ancestors(N node, Map<N, Integer> result, int distance) {
+    Integer previous = result.get(node);
 
-        return result;
+    if (previous == null || previous > distance) {
+      result.put(node, distance);
+
+      for (N parent : node.parents()) ancestors(parent, result, distance + 1);
     }
+
+    return result;
+  }
 }

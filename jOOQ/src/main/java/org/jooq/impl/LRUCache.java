@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,16 +46,16 @@ import java.util.Map;
  * @author Lukas Eder
  */
 final class LRUCache<K, V> extends LinkedHashMap<K, V> {
-    private final int         size;
+  private final int size;
 
-    LRUCache(int size) {
-        super(size, 0.75f, true);
+  LRUCache(int size) {
+    super(size, 0.75f, true);
 
-        this.size = size;
-    }
+    this.size = size;
+  }
 
-    @Override
-    protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
-        return size() > size;
-    }
+  @Override
+  protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
+    return size() > size;
+  }
 }

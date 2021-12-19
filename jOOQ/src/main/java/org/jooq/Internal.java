@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -48,16 +48,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Signifies that a API (public class, method or field) is internal and subject
- * to incompatible changes, or even removal, in a future release. An API bearing
- * this annotation is exempt from any compatibility guarantees made by its
- * containing library.
+ * Signifies that a API (public class, method or field) is internal and subject to incompatible
+ * changes, or even removal, in a future release. An API bearing this annotation is exempt from any
+ * compatibility guarantees made by its containing library.
  *
  * @author Knut Wannheden
  */
 @Documented
 @Retention(RetentionPolicy.CLASS)
-@Target(value = { FIELD, METHOD, TYPE, ANNOTATION_TYPE })
+@Target(value = {FIELD, METHOD, TYPE, ANNOTATION_TYPE})
 @Internal
-public @interface Internal {
-}
+public @interface Internal {}

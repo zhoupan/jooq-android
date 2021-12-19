@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,7 @@
  */
 package org.jooq.impl;
 
+import static org.jooq.SQLDialect.*;
 import static org.jooq.impl.DSL.*;
 import static org.jooq.impl.Internal.*;
 import static org.jooq.impl.Keywords.*;
@@ -46,103 +47,49 @@ import static org.jooq.impl.Tools.*;
 import static org.jooq.impl.Tools.BooleanDataKey.*;
 import static org.jooq.impl.Tools.DataExtendedKey.*;
 import static org.jooq.impl.Tools.DataKey.*;
-import static org.jooq.SQLDialect.*;
 
+import java.sql.Date;
+import java.util.*;
 import org.jooq.*;
-import org.jooq.Record;
 import org.jooq.conf.*;
-import org.jooq.impl.*;
 import org.jooq.tools.*;
 
-import java.util.*;
-import java.sql.Date;
+/** The <code>TO DATE</code> statement. */
+@SuppressWarnings({"rawtypes", "unchecked", "unused"})
+final class ToDate extends AbstractField<Date> {
 
+  private final Field<String> value;
+  private final Field<String> formatMask;
 
-/**
- * The <code>TO DATE</code> statement.
- */
-@SuppressWarnings({ "rawtypes", "unchecked", "unused" })
-final class ToDate
-extends
-    AbstractField<Date>
-{
+  ToDate(Field<String> value, Field<String> formatMask) {
+    super(N_TO_DATE, allNotNull(DATE, value, formatMask));
 
-    private final Field<String> value;
-    private final Field<String> formatMask;
+    this.value = nullSafeNotNull(value, VARCHAR);
+    this.formatMask = nullSafeNotNull(formatMask, VARCHAR);
+  }
 
-    ToDate(
-        Field<String> value,
-        Field<String> formatMask
-    ) {
-        super(
-            N_TO_DATE,
-            allNotNull(DATE, value, formatMask)
-        );
+  // -------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // -------------------------------------------------------------------------
 
-        this.value = nullSafeNotNull(value, VARCHAR);
-        this.formatMask = nullSafeNotNull(formatMask, VARCHAR);
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      default:
+        ctx.visit(function(N_TO_DATE, getDataType(), value, formatMask));
+        break;
     }
+  }
 
-    // -------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // The Object API
+  // -------------------------------------------------------------------------
 
-
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            default:
-                ctx.visit(function(N_TO_DATE, getDataType(), value, formatMask));
-                break;
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // -------------------------------------------------------------------------
-    // The Object API
-    // -------------------------------------------------------------------------
-
-    @Override
-    public boolean equals(Object that) {
-        if (that instanceof ToDate) {
-            return
-                StringUtils.equals(value, ((ToDate) that).value) &&
-                StringUtils.equals(formatMask, ((ToDate) that).formatMask)
-            ;
-        }
-        else
-            return super.equals(that);
-    }
+  @Override
+  public boolean equals(Object that) {
+    if (that instanceof ToDate) {
+      return StringUtils.equals(value, ((ToDate) that).value)
+          && StringUtils.equals(formatMask, ((ToDate) that).formatMask);
+    } else return super.equals(that);
+  }
 }

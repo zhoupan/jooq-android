@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,66 +37,74 @@
  */
 package org.jooq.meta;
 
-/**
- * @author Lukas Eder
- */
-public class DefaultSequenceDefinition
-    extends AbstractTypedElementDefinition<SchemaDefinition>
+/** @author Lukas Eder */
+public class DefaultSequenceDefinition extends AbstractTypedElementDefinition<SchemaDefinition>
     implements SequenceDefinition {
 
-    private Number startWith;
-    private Number incrementBy;
-    private Number minValue;
-    private Number maxValue;
-    private boolean cycle;
-    private Number cache;
+  private Number startWith;
+  private Number incrementBy;
+  private Number minValue;
+  private Number maxValue;
+  private boolean cycle;
+  private Number cache;
 
-    public DefaultSequenceDefinition(SchemaDefinition schema, String name, DataTypeDefinition type) {
-        this(schema, name, type, null);
-    }
+  public DefaultSequenceDefinition(SchemaDefinition schema, String name, DataTypeDefinition type) {
+    this(schema, name, type, null);
+  }
 
-    public DefaultSequenceDefinition(SchemaDefinition schema, String name, DataTypeDefinition type, String comment) {
-        this(schema, name, type, comment, null, null, null, null, false, null);
-    }
+  public DefaultSequenceDefinition(
+      SchemaDefinition schema, String name, DataTypeDefinition type, String comment) {
+    this(schema, name, type, comment, null, null, null, null, false, null);
+  }
 
-    public DefaultSequenceDefinition(SchemaDefinition schema, String name, DataTypeDefinition type, String comment, Number startWith, Number incrementBy, Number minValue, Number maxValue, boolean cycle, Number cache) {
-        super(schema, name, -1, type, comment);
+  public DefaultSequenceDefinition(
+      SchemaDefinition schema,
+      String name,
+      DataTypeDefinition type,
+      String comment,
+      Number startWith,
+      Number incrementBy,
+      Number minValue,
+      Number maxValue,
+      boolean cycle,
+      Number cache) {
+    super(schema, name, -1, type, comment);
 
-        this.startWith = startWith;
-        this.incrementBy = incrementBy;
-        this.minValue = minValue;
-        this.maxValue = maxValue;
-        this.cycle = cycle;
-        this.cache = cache;
-    }
+    this.startWith = startWith;
+    this.incrementBy = incrementBy;
+    this.minValue = minValue;
+    this.maxValue = maxValue;
+    this.cycle = cycle;
+    this.cache = cache;
+  }
 
-    @Override
-    public Number getStartWith() {
-        return startWith;
-    }
+  @Override
+  public Number getStartWith() {
+    return startWith;
+  }
 
-    @Override
-    public Number getIncrementBy() {
-        return incrementBy;
-    }
+  @Override
+  public Number getIncrementBy() {
+    return incrementBy;
+  }
 
-    @Override
-    public Number getMinvalue() {
-        return minValue;
-    }
+  @Override
+  public Number getMinvalue() {
+    return minValue;
+  }
 
-    @Override
-    public Number getMaxvalue() {
-        return maxValue;
-    }
+  @Override
+  public Number getMaxvalue() {
+    return maxValue;
+  }
 
-    @Override
-    public boolean getCycle() {
-        return cycle;
-    }
+  @Override
+  public boolean getCycle() {
+    return cycle;
+  }
 
-    @Override
-    public Number getCache() {
-        return cache;
-    }
+  @Override
+  public Number getCache() {
+    return cache;
+  }
 }

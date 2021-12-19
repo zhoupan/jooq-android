@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,6 @@
  *
  *
  */
-
 package org.jooq.impl;
 
 import static java.util.Arrays.asList;
@@ -44,117 +43,111 @@ import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.function.Function;
-
 import org.jooq.Context;
 import org.jooq.QueryPart;
 
 /**
- * A {@link List} view, delegating all calls to a wrapped list, but acting like
- * a {@link QueryPart}.
+ * A {@link List} view, delegating all calls to a wrapped list, but acting like a {@link QueryPart}.
  *
  * @author Lukas Eder
  */
 class QueryPartListView<T extends QueryPart> extends QueryPartCollectionView<T> implements List<T> {
 
-    @SafeVarargs
-    static final <T extends QueryPart> QueryPartListView<T> wrap(T... wrappedList) {
-        return new QueryPartListView<>(wrappedList);
-    }
+  @SafeVarargs
+  static final <T extends QueryPart> QueryPartListView<T> wrap(T... wrappedList) {
+    return new QueryPartListView<>(wrappedList);
+  }
 
-    static final <T extends QueryPart> QueryPartListView<T> wrap(List<T> wrappedList) {
-        return new QueryPartListView<>(wrappedList);
-    }
+  static final <T extends QueryPart> QueryPartListView<T> wrap(List<T> wrappedList) {
+    return new QueryPartListView<>(wrappedList);
+  }
 
-    @SafeVarargs
-    QueryPartListView(T... wrappedList) {
-        this(asList(wrappedList));
-    }
+  @SafeVarargs
+  QueryPartListView(T... wrappedList) {
+    this(asList(wrappedList));
+  }
 
-    QueryPartListView(List<T> wrappedList) {
-        super(wrappedList);
-    }
+  QueryPartListView(List<T> wrappedList) {
+    super(wrappedList);
+  }
 
-    @Override
-    QueryPartListView<T> qualify(boolean newQualify) {
-        return (QueryPartListView<T>) super.qualify(newQualify);
-    }
+  @Override
+  QueryPartListView<T> qualify(boolean newQualify) {
+    return (QueryPartListView<T>) super.qualify(newQualify);
+  }
 
-    @Override
-    QueryPartListView<T> map(Function<? super T, ? extends T> newMapper) {
-        return (QueryPartListView<T>) super.map(newMapper);
-    }
+  @Override
+  QueryPartListView<T> map(Function<? super T, ? extends T> newMapper) {
+    return (QueryPartListView<T>) super.map(newMapper);
+  }
 
-    @Override
-    QueryPartListView<T> separator(String newSeparator) {
-        return (QueryPartListView<T>) super.separator(newSeparator);
-    }
+  @Override
+  QueryPartListView<T> separator(String newSeparator) {
+    return (QueryPartListView<T>) super.separator(newSeparator);
+  }
 
-    @Override
-    List<T> wrapped() {
-        return (List<T>) super.wrapped();
-    }
+  @Override
+  List<T> wrapped() {
+    return (List<T>) super.wrapped();
+  }
 
-    /**
-     * Subclasses may override this method
-     */
-    @Override
-    protected void toSQLEmptyList(Context<?> context) {}
+  /** Subclasses may override this method */
+  @Override
+  protected void toSQLEmptyList(Context<?> context) {}
 
-    // -------------------------------------------------------------------------
-    // Implementations from the List API
-    // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // Implementations from the List API
+  // -------------------------------------------------------------------------
 
-    @Override
-    public final boolean addAll(int index, Collection<? extends T> c) {
-        return wrapped().addAll(index, removeNulls(c));
-    }
+  @Override
+  public final boolean addAll(int index, Collection<? extends T> c) {
+    return wrapped().addAll(index, removeNulls(c));
+  }
 
-    @Override
-    public final T get(int index) {
-        return wrapped().get(index);
-    }
+  @Override
+  public final T get(int index) {
+    return wrapped().get(index);
+  }
 
-    @Override
-    public final T set(int index, T element) {
-        if (element != null)
-            return wrapped().set(index, element);
+  @Override
+  public final T set(int index, T element) {
+    if (element != null) return wrapped().set(index, element);
 
-        return null;
-    }
+    return null;
+  }
 
-    @Override
-    public final void add(int index, T element) {
-        if (element != null)
-            wrapped().add(index, element);
-    }
+  @Override
+  public final void add(int index, T element) {
+    if (element != null) wrapped().add(index, element);
+  }
 
-    @Override
-    public final T remove(int index) {
-        return wrapped().remove(index);
-    }
+  @Override
+  public final T remove(int index) {
+    return wrapped().remove(index);
+  }
 
-    @Override
-    public final int indexOf(Object o) {
-        return wrapped().indexOf(o);
-    }
+  @Override
+  public final int indexOf(Object o) {
+    return wrapped().indexOf(o);
+  }
 
-    @Override
-    public final int lastIndexOf(Object o) {
-        return wrapped().lastIndexOf(o);
-    }
+  @Override
+  public final int lastIndexOf(Object o) {
+    return wrapped().lastIndexOf(o);
+  }
 
-    @Override
-    public final ListIterator<T> listIterator() {
-        return wrapped().listIterator();
-    }
+  @Override
+  public final ListIterator<T> listIterator() {
+    return wrapped().listIterator();
+  }
 
-    @Override
-    public final ListIterator<T> listIterator(int index) {
-        return wrapped().listIterator(index);
-    }
+  @Override
+  public final ListIterator<T> listIterator(int index) {
+    return wrapped().listIterator(index);
+  }
 
-    @Override
-    public final List<T> subList(int fromIndex, int toIndex) {
-        return wrapped().subList(fromIndex, toIndex);
-    }
+  @Override
+  public final List<T> subList(int fromIndex, int toIndex) {
+    return wrapped().subList(fromIndex, toIndex);
+  }
 }

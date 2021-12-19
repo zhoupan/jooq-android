@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,19 +40,19 @@ package org.jooq.exception;
 import org.jooq.Loader;
 
 /**
- * The <code>LoaderConfigurationException</code> indicates that a {@link Loader}
- * was executed with an illegal execution configuration.
+ * The <code>LoaderConfigurationException</code> indicates that a {@link Loader} was executed with
+ * an illegal execution configuration.
  *
  * @author Lukas Eder
  */
 public class LoaderConfigurationException extends DataAccessException {
 
-    /**
-     * Constructor for LoaderConfigurationException.
-     *
-     * @param message the detail message
-     */
-    public LoaderConfigurationException(String message) {
-        super(message);
-    }
+  /**
+   * Constructor for LoaderConfigurationException.
+   *
+   * @param message the detail message
+   */
+  public LoaderConfigurationException(String message) {
+    super(message);
+  }
 }

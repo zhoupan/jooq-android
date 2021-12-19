@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,43 +38,32 @@
 package org.jooq;
 
 /**
- * The current language context of some {@link ParseContext} or
- * {@link RenderContext}.
- * <p>
- * This can be useful to help distinguish between ways to generate SQL, e.g.:
+ * The current language context of some {@link ParseContext} or {@link RenderContext}.
+ *
+ * <p>This can be useful to help distinguish between ways to generate SQL, e.g.:
+ *
  * <ul>
- * <li>whether <code>CAST</code> expressions are allowed to generate length,
- * precision, and scale</li>
- * <li>whether <code>DELETING</code> and similar "magic" identifiers are from a
- * <code>TRIGGER</code>, or not</li>
+ *   <li>whether <code>CAST</code> expressions are allowed to generate length, precision, and scale
+ *   <li>whether <code>DELETING</code> and similar "magic" identifiers are from a <code>TRIGGER
+ *       </code>, or not
  * </ul>
  *
  * @author Lukas Eder
  */
 public enum LanguageContext {
 
-    /**
-     * A SQL query, including DDL to create procedural elements.
-     */
-    QUERY,
+  /** A SQL query, including DDL to create procedural elements. */
+  QUERY,
 
-    /**
-     * The body of a stored procedure.
-     */
-    PROCEDURE,
+  /** The body of a stored procedure. */
+  PROCEDURE,
 
-    /**
-     * The body of a stored function.
-     */
-    FUNCTION,
+  /** The body of a stored function. */
+  FUNCTION,
 
-    /**
-     * The body of a trigger.
-     */
-    TRIGGER,
+  /** The body of a trigger. */
+  TRIGGER,
 
-    /**
-     * The body of an anonymous block.
-     */
-    BLOCK
+  /** The body of an anonymous block. */
+  BLOCK
 }

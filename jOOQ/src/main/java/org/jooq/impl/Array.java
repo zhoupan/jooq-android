@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -47,61 +47,48 @@ import static org.jooq.impl.Names.N_ARRAY;
 
 import java.util.Collection;
 import java.util.Set;
-
 import org.jooq.Context;
 import org.jooq.DataType;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.SQLDialect;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class Array<T> extends AbstractField<T[]> {
-    private static final Set<SQLDialect> REQUIRES_CAST    = SQLDialect.supportedBy(POSTGRES);
+  private static final Set<SQLDialect> REQUIRES_CAST = SQLDialect.supportedBy(POSTGRES);
 
-    private final FieldsImpl<Record>     fields;
+  private final FieldsImpl<Record> fields;
 
-    Array(Collection<? extends Field<T>> fields) {
-        super(N_ARRAY, type(fields));
+  Array(Collection<? extends Field<T>> fields) {
+    super(N_ARRAY, type(fields));
 
-        this.fields = new FieldsImpl<>(fields);
+    this.fields = new FieldsImpl<>(fields);
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  private static <T> DataType<T[]> type(Collection<? extends Field<T>> fields) {
+    if (fields == null || fields.isEmpty()) return (DataType) SQLDataType.OTHER.getArrayDataType();
+    else return fields.iterator().next().getDataType().getArrayDataType();
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case H2:
+      case HSQLDB:
+      case POSTGRES:
+      default:
+        boolean squareBrackets = true;
+
+        ctx.visit(K_ARRAY)
+            .sql(squareBrackets ? '[' : '(')
+            .visit(fields)
+            .sql(squareBrackets ? ']' : ')');
+
+        if (fields.fields.length == 0 && REQUIRES_CAST.contains(ctx.dialect()))
+          ctx.sql("::").visit(K_INT).sql("[]");
+
+        break;
     }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    private static <T> DataType<T[]> type(Collection<? extends Field<T>> fields) {
-        if (fields == null || fields.isEmpty())
-            return (DataType) SQLDataType.OTHER.getArrayDataType();
-        else
-            return fields.iterator().next().getDataType().getArrayDataType();
-    }
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-
-
-            case H2:
-            case HSQLDB:
-            case POSTGRES:
-            default:
-                boolean squareBrackets = true;
-
-                ctx.visit(K_ARRAY)
-                   .sql(squareBrackets ? '[' : '(')
-                   .visit(fields)
-                   .sql(squareBrackets ? ']' : ')');
-
-                if (fields.fields.length == 0 && REQUIRES_CAST.contains(ctx.dialect()))
-                    ctx.sql("::").visit(K_INT).sql("[]");
-
-                break;
-        }
-    }
+  }
 }

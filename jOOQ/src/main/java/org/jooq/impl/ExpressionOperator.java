@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,112 +46,81 @@ import org.jooq.Name;
  */
 enum ExpressionOperator {
 
-    /**
-     * Concatenation
-     */
-    CONCAT("||", true, false),
+  /** Concatenation */
+  CONCAT("||", true, false),
 
-    /**
-     * Addition
-     */
-    ADD("+", true, true),
+  /** Addition */
+  ADD("+", true, true),
 
-    /**
-     * Subtraction
-     */
-    SUBTRACT("-"),
+  /** Subtraction */
+  SUBTRACT("-"),
 
-    /**
-     * Multiplication
-     */
-    MULTIPLY("*", true, true),
+  /** Multiplication */
+  MULTIPLY("*", true, true),
 
-    /**
-     * Division
-     */
-    DIVIDE("/"),
+  /** Division */
+  DIVIDE("/"),
 
-    /**
-     * Modulo
-     */
-    MODULO("%"),
+  /** Modulo */
+  MODULO("%"),
 
-    /**
-     * Bitwise not
-     */
-    BIT_NOT("~"),
+  /** Bitwise not */
+  BIT_NOT("~"),
 
-    /**
-     * Bitwise and
-     */
-    BIT_AND("&", true, true),
+  /** Bitwise and */
+  BIT_AND("&", true, true),
 
-    /**
-     * Bitwise or
-     */
-    BIT_OR("|", true, true),
+  /** Bitwise or */
+  BIT_OR("|", true, true),
 
-    /**
-     * Bitwise xor
-     */
-    BIT_XOR("^", true, true),
+  /** Bitwise xor */
+  BIT_XOR("^", true, true),
 
-    /**
-     * Bitwise nand
-     */
-    BIT_NAND("~&"),
+  /** Bitwise nand */
+  BIT_NAND("~&"),
 
-    /**
-     * Bitwise nor
-     */
-    BIT_NOR("~|"),
+  /** Bitwise nor */
+  BIT_NOR("~|"),
 
-    /**
-     * Bitwise xor
-     */
-    BIT_XNOR("~^"),
+  /** Bitwise xor */
+  BIT_XNOR("~^"),
 
-    /**
-     * Bitwise shift left
-     */
-    SHL("<<"),
+  /** Bitwise shift left */
+  SHL("<<"),
 
-    /**
-     * Bitwise shift right
-     */
-    SHR(">>"),
+  /** Bitwise shift right */
+  SHR(">>"),
+  ;
 
-    ;
+  private final String sql;
+  private final Name name;
+  private final boolean associative;
+  private final boolean commutative;
 
-    private final String  sql;
-    private final Name    name;
-    private final boolean associative;
-    private final boolean commutative;
+  private ExpressionOperator(String sql) {
+    this(sql, false, false);
+  }
 
-    private ExpressionOperator(String sql) {
-        this(sql, false, false);
-    }
+  private ExpressionOperator(String sql, boolean associative, boolean commutative) {
+    this.sql = sql;
+    this.name = DSL.name(name().toLowerCase());
+    this.associative = associative;
+    this.commutative = commutative;
+  }
 
-    private ExpressionOperator(String sql, boolean associative, boolean commutative) {
-        this.sql = sql;
-        this.name = DSL.name(name().toLowerCase());
-        this.associative = associative;
-        this.commutative = commutative;
-    }
+  final String toSQL() {
+    return sql;
+  }
 
-    final String toSQL() {
-        return sql;
-    }
+  final Name toName() {
+    return name;
+  }
 
-    final Name toName() {
-        return name;
-    }
+  final boolean associative() {
+    return associative;
+  }
 
-    final boolean associative() {
-        return associative;
-    }
-
-    final boolean commutative() {
-        return commutative;
-    }
+  final boolean commutative() {
+    return commutative;
+  }
 }

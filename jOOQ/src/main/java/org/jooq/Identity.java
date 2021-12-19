@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,17 +38,14 @@
 package org.jooq;
 
 import java.io.Serializable;
-
 import org.jetbrains.annotations.NotNull;
 
 /**
- * An <code>Identity</code> is an object representing an <code>IDENTITY</code>
- * column as understood by the SQL:2003 standard. In most RDBMS, this is
- * actually called an <code>IDENTITY</code> column. Some RDMBS such as MySQL
- * call it <code>AUTO_INCREMENT</code> columns.
- * <p>
- * Instances of this type cannot be created directly. They are available from
- * generated code.
+ * An <code>Identity</code> is an object representing an <code>IDENTITY</code> column as understood
+ * by the SQL:2003 standard. In most RDBMS, this is actually called an <code>IDENTITY</code> column.
+ * Some RDMBS such as MySQL call it <code>AUTO_INCREMENT</code> columns.
+ *
+ * <p>Instances of this type cannot be created directly. They are available from generated code.
  *
  * @param <R> The <code>IDENTITY</code>'s owner table record
  * @param <T> The <code>IDENTITY</code>'s field type
@@ -56,15 +53,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface Identity<R extends Record, T> extends Serializable {
 
-    /**
-     * The <code>IDENTITY</code>'s owner table
-     */
-    @NotNull
-    Table<R> getTable();
+  /** The <code>IDENTITY</code>'s owner table */
+  @NotNull
+  Table<R> getTable();
 
-    /**
-     * The <code>IDENTITY</code> column.
-     */
-    @NotNull
-    TableField<R, T> getField();
+  /** The <code>IDENTITY</code> column. */
+  @NotNull
+  TableField<R, T> getField();
 }

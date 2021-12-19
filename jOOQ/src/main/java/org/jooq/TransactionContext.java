@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,58 +41,48 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
- * A context object that is used to pass arguments to the various methods of
- * {@link TransactionProvider}.
+ * A context object that is used to pass arguments to the various methods of {@link
+ * TransactionProvider}.
  *
  * @author Lukas Eder
  */
 public interface TransactionContext extends Scope {
 
-    /**
-     * A user-defined transaction object, possibly obtained from
-     * {@link TransactionProvider#begin(TransactionContext)}.
-     *
-     * @return The transaction object. May be <code>null</code>.
-     */
-    @Nullable
-    Transaction transaction();
+  /**
+   * A user-defined transaction object, possibly obtained from {@link
+   * TransactionProvider#begin(TransactionContext)}.
+   *
+   * @return The transaction object. May be <code>null</code>.
+   */
+  @Nullable
+  Transaction transaction();
 
-    /**
-     * Set the user-defined transaction object to the current transaction
-     * context.
-     */
-    @NotNull
-    TransactionContext transaction(Transaction transaction);
+  /** Set the user-defined transaction object to the current transaction context. */
+  @NotNull
+  TransactionContext transaction(Transaction transaction);
 
-    /**
-     * The exception that has caused the rollback.
-     *
-     * @return The exception. May be <code>null</code>, in particular if the
-     *         cause is a {@link Throwable}, in case of which
-     *         {@link #causeThrowable()} should be called.
-     */
-    @Nullable
-    Exception cause();
+  /**
+   * The exception that has caused the rollback.
+   *
+   * @return The exception. May be <code>null</code>, in particular if the cause is a {@link
+   *     Throwable}, in case of which {@link #causeThrowable()} should be called.
+   */
+  @Nullable
+  Exception cause();
 
-    /**
-     * The throwable that has caused the rollback.
-     *
-     * @return The throwable. May be <code>null</code>.
-     */
-    @Nullable
-    Throwable causeThrowable();
+  /**
+   * The throwable that has caused the rollback.
+   *
+   * @return The throwable. May be <code>null</code>.
+   */
+  @Nullable
+  Throwable causeThrowable();
 
-    /**
-     * Set the exception that has caused the rollback to the current transaction
-     * context.
-     */
-    @NotNull
-    TransactionContext cause(Exception cause);
+  /** Set the exception that has caused the rollback to the current transaction context. */
+  @NotNull
+  TransactionContext cause(Exception cause);
 
-    /**
-     * Set the throwable that has caused the rollback to the current transaction
-     * context.
-     */
-    @NotNull
-    TransactionContext causeThrowable(Throwable cause);
+  /** Set the throwable that has caused the rollback to the current transaction context. */
+  @NotNull
+  TransactionContext causeThrowable(Throwable cause);
 }

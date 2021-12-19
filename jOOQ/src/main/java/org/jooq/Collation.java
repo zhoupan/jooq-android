@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,14 +41,14 @@ import org.jooq.impl.DSL;
 
 /**
  * A collation.
- * <p>
- * In SQL, a collation is a set of objects defining character encoding and/or
- * sort order of character data. jOOQ supports the collation type in various SQL
- * clauses of DDL and DML statements.
- * <p>
- * <strong>Example:</strong>
- * <p>
- * <code><pre>
+ *
+ * <p>In SQL, a collation is a set of objects defining character encoding and/or sort order of
+ * character data. jOOQ supports the collation type in various SQL clauses of DDL and DML
+ * statements.
+ *
+ * <p><strong>Example:</strong>
+ *
+ * <p><code><pre>
  * // Assuming import static org.jooq.impl.DSL.*;
  *
  * using(configuration)
@@ -59,15 +59,13 @@ import org.jooq.impl.DSL;
  *        ACTOR.LAST_NAME.collate(collation("utf8_german2_ci")))
  *    .fetch();
  * </pre></code>
- * <p>
- * Instances can be created using {@link DSL#collation(Name)} and overloads.
+ *
+ * <p>Instances can be created using {@link DSL#collation(Name)} and overloads.
  *
  * @author Lukas Eder
  */
 public interface Collation extends QueryPart {
 
-    /**
-     * The name of the collation.
-     */
-    String getName();
+  /** The name of the collation. */
+  String getName();
 }

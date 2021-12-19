@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,50 +38,41 @@
 package org.jooq.impl;
 
 import org.jooq.Context;
-import org.jooq.QueryPart;
 import org.jooq.Record;
 import org.jooq.SQL;
 import org.jooq.TableOptions;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class SQLTable extends AbstractTable<Record> {
 
-    private final SQL delegate;
+  private final SQL delegate;
 
-    SQLTable(SQL delegate) {
-        super(TableOptions.expression(), DSL.name(delegate.toString()));
+  SQLTable(SQL delegate) {
+    super(TableOptions.expression(), DSL.name(delegate.toString()));
 
-        this.delegate = delegate;
+    this.delegate = delegate;
+  }
+
+  // ------------------------------------------------------------------------
+  // SQLTable API
+  // ------------------------------------------------------------------------
+
+  @Override
+  public final Class<? extends Record> getRecordType() {
+    return RecordImplN.class;
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      default:
+        ctx.visit(delegate);
+        break;
     }
+  }
 
-    // ------------------------------------------------------------------------
-    // SQLTable API
-    // ------------------------------------------------------------------------
-
-    @Override
-    public final Class<? extends Record> getRecordType() {
-        return RecordImplN.class;
-    }
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-            default:
-                ctx.visit(delegate);
-                break;
-        }
-    }
-
-    @Override
-    final FieldsImpl<Record> fields0() {
-        return new FieldsImpl<>();
-    }
+  @Override
+  final FieldsImpl<Record> fields0() {
+    return new FieldsImpl<>();
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,13 +37,10 @@
  */
 package org.jooq.impl;
 
-
 import org.jooq.*;
 
-/**
- * The <code>JSONOnNull</code>.
- */
+/** The <code>JSONOnNull</code>. */
 enum JSONOnNull {
-    NULL_ON_NULL,
-    ABSENT_ON_NULL,
+  NULL_ON_NULL,
+  ABSENT_ON_NULL,
 }

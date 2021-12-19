@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,31 +39,29 @@ package org.jooq.impl;
 
 import org.jooq.Converter;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 public class DelegatingConverter<T, U> extends AbstractConverter<T, U> {
 
-    private final Converter<T, U> delegate;
+  private final Converter<T, U> delegate;
 
-    public DelegatingConverter(Converter<T, U> delegate) {
-        super(delegate.fromType(), delegate.toType());
+  public DelegatingConverter(Converter<T, U> delegate) {
+    super(delegate.fromType(), delegate.toType());
 
-        this.delegate = delegate;
-    }
+    this.delegate = delegate;
+  }
 
-    @Override
-    public final U from(T t) {
-        return delegate.from(t);
-    }
+  @Override
+  public final U from(T t) {
+    return delegate.from(t);
+  }
 
-    @Override
-    public final T to(U u) {
-        return delegate.to(u);
-    }
+  @Override
+  public final T to(U u) {
+    return delegate.to(u);
+  }
 
-    @Override
-    public String toString() {
-        return "Converter [ " + fromType().getName() + " -> " + toType().getName() + " ]";
-    }
+  @Override
+  public String toString() {
+    return "Converter [ " + fromType().getName() + " -> " + toType().getName() + " ]";
+  }
 }

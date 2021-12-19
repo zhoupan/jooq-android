@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,92 +39,77 @@ package org.jooq;
 
 import java.sql.Statement;
 import java.util.stream.Stream;
-
+import org.jetbrains.annotations.NotNull;
 import org.jooq.exception.DetachedException;
 import org.jooq.impl.DSL;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * A wrapper for a collection of queries.
- * <p>
- * Instances can be created using {@link DSL#queries(Query...)} and overloads.
+ *
+ * <p>Instances can be created using {@link DSL#queries(Query...)} and overloads.
  *
  * @author Lukas Eder
  */
 public interface Queries extends AttachableQueryPart, Iterable<Query> {
 
-    // ------------------------------------------------------------------------
-    // Access API
-    // ------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
+  // Access API
+  // ------------------------------------------------------------------------
 
-    /**
-     * Return a new instance combining both sets of queries.
-     */
-    @NotNull
-    Queries concat(Queries other);
+  /** Return a new instance combining both sets of queries. */
+  @NotNull
+  Queries concat(Queries other);
 
-    /**
-     * The wrapped collection of queries.
-     */
-    @NotNull
-    Query[] queries();
+  /** The wrapped collection of queries. */
+  @NotNull
+  Query[] queries();
 
-    /**
-     * The wrapped collection of queries as a {@link Block}.
-     */
-    @NotNull
-    Block block();
+  /** The wrapped collection of queries as a {@link Block}. */
+  @NotNull
+  Block block();
 
-    /**
-     * The wrapped collection of queries.
-     *
-     * @deprecated - 3.10 - [#6143] - Use {@link #queryStream()} instead.
-     */
-    @NotNull
-    @Deprecated(forRemoval = true, since = "3.10")
-    Stream<Query> stream();
+  /**
+   * The wrapped collection of queries.
+   *
+   * @deprecated - 3.10 - [#6143] - Use {@link #queryStream()} instead.
+   */
+  @NotNull
+  @Deprecated(forRemoval = true, since = "3.10")
+  Stream<Query> stream();
 
-    /**
-     * The wrapped collection of queries.
-     */
-    @NotNull
-    Stream<Query> queryStream();
+  /** The wrapped collection of queries. */
+  @NotNull
+  Stream<Query> queryStream();
 
-    // ------------------------------------------------------------------------
-    // Execution API
-    // ------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
+  // Execution API
+  // ------------------------------------------------------------------------
 
-    /**
-     * Execute all queries one-by-one and return all results.
-     * <p>
-     * This is a convenience method for executing individual {@link #queries()}.
-     * <p>
-     * If this {@link Queries} reference is attached to a {@link Configuration},
-     * then that <code>configuration</code> is used through
-     * {@link DSLContext#fetchMany(ResultQuery)} or
-     * {@link DSLContext#execute(Query)}. If this <code>queries</code> reference
-     * is unattached, then each individual {@link ResultQuery#fetchMany()} or
-     * {@link Query#execute()} method is called.
-     *
-     * @throws DetachedException If this <code>queries</code> reference is
-     *             unattached and at least one of the contained
-     *             {@link #queries()} is also unattached.
-     */
-    @NotNull
-    Results fetchMany();
+  /**
+   * Execute all queries one-by-one and return all results.
+   *
+   * <p>This is a convenience method for executing individual {@link #queries()}.
+   *
+   * <p>If this {@link Queries} reference is attached to a {@link Configuration}, then that <code>
+   * configuration</code> is used through {@link DSLContext#fetchMany(ResultQuery)} or {@link
+   * DSLContext#execute(Query)}. If this <code>queries</code> reference is unattached, then each
+   * individual {@link ResultQuery#fetchMany()} or {@link Query#execute()} method is called.
+   *
+   * @throws DetachedException If this <code>queries</code> reference is unattached and at least one
+   *     of the contained {@link #queries()} is also unattached.
+   */
+  @NotNull
+  Results fetchMany();
 
-    /**
-     * Sends the entire batch of queries to the server and executes them using a
-     * JDBC {@link Statement#executeBatch()} operation.
-     * <p>
-     * This {@link Queries} reference must be attached to a
-     * {@link Configuration}.
-     *
-     * @throws DetachedException If this <code>queries</code> reference is
-     *             unattached.
-     * @see DSLContext#batch(Queries)
-     */
-    @NotNull
-    int[] executeBatch();
+  /**
+   * Sends the entire batch of queries to the server and executes them using a JDBC {@link
+   * Statement#executeBatch()} operation.
+   *
+   * <p>This {@link Queries} reference must be attached to a {@link Configuration}.
+   *
+   * @throws DetachedException If this <code>queries</code> reference is unattached.
+   * @see DSLContext#batch(Queries)
+   */
+  @NotNull
+  int[] executeBatch();
 }

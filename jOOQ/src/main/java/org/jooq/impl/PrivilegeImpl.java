@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,28 +44,26 @@ import org.jooq.Context;
 import org.jooq.Keyword;
 import org.jooq.Privilege;
 
-/**
- * @author Timur Shaidullin
- */
+/** @author Timur Shaidullin */
 final class PrivilegeImpl extends AbstractQueryPart implements Privilege, SimpleQueryPart {
-    private static final Clause[] CLAUSES          = { PRIVILEGE };
-    private final Keyword         privilege;
+  private static final Clause[] CLAUSES = {PRIVILEGE};
+  private final Keyword privilege;
 
-    PrivilegeImpl(Keyword privilege) {
-        this.privilege = privilege;
-    }
+  PrivilegeImpl(Keyword privilege) {
+    this.privilege = privilege;
+  }
 
-    // ------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // ------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // ------------------------------------------------------------------------
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        ctx.visit(privilege);
-    }
+  @Override
+  public final void accept(Context<?> ctx) {
+    ctx.visit(privilege);
+  }
 
-    @Override
-    public final Clause[] clauses(Context<?> ctx) {
-        return CLAUSES;
-    }
+  @Override
+  public final Clause[] clauses(Context<?> ctx) {
+    return CLAUSES;
+  }
 }

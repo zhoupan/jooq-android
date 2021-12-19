@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,32 +39,27 @@ package org.jooq.impl;
 
 import static java.util.Collections.emptyList;
 
-import java.util.Collections;
-
-import org.jooq.Commit;
+import org.jetbrains.annotations.NotNull;
 import org.jooq.Commits;
 import org.jooq.Configuration;
 import org.jooq.ContentType;
 import org.jooq.File;
 import org.jooq.Internal;
 
-import org.jetbrains.annotations.NotNull;
-
-/**
- * The public API entry point for jOOQ migrations.
- */
+/** The public API entry point for jOOQ migrations. */
 @Internal
 public final class Migrations {
 
-    @Internal
-    @NotNull
-    public static final Commits commits(Configuration configuration) {
-        return new CommitsImpl(configuration, new CommitImpl(configuration, "init", "init", emptyList(), emptyList()));
-    }
+  @Internal
+  @NotNull
+  public static final Commits commits(Configuration configuration) {
+    return new CommitsImpl(
+        configuration, new CommitImpl(configuration, "init", "init", emptyList(), emptyList()));
+  }
 
-    @Internal
-    @NotNull
-    public static final File file(String path, String content, ContentType type) {
-        return new FileImpl(path, content, type);
-    }
+  @Internal
+  @NotNull
+  public static final File file(String path, String content, ContentType type) {
+    return new FileImpl(path, content, type);
+  }
 }

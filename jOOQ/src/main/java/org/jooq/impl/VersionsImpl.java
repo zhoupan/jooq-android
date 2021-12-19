@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,50 +41,46 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.jooq.Version;
 import org.jooq.Versions;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class VersionsImpl implements Versions {
 
-    final Version              root;
-    final Map<String, Version> versions;
+  final Version root;
+  final Map<String, Version> versions;
 
-    VersionsImpl(Version root) {
-        this.root = root;
-        this.versions = new HashMap<>();
+  VersionsImpl(Version root) {
+    this.root = root;
+    this.versions = new HashMap<>();
 
-        add(root);
-    }
+    add(root);
+  }
 
-    void add(Version version) {
-        versions.put(version.id(), version);
-    }
+  void add(Version version) {
+    versions.put(version.id(), version);
+  }
 
-    void addAll(Collection<? extends Version> v) {
-        for (Version version : v)
-            add(version);
-    }
+  void addAll(Collection<? extends Version> v) {
+    for (Version version : v) add(version);
+  }
 
-    void remove(Version version) {
-        versions.remove(version.id());
-    }
+  void remove(Version version) {
+    versions.remove(version.id());
+  }
 
-    @Override
-    public final Version root() {
-        return root;
-    }
+  @Override
+  public final Version root() {
+    return root;
+  }
 
-    @Override
-    public final Version get(String id) {
-        return versions.get(id);
-    }
+  @Override
+  public final Version get(String id) {
+    return versions.get(id);
+  }
 
-    @Override
-    public final Iterator<Version> iterator() {
-        return versions.values().iterator();
-    }
+  @Override
+  public final Iterator<Version> iterator() {
+    return versions.values().iterator();
+  }
 }

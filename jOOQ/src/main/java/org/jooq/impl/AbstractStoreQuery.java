@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,7 +38,6 @@
 package org.jooq.impl;
 
 import java.util.Map;
-
 import org.jooq.Configuration;
 import org.jooq.Context;
 import org.jooq.DataType;
@@ -52,78 +51,70 @@ import org.jooq.Table;
  *
  * @author Lukas Eder
  */
-abstract class AbstractStoreQuery<R extends Record> extends AbstractDMLQuery<R> implements StoreQuery<R> {
+abstract class AbstractStoreQuery<R extends Record> extends AbstractDMLQuery<R>
+    implements StoreQuery<R> {
 
-    AbstractStoreQuery(Configuration configuration, WithImpl with, Table<R> table) {
-        super(configuration, with, table);
+  AbstractStoreQuery(Configuration configuration, WithImpl with, Table<R> table) {
+    super(configuration, with, table);
+  }
+
+  protected abstract Map<Field<?>, Field<?>> getValues();
+
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  @Override
+  public final void setRecord(R record) {
+    for (int i = 0; i < record.size(); i++)
+      if (record.changed(i)) addValue((Field) record.field(i), record.get(i));
+  }
+
+  @Override
+  public final <T> void addValue(Field<T> field, T value) {
+    addValue(field, -1, value);
+  }
+
+  @Override
+  public final <T> void addValue(Field<T> field, Field<T> value) {
+    addValue(field, -1, value);
+  }
+
+  final <T> void addValue(Field<T> field, int index, T value) {
+    if (field == null)
+      if (index >= 0) addValue(new UnknownField<T>(index), value);
+      else addValue(new UnknownField<T>(getValues().size()), value);
+    else getValues().put(field, Tools.field(value, field));
+  }
+
+  final <T> void addValue(Field<T> field, int index, Field<T> value) {
+    if (field == null)
+      if (index >= 0) addValue(new UnknownField<T>(index), value);
+      else addValue(new UnknownField<T>(getValues().size()), value);
+    else getValues().put(field, Tools.field(value, field));
+  }
+
+  static class UnknownField<T> extends AbstractField<T> {
+    private final int index;
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    UnknownField(int index) {
+      super(DSL.name("unknown field " + index), (DataType) SQLDataType.OTHER);
+
+      this.index = index;
     }
 
-    protected abstract Map<Field<?>, Field<?>> getValues();
-
-    @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
-    public final void setRecord(R record) {
-        for (int i = 0; i < record.size(); i++)
-            if (record.changed(i))
-                addValue((Field) record.field(i), record.get(i));
+    public void accept(Context<?> ctx) {
+      ctx.visit(getUnqualifiedName());
     }
 
     @Override
-    public final <T> void addValue(Field<T> field, T value) {
-        addValue(field, -1, value);
+    public int hashCode() {
+      return index;
     }
 
     @Override
-    public final <T> void addValue(Field<T> field, Field<T> value) {
-        addValue(field, -1, value);
+    public boolean equals(Object that) {
+      if (that instanceof UnknownField) return index == ((UnknownField<?>) that).index;
+      else return false;
     }
-
-    final <T> void addValue(Field<T> field, int index, T value) {
-        if (field == null)
-            if (index >= 0)
-                addValue(new UnknownField<T>(index), value);
-            else
-                addValue(new UnknownField<T>(getValues().size()), value);
-        else
-            getValues().put(field, Tools.field(value, field));
-    }
-
-    final <T> void addValue(Field<T> field, int index, Field<T> value) {
-        if (field == null)
-            if (index >= 0)
-                addValue(new UnknownField<T>(index), value);
-            else
-                addValue(new UnknownField<T>(getValues().size()), value);
-        else
-            getValues().put(field, Tools.field(value, field));
-    }
-
-    static class UnknownField<T> extends AbstractField<T> {
-        private final int         index;
-
-        @SuppressWarnings({ "rawtypes", "unchecked" })
-        UnknownField(int index) {
-            super(DSL.name("unknown field " + index), (DataType) SQLDataType.OTHER);
-
-            this.index = index;
-        }
-
-        @Override
-        public void accept(Context<?> ctx) {
-            ctx.visit(getUnqualifiedName());
-        }
-
-        @Override
-        public int hashCode() {
-            return index;
-        }
-
-        @Override
-        public boolean equals(Object that) {
-            if (that instanceof UnknownField)
-                return index == ((UnknownField<?>) that).index;
-            else
-                return false;
-        }
-    }
+  }
 }

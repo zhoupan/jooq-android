@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,10 +41,10 @@ import org.jooq.impl.DSL;
 
 /**
  * An <code>UPDATE</code> statement.
- * <p>
- * <strong>Example:</strong>
- * <p>
- * <code><pre>
+ *
+ * <p><strong>Example:</strong>
+ *
+ * <p><code><pre>
  * // Assuming import static org.jooq.impl.DSL.*;
  *
  * using(configuration)
@@ -53,12 +53,10 @@ import org.jooq.impl.DSL;
  *    .where(CUSTOMER.ID.eq(1))
  *    .execute();
  * </pre></code>
- * <p>
- * Instances can be created using {@link DSL#update(Table)}, or
- * {@link DSLContext#updateQuery(Table)} and overloads.
+ *
+ * <p>Instances can be created using {@link DSL#update(Table)}, or {@link
+ * DSLContext#updateQuery(Table)} and overloads.
  *
  * @author Lukas Eder
  */
-public interface Update<R extends Record> extends RowCountQuery {
-
-}
+public interface Update<R extends Record> extends RowCountQuery {}

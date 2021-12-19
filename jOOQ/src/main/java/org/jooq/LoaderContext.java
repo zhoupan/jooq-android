@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,53 +38,43 @@
 package org.jooq;
 
 import java.util.List;
-
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A context object that provides information about a loader's current state to
- * {@link LoaderRowListener}.
+ * A context object that provides information about a loader's current state to {@link
+ * LoaderRowListener}.
  *
  * @author Lukas Eder
  */
 public interface LoaderContext {
 
-    /**
-     * Override the row that will be processed. Changing it has now effect on
-     * the {@link LoaderListenerStep#onRowEnd(LoaderRowListener)} event.
-     */
-    @NotNull @CheckReturnValue
-    LoaderContext row(Object[] row);
+  /**
+   * Override the row that will be processed. Changing it has now effect on the {@link
+   * LoaderListenerStep#onRowEnd(LoaderRowListener)} event.
+   */
+  @NotNull
+  @CheckReturnValue
+  LoaderContext row(Object[] row);
 
-    /**
-     * The row that will be or has been processed.
-     */
-    @NotNull @CheckReturnValue
-    Object[] row();
+  /** The row that will be or has been processed. */
+  @NotNull
+  @CheckReturnValue
+  Object[] row();
 
-    /**
-     * A list of errors that might have happened during the load.
-     */
-    @NotNull @CheckReturnValue
-    List<LoaderError> errors();
+  /** A list of errors that might have happened during the load. */
+  @NotNull
+  @CheckReturnValue
+  List<LoaderError> errors();
 
-    /**
-     * The number of processed rows.
-     */
-    int processed();
+  /** The number of processed rows. */
+  int processed();
 
-    /**
-     * The number of executed statements, bulk statements, or batch statements.
-     */
-    int executed();
+  /** The number of executed statements, bulk statements, or batch statements. */
+  int executed();
 
-    /**
-     * The number of ignored rows.
-     */
-    int ignored();
+  /** The number of ignored rows. */
+  int ignored();
 
-    /**
-     * The number of inserted or updated rows.
-     */
-    int stored();
+  /** The number of inserted or updated rows. */
+  int stored();
 }

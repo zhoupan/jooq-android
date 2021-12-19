@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,12 +42,11 @@ import static org.jooq.SQLDialect.*;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * This type is part of the jOOQ DSL to create {@link Select}, {@link Insert},
- * {@link Update}, {@link Delete}, {@link Merge} statements prefixed with a
- * <code>WITH</code> clause and with {@link CommonTableExpression}s.
- * <p>
- * Example:
- * <code><pre>
+ * This type is part of the jOOQ DSL to create {@link Select}, {@link Insert}, {@link Update},
+ * {@link Delete}, {@link Merge} statements prefixed with a <code>WITH</code> clause and with {@link
+ * CommonTableExpression}s.
+ *
+ * <p>Example: <code><pre>
  * DSL.with("table", "col1", "col2")
  *    .as(
  *        select(one(), two())
@@ -60,35 +59,33 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface WithAsStep13 {
 
-    /**
-     * Associate a subselect with a common table expression's table and column
-     * names.
-     */
-    @NotNull @CheckReturnValue
-    @Support({ FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, POSTGRES, SQLITE })
-    WithStep as(ResultQuery<? extends Record13<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?>> query);
+  /** Associate a subselect with a common table expression's table and column names. */
+  @NotNull
+  @CheckReturnValue
+  @Support({FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, POSTGRES, SQLITE})
+  WithStep as(ResultQuery<? extends Record13<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?>> query);
 
-    /**
-     * Associate a materialized subselect with a common table expression's table
-     * and column names.
-     * <p>
-     * This adds the PostgreSQL 12 <code>MATERIALIZED</code> hint to the common
-     * table expression definition, or silently ignores it, if the hint is not
-     * supported.
-     */
-    @NotNull @CheckReturnValue
-    @Support({ FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, POSTGRES, SQLITE })
-    WithStep asMaterialized(ResultQuery<? extends Record13<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?>> query);
+  /**
+   * Associate a materialized subselect with a common table expression's table and column names.
+   *
+   * <p>This adds the PostgreSQL 12 <code>MATERIALIZED</code> hint to the common table expression
+   * definition, or silently ignores it, if the hint is not supported.
+   */
+  @NotNull
+  @CheckReturnValue
+  @Support({FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, POSTGRES, SQLITE})
+  WithStep asMaterialized(
+      ResultQuery<? extends Record13<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?>> query);
 
-    /**
-     * Associate a non-materialized subselect with a common table expression's
-     * table and column names.
-     * <p>
-     * This adds the PostgreSQL 12 <code>NOT MATERIALIZED</code> hint to the
-     * common table expression definition, or silently ignores it, if the hint
-     * is not supported.
-     */
-    @NotNull @CheckReturnValue
-    @Support({ FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, POSTGRES, SQLITE })
-    WithStep asNotMaterialized(ResultQuery<? extends Record13<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?>> query);
+  /**
+   * Associate a non-materialized subselect with a common table expression's table and column names.
+   *
+   * <p>This adds the PostgreSQL 12 <code>NOT MATERIALIZED</code> hint to the common table
+   * expression definition, or silently ignores it, if the hint is not supported.
+   */
+  @NotNull
+  @CheckReturnValue
+  @Support({FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, POSTGRES, SQLITE})
+  WithStep asNotMaterialized(
+      ResultQuery<? extends Record13<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?>> query);
 }

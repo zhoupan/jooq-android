@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,16 +38,13 @@
 package org.jooq.impl;
 
 import java.nio.charset.Charset;
-
 import org.jooq.CharsetProvider;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class DefaultCharsetProvider implements CharsetProvider {
 
-    @Override
-    public final Charset provide() {
-        return Charset.defaultCharset();
-    }
+  @Override
+  public final Charset provide() {
+    return Charset.defaultCharset();
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -47,13 +47,13 @@ import java.util.concurrent.ForkJoinPool;
  */
 public class DefaultExecutor implements Executor {
 
-    private static final Executor EXECUTOR         =
-        ForkJoinPool.getCommonPoolParallelism() > 1
-      ? ForkJoinPool.commonPool()
-      : command -> new Thread(command).start();
+  private static final Executor EXECUTOR =
+      ForkJoinPool.getCommonPoolParallelism() > 1
+          ? ForkJoinPool.commonPool()
+          : command -> new Thread(command).start();
 
-    @Override
-    public final void execute(Runnable command) {
-        EXECUTOR.execute(command);
-    }
+  @Override
+  public final void execute(Runnable command) {
+    EXECUTOR.execute(command);
+  }
 }

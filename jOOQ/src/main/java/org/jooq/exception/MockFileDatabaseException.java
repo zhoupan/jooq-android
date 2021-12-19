@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,14 +40,13 @@ package org.jooq.exception;
 import org.jooq.tools.jdbc.MockDataProvider;
 
 /**
- * An unexpected result can be encountered while loading a file-based
- * {@link MockDataProvider}.
- * <p>
- * This exception may for instance indicate that the number of rows is not in
- * accordance with the specified number of rows. I.e. it not be allowed for the
- * file-based {@link MockDataProvider} to have this content:
- * <p>
- * <code><pre>
+ * An unexpected result can be encountered while loading a file-based {@link MockDataProvider}.
+ *
+ * <p>This exception may for instance indicate that the number of rows is not in accordance with the
+ * specified number of rows. I.e. it not be allowed for the file-based {@link MockDataProvider} to
+ * have this content:
+ *
+ * <p><code><pre>
  * select "TABLE2"."ID2", "TABLE2"."NAME2" from "TABLE2"
  * &gt; +---+-----+
  * &gt; |ID2|NAME2|
@@ -63,22 +62,22 @@ import org.jooq.tools.jdbc.MockDataProvider;
  */
 public class MockFileDatabaseException extends DataAccessException {
 
-    /**
-     * Constructor for MockFileDatabaseException.
-     *
-     * @param message the detail message
-     */
-    public MockFileDatabaseException(String message) {
-        super(message);
-    }
+  /**
+   * Constructor for MockFileDatabaseException.
+   *
+   * @param message the detail message
+   */
+  public MockFileDatabaseException(String message) {
+    super(message);
+  }
 
-    /**
-     * Constructor for MockFileDatabaseException.
-     *
-     * @param message the detail message
-     * @param cause the root cause
-     */
-    public MockFileDatabaseException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  /**
+   * Constructor for MockFileDatabaseException.
+   *
+   * @param message the detail message
+   * @param cause the root cause
+   */
+  public MockFileDatabaseException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

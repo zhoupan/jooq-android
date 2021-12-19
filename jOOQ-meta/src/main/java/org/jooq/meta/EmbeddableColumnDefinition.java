@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,6 @@
  *
  *
  */
-
 package org.jooq.meta;
 
 /**
@@ -43,17 +42,15 @@ package org.jooq.meta;
  *
  * @author Lukas Eder
  */
-public interface EmbeddableColumnDefinition extends TypedElementDefinition<EmbeddableDefinition>, PositionedDefinition {
+public interface EmbeddableColumnDefinition
+    extends TypedElementDefinition<EmbeddableDefinition>, PositionedDefinition {
 
-    /**
-     * The referencing column definition.
-     */
-    ColumnDefinition getReferencingColumn();
+  /** The referencing column definition. */
+  ColumnDefinition getReferencingColumn();
 
-    /**
-     * The {@link PositionedDefinition#getPosition()} of
-     * {@link #getReferencingColumn()} within its defining table.
-     */
-    int getReferencingColumnPosition();
-
+  /**
+   * The {@link PositionedDefinition#getPosition()} of {@link #getReferencingColumn()} within its
+   * defining table.
+   */
+  int getReferencingColumnPosition();
 }

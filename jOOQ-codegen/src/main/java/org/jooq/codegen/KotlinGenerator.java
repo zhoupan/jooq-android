@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,12 +39,10 @@ package org.jooq.codegen;
 
 import static org.jooq.codegen.Language.KOTLIN;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 public class KotlinGenerator extends JavaGenerator {
 
-    public KotlinGenerator() {
-        super(KOTLIN);
-    }
+  public KotlinGenerator() {
+    super(KOTLIN);
+  }
 }

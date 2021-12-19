@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,14 +37,7 @@
  */
 package org.jooq.impl;
 
-import static org.jooq.conf.ParamType.INLINED;
-import static org.jooq.impl.JSONExists.Behaviour.ERROR;
-import static org.jooq.impl.JSONExists.Behaviour.FALSE;
-import static org.jooq.impl.JSONExists.Behaviour.TRUE;
-import static org.jooq.impl.JSONExists.Behaviour.UNKNOWN;
-import static org.jooq.impl.Keywords.K_ERROR;
 import static org.jooq.impl.Keywords.K_JSON_EXISTS;
-import static org.jooq.impl.Keywords.K_ON;
 import static org.jooq.impl.Names.N_JSONB_PATH_EXISTS;
 import static org.jooq.impl.Names.N_JSON_CONTAINS_PATH;
 import static org.jooq.impl.SQLDataType.JSONB;
@@ -54,8 +47,6 @@ import org.jooq.Context;
 import org.jooq.Field;
 import org.jooq.JSONExistsOnStep;
 import org.jooq.Keyword;
-import org.jooq.conf.ParamType;
-
 
 /**
  * The JSON value constructor.
@@ -64,102 +55,63 @@ import org.jooq.conf.ParamType;
  */
 final class JSONExists extends AbstractCondition implements JSONExistsOnStep {
 
-    private final Field<?>      json;
-    private final Field<String> path;
+  private final Field<?> json;
+  private final Field<String> path;
 
+  JSONExists(Field<?> json, Field<String> path) {
+    this(json, path, null);
+  }
 
+  private JSONExists(Field<?> json, Field<String> path, Behaviour onError) {
 
+    this.json = json;
+    this.path = path;
+  }
 
+  // -------------------------------------------------------------------------
+  // XXX: DSL API
+  // -------------------------------------------------------------------------
 
-    JSONExists(Field<?> json, Field<String> path) {
-        this(json, path, null);
+  // -------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // -------------------------------------------------------------------------
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case MYSQL:
+        ctx.visit(N_JSON_CONTAINS_PATH).sql('(').visit(json).sql(", 'one', ").visit(path).sql(')');
+        break;
+
+      case POSTGRES:
+        ctx.visit(N_JSONB_PATH_EXISTS)
+            .sql('(')
+            .visit(castIfNeeded(json, JSONB))
+            .sql(", ")
+            .visit(path)
+            .sql("::jsonpath)");
+        break;
+
+      default:
+        ctx.visit(K_JSON_EXISTS).sql('(').visit(json).sql(", ");
+
+        ctx.visit(path);
+
+        ctx.sql(')');
+        break;
     }
+  }
 
-    private JSONExists(
-        Field<?> json,
-        Field<String> path,
-        Behaviour onError
-    ) {
+  enum Behaviour {
+    ERROR,
+    TRUE,
+    FALSE,
+    UNKNOWN;
 
-        this.json = json;
-        this.path = path;
+    final Keyword keyword;
 
-
-
-
+    Behaviour() {
+      this.keyword = DSL.keyword(name().toLowerCase());
     }
-
-    // -------------------------------------------------------------------------
-    // XXX: DSL API
-    // -------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // -------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // -------------------------------------------------------------------------
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-            case MYSQL:
-                ctx.visit(N_JSON_CONTAINS_PATH).sql('(').visit(json).sql(", 'one', ").visit(path).sql(')');
-                break;
-
-            case POSTGRES:
-                ctx.visit(N_JSONB_PATH_EXISTS).sql('(').visit(castIfNeeded(json, JSONB)).sql(", ").visit(path).sql("::jsonpath)");
-                break;
-
-            default:
-                ctx.visit(K_JSON_EXISTS).sql('(').visit(json).sql(", ");
-
-
-
-
-
-
-                ctx.visit(path);
-
-
-
-
-
-
-                ctx.sql(')');
-                break;
-        }
-    }
-
-    enum Behaviour {
-        ERROR, TRUE, FALSE, UNKNOWN;
-
-        final Keyword keyword;
-
-        Behaviour() {
-            this.keyword = DSL.keyword(name().toLowerCase());
-        }
-    }
+  }
 }

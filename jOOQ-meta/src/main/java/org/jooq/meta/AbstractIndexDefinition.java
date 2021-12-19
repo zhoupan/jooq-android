@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,64 +40,58 @@ package org.jooq.meta;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * @author Lukas Eder
- */
-public abstract class AbstractIndexDefinition extends AbstractDefinition implements IndexDefinition {
+/** @author Lukas Eder */
+public abstract class AbstractIndexDefinition extends AbstractDefinition
+    implements IndexDefinition {
 
-    private final TableDefinition       table;
-    private final boolean               unique;
-    private List<IndexColumnDefinition> indexColumns;
+  private final TableDefinition table;
+  private final boolean unique;
+  private List<IndexColumnDefinition> indexColumns;
 
-    public AbstractIndexDefinition(SchemaDefinition schema, String name, TableDefinition table, boolean unique) {
-        this(schema, name, table, unique, "");
+  public AbstractIndexDefinition(
+      SchemaDefinition schema, String name, TableDefinition table, boolean unique) {
+    this(schema, name, table, unique, "");
+  }
+
+  public AbstractIndexDefinition(
+      SchemaDefinition schema, String name, TableDefinition table, boolean unique, String comment) {
+    super(schema.getDatabase(), schema, name, comment);
+
+    this.table = table;
+    this.unique = unique;
+  }
+
+  @Override
+  public List<Definition> getDefinitionPath() {
+    List<Definition> result = new ArrayList<>();
+
+    switch (getDialect().family()) {
+      default:
+        result.addAll(getSchema().getDefinitionPath());
     }
 
-    public AbstractIndexDefinition(SchemaDefinition schema, String name, TableDefinition table, boolean unique, String comment) {
-        super(schema.getDatabase(), schema, name, comment);
+    result.add(this);
+    return result;
+  }
 
-        this.table = table;
-        this.unique = unique;
+  @Override
+  public TableDefinition getTable() {
+    return table;
+  }
+
+  @Override
+  public List<IndexColumnDefinition> getIndexColumns() {
+    if (indexColumns == null) {
+      indexColumns = getIndexColumns0();
     }
 
-    @Override
-    public List<Definition> getDefinitionPath() {
-        List<Definition> result = new ArrayList<>();
+    return indexColumns;
+  }
 
-        switch (getDialect().family()) {
+  protected abstract List<IndexColumnDefinition> getIndexColumns0();
 
-
-
-
-
-
-
-            default:
-                result.addAll(getSchema().getDefinitionPath());
-        }
-
-        result.add(this);
-        return result;
-    }
-
-    @Override
-    public TableDefinition getTable() {
-        return table;
-    }
-
-    @Override
-    public List<IndexColumnDefinition> getIndexColumns() {
-        if (indexColumns == null) {
-            indexColumns = getIndexColumns0();
-        }
-
-        return indexColumns;
-    }
-
-    protected abstract List<IndexColumnDefinition> getIndexColumns0();
-
-    @Override
-    public boolean isUnique() {
-        return unique;
-    }
+  @Override
+  public boolean isUnique() {
+    return unique;
+  }
 }

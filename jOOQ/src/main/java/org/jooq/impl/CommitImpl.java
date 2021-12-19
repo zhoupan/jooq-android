@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -57,7 +57,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import org.jooq.Commit;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
@@ -69,344 +68,342 @@ import org.jooq.Version;
 import org.jooq.exception.DataMigrationException;
 import org.jooq.tools.StringUtils;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class CommitImpl extends AbstractNode<Commit> implements Commit {
 
-    private final Configuration          configuration;
-    private final DSLContext             ctx;
-    private final List<? extends Commit> parents;
-    private final Map<String, File>      delta;
-    private final Map<String, File>      files;
+  private final Configuration configuration;
+  private final DSLContext ctx;
+  private final List<? extends Commit> parents;
+  private final Map<String, File> delta;
+  private final Map<String, File> files;
 
-    CommitImpl(Configuration configuration, String id, String message, List<? extends Commit> parents, Collection<? extends File> delta) {
-        super(id, message);
+  CommitImpl(
+      Configuration configuration,
+      String id,
+      String message,
+      List<? extends Commit> parents,
+      Collection<? extends File> delta) {
+    super(id, message);
 
-        this.configuration = configuration;
-        this.ctx = configuration.dsl();
-        this.parents = parents;
-        this.delta = map(delta, false);
-        this.files = initFiles();
-    }
+    this.configuration = configuration;
+    this.ctx = configuration.dsl();
+    this.parents = parents;
+    this.delta = map(delta, false);
+    this.files = initFiles();
+  }
 
-    // TODO extract this Map<String, File> type to new type
-    private static final Map<String, File> map(Collection<? extends File> list, boolean applyDeletions) {
-        return apply(new LinkedHashMap<>(), list, applyDeletions);
-    }
+  // TODO extract this Map<String, File> type to new type
+  private static final Map<String, File> map(
+      Collection<? extends File> list, boolean applyDeletions) {
+    return apply(new LinkedHashMap<>(), list, applyDeletions);
+  }
 
-    private static final Map<String, File> apply(Map<String, File> result, Collection<? extends File> list, boolean applyDeletions) {
-        for (File file : list)
-            apply(result, file, applyDeletions);
+  private static final Map<String, File> apply(
+      Map<String, File> result, Collection<? extends File> list, boolean applyDeletions) {
+    for (File file : list) apply(result, file, applyDeletions);
 
-        return result;
-    }
+    return result;
+  }
 
-    private static final Map<String, File> apply(Map<String, File> result, File file, boolean applyDeletions) {
-        if (applyDeletions && file.content() == null)
-            result.remove(file.path());
-        else
-            result.put(file.path(), file);
+  private static final Map<String, File> apply(
+      Map<String, File> result, File file, boolean applyDeletions) {
+    if (applyDeletions && file.content() == null) result.remove(file.path());
+    else result.put(file.path(), file);
 
-        return result;
-    }
+    return result;
+  }
 
-    private final Map<String, File> initFiles() {
-        if (parents.isEmpty())
-            return delta;
+  private final Map<String, File> initFiles() {
+    if (parents.isEmpty()) return delta;
 
-        // TODO: Support multiple parents
-        Commit parent = parents.get(0);
-        return apply(map(parent.files(), true), delta(), true);
-    }
+    // TODO: Support multiple parents
+    Commit parent = parents.get(0);
+    return apply(map(parent.files(), true), delta(), true);
+  }
 
-    @Override
-    public final List<Commit> parents() {
-        return Collections.unmodifiableList(parents);
-    }
+  @Override
+  public final List<Commit> parents() {
+    return Collections.unmodifiableList(parents);
+  }
 
-    @Override
-    public final Collection<File> delta() {
-        return delta.values();
-    }
+  @Override
+  public final Collection<File> delta() {
+    return delta.values();
+  }
 
-    @Override
-    public final Collection<File> files() {
-        return files.values();
-    }
+  @Override
+  public final Collection<File> files() {
+    return files.values();
+  }
 
-    private static final Collection<Source> sources(Collection<File> files) {
-        return Tools.map(files, f -> Source.of(f.content()));
-    }
+  private static final Collection<Source> sources(Collection<File> files) {
+    return Tools.map(files, f -> Source.of(f.content()));
+  }
 
-    @Override
-    public final Collection<Source> sources() {
-        return sources(files());
-    }
+  @Override
+  public final Collection<Source> sources() {
+    return sources(files());
+  }
 
-    @Override
-    public final Commit commit(String newId, File... newFiles) {
-        return commit(newId, "", newFiles);
-    }
+  @Override
+  public final Commit commit(String newId, File... newFiles) {
+    return commit(newId, "", newFiles);
+  }
 
-    @Override
-    public final Commit commit(String newId, Collection<? extends File> newFiles) {
-        return commit(newId, "", newFiles);
-    }
+  @Override
+  public final Commit commit(String newId, Collection<? extends File> newFiles) {
+    return commit(newId, "", newFiles);
+  }
 
-    @Override
-    public final Commit commit(String newId, String newMessage, File... newFiles) {
-        return commit(newId, newMessage, Arrays.asList(newFiles));
-    }
+  @Override
+  public final Commit commit(String newId, String newMessage, File... newFiles) {
+    return commit(newId, newMessage, Arrays.asList(newFiles));
+  }
 
-    @Override
-    public final Commit commit(String newId, String newMessage, Collection<? extends File> newFiles) {
-        return new CommitImpl(configuration, newId, newMessage, Arrays.asList(this), newFiles);
-    }
+  @Override
+  public final Commit commit(String newId, String newMessage, Collection<? extends File> newFiles) {
+    return new CommitImpl(configuration, newId, newMessage, Arrays.asList(this), newFiles);
+  }
 
-    @Override
-    public final Commit merge(String newId, Commit with, File... newFiles) {
-        return merge(newId, null, with, Arrays.asList(newFiles));
-    }
+  @Override
+  public final Commit merge(String newId, Commit with, File... newFiles) {
+    return merge(newId, null, with, Arrays.asList(newFiles));
+  }
 
-    @Override
-    public final Commit merge(String newId, Commit with, Collection<? extends File> newFiles) {
-        return merge(newId, null, with, newFiles);
-    }
+  @Override
+  public final Commit merge(String newId, Commit with, Collection<? extends File> newFiles) {
+    return merge(newId, null, with, newFiles);
+  }
 
-    @Override
-    public final Commit merge(String newId, String newMessage, Commit with, File... newFiles) {
-        return merge(newId, newMessage, with, Arrays.asList(newFiles));
-    }
+  @Override
+  public final Commit merge(String newId, String newMessage, Commit with, File... newFiles) {
+    return merge(newId, newMessage, with, Arrays.asList(newFiles));
+  }
 
-    @Override
-    public final Commit merge(String newId, String newMessage, Commit with, Collection<? extends File> newFiles) {
-        return new CommitImpl(configuration, newId, newMessage, Arrays.asList(this, with), newFiles);
-    }
+  @Override
+  public final Commit merge(
+      String newId, String newMessage, Commit with, Collection<? extends File> newFiles) {
+    return new CommitImpl(configuration, newId, newMessage, Arrays.asList(this, with), newFiles);
+  }
 
-    @Override
-    public final Version version() {
-        return root().migrateTo(this).to();
-    }
+  @Override
+  public final Version version() {
+    return root().migrateTo(this).to();
+  }
 
-    @Override
-    public final Meta meta() {
-        return version().meta();
-    }
+  @Override
+  public final Meta meta() {
+    return version().meta();
+  }
 
-    @Override
-    public final Files migrateTo(Commit resultCommit) {
+  @Override
+  public final Files migrateTo(Commit resultCommit) {
 
-        // TODO: Implement reverting a branch up to the common ancestor
-        Commit ancestor = commonAncestor(resultCommit);
-        return migrateTo0(resultCommit);
-    }
+    // TODO: Implement reverting a branch up to the common ancestor
+    Commit ancestor = commonAncestor(resultCommit);
+    return migrateTo0(resultCommit);
+  }
 
-    private final Files migrateTo0(Commit resultCommit) {
+  private final Files migrateTo0(Commit resultCommit) {
 
-        // History are all the files that have been applied before this commit
-        Map<String, File> history = new LinkedHashMap<>();
-        Map<String, String> historyKeys = new HashMap<>();
+    // History are all the files that have been applied before this commit
+    Map<String, File> history = new LinkedHashMap<>();
+    Map<String, String> historyKeys = new HashMap<>();
 
-        // Result are all the files that are applied starting from this commit
-        Map<String, File> result = new LinkedHashMap<>();
+    // Result are all the files that are applied starting from this commit
+    Map<String, File> result = new LinkedHashMap<>();
 
-        // Temporary FileType.SCHEMA changes that are collapsed until a FileType.INCREMENT is encountered
-        Map<String, File> tempHistory = new LinkedHashMap<>();
-        Map<String, String> tempHistoryKeys = new HashMap<>();
+    // Temporary FileType.SCHEMA changes that are collapsed until a FileType.INCREMENT is
+    // encountered
+    Map<String, File> tempHistory = new LinkedHashMap<>();
+    Map<String, String> tempHistoryKeys = new HashMap<>();
 
-        Deque<Commit> commitHistory = new ArrayDeque<>();
-        history(commitHistory, new HashSet<>(), Arrays.asList(resultCommit));
+    Deque<Commit> commitHistory = new ArrayDeque<>();
+    history(commitHistory, new HashSet<>(), Arrays.asList(resultCommit));
 
-        boolean recordingResult = false;
-        boolean hasDeletions = false;
-        for (Commit commit : commitHistory) {
-            List<File> commitFiles = new ArrayList<>(commit.delta());
+    boolean recordingResult = false;
+    boolean hasDeletions = false;
+    for (Commit commit : commitHistory) {
+      List<File> commitFiles = new ArrayList<>(commit.delta());
 
-            // Deletions
-            Iterator<File> deletions = commitFiles.iterator();
-            while (deletions.hasNext()) {
-                File file = deletions.next();
+      // Deletions
+      Iterator<File> deletions = commitFiles.iterator();
+      while (deletions.hasNext()) {
+        File file = deletions.next();
 
-                if (file.content() == null) {
-                    hasDeletions |= true;
-                    String path = file.path();
-                    String tempKey = tempHistoryKeys.remove(path);
-                    String tempRemove = tempKey != null ? tempKey : path;
-                    String key = historyKeys.remove(path);
-                    String remove = key != null ? key : path;
+        if (file.content() == null) {
+          hasDeletions |= true;
+          String path = file.path();
+          String tempKey = tempHistoryKeys.remove(path);
+          String tempRemove = tempKey != null ? tempKey : path;
+          String key = historyKeys.remove(path);
+          String remove = key != null ? key : path;
 
-                    if (recordingResult && result.remove(tempRemove) == null && file.type() == INCREMENT && history.containsKey(tempRemove))
-                        result.put(tempRemove, file);
-                    else if (recordingResult && result.remove(remove) == null && file.type() == SCHEMA && history.containsKey(remove))
-                        result.put(remove, file);
-                    else
-                        history.remove(tempRemove);
+          if (recordingResult
+              && result.remove(tempRemove) == null
+              && file.type() == INCREMENT
+              && history.containsKey(tempRemove)) result.put(tempRemove, file);
+          else if (recordingResult
+              && result.remove(remove) == null
+              && file.type() == SCHEMA
+              && history.containsKey(remove)) result.put(remove, file);
+          else history.remove(tempRemove);
 
-                    tempHistory.remove(path);
-                    deletions.remove();
-                }
-            }
-
-            // Increments
-            Iterator<File> increments = commitFiles.iterator();
-            while (increments.hasNext()) {
-                File file = increments.next();
-
-                if (file.type() == INCREMENT) {
-                    String path = file.path();
-                    File oldFile = recordingResult ? history.get(path) : history.put(path, file);
-
-                    if (oldFile == null && !tempHistory.isEmpty() && !result.containsKey(path))
-                        move(tempHistory, result, tempHistoryKeys);
-
-                    if (recordingResult)
-                        result.put(path, file);
-
-                    increments.remove();
-                }
-            }
-
-            // Schema files
-            Iterator<File> schemas = commitFiles.iterator();
-            while (schemas.hasNext()) {
-                File file = schemas.next();
-
-                if (file.type() == SCHEMA) {
-                    String path = file.path();
-                    String key = commit.id() + "-" + path;
-
-                    if (recordingResult) {
-                        tempHistory.put(path, file);
-                        tempHistoryKeys.put(path, key);
-                    }
-                    else {
-                        history.put(key, file);
-                        historyKeys.put(path, key);
-                    }
-
-                    schemas.remove();
-                }
-            }
-
-            recordingResult |= id().equals(commit.id());
+          tempHistory.remove(path);
+          deletions.remove();
         }
+      }
 
-        move(tempHistory, result, tempHistoryKeys);
+      // Increments
+      Iterator<File> increments = commitFiles.iterator();
+      while (increments.hasNext()) {
+        File file = increments.next();
 
-        // See if resulting increments try to alter history
-        for (Iterator<Entry<String, File>> it = result.entrySet().iterator(); it.hasNext();) {
-            Entry<String, File> entry = it.next();
-            String path = entry.getKey();
-            File file = entry.getValue();
+        if (file.type() == INCREMENT) {
+          String path = file.path();
+          File oldFile = recordingResult ? history.get(path) : history.put(path, file);
 
-            if (file.type() == INCREMENT) {
-                File historicFile = history.get(path);
+          if (oldFile == null && !tempHistory.isEmpty() && !result.containsKey(path))
+            move(tempHistory, result, tempHistoryKeys);
 
-                if (historicFile != null) {
+          if (recordingResult) result.put(path, file);
 
-                    // Altering history is not allowed
-                    if (!StringUtils.equals(historicFile.content(), file.content()))
-                        throw new DataMigrationException("Cannot edit increment file that has already been applied: " + file);
-
-                    // History was altered, but the alteration was reverted
-                    else
-                        it.remove();
-                }
-            }
+          increments.remove();
         }
+      }
 
-        // Collapse consecutive FileType.SCHEMA files that were not consecutive
-        // prior to the deletion.
-        if (hasDeletions) {
-            Map<String, List<String>> keys = new LinkedHashMap<>();
-            Set<String> remove = new LinkedHashSet<>();
+      // Schema files
+      Iterator<File> schemas = commitFiles.iterator();
+      while (schemas.hasNext()) {
+        File file = schemas.next();
 
-            result.forEach((key, file) -> {
-                if (file.type() == SCHEMA)
-                    keys.computeIfAbsent(file.path(), p -> new ArrayList<>()).add(key);
-                else
-                    moveAllButLast(keys, remove);
-            });
+        if (file.type() == SCHEMA) {
+          String path = file.path();
+          String key = commit.id() + "-" + path;
 
-            moveAllButLast(keys, remove);
-            for (String r : remove)
-                result.remove(r);
+          if (recordingResult) {
+            tempHistory.put(path, file);
+            tempHistoryKeys.put(path, key);
+          } else {
+            history.put(key, file);
+            historyKeys.put(path, key);
+          }
+
+          schemas.remove();
         }
+      }
 
-        Map<String, File> versionFiles = new HashMap<>();
-        Version from = version(ctx.version("init"), id(), versionFiles, history.values());
-        Version to = version(from, resultCommit.id(), versionFiles, result.values());
-        return new FilesImpl(from, to, result.values());
+      recordingResult |= id().equals(commit.id());
     }
 
-    /**
-     * Breadth first recursion over commit graph.
-     */
-    private static final void history(Deque<Commit> commitHistory, Set<Commit> set, List<Commit> commits) {
-        for (Commit commit : commits)
-            if (set.add(commit))
-                commitHistory.push(commit);
+    move(tempHistory, result, tempHistoryKeys);
 
-        Collection<Commit> p = new LinkedHashSet<>();
-        for (Commit commit : commits)
-            p.addAll(commit.parents());
+    // See if resulting increments try to alter history
+    for (Iterator<Entry<String, File>> it = result.entrySet().iterator(); it.hasNext(); ) {
+      Entry<String, File> entry = it.next();
+      String path = entry.getKey();
+      File file = entry.getValue();
 
-        if (!p.isEmpty()) {
-            List<Commit> l = new ArrayList<>(p);
-            Collections.reverse(l);
-            history(commitHistory, set, l);
+      if (file.type() == INCREMENT) {
+        File historicFile = history.get(path);
+
+        if (historicFile != null) {
+
+          // Altering history is not allowed
+          if (!StringUtils.equals(historicFile.content(), file.content()))
+            throw new DataMigrationException(
+                "Cannot edit increment file that has already been applied: " + file);
+
+          // History was altered, but the alteration was reverted
+          else it.remove();
         }
+      }
     }
 
-    private static final Version version(Version from, String newId, Map<String, File> files, Collection<File> result) {
-        Version to = from;
+    // Collapse consecutive FileType.SCHEMA files that were not consecutive
+    // prior to the deletion.
+    if (hasDeletions) {
+      Map<String, List<String>> keys = new LinkedHashMap<>();
+      Set<String> remove = new LinkedHashSet<>();
 
-        List<File> list = new ArrayList<>(result);
-
-        for (int j = 0; j < list.size(); j++) {
-            File file = list.get(j);
-            String commitId = newId + "-" + file.path();
-
+      result.forEach(
+          (key, file) -> {
             if (file.type() == SCHEMA)
-                to = to.commit(commitId, sources(apply(files, file, true).values()).toArray(EMPTY_SOURCE));
-            else
-                to = to.apply(commitId, file.content());
-        }
+              keys.computeIfAbsent(file.path(), p -> new ArrayList<>()).add(key);
+            else moveAllButLast(keys, remove);
+          });
 
-        return to;
+      moveAllButLast(keys, remove);
+      for (String r : remove) result.remove(r);
     }
 
-    private static final void moveAllButLast(Map<String, List<String>> keys, Set<String> remove) {
-        for (List<String> k : keys.values())
-            if (k.size() > 1)
-                remove.addAll(k.subList(0, k.size() - 1));
+    Map<String, File> versionFiles = new HashMap<>();
+    Version from = version(ctx.version("init"), id(), versionFiles, history.values());
+    Version to = version(from, resultCommit.id(), versionFiles, result.values());
+    return new FilesImpl(from, to, result.values());
+  }
 
-        keys.clear();
+  /** Breadth first recursion over commit graph. */
+  private static final void history(
+      Deque<Commit> commitHistory, Set<Commit> set, List<Commit> commits) {
+    for (Commit commit : commits) if (set.add(commit)) commitHistory.push(commit);
+
+    Collection<Commit> p = new LinkedHashSet<>();
+    for (Commit commit : commits) p.addAll(commit.parents());
+
+    if (!p.isEmpty()) {
+      List<Commit> l = new ArrayList<>(p);
+      Collections.reverse(l);
+      history(commitHistory, set, l);
+    }
+  }
+
+  private static final Version version(
+      Version from, String newId, Map<String, File> files, Collection<File> result) {
+    Version to = from;
+
+    List<File> list = new ArrayList<>(result);
+
+    for (int j = 0; j < list.size(); j++) {
+      File file = list.get(j);
+      String commitId = newId + "-" + file.path();
+
+      if (file.type() == SCHEMA)
+        to = to.commit(commitId, sources(apply(files, file, true).values()).toArray(EMPTY_SOURCE));
+      else to = to.apply(commitId, file.content());
     }
 
-    private static final void move(Map<String, File> files, Map<String, File> result, Map<String, String> keys) {
-        for (File file : files.values())
-            result.put(keys.get(file.path()), file);
+    return to;
+  }
 
-        files.clear();
-    }
+  private static final void moveAllButLast(Map<String, List<String>> keys, Set<String> remove) {
+    for (List<String> k : keys.values())
+      if (k.size() > 1) remove.addAll(k.subList(0, k.size() - 1));
 
-    @Override
-    public int hashCode() {
-        return id().hashCode();
-    }
+    keys.clear();
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Commit)
-            return id().equals(((Commit) obj).id());
+  private static final void move(
+      Map<String, File> files, Map<String, File> result, Map<String, String> keys) {
+    for (File file : files.values()) result.put(keys.get(file.path()), file);
 
-        return false;
-    }
+    files.clear();
+  }
 
-    @Override
-    public String toString() {
-        return isBlank(message()) ? id() : id() + " - " + message();
-    }
+  @Override
+  public int hashCode() {
+    return id().hashCode();
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof Commit) return id().equals(((Commit) obj).id());
+
+    return false;
+  }
+
+  @Override
+  public String toString() {
+    return isBlank(message()) ? id() : id() + " - " + message();
+  }
 }

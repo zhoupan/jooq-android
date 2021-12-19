@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -49,51 +49,39 @@ import org.jooq.Record1;
 import org.jooq.Select;
 import org.jooq.Table;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class ArraySelect<T> extends AbstractField<T[]> {
 
-    private final Select<? extends Record1<T>> select;
+  private final Select<? extends Record1<T>> select;
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    ArraySelect(Select<? extends Record1<T>> select) {
-        super(N_ARRAY, (DataType) select.getSelect().get(0).getDataType().getArrayDataType());
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  ArraySelect(Select<? extends Record1<T>> select) {
+    super(N_ARRAY, (DataType) select.getSelect().get(0).getDataType().getArrayDataType());
 
-        this.select = select;
-    }
+    this.select = select;
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case H2:
+        {
+          Table<?> t = select.asTable("t", "c");
+          Field<?> c = t.field("c");
 
-
-
-
-
-
-
-
-
-            case H2: {
-                Table<?> t = select.asTable("t", "c");
-                Field<?> c = t.field("c");
-
-                // [#11053] TODO: Move ORDER BY clause from subquery to ARRAY_AGG
-                // See https://github.com/jOOQ/jOOQ/issues/11053#issuecomment-735773248
-                visitSubquery(ctx, DSL.select(arrayAgg(c)).from(t));
-                break;
-            }
-
-
-
-            case HSQLDB:
-            case POSTGRES:
-            default:
-                ctx.visit(K_ARRAY);
-                visitSubquery(ctx, select);
-
-                break;
+          // [#11053] TODO: Move ORDER BY clause from subquery to ARRAY_AGG
+          // See https://github.com/jOOQ/jOOQ/issues/11053#issuecomment-735773248
+          visitSubquery(ctx, DSL.select(arrayAgg(c)).from(t));
+          break;
         }
+
+      case HSQLDB:
+      case POSTGRES:
+      default:
+        ctx.visit(K_ARRAY);
+        visitSubquery(ctx, select);
+
+        break;
     }
+  }
 }

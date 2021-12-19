@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -50,751 +50,693 @@ import java.util.Set;
  */
 public final class DDLExportConfiguration {
 
-    private final EnumSet<DDLFlag> flags;
+  private final EnumSet<DDLFlag> flags;
 
-    private final boolean          createSchemaIfNotExists;
-    private final boolean          createTableIfNotExists;
-    private final boolean          createIndexIfNotExists;
-    private final boolean          createDomainIfNotExists;
-    private final boolean          createSequenceIfNotExists;
-    private final boolean          createViewIfNotExists;
-    private final boolean          createOrReplaceView;
+  private final boolean createSchemaIfNotExists;
+  private final boolean createTableIfNotExists;
+  private final boolean createIndexIfNotExists;
+  private final boolean createDomainIfNotExists;
+  private final boolean createSequenceIfNotExists;
+  private final boolean createViewIfNotExists;
+  private final boolean createOrReplaceView;
 
-    private final boolean          respectCatalogOrder;
-    private final boolean          respectSchemaOrder;
-    private final boolean          respectTableOrder;
-    private final boolean          respectColumnOrder;
-    private final boolean          respectConstraintOrder;
-    private final boolean          respectIndexOrder;
-    private final boolean          respectDomainOrder;
-    private final boolean          respectSequenceOrder;
+  private final boolean respectCatalogOrder;
+  private final boolean respectSchemaOrder;
+  private final boolean respectTableOrder;
+  private final boolean respectColumnOrder;
+  private final boolean respectConstraintOrder;
+  private final boolean respectIndexOrder;
+  private final boolean respectDomainOrder;
+  private final boolean respectSequenceOrder;
 
-    private final boolean          defaultSequenceFlags;
+  private final boolean defaultSequenceFlags;
 
-    private final boolean          includeConstraintsOnViews;
+  private final boolean includeConstraintsOnViews;
 
-    /**
-     * Create a new default export configuration instance.
-     */
-    public DDLExportConfiguration() {
-        this(
-            EnumSet.allOf(DDLFlag.class),
+  /** Create a new default export configuration instance. */
+  public DDLExportConfiguration() {
+    this(
+        EnumSet.allOf(DDLFlag.class),
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false,
+        true,
+        false,
+        false,
+        false,
+        false,
+        false,
+        false);
+  }
 
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
+  private DDLExportConfiguration(
+      Collection<DDLFlag> flags,
+      boolean createSchemaIfNotExists,
+      boolean createTableIfNotExists,
+      boolean createIndexIfNotExists,
+      boolean createDomainIfNotExists,
+      boolean createSequenceIfNotExists,
+      boolean createViewIfNotExists,
+      boolean createOrReplaceView,
+      boolean respectCatalogOrder,
+      boolean respectSchemaOrder,
+      boolean respectTableOrder,
+      boolean respectColumnOrder,
+      boolean respectConstraintOrder,
+      boolean respectIndexOrder,
+      boolean respectDomainOrder,
+      boolean respectSequenceOrder,
+      boolean defaultSequenceFlags,
+      boolean includeConstraintsOnViews) {
+    this.flags = EnumSet.copyOf(flags);
 
-            false,
-            false,
-            false,
-            true,
-            false,
-            false,
-            false,
-            false,
+    this.createSchemaIfNotExists = createSchemaIfNotExists;
+    this.createTableIfNotExists = createTableIfNotExists;
+    this.createIndexIfNotExists = createIndexIfNotExists;
+    this.createDomainIfNotExists = createDomainIfNotExists;
+    this.createSequenceIfNotExists = createSequenceIfNotExists;
+    this.createViewIfNotExists = createViewIfNotExists;
+    this.createOrReplaceView = createOrReplaceView;
 
-            false,
+    this.respectCatalogOrder = respectCatalogOrder;
+    this.respectSchemaOrder = respectSchemaOrder;
+    this.respectTableOrder = respectTableOrder;
+    this.respectColumnOrder = respectColumnOrder;
+    this.respectConstraintOrder = respectConstraintOrder;
+    this.respectIndexOrder = respectIndexOrder;
+    this.respectDomainOrder = respectDomainOrder;
+    this.respectSequenceOrder = respectSequenceOrder;
 
-            false
-        );
-    }
+    this.defaultSequenceFlags = defaultSequenceFlags;
 
-    private DDLExportConfiguration(
-        Collection<DDLFlag> flags,
+    this.includeConstraintsOnViews = includeConstraintsOnViews;
+  }
 
-        boolean createSchemaIfNotExists,
-        boolean createTableIfNotExists,
-        boolean createIndexIfNotExists,
-        boolean createDomainIfNotExists,
-        boolean createSequenceIfNotExists,
-        boolean createViewIfNotExists,
-        boolean createOrReplaceView,
+  /** The {@link DDLFlag} that are enabled on this configuration. */
+  public final Set<DDLFlag> flags() {
+    return Collections.unmodifiableSet(flags);
+  }
 
-        boolean respectCatalogOrder,
-        boolean respectSchemaOrder,
-        boolean respectTableOrder,
-        boolean respectColumnOrder,
-        boolean respectConstraintOrder,
-        boolean respectIndexOrder,
-        boolean respectDomainOrder,
-        boolean respectSequenceOrder,
+  /** The {@link DDLFlag} that are enabled on this configuration. */
+  public final DDLExportConfiguration flags(DDLFlag... newFlags) {
+    return flags(Arrays.asList(newFlags));
+  }
 
-        boolean defaultSequenceFlags,
+  /** The {@link DDLFlag} that are enabled on this configuration. */
+  public final DDLExportConfiguration flags(Collection<DDLFlag> newFlags) {
+    return new DDLExportConfiguration(
+        newFlags,
+        createSchemaIfNotExists,
+        createTableIfNotExists,
+        createIndexIfNotExists,
+        createDomainIfNotExists,
+        createSequenceIfNotExists,
+        createViewIfNotExists,
+        createOrReplaceView,
+        respectCatalogOrder,
+        respectSchemaOrder,
+        respectTableOrder,
+        respectColumnOrder,
+        respectConstraintOrder,
+        respectIndexOrder,
+        respectDomainOrder,
+        respectSequenceOrder,
+        defaultSequenceFlags,
+        includeConstraintsOnViews);
+  }
 
-        boolean includeConstraintsOnViews
-    ) {
-        this.flags = EnumSet.copyOf(flags);
+  /**
+   * Whether to generate <code>CREATE SCHEMA IF NOT EXISTS</code> statements.
+   *
+   * <p>Not all RDBMS support this flag. Check {@link DSLContext#createSchemaIfNotExists(Schema)} to
+   * see if your {@link SQLDialect} supports the clause.
+   */
+  public final boolean createSchemaIfNotExists() {
+    return createSchemaIfNotExists;
+  }
 
-        this.createSchemaIfNotExists = createSchemaIfNotExists;
-        this.createTableIfNotExists = createTableIfNotExists;
-        this.createIndexIfNotExists = createIndexIfNotExists;
-        this.createDomainIfNotExists = createDomainIfNotExists;
-        this.createSequenceIfNotExists = createSequenceIfNotExists;
-        this.createViewIfNotExists = createViewIfNotExists;
-        this.createOrReplaceView = createOrReplaceView;
+  /** Whether to generate <code>CREATE SCHEMA IF NOT EXISTS</code> statements. */
+  public final DDLExportConfiguration createSchemaIfNotExists(boolean newCreateSchemaIfNotExists) {
+    return new DDLExportConfiguration(
+        flags,
+        newCreateSchemaIfNotExists,
+        createTableIfNotExists,
+        createIndexIfNotExists,
+        createDomainIfNotExists,
+        createSequenceIfNotExists,
+        createViewIfNotExists,
+        createOrReplaceView,
+        respectCatalogOrder,
+        respectSchemaOrder,
+        respectTableOrder,
+        respectColumnOrder,
+        respectConstraintOrder,
+        respectIndexOrder,
+        respectDomainOrder,
+        respectSequenceOrder,
+        defaultSequenceFlags,
+        includeConstraintsOnViews);
+  }
 
-        this.respectCatalogOrder = respectCatalogOrder;
-        this.respectSchemaOrder = respectSchemaOrder;
-        this.respectTableOrder = respectTableOrder;
-        this.respectColumnOrder = respectColumnOrder;
-        this.respectConstraintOrder = respectConstraintOrder;
-        this.respectIndexOrder = respectIndexOrder;
-        this.respectDomainOrder = respectDomainOrder;
-        this.respectSequenceOrder = respectSequenceOrder;
+  /**
+   * Whether to generate <code>CREATE TABLE IF NOT EXISTS</code> statements.
+   *
+   * <p>Not all RDBMS support this flag. Check {@link DSLContext#createTableIfNotExists(Table)} to
+   * see if your {@link SQLDialect} supports the clause.
+   */
+  public final boolean createTableIfNotExists() {
+    return createTableIfNotExists;
+  }
 
-        this.defaultSequenceFlags = defaultSequenceFlags;
+  /** Whether to generate <code>CREATE TABLE IF NOT EXISTS</code> statements. */
+  public final DDLExportConfiguration createTableIfNotExists(boolean newCreateTableIfNotExists) {
+    return new DDLExportConfiguration(
+        flags,
+        createSchemaIfNotExists,
+        newCreateTableIfNotExists,
+        createIndexIfNotExists,
+        createDomainIfNotExists,
+        createSequenceIfNotExists,
+        createViewIfNotExists,
+        createOrReplaceView,
+        respectCatalogOrder,
+        respectSchemaOrder,
+        respectTableOrder,
+        respectColumnOrder,
+        respectConstraintOrder,
+        respectIndexOrder,
+        respectDomainOrder,
+        respectSequenceOrder,
+        defaultSequenceFlags,
+        includeConstraintsOnViews);
+  }
 
-        this.includeConstraintsOnViews = includeConstraintsOnViews;
-    }
+  /**
+   * Whether to generate <code>CREATE INDEX IF NOT EXISTS</code> statements.
+   *
+   * <p>Not all RDBMS support this flag. Check {@link DSLContext#createIndexIfNotExists(Index)} to
+   * see if your {@link SQLDialect} supports the clause.
+   */
+  public final boolean createIndexIfNotExists() {
+    return createIndexIfNotExists;
+  }
 
-    /**
-     * The {@link DDLFlag} that are enabled on this configuration.
-     */
-    public final Set<DDLFlag> flags() {
-        return Collections.unmodifiableSet(flags);
-    }
+  /** Whether to generate <code>CREATE INDEX IF NOT EXISTS</code> statements. */
+  public final DDLExportConfiguration createIndexIfNotExists(boolean newCreateIndexIfNotExists) {
+    return new DDLExportConfiguration(
+        flags,
+        createSchemaIfNotExists,
+        createTableIfNotExists,
+        newCreateIndexIfNotExists,
+        createDomainIfNotExists,
+        createSequenceIfNotExists,
+        createViewIfNotExists,
+        createOrReplaceView,
+        respectCatalogOrder,
+        respectSchemaOrder,
+        respectTableOrder,
+        respectColumnOrder,
+        respectConstraintOrder,
+        respectIndexOrder,
+        respectDomainOrder,
+        respectSequenceOrder,
+        defaultSequenceFlags,
+        includeConstraintsOnViews);
+  }
 
-    /**
-     * The {@link DDLFlag} that are enabled on this configuration.
-     */
-    public final DDLExportConfiguration flags(DDLFlag... newFlags) {
-        return flags(Arrays.asList(newFlags));
-    }
+  /**
+   * Whether to generate <code>CREATE DOMAIN IF NOT EXISTS</code> statements.
+   *
+   * <p>Not all RDBMS support this flag. Check {@link DSLContext#createDomainIfNotExists(Domain)} to
+   * see if your {@link SQLDialect} supports the clause.
+   */
+  public final boolean createDomainIfNotExists() {
+    return createDomainIfNotExists;
+  }
 
-    /**
-     * The {@link DDLFlag} that are enabled on this configuration.
-     */
-    public final DDLExportConfiguration flags(Collection<DDLFlag> newFlags) {
-        return new DDLExportConfiguration(
-            newFlags,
-            createSchemaIfNotExists,
-            createTableIfNotExists,
-            createIndexIfNotExists,
-            createDomainIfNotExists,
-            createSequenceIfNotExists,
-            createViewIfNotExists,
-            createOrReplaceView,
-            respectCatalogOrder,
-            respectSchemaOrder,
-            respectTableOrder,
-            respectColumnOrder,
-            respectConstraintOrder,
-            respectIndexOrder,
-            respectDomainOrder,
-            respectSequenceOrder,
-            defaultSequenceFlags,
-            includeConstraintsOnViews
-        );
-    }
+  /** Whether to generate <code>CREATE DOMAIN IF NOT EXISTS</code> statements. */
+  public final DDLExportConfiguration createDomainIfNotExists(boolean newCreateDomainIfNotExists) {
+    return new DDLExportConfiguration(
+        flags,
+        createSchemaIfNotExists,
+        createTableIfNotExists,
+        createIndexIfNotExists,
+        newCreateDomainIfNotExists,
+        createSequenceIfNotExists,
+        createViewIfNotExists,
+        createOrReplaceView,
+        respectCatalogOrder,
+        respectSchemaOrder,
+        respectTableOrder,
+        respectColumnOrder,
+        respectConstraintOrder,
+        respectIndexOrder,
+        respectDomainOrder,
+        respectSequenceOrder,
+        defaultSequenceFlags,
+        includeConstraintsOnViews);
+  }
 
-    /**
-     * Whether to generate <code>CREATE SCHEMA IF NOT EXISTS</code> statements.
-     * <p>
-     * Not all RDBMS support this flag. Check
-     * {@link DSLContext#createSchemaIfNotExists(Schema)} to see if your
-     * {@link SQLDialect} supports the clause.
-     */
-    public final boolean createSchemaIfNotExists() {
-        return createSchemaIfNotExists;
-    }
+  /**
+   * Whether to generate <code>CREATE SEQUENCE IF NOT EXISTS</code> statements.
+   *
+   * <p>Not all RDBMS support this flag. Check {@link
+   * DSLContext#createSequenceIfNotExists(Sequence)} to see if your {@link SQLDialect} supports the
+   * clause.
+   */
+  public final boolean createSequenceIfNotExists() {
+    return createSequenceIfNotExists;
+  }
 
-    /**
-     * Whether to generate <code>CREATE SCHEMA IF NOT EXISTS</code> statements.
-     */
-    public final DDLExportConfiguration createSchemaIfNotExists(boolean newCreateSchemaIfNotExists) {
-        return new DDLExportConfiguration(
-            flags,
-            newCreateSchemaIfNotExists,
-            createTableIfNotExists,
-            createIndexIfNotExists,
-            createDomainIfNotExists,
-            createSequenceIfNotExists,
-            createViewIfNotExists,
-            createOrReplaceView,
-            respectCatalogOrder,
-            respectSchemaOrder,
-            respectTableOrder,
-            respectColumnOrder,
-            respectConstraintOrder,
-            respectIndexOrder,
-            respectDomainOrder,
-            respectSequenceOrder,
-            defaultSequenceFlags,
-            includeConstraintsOnViews
-        );
-    }
+  /** Whether to generate <code>CREATE SEQUENCE IF NOT EXISTS</code> statements. */
+  public final DDLExportConfiguration createSequenceIfNotExists(
+      boolean newCreateSequenceIfNotExists) {
+    return new DDLExportConfiguration(
+        flags,
+        createSchemaIfNotExists,
+        createTableIfNotExists,
+        createIndexIfNotExists,
+        createDomainIfNotExists,
+        newCreateSequenceIfNotExists,
+        createViewIfNotExists,
+        createOrReplaceView,
+        respectCatalogOrder,
+        respectSchemaOrder,
+        respectTableOrder,
+        respectColumnOrder,
+        respectConstraintOrder,
+        respectIndexOrder,
+        respectDomainOrder,
+        respectSequenceOrder,
+        defaultSequenceFlags,
+        includeConstraintsOnViews);
+  }
 
-    /**
-     * Whether to generate <code>CREATE TABLE IF NOT EXISTS</code> statements.
-     * <p>
-     * Not all RDBMS support this flag. Check
-     * {@link DSLContext#createTableIfNotExists(Table)} to see if your
-     * {@link SQLDialect} supports the clause.
-     */
-    public final boolean createTableIfNotExists() {
-        return createTableIfNotExists;
-    }
+  /**
+   * Whether to generate <code>CREATE VIEW IF NOT EXISTS</code> statements.
+   *
+   * <p>Not all RDBMS support this flag. Check {@link DSLContext#createViewIfNotExists(Table,
+   * Field...)} to see if your {@link SQLDialect} supports the clause.
+   */
+  public final boolean createViewIfNotExists() {
+    return createViewIfNotExists;
+  }
 
-    /**
-     * Whether to generate <code>CREATE TABLE IF NOT EXISTS</code> statements.
-     */
-    public final DDLExportConfiguration createTableIfNotExists(boolean newCreateTableIfNotExists) {
-        return new DDLExportConfiguration(
-            flags,
-            createSchemaIfNotExists,
-            newCreateTableIfNotExists,
-            createIndexIfNotExists,
-            createDomainIfNotExists,
-            createSequenceIfNotExists,
-            createViewIfNotExists,
-            createOrReplaceView,
-            respectCatalogOrder,
-            respectSchemaOrder,
-            respectTableOrder,
-            respectColumnOrder,
-            respectConstraintOrder,
-            respectIndexOrder,
-            respectDomainOrder,
-            respectSequenceOrder,
-            defaultSequenceFlags,
-            includeConstraintsOnViews
-        );
-    }
+  /** Whether to generate <code>CREATE VIEW IF NOT EXISTS</code> statements. */
+  public final DDLExportConfiguration createViewIfNotExists(boolean newCreateViewIfNotExists) {
+    return new DDLExportConfiguration(
+        flags,
+        createSchemaIfNotExists,
+        createTableIfNotExists,
+        createIndexIfNotExists,
+        createDomainIfNotExists,
+        createSequenceIfNotExists,
+        newCreateViewIfNotExists,
+        createOrReplaceView,
+        respectCatalogOrder,
+        respectSchemaOrder,
+        respectTableOrder,
+        respectColumnOrder,
+        respectConstraintOrder,
+        respectIndexOrder,
+        respectDomainOrder,
+        respectSequenceOrder,
+        defaultSequenceFlags,
+        includeConstraintsOnViews);
+  }
 
-    /**
-     * Whether to generate <code>CREATE INDEX IF NOT EXISTS</code> statements.
-     * <p>
-     * Not all RDBMS support this flag. Check
-     * {@link DSLContext#createIndexIfNotExists(Index)} to see if your
-     * {@link SQLDialect} supports the clause.
-     */
-    public final boolean createIndexIfNotExists() {
-        return createIndexIfNotExists;
-    }
+  /**
+   * Whether to generate <code>CREATE OR REPLACE VIEW</code> statements.
+   *
+   * <p>Not all RDBMS support this flag. Check {@link DSLContext#createOrReplaceView(Table,
+   * Field...)} to see if your {@link SQLDialect} supports the clause.
+   */
+  public final boolean createOrReplaceView() {
+    return createOrReplaceView;
+  }
 
-    /**
-     * Whether to generate <code>CREATE INDEX IF NOT EXISTS</code> statements.
-     */
-    public final DDLExportConfiguration createIndexIfNotExists(boolean newCreateIndexIfNotExists) {
-        return new DDLExportConfiguration(
-            flags,
-            createSchemaIfNotExists,
-            createTableIfNotExists,
-            newCreateIndexIfNotExists,
-            createDomainIfNotExists,
-            createSequenceIfNotExists,
-            createViewIfNotExists,
-            createOrReplaceView,
-            respectCatalogOrder,
-            respectSchemaOrder,
-            respectTableOrder,
-            respectColumnOrder,
-            respectConstraintOrder,
-            respectIndexOrder,
-            respectDomainOrder,
-            respectSequenceOrder,
-            defaultSequenceFlags,
-            includeConstraintsOnViews
-        );
-    }
+  /** Whether to generate <code>CREATE OR REPLACE VIEW</code> statements. */
+  public final DDLExportConfiguration createOrReplaceView(boolean newCreateOrReplaceView) {
+    return new DDLExportConfiguration(
+        flags,
+        createSchemaIfNotExists,
+        createTableIfNotExists,
+        createIndexIfNotExists,
+        createDomainIfNotExists,
+        createSequenceIfNotExists,
+        createViewIfNotExists,
+        newCreateOrReplaceView,
+        respectCatalogOrder,
+        respectSchemaOrder,
+        respectTableOrder,
+        respectColumnOrder,
+        respectConstraintOrder,
+        respectIndexOrder,
+        respectDomainOrder,
+        respectSequenceOrder,
+        defaultSequenceFlags,
+        includeConstraintsOnViews);
+  }
 
-    /**
-     * Whether to generate <code>CREATE DOMAIN IF NOT EXISTS</code> statements.
-     * <p>
-     * Not all RDBMS support this flag. Check
-     * {@link DSLContext#createDomainIfNotExists(Domain)} to see if your
-     * {@link SQLDialect} supports the clause.
-     */
-    public final boolean createDomainIfNotExists() {
-        return createDomainIfNotExists;
-    }
+  /**
+   * Whether to respect the catalog order produced by the {@link Meta} source when generated catalog
+   * DDL.
+   */
+  public final boolean respectCatalogOrder() {
+    return respectCatalogOrder;
+  }
 
-    /**
-     * Whether to generate <code>CREATE DOMAIN IF NOT EXISTS</code> statements.
-     */
-    public final DDLExportConfiguration createDomainIfNotExists(boolean newCreateDomainIfNotExists) {
-        return new DDLExportConfiguration(
-            flags,
-            createSchemaIfNotExists,
-            createTableIfNotExists,
-            createIndexIfNotExists,
-            newCreateDomainIfNotExists,
-            createSequenceIfNotExists,
-            createViewIfNotExists,
-            createOrReplaceView,
-            respectCatalogOrder,
-            respectSchemaOrder,
-            respectTableOrder,
-            respectColumnOrder,
-            respectConstraintOrder,
-            respectIndexOrder,
-            respectDomainOrder,
-            respectSequenceOrder,
-            defaultSequenceFlags,
-            includeConstraintsOnViews
-        );
-    }
+  /**
+   * Whether to respect the catalog order produced by the {@link Meta} source when generated catalog
+   * DDL.
+   */
+  public final DDLExportConfiguration respectCatalogOrder(boolean newRespectCatalogOrder) {
+    return new DDLExportConfiguration(
+        flags,
+        createSchemaIfNotExists,
+        createTableIfNotExists,
+        createIndexIfNotExists,
+        createDomainIfNotExists,
+        createSequenceIfNotExists,
+        createViewIfNotExists,
+        createOrReplaceView,
+        newRespectCatalogOrder,
+        respectSchemaOrder,
+        respectTableOrder,
+        respectColumnOrder,
+        respectConstraintOrder,
+        respectIndexOrder,
+        respectDomainOrder,
+        respectSequenceOrder,
+        defaultSequenceFlags,
+        includeConstraintsOnViews);
+  }
 
-    /**
-     * Whether to generate <code>CREATE SEQUENCE IF NOT EXISTS</code> statements.
-     * <p>
-     * Not all RDBMS support this flag. Check
-     * {@link DSLContext#createSequenceIfNotExists(Sequence)} to see if your
-     * {@link SQLDialect} supports the clause.
-     */
-    public final boolean createSequenceIfNotExists() {
-        return createSequenceIfNotExists;
-    }
+  /**
+   * Whether to respect the schema order produced by the {@link Meta} source when generated schema
+   * DDL.
+   */
+  public final boolean respectSchemaOrder() {
+    return respectSchemaOrder;
+  }
 
-    /**
-     * Whether to generate <code>CREATE SEQUENCE IF NOT EXISTS</code> statements.
-     */
-    public final DDLExportConfiguration createSequenceIfNotExists(boolean newCreateSequenceIfNotExists) {
-        return new DDLExportConfiguration(
-            flags,
-            createSchemaIfNotExists,
-            createTableIfNotExists,
-            createIndexIfNotExists,
-            createDomainIfNotExists,
-            newCreateSequenceIfNotExists,
-            createViewIfNotExists,
-            createOrReplaceView,
-            respectCatalogOrder,
-            respectSchemaOrder,
-            respectTableOrder,
-            respectColumnOrder,
-            respectConstraintOrder,
-            respectIndexOrder,
-            respectDomainOrder,
-            respectSequenceOrder,
-            defaultSequenceFlags,
-            includeConstraintsOnViews
-        );
-    }
+  /**
+   * Whether to respect the schema order produced by the {@link Meta} source when generated schema
+   * DDL.
+   */
+  public final DDLExportConfiguration respectSchemaOrder(boolean newRespectSchemaOrder) {
+    return new DDLExportConfiguration(
+        flags,
+        createSchemaIfNotExists,
+        createTableIfNotExists,
+        createIndexIfNotExists,
+        createDomainIfNotExists,
+        createSequenceIfNotExists,
+        createViewIfNotExists,
+        createOrReplaceView,
+        respectCatalogOrder,
+        newRespectSchemaOrder,
+        respectTableOrder,
+        respectColumnOrder,
+        respectConstraintOrder,
+        respectIndexOrder,
+        respectDomainOrder,
+        respectSequenceOrder,
+        defaultSequenceFlags,
+        includeConstraintsOnViews);
+  }
 
-    /**
-     * Whether to generate <code>CREATE VIEW IF NOT EXISTS</code> statements.
-     * <p>
-     * Not all RDBMS support this flag. Check
-     * {@link DSLContext#createViewIfNotExists(Table, Field...)} to see if your
-     * {@link SQLDialect} supports the clause.
-     */
-    public final boolean createViewIfNotExists() {
-        return createViewIfNotExists;
-    }
+  /**
+   * Whether to respect the table order produced by the {@link Meta} source when generated table
+   * DDL.
+   */
+  public final boolean respectTableOrder() {
+    return respectTableOrder;
+  }
 
-    /**
-     * Whether to generate <code>CREATE VIEW IF NOT EXISTS</code> statements.
-     */
-    public final DDLExportConfiguration createViewIfNotExists(boolean newCreateViewIfNotExists) {
-        return new DDLExportConfiguration(
-            flags,
-            createSchemaIfNotExists,
-            createTableIfNotExists,
-            createIndexIfNotExists,
-            createDomainIfNotExists,
-            createSequenceIfNotExists,
-            newCreateViewIfNotExists,
-            createOrReplaceView,
-            respectCatalogOrder,
-            respectSchemaOrder,
-            respectTableOrder,
-            respectColumnOrder,
-            respectConstraintOrder,
-            respectIndexOrder,
-            respectDomainOrder,
-            respectSequenceOrder,
-            defaultSequenceFlags,
-            includeConstraintsOnViews
-        );
-    }
+  /**
+   * Whether to respect the table order produced by the {@link Meta} source when generated table
+   * DDL.
+   */
+  public final DDLExportConfiguration respectTableOrder(boolean newRespectTableOrder) {
+    return new DDLExportConfiguration(
+        flags,
+        createSchemaIfNotExists,
+        createTableIfNotExists,
+        createIndexIfNotExists,
+        createDomainIfNotExists,
+        createSequenceIfNotExists,
+        createViewIfNotExists,
+        createOrReplaceView,
+        respectCatalogOrder,
+        respectSchemaOrder,
+        newRespectTableOrder,
+        respectColumnOrder,
+        respectConstraintOrder,
+        respectIndexOrder,
+        respectDomainOrder,
+        respectSequenceOrder,
+        defaultSequenceFlags,
+        includeConstraintsOnViews);
+  }
 
-    /**
-     * Whether to generate <code>CREATE OR REPLACE VIEW</code> statements.
-     * <p>
-     * Not all RDBMS support this flag. Check
-     * {@link DSLContext#createOrReplaceView(Table, Field...)} to see if your
-     * {@link SQLDialect} supports the clause.
-     */
-    public final boolean createOrReplaceView() {
-        return createOrReplaceView;
-    }
+  /**
+   * Whether to respect the column order produced by the {@link Meta} source when generated column
+   * DDL.
+   */
+  public final boolean respectColumnOrder() {
+    return respectColumnOrder;
+  }
 
-    /**
-     * Whether to generate <code>CREATE OR REPLACE VIEW</code> statements.
-     */
-    public final DDLExportConfiguration createOrReplaceView(boolean newCreateOrReplaceView) {
-        return new DDLExportConfiguration(
-            flags,
-            createSchemaIfNotExists,
-            createTableIfNotExists,
-            createIndexIfNotExists,
-            createDomainIfNotExists,
-            createSequenceIfNotExists,
-            createViewIfNotExists,
-            newCreateOrReplaceView,
-            respectCatalogOrder,
-            respectSchemaOrder,
-            respectTableOrder,
-            respectColumnOrder,
-            respectConstraintOrder,
-            respectIndexOrder,
-            respectDomainOrder,
-            respectSequenceOrder,
-            defaultSequenceFlags,
-            includeConstraintsOnViews
-        );
-    }
+  /**
+   * Whether to respect the column order produced by the {@link Meta} source when generated column
+   * DDL.
+   */
+  public final DDLExportConfiguration respectColumnOrder(boolean newRespectColumnOrder) {
+    return new DDLExportConfiguration(
+        flags,
+        createSchemaIfNotExists,
+        createTableIfNotExists,
+        createIndexIfNotExists,
+        createDomainIfNotExists,
+        createSequenceIfNotExists,
+        createViewIfNotExists,
+        createOrReplaceView,
+        respectCatalogOrder,
+        respectSchemaOrder,
+        respectTableOrder,
+        newRespectColumnOrder,
+        respectConstraintOrder,
+        respectIndexOrder,
+        respectDomainOrder,
+        respectSequenceOrder,
+        defaultSequenceFlags,
+        includeConstraintsOnViews);
+  }
 
-    /**
-     * Whether to respect the catalog order produced by the {@link Meta} source
-     * when generated catalog DDL.
-     */
-    public final boolean respectCatalogOrder() {
-        return respectCatalogOrder;
-    }
+  /**
+   * Whether to respect the constraint order produced by the {@link Meta} source when generated
+   * constraint DDL.
+   */
+  public final boolean respectConstraintOrder() {
+    return respectConstraintOrder;
+  }
 
-    /**
-     * Whether to respect the catalog order produced by the {@link Meta} source
-     * when generated catalog DDL.
-     */
-    public final DDLExportConfiguration respectCatalogOrder(boolean newRespectCatalogOrder) {
-        return new DDLExportConfiguration(
-            flags,
-            createSchemaIfNotExists,
-            createTableIfNotExists,
-            createIndexIfNotExists,
-            createDomainIfNotExists,
-            createSequenceIfNotExists,
-            createViewIfNotExists,
-            createOrReplaceView,
-            newRespectCatalogOrder,
-            respectSchemaOrder,
-            respectTableOrder,
-            respectColumnOrder,
-            respectConstraintOrder,
-            respectIndexOrder,
-            respectDomainOrder,
-            respectSequenceOrder,
-            defaultSequenceFlags,
-            includeConstraintsOnViews
-        );
-    }
+  /**
+   * Whether to respect the constraint order produced by the {@link Meta} source when generated
+   * constraint DDL.
+   */
+  public final DDLExportConfiguration respectConstraintOrder(boolean newRespectConstraintOrder) {
+    return new DDLExportConfiguration(
+        flags,
+        createSchemaIfNotExists,
+        createTableIfNotExists,
+        createIndexIfNotExists,
+        createDomainIfNotExists,
+        createSequenceIfNotExists,
+        createViewIfNotExists,
+        createOrReplaceView,
+        respectCatalogOrder,
+        respectSchemaOrder,
+        respectTableOrder,
+        respectColumnOrder,
+        newRespectConstraintOrder,
+        respectIndexOrder,
+        respectDomainOrder,
+        respectSequenceOrder,
+        defaultSequenceFlags,
+        includeConstraintsOnViews);
+  }
 
-    /**
-     * Whether to respect the schema order produced by the {@link Meta} source
-     * when generated schema DDL.
-     */
-    public final boolean respectSchemaOrder() {
-        return respectSchemaOrder;
-    }
+  /**
+   * Whether to respect the index order produced by the {@link Meta} source when generated index
+   * DDL.
+   */
+  public final boolean respectIndexOrder() {
+    return respectIndexOrder;
+  }
 
-    /**
-     * Whether to respect the schema order produced by the {@link Meta} source
-     * when generated schema DDL.
-     */
-    public final DDLExportConfiguration respectSchemaOrder(boolean newRespectSchemaOrder) {
-        return new DDLExportConfiguration(
-            flags,
-            createSchemaIfNotExists,
-            createTableIfNotExists,
-            createIndexIfNotExists,
-            createDomainIfNotExists,
-            createSequenceIfNotExists,
-            createViewIfNotExists,
-            createOrReplaceView,
-            respectCatalogOrder,
-            newRespectSchemaOrder,
-            respectTableOrder,
-            respectColumnOrder,
-            respectConstraintOrder,
-            respectIndexOrder,
-            respectDomainOrder,
-            respectSequenceOrder,
-            defaultSequenceFlags,
-            includeConstraintsOnViews
-        );
-    }
+  /**
+   * Whether to respect the index order produced by the {@link Meta} source when generated index
+   * DDL.
+   */
+  public final DDLExportConfiguration respectIndexOrder(boolean newRespectIndexOrder) {
+    return new DDLExportConfiguration(
+        flags,
+        createSchemaIfNotExists,
+        createTableIfNotExists,
+        createIndexIfNotExists,
+        createDomainIfNotExists,
+        createSequenceIfNotExists,
+        createViewIfNotExists,
+        createOrReplaceView,
+        respectCatalogOrder,
+        respectSchemaOrder,
+        respectTableOrder,
+        respectColumnOrder,
+        respectConstraintOrder,
+        newRespectIndexOrder,
+        respectDomainOrder,
+        respectSequenceOrder,
+        defaultSequenceFlags,
+        includeConstraintsOnViews);
+  }
 
-    /**
-     * Whether to respect the table order produced by the {@link Meta} source
-     * when generated table DDL.
-     */
-    public final boolean respectTableOrder() {
-        return respectTableOrder;
-    }
+  /**
+   * Whether to respect the domain order produced by the {@link Meta} source when generated domain
+   * DDL.
+   */
+  public final boolean respectDomainOrder() {
+    return respectDomainOrder;
+  }
 
-    /**
-     * Whether to respect the table order produced by the {@link Meta} source
-     * when generated table DDL.
-     */
-    public final DDLExportConfiguration respectTableOrder(boolean newRespectTableOrder) {
-        return new DDLExportConfiguration(
-            flags,
-            createSchemaIfNotExists,
-            createTableIfNotExists,
-            createIndexIfNotExists,
-            createDomainIfNotExists,
-            createSequenceIfNotExists,
-            createViewIfNotExists,
-            createOrReplaceView,
-            respectCatalogOrder,
-            respectSchemaOrder,
-            newRespectTableOrder,
-            respectColumnOrder,
-            respectConstraintOrder,
-            respectIndexOrder,
-            respectDomainOrder,
-            respectSequenceOrder,
-            defaultSequenceFlags,
-            includeConstraintsOnViews
-        );
-    }
+  /**
+   * Whether to respect the sequence order produced by the {@link Meta} source when generated
+   * sequence DDL.
+   */
+  public final DDLExportConfiguration respectDomainOrder(boolean newRespectDomainOrder) {
+    return new DDLExportConfiguration(
+        flags,
+        createSchemaIfNotExists,
+        createTableIfNotExists,
+        createIndexIfNotExists,
+        createDomainIfNotExists,
+        createSequenceIfNotExists,
+        createViewIfNotExists,
+        createOrReplaceView,
+        respectCatalogOrder,
+        respectSchemaOrder,
+        respectTableOrder,
+        respectColumnOrder,
+        respectConstraintOrder,
+        respectIndexOrder,
+        newRespectDomainOrder,
+        respectSequenceOrder,
+        defaultSequenceFlags,
+        includeConstraintsOnViews);
+  }
 
-    /**
-     * Whether to respect the column order produced by the {@link Meta} source
-     * when generated column DDL.
-     */
-    public final boolean respectColumnOrder() {
-        return respectColumnOrder;
-    }
+  /**
+   * Whether to respect the sequence order produced by the {@link Meta} source when generated
+   * sequence DDL.
+   */
+  public final boolean respectSequenceOrder() {
+    return respectSequenceOrder;
+  }
 
-    /**
-     * Whether to respect the column order produced by the {@link Meta} source
-     * when generated column DDL.
-     */
-    public final DDLExportConfiguration respectColumnOrder(boolean newRespectColumnOrder) {
-        return new DDLExportConfiguration(
-            flags,
-            createSchemaIfNotExists,
-            createTableIfNotExists,
-            createIndexIfNotExists,
-            createDomainIfNotExists,
-            createSequenceIfNotExists,
-            createViewIfNotExists,
-            createOrReplaceView,
-            respectCatalogOrder,
-            respectSchemaOrder,
-            respectTableOrder,
-            newRespectColumnOrder,
-            respectConstraintOrder,
-            respectIndexOrder,
-            respectDomainOrder,
-            respectSequenceOrder,
-            defaultSequenceFlags,
-            includeConstraintsOnViews
-        );
-    }
+  /**
+   * Whether to respect the sequence order produced by the {@link Meta} source when generated
+   * sequence DDL.
+   */
+  public final DDLExportConfiguration respectSequenceOrder(boolean newRespectSequenceOrder) {
+    return new DDLExportConfiguration(
+        flags,
+        createSchemaIfNotExists,
+        createTableIfNotExists,
+        createIndexIfNotExists,
+        createDomainIfNotExists,
+        createSequenceIfNotExists,
+        createViewIfNotExists,
+        createOrReplaceView,
+        respectCatalogOrder,
+        respectSchemaOrder,
+        respectTableOrder,
+        respectColumnOrder,
+        respectConstraintOrder,
+        respectIndexOrder,
+        respectDomainOrder,
+        newRespectSequenceOrder,
+        defaultSequenceFlags,
+        includeConstraintsOnViews);
+  }
 
-    /**
-     * Whether to respect the constraint order produced by the {@link Meta} source
-     * when generated constraint DDL.
-     */
-    public final boolean respectConstraintOrder() {
-        return respectConstraintOrder;
-    }
+  /**
+   * Whether to explicitly produce defaults for all sequence flags, when they're not defined
+   * explicitly.
+   */
+  public final boolean defaultSequenceFlags() {
+    return defaultSequenceFlags;
+  }
 
-    /**
-     * Whether to respect the constraint order produced by the {@link Meta} source
-     * when generated constraint DDL.
-     */
-    public final DDLExportConfiguration respectConstraintOrder(boolean newRespectConstraintOrder) {
-        return new DDLExportConfiguration(
-            flags,
-            createSchemaIfNotExists,
-            createTableIfNotExists,
-            createIndexIfNotExists,
-            createDomainIfNotExists,
-            createSequenceIfNotExists,
-            createViewIfNotExists,
-            createOrReplaceView,
-            respectCatalogOrder,
-            respectSchemaOrder,
-            respectTableOrder,
-            respectColumnOrder,
-            newRespectConstraintOrder,
-            respectIndexOrder,
-            respectDomainOrder,
-            respectSequenceOrder,
-            defaultSequenceFlags,
-            includeConstraintsOnViews
-        );
-    }
+  /**
+   * Whether to explicitly produce defaults for all sequence flags, when they're not defined
+   * explicitly.
+   */
+  public final DDLExportConfiguration defaultSequenceFlags(boolean newDefaultSequenceFlags) {
+    return new DDLExportConfiguration(
+        flags,
+        createSchemaIfNotExists,
+        createTableIfNotExists,
+        createIndexIfNotExists,
+        createDomainIfNotExists,
+        createSequenceIfNotExists,
+        createViewIfNotExists,
+        createOrReplaceView,
+        respectCatalogOrder,
+        respectSchemaOrder,
+        respectTableOrder,
+        respectColumnOrder,
+        respectConstraintOrder,
+        respectIndexOrder,
+        respectDomainOrder,
+        respectSequenceOrder,
+        newDefaultSequenceFlags,
+        includeConstraintsOnViews);
+  }
 
-    /**
-     * Whether to respect the index order produced by the {@link Meta} source
-     * when generated index DDL.
-     */
-    public final boolean respectIndexOrder() {
-        return respectIndexOrder;
-    }
+  /** Whether to include constraints on views. */
+  public final boolean includeConstraintsOnViews() {
+    return includeConstraintsOnViews;
+  }
 
-    /**
-     * Whether to respect the index order produced by the {@link Meta} source
-     * when generated index DDL.
-     */
-    public final DDLExportConfiguration respectIndexOrder(boolean newRespectIndexOrder) {
-        return new DDLExportConfiguration(
-            flags,
-            createSchemaIfNotExists,
-            createTableIfNotExists,
-            createIndexIfNotExists,
-            createDomainIfNotExists,
-            createSequenceIfNotExists,
-            createViewIfNotExists,
-            createOrReplaceView,
-            respectCatalogOrder,
-            respectSchemaOrder,
-            respectTableOrder,
-            respectColumnOrder,
-            respectConstraintOrder,
-            newRespectIndexOrder,
-            respectDomainOrder,
-            respectSequenceOrder,
-            defaultSequenceFlags,
-            includeConstraintsOnViews
-        );
-    }
-
-    /**
-     * Whether to respect the domain order produced by the {@link Meta} source
-     * when generated domain DDL.
-     */
-    public final boolean respectDomainOrder() {
-        return respectDomainOrder;
-    }
-
-    /**
-     * Whether to respect the sequence order produced by the {@link Meta} source
-     * when generated sequence DDL.
-     */
-    public final DDLExportConfiguration respectDomainOrder(boolean newRespectDomainOrder) {
-        return new DDLExportConfiguration(
-            flags,
-            createSchemaIfNotExists,
-            createTableIfNotExists,
-            createIndexIfNotExists,
-            createDomainIfNotExists,
-            createSequenceIfNotExists,
-            createViewIfNotExists,
-            createOrReplaceView,
-            respectCatalogOrder,
-            respectSchemaOrder,
-            respectTableOrder,
-            respectColumnOrder,
-            respectConstraintOrder,
-            respectIndexOrder,
-            newRespectDomainOrder,
-            respectSequenceOrder,
-            defaultSequenceFlags,
-            includeConstraintsOnViews
-        );
-    }
-
-    /**
-     * Whether to respect the sequence order produced by the {@link Meta} source
-     * when generated sequence DDL.
-     */
-    public final boolean respectSequenceOrder() {
-        return respectSequenceOrder;
-    }
-
-    /**
-     * Whether to respect the sequence order produced by the {@link Meta} source
-     * when generated sequence DDL.
-     */
-    public final DDLExportConfiguration respectSequenceOrder(boolean newRespectSequenceOrder) {
-        return new DDLExportConfiguration(
-            flags,
-            createSchemaIfNotExists,
-            createTableIfNotExists,
-            createIndexIfNotExists,
-            createDomainIfNotExists,
-            createSequenceIfNotExists,
-            createViewIfNotExists,
-            createOrReplaceView,
-            respectCatalogOrder,
-            respectSchemaOrder,
-            respectTableOrder,
-            respectColumnOrder,
-            respectConstraintOrder,
-            respectIndexOrder,
-            respectDomainOrder,
-            newRespectSequenceOrder,
-            defaultSequenceFlags,
-            includeConstraintsOnViews
-        );
-    }
-
-    /**
-     * Whether to explicitly produce defaults for all sequence flags, when
-     * they're not defined explicitly.
-     */
-    public final boolean defaultSequenceFlags() {
-        return defaultSequenceFlags;
-    }
-
-    /**
-     * Whether to explicitly produce defaults for all sequence flags, when
-     * they're not defined explicitly.
-     */
-    public final DDLExportConfiguration defaultSequenceFlags(boolean newDefaultSequenceFlags) {
-        return new DDLExportConfiguration(
-            flags,
-            createSchemaIfNotExists,
-            createTableIfNotExists,
-            createIndexIfNotExists,
-            createDomainIfNotExists,
-            createSequenceIfNotExists,
-            createViewIfNotExists,
-            createOrReplaceView,
-            respectCatalogOrder,
-            respectSchemaOrder,
-            respectTableOrder,
-            respectColumnOrder,
-            respectConstraintOrder,
-            respectIndexOrder,
-            respectDomainOrder,
-            respectSequenceOrder,
-            newDefaultSequenceFlags,
-            includeConstraintsOnViews
-        );
-    }
-
-    /**
-     * Whether to include constraints on views.
-     */
-    public final boolean includeConstraintsOnViews() {
-        return includeConstraintsOnViews;
-    }
-
-    /**
-     * Whether to include constraints on views.
-     */
-    public final DDLExportConfiguration includeConstraintsOnViews(boolean newIncludeConstraintsOnViews) {
-        return new DDLExportConfiguration(
-            flags,
-            createSchemaIfNotExists,
-            createTableIfNotExists,
-            createIndexIfNotExists,
-            createDomainIfNotExists,
-            createSequenceIfNotExists,
-            createViewIfNotExists,
-            createOrReplaceView,
-            respectCatalogOrder,
-            respectSchemaOrder,
-            respectTableOrder,
-            respectColumnOrder,
-            respectConstraintOrder,
-            respectIndexOrder,
-            respectDomainOrder,
-            respectSequenceOrder,
-            defaultSequenceFlags,
-            newIncludeConstraintsOnViews
-        );
-    }
+  /** Whether to include constraints on views. */
+  public final DDLExportConfiguration includeConstraintsOnViews(
+      boolean newIncludeConstraintsOnViews) {
+    return new DDLExportConfiguration(
+        flags,
+        createSchemaIfNotExists,
+        createTableIfNotExists,
+        createIndexIfNotExists,
+        createDomainIfNotExists,
+        createSequenceIfNotExists,
+        createViewIfNotExists,
+        createOrReplaceView,
+        respectCatalogOrder,
+        respectSchemaOrder,
+        respectTableOrder,
+        respectColumnOrder,
+        respectConstraintOrder,
+        respectIndexOrder,
+        respectDomainOrder,
+        respectSequenceOrder,
+        defaultSequenceFlags,
+        newIncludeConstraintsOnViews);
+  }
 }

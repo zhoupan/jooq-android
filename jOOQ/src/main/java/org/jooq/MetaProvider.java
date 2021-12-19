@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,24 +38,20 @@
 package org.jooq;
 
 import java.sql.DatabaseMetaData;
-
 import org.jetbrains.annotations.NotNull;
 
 /**
  * An SPI that can produce dynamic catalog, schema, table meta data information.
- * <p>
- * The default implementation will produce information based on
- * {@link DatabaseMetaData} obtained from the enclosing
- * {@link Configuration#connectionProvider()}.
+ *
+ * <p>The default implementation will produce information based on {@link DatabaseMetaData} obtained
+ * from the enclosing {@link Configuration#connectionProvider()}.
  *
  * @author Lukas Eder
  */
 @FunctionalInterface
 public interface MetaProvider {
 
-    /**
-     * Provide meta data information.
-     */
-    @NotNull
-    Meta provide();
+  /** Provide meta data information. */
+  @NotNull
+  Meta provide();
 }

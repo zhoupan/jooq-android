@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,9 +38,7 @@
 package org.jooq.impl;
 
 import static org.jooq.impl.DSL.choose;
-import static org.jooq.impl.DSL.function;
 import static org.jooq.impl.DSL.inline;
-import static org.jooq.impl.DSL.unquotedName;
 import static org.jooq.impl.Names.N_CHOOSE;
 
 import org.jooq.CaseValueStep;
@@ -49,48 +47,44 @@ import org.jooq.Context;
 import org.jooq.DataType;
 import org.jooq.Field;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class Choose<T> extends AbstractField<T> {
 
-    private Field<Integer> index;
-    private Field<T>[]     values;
+  private Field<Integer> index;
+  private Field<T>[] values;
 
-    Choose(Field<Integer> index, Field<T>[] values) {
-        super(N_CHOOSE, dataType(values));
+  Choose(Field<Integer> index, Field<T>[] values) {
+    super(N_CHOOSE, dataType(values));
 
-        this.index = index;
-        this.values = values;
-    }
+    this.index = index;
+    this.values = values;
+  }
 
-    @SuppressWarnings("unchecked")
-    private static final <T> DataType<T> dataType(Field<T>[] values) {
-        return values == null || values.length == 0 ? (DataType<T>) SQLDataType.OTHER : values[0].getDataType();
-    }
+  @SuppressWarnings("unchecked")
+  private static final <T> DataType<T> dataType(Field<T>[] values) {
+    return values == null || values.length == 0
+        ? (DataType<T>) SQLDataType.OTHER
+        : values[0].getDataType();
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      default:
+        {
+          CaseValueStep<Integer> s = choose(index);
+          CaseWhenStep<Integer, T> when = null;
 
+          for (int i = 0; i < values.length; i++) {
+            when =
+                when == null
+                    ? s.when(inline(i + 1), values[i])
+                    : when.when(inline(i + 1), values[i]);
+          }
 
-
-
-
-
-            default: {
-                CaseValueStep<Integer> s = choose(index);
-                CaseWhenStep<Integer, T> when = null;
-
-                for (int i = 0; i < values.length; i++) {
-                    when = when == null
-                        ? s.when(inline(i + 1), values[i])
-                        : when.when(inline(i + 1), values[i]);
-                }
-
-                ctx.visit(when);
-                break;
-            }
+          ctx.visit(when);
+          break;
         }
     }
+  }
 }

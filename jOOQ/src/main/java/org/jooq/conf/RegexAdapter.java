@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,21 +38,18 @@
 package org.jooq.conf;
 
 import java.util.regex.Pattern;
-
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 public class RegexAdapter extends XmlAdapter<String, Pattern> {
 
-    @Override
-    public Pattern unmarshal(String v) throws Exception {
-        return v == null ? null : Pattern.compile(v);
-    }
+  @Override
+  public Pattern unmarshal(String v) throws Exception {
+    return v == null ? null : Pattern.compile(v);
+  }
 
-    @Override
-    public String marshal(Pattern v) throws Exception {
-        return v == null ? null : v.pattern();
-    }
+  @Override
+  public String marshal(Pattern v) throws Exception {
+    return v == null ? null : v.pattern();
+  }
 }

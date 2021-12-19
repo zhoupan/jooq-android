@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -49,62 +49,60 @@ import org.jooq.conf.SettingsTools;
  */
 final class KeywordImpl extends AbstractQueryPart implements Keyword {
 
-    private final String      asIs;
+  private final String asIs;
 
-    private       String      lower;
-    private       String      upper;
-    private       String      pascal;
+  private String lower;
+  private String upper;
+  private String pascal;
 
-    KeywordImpl(String keyword) {
-        this.asIs = keyword;
+  KeywordImpl(String keyword) {
+    this.asIs = keyword;
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    if (ctx.separatorRequired()) ctx.sql(' ');
+
+    ctx.sql(render(ctx), true);
+  }
+
+  private String render(Context<?> ctx) {
+    RenderKeywordCase style = SettingsTools.getRenderKeywordCase(ctx.settings());
+
+    switch (style) {
+      case AS_IS:
+        return asIs;
+      case LOWER:
+        return lower == null ? lower = asIs.toLowerCase() : lower;
+      case UPPER:
+        return upper == null ? upper = asIs.toUpperCase() : upper;
+      case PASCAL:
+        return pascal == null ? pascal = pascal(asIs) : pascal;
+      default:
+        throw new UnsupportedOperationException("Unsupported style: " + style);
     }
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        if (ctx.separatorRequired())
-            ctx.sql(' ');
+  private static final String pascal(String keyword) {
+    if (keyword.isEmpty()) return keyword;
+    else if (keyword.indexOf(' ') >= 0) {
+      StringBuilder sb = new StringBuilder();
 
-        ctx.sql(render(ctx), true);
-    }
+      int prev = 0;
+      int next = 0;
 
-    private String render(Context<?> ctx) {
-        RenderKeywordCase style = SettingsTools.getRenderKeywordCase(ctx.settings());
+      do {
+        next = keyword.indexOf(' ', prev);
 
-        switch (style) {
-            case AS_IS:  return asIs;
-            case LOWER:  return lower == null  ? lower  = asIs.toLowerCase() : lower;
-            case UPPER:  return upper == null  ? upper  = asIs.toUpperCase() : upper;
-            case PASCAL: return pascal == null ? pascal = pascal(asIs)       : pascal;
-            default:
-                throw new UnsupportedOperationException("Unsupported style: " + style);
-        }
-    }
+        if (prev > 0) sb.append(' ');
 
-    private static final String pascal(String keyword) {
-        if (keyword.isEmpty())
-            return keyword;
-        else if (keyword.indexOf(' ') >= 0) {
-            StringBuilder sb = new StringBuilder();
+        sb.append(Character.toUpperCase(keyword.charAt(prev)));
+        sb.append(keyword.substring(prev + 1, next == -1 ? keyword.length() : next).toLowerCase());
 
-            int prev = 0;
-            int next = 0;
+        prev = next + 1;
+      } while (next != -1);
 
-            do {
-                next = keyword.indexOf(' ', prev);
-
-                if (prev > 0)
-                    sb.append(' ');
-
-                sb.append(Character.toUpperCase(keyword.charAt(prev)));
-                sb.append(keyword.substring(prev + 1, next == -1 ? keyword.length() : next).toLowerCase());
-
-                prev = next + 1;
-            }
-            while (next != -1);
-
-            return sb.toString();
-        }
-        else
-            return Character.toUpperCase(keyword.charAt(0)) + keyword.substring(1).toLowerCase();
-    }
+      return sb.toString();
+    } else return Character.toUpperCase(keyword.charAt(0)) + keyword.substring(1).toLowerCase();
+  }
 }

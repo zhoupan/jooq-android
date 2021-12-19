@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,16 +37,14 @@
  */
 package org.jooq.checker;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-
-import org.jooq.checker.Tools.Printer;
-
 import com.google.errorprone.bugpatterns.BugChecker;
 import com.google.errorprone.bugpatterns.BugChecker.MethodInvocationTreeMatcher;
 import com.google.errorprone.matchers.Description;
 import com.sun.source.tree.Tree;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import org.jooq.checker.Tools.Printer;
 
 /**
  * Common base class for matchers.
@@ -55,29 +53,28 @@ import com.sun.source.tree.Tree;
  */
 abstract class AbstractMatcher extends BugChecker implements MethodInvocationTreeMatcher {
 
-    /**
-     * Generated UID
-     */
-    private static final long serialVersionUID = -3955673252940475227L;
+  /** Generated UID */
+  private static final long serialVersionUID = -3955673252940475227L;
 
-    Description error(Tree node, String message) {
-        return buildDescription(node).setMessage(message).build();
+  Description error(Tree node, String message) {
+    return buildDescription(node).setMessage(message).build();
+  }
+
+  static Description print(Printer printer) {
+    try (PrintWriter writer = new PrintWriter(new FileWriter("error.txt"))) {
+      writer.println("This is probably a bug in jOOQ-checker.");
+      writer.println(
+          "If you think this is a bug in jOOQ, please report it here: https://github.com/jOOQ/jOOQ/issues/new");
+      writer.println("---------------------------------------------------------------------");
+
+      printer.print(writer);
+    } catch (IOException ignore) {
     }
 
-    static Description print(Printer printer) {
-        try (PrintWriter writer = new PrintWriter(new FileWriter("error.txt"))){
-            writer.println("This is probably a bug in jOOQ-checker.");
-            writer.println("If you think this is a bug in jOOQ, please report it here: https://github.com/jOOQ/jOOQ/issues/new");
-            writer.println("---------------------------------------------------------------------");
+    return null;
+  }
 
-            printer.print(writer);
-        }
-        catch (IOException ignore) {}
-
-        return null;
-    }
-
-    static Description nullSafe(Description d) {
-        return d == null ? Description.NO_MATCH : d;
-    }
+  static Description nullSafe(Description d) {
+    return d == null ? Description.NO_MATCH : d;
+  }
 }

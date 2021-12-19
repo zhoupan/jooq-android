@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,7 +41,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
-
 import org.jooq.Configuration;
 import org.jooq.Context;
 import org.jooq.Param;
@@ -49,124 +48,121 @@ import org.jooq.Query;
 import org.jooq.Record;
 import org.jooq.conf.ParamType;
 
-/**
- * @author Lukas Eder
- */
-abstract class AbstractDelegatingQuery<R extends Record, Q extends Query>
-    extends AbstractQueryPart
+/** @author Lukas Eder */
+abstract class AbstractDelegatingQuery<R extends Record, Q extends Query> extends AbstractQueryPart
     implements Query {
-    private final Q           delegate;
+  private final Q delegate;
 
-    AbstractDelegatingQuery(Q delegate) {
-        this.delegate = delegate;
-    }
+  AbstractDelegatingQuery(Q delegate) {
+    this.delegate = delegate;
+  }
 
-    @Override
-    public final Configuration configuration() {
-        return delegate.configuration();
-    }
+  @Override
+  public final Configuration configuration() {
+    return delegate.configuration();
+  }
 
-    @Override
-    public final List<Object> getBindValues() {
-        return delegate.getBindValues();
-    }
+  @Override
+  public final List<Object> getBindValues() {
+    return delegate.getBindValues();
+  }
 
-    @Override
-    public final Map<String, Param<?>> getParams() {
-        return delegate.getParams();
-    }
+  @Override
+  public final Map<String, Param<?>> getParams() {
+    return delegate.getParams();
+  }
 
-    @Override
-    public final Param<?> getParam(String name) {
-        return delegate.getParam(name);
-    }
+  @Override
+  public final Param<?> getParam(String name) {
+    return delegate.getParam(name);
+  }
 
-    @Override
-    public final void accept(Context<?> context) {
-        context.visit(delegate);
-    }
+  @Override
+  public final void accept(Context<?> context) {
+    context.visit(delegate);
+  }
 
-    @Override
-    public final String getSQL() {
-        return delegate.getSQL();
-    }
+  @Override
+  public final String getSQL() {
+    return delegate.getSQL();
+  }
 
-    @Override
-    public final String getSQL(ParamType paramType) {
-        return delegate.getSQL(paramType);
-    }
+  @Override
+  public final String getSQL(ParamType paramType) {
+    return delegate.getSQL(paramType);
+  }
 
-    @Override
-    public final void attach(Configuration configuration) {
-        delegate.attach(configuration);
-    }
+  @Override
+  public final void attach(Configuration configuration) {
+    delegate.attach(configuration);
+  }
 
-    @Override
-    public final void detach() {
-        delegate.detach();
-    }
+  @Override
+  public final void detach() {
+    delegate.detach();
+  }
 
-    @Override
-    public final int execute() {
-        return delegate.execute();
-    }
+  @Override
+  public final int execute() {
+    return delegate.execute();
+  }
 
-    @Override
-    public final CompletionStage<Integer> executeAsync() {
-        return delegate.executeAsync();
-    }
+  @Override
+  public final CompletionStage<Integer> executeAsync() {
+    return delegate.executeAsync();
+  }
 
-    @Override
-    public final CompletionStage<Integer> executeAsync(Executor executor) {
-        return delegate.executeAsync(executor);
-    }
+  @Override
+  public final CompletionStage<Integer> executeAsync(Executor executor) {
+    return delegate.executeAsync(executor);
+  }
 
-    @Override
-    public final boolean isExecutable() {
-        return delegate.isExecutable();
-    }
+  @Override
+  public final boolean isExecutable() {
+    return delegate.isExecutable();
+  }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public final Q bind(String param, Object value) {
-        return (Q) delegate.bind(param, value);
-    }
+  @SuppressWarnings("unchecked")
+  @Override
+  public final Q bind(String param, Object value) {
+    return (Q) delegate.bind(param, value);
+  }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public final Q bind(int index, Object value) {
-        return (Q) delegate.bind(index, value);
-    }
+  @SuppressWarnings("unchecked")
+  @Override
+  public final Q bind(int index, Object value) {
+    return (Q) delegate.bind(index, value);
+  }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public final Q poolable(boolean poolable) {
-        return (Q) delegate.poolable(poolable);
-    }
+  @SuppressWarnings("unchecked")
+  @Override
+  public final Q poolable(boolean poolable) {
+    return (Q) delegate.poolable(poolable);
+  }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public final Q queryTimeout(int timeout) {
-        return (Q) delegate.queryTimeout(timeout);
-    }
+  @SuppressWarnings("unchecked")
+  @Override
+  public final Q queryTimeout(int timeout) {
+    return (Q) delegate.queryTimeout(timeout);
+  }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public final Q keepStatement(boolean keepStatement) {
-        return (Q) delegate.keepStatement(keepStatement);
-    }
+  @SuppressWarnings("unchecked")
+  @Override
+  public final Q keepStatement(boolean keepStatement) {
+    return (Q) delegate.keepStatement(keepStatement);
+  }
 
-    @Override
-    public final void close() {
-        delegate.close();
-    }
+  @Override
+  public final void close() {
+    delegate.close();
+  }
 
-    @Override
-    public final void cancel() {
-        delegate.cancel();
-    }
+  @Override
+  public final void cancel() {
+    delegate.cancel();
+  }
 
-    final Q getDelegate() {
-        return delegate;
-    }
+  final Q getDelegate() {
+    return delegate;
+  }
 }

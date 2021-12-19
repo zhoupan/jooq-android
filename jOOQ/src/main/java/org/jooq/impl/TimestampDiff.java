@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,135 +37,104 @@
  */
 package org.jooq.impl;
 
-import static org.jooq.impl.DSL.function;
 import static org.jooq.impl.DSL.keyword;
 import static org.jooq.impl.Keywords.K_MILLISECOND;
 import static org.jooq.impl.Names.N_DATEDIFF;
-import static org.jooq.impl.Names.N_DAYS;
-import static org.jooq.impl.Names.N_NANO100_BETWEEN;
 import static org.jooq.impl.Names.N_STRFTIME;
 import static org.jooq.impl.Names.N_TIMESTAMPDIFF;
-import static org.jooq.impl.Names.N_TIMESTAMP_DIFF;
-import static org.jooq.impl.SQLDataType.INTEGER;
 import static org.jooq.impl.SQLDataType.INTERVALDAYTOSECOND;
 import static org.jooq.impl.Tools.castIfNeeded;
-
-import java.sql.Timestamp;
 
 import org.jooq.Context;
 import org.jooq.Field;
 import org.jooq.types.DayToSecond;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class TimestampDiff extends AbstractField<DayToSecond> {
 
-    private final Field<?>    timestamp1;
-    private final Field<?>    timestamp2;
+  private final Field<?> timestamp1;
+  private final Field<?> timestamp2;
 
-    TimestampDiff(Field<?> timestamp1, Field<?> timestamp2) {
-        super(N_TIMESTAMPDIFF, INTERVALDAYTOSECOND);
+  TimestampDiff(Field<?> timestamp1, Field<?> timestamp2) {
+    super(N_TIMESTAMPDIFF, INTERVALDAYTOSECOND);
 
-        this.timestamp1 = timestamp1;
-        this.timestamp2 = timestamp2;
+    this.timestamp1 = timestamp1;
+    this.timestamp2 = timestamp2;
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case POSTGRES:
+
+        // [#4481] Parentheses are important in case this expression is
+        //         placed in the context of other arithmetic
+        ctx.sql('(').visit(timestamp1).sql(" - ").visit(timestamp2).sql(')');
+        break;
+
+        // CUBRID's datetime operations operate on a millisecond level
+      case CUBRID:
+        ctx.visit(timestamp1.sub(timestamp2));
+        break;
+
+      case DERBY:
+        ctx.sql("1000 * {fn ")
+            .visit(N_TIMESTAMPDIFF)
+            .sql('(')
+            .visit(keyword("sql_tsi_second"))
+            .sql(", ")
+            .visit(timestamp2)
+            .sql(", ")
+            .visit(timestamp1)
+            .sql(") }");
+        break;
+
+      case FIREBIRD:
+        ctx.visit(N_DATEDIFF)
+            .sql('(')
+            .visit(K_MILLISECOND)
+            .sql(", ")
+            .visit(timestamp2)
+            .sql(", ")
+            .visit(timestamp1)
+            .sql(')');
+        break;
+
+      case H2:
+      case HSQLDB:
+        ctx.visit(N_DATEDIFF).sql("('ms', ").visit(timestamp2).sql(", ").visit(timestamp1).sql(')');
+        break;
+
+        // MySQL's datetime operations operate on a microsecond level
+
+      case MARIADB:
+      case MYSQL:
+        ctx.visit(N_TIMESTAMPDIFF)
+            .sql('(')
+            .visit(keyword("microsecond"))
+            .sql(", ")
+            .visit(timestamp2)
+            .sql(", ")
+            .visit(timestamp1)
+            .sql(") / 1000");
+        break;
+
+      case SQLITE:
+        ctx.sql('(')
+            .visit(N_STRFTIME)
+            .sql("('%s', ")
+            .visit(timestamp1)
+            .sql(") - ")
+            .visit(N_STRFTIME)
+            .sql("('%s', ")
+            .visit(timestamp2)
+            .sql(")) * 1000");
+        break;
+
+      default:
+        // Default implementation for equals() and hashCode()
+        ctx.visit(castIfNeeded(timestamp1.sub(timestamp2), DayToSecond.class));
+        break;
     }
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            case POSTGRES:
-
-                // [#4481] Parentheses are important in case this expression is
-                //         placed in the context of other arithmetic
-                ctx.sql('(').visit(timestamp1).sql(" - ").visit(timestamp2).sql(')');
-                break;
-
-            // CUBRID's datetime operations operate on a millisecond level
-            case CUBRID:
-                ctx.visit(timestamp1.sub(timestamp2));
-                break;
-
-            case DERBY:
-                ctx.sql("1000 * {fn ").visit(N_TIMESTAMPDIFF).sql('(').visit(keyword("sql_tsi_second")).sql(", ").visit(timestamp2).sql(", ").visit(timestamp1).sql(") }");
-                break;
-
-
-            case FIREBIRD:
-                ctx.visit(N_DATEDIFF).sql('(').visit(K_MILLISECOND).sql(", ").visit(timestamp2).sql(", ").visit(timestamp1).sql(')');
-                break;
-
-            case H2:
-            case HSQLDB:
-                ctx.visit(N_DATEDIFF).sql("('ms', ").visit(timestamp2).sql(", ").visit(timestamp1).sql(')');
-                break;
-
-            // MySQL's datetime operations operate on a microsecond level
-
-
-            case MARIADB:
-            case MYSQL:
-                ctx.visit(N_TIMESTAMPDIFF).sql('(').visit(keyword("microsecond")).sql(", ").visit(timestamp2).sql(", ").visit(timestamp1).sql(") / 1000");
-                break;
-
-            case SQLITE:
-                ctx.sql('(').visit(N_STRFTIME).sql("('%s', ").visit(timestamp1).sql(") - ").visit(N_STRFTIME).sql("('%s', ").visit(timestamp2).sql(")) * 1000");
-                break;
-
-            default:
-                // Default implementation for equals() and hashCode()
-                ctx.visit(castIfNeeded(timestamp1.sub(timestamp2), DayToSecond.class));
-                break;
-        }
-    }
+  }
 }

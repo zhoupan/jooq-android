@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,31 +40,29 @@ package org.jooq.exception;
 import org.jooq.UpdatableRecord;
 
 /**
- * An error occurred while storing a record whose underlying data had already
- * been changed
+ * An error occurred while storing a record whose underlying data had already been changed
  *
  * @see UpdatableRecord#store()
  * @author Lukas Eder
  */
 public class DataChangedException extends DataAccessException {
 
-    /**
-     * Constructor for DataChangedException.
-     *
-     * @param message the detail message
-     */
-    public DataChangedException(String message) {
-        super(message);
-    }
+  /**
+   * Constructor for DataChangedException.
+   *
+   * @param message the detail message
+   */
+  public DataChangedException(String message) {
+    super(message);
+  }
 
-    /**
-     * Constructor for DataChangedException.
-     *
-     * @param message the detail message
-     * @param cause the root cause (usually from using a underlying data access
-     *            API such as JDBC)
-     */
-    public DataChangedException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  /**
+   * Constructor for DataChangedException.
+   *
+   * @param message the detail message
+   * @param cause the root cause (usually from using a underlying data access API such as JDBC)
+   */
+  public DataChangedException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

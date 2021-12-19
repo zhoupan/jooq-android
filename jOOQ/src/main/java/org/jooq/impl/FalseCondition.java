@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,7 +39,6 @@ package org.jooq.impl;
 
 import static org.jooq.Clause.CONDITION;
 import static org.jooq.Clause.CONDITION_COMPARISON;
-// ...
 import static org.jooq.impl.Keywords.K_FALSE;
 import static org.jooq.impl.TrueCondition.NO_SUPPORT_BOOLEAN;
 
@@ -47,35 +46,27 @@ import org.jooq.Clause;
 import org.jooq.Context;
 import org.jooq.False;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class FalseCondition extends AbstractCondition implements False {
 
-    private static final Clause[] CLAUSES  = { CONDITION, CONDITION_COMPARISON };
-    static final FalseCondition   INSTANCE = new FalseCondition();
+  private static final Clause[] CLAUSES = {CONDITION, CONDITION_COMPARISON};
+  static final FalseCondition INSTANCE = new FalseCondition();
 
-    @Override
-    final boolean isNullable() {
-        return false;
-    }
+  @Override
+  final boolean isNullable() {
+    return false;
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        if (NO_SUPPORT_BOOLEAN.contains(ctx.dialect()))
-            ctx.sql("1 = 0");
+  @Override
+  public final void accept(Context<?> ctx) {
+    if (NO_SUPPORT_BOOLEAN.contains(ctx.dialect())) ctx.sql("1 = 0");
+    else ctx.visit(K_FALSE);
+  }
 
+  @Override
+  public final Clause[] clauses(Context<?> ctx) {
+    return CLAUSES;
+  }
 
-
-
-        else
-            ctx.visit(K_FALSE);
-    }
-
-    @Override
-    public final Clause[] clauses(Context<?> ctx) {
-        return CLAUSES;
-    }
-
-    private FalseCondition() {}
+  private FalseCondition() {}
 }

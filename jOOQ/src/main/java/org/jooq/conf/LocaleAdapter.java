@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,33 +38,28 @@
 package org.jooq.conf;
 
 import java.util.Locale;
-
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 public class LocaleAdapter extends XmlAdapter<String, Locale> {
 
-    @Override
-    public Locale unmarshal(String v) throws Exception {
-        Locale result = null;
+  @Override
+  public Locale unmarshal(String v) throws Exception {
+    Locale result = null;
 
-        if (v == null)
-            return result;
+    if (v == null) return result;
 
-        result = Locale.forLanguageTag(v);
-        return result;
-    }
+    result = Locale.forLanguageTag(v);
+    return result;
+  }
 
-    @Override
-    public String marshal(Locale v) throws Exception {
-        String result = null;
+  @Override
+  public String marshal(Locale v) throws Exception {
+    String result = null;
 
-        if (v == null)
-            return result;
+    if (v == null) return result;
 
-        result = v.toLanguageTag();
-        return result;
-    }
+    result = v.toLanguageTag();
+    return result;
+  }
 }

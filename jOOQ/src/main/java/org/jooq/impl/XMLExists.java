@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -49,66 +49,64 @@ import org.jooq.Field;
 import org.jooq.XML;
 import org.jooq.XMLExistsPassingStep;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class XMLExists extends AbstractCondition implements XMLExistsPassingStep {
-    private final Field<String>       xpath;
-    private final Field<XML>          passing;
-    private final XMLPassingMechanism passingMechanism;
+  private final Field<String> xpath;
+  private final Field<XML> passing;
+  private final XMLPassingMechanism passingMechanism;
 
-    XMLExists(Field<String> xpath) {
-        this(xpath, null, null);
-    }
+  XMLExists(Field<String> xpath) {
+    this(xpath, null, null);
+  }
 
-    private XMLExists(Field<String> xpath, Field<XML> passing, XMLPassingMechanism passingMechanism) {
-        this.xpath = xpath;
-        this.passing = passing;
-        this.passingMechanism = passingMechanism;
-    }
+  private XMLExists(Field<String> xpath, Field<XML> passing, XMLPassingMechanism passingMechanism) {
+    this.xpath = xpath;
+    this.passing = passing;
+    this.passingMechanism = passingMechanism;
+  }
 
-    // -------------------------------------------------------------------------
-    // XXX: DSL API
-    // -------------------------------------------------------------------------
-    @Override
-    public final Condition passing(XML xml) {
-        return passing(Tools.field(xml));
-    }
+  // -------------------------------------------------------------------------
+  // XXX: DSL API
+  // -------------------------------------------------------------------------
+  @Override
+  public final Condition passing(XML xml) {
+    return passing(Tools.field(xml));
+  }
 
-    @Override
-    public final Condition passing(Field<XML> xml) {
-        return new XMLExists(xpath, xml, null);
-    }
+  @Override
+  public final Condition passing(Field<XML> xml) {
+    return new XMLExists(xpath, xml, null);
+  }
 
-    @Override
-    public final Condition passingByRef(XML xml) {
-        return passingByRef(Tools.field(xml));
-    }
+  @Override
+  public final Condition passingByRef(XML xml) {
+    return passingByRef(Tools.field(xml));
+  }
 
-    @Override
-    public final Condition passingByRef(Field<XML> xml) {
-        return new XMLExists(xpath, xml, BY_REF);
-    }
+  @Override
+  public final Condition passingByRef(Field<XML> xml) {
+    return new XMLExists(xpath, xml, BY_REF);
+  }
 
-    @Override
-    public final Condition passingByValue(XML xml) {
-        return passingByRef(Tools.field(xml));
-    }
+  @Override
+  public final Condition passingByValue(XML xml) {
+    return passingByRef(Tools.field(xml));
+  }
 
-    @Override
-    public final Condition passingByValue(Field<XML> xml) {
-        return new XMLExists(xpath, xml, BY_VALUE);
-    }
+  @Override
+  public final Condition passingByValue(Field<XML> xml) {
+    return new XMLExists(xpath, xml, BY_VALUE);
+  }
 
-    // -------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // -------------------------------------------------------------------------
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        ctx.visit(K_XMLEXISTS).sqlIndentStart('(');
-        acceptXPath(ctx, xpath);
-        acceptPassing(ctx, passing, passingMechanism);
-        ctx.sqlIndentEnd(')');
-    }
+  @Override
+  public final void accept(Context<?> ctx) {
+    ctx.visit(K_XMLEXISTS).sqlIndentStart('(');
+    acceptXPath(ctx, xpath);
+    acceptPassing(ctx, passing, passingMechanism);
+    ctx.sqlIndentEnd(')');
+  }
 }

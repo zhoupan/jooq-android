@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,50 +39,45 @@ package org.jooq.util.jaxb.tools;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-
 import org.jooq.tools.StringUtils;
 
 /**
- * An {@link XmlAdapter} that implements useful features after parsing XML
- * strings with JAXB.
- * <p>
- * Supported features are:
+ * An {@link XmlAdapter} that implements useful features after parsing XML strings with JAXB.
+ *
+ * <p>Supported features are:
+ *
  * <ul>
- * <li>[#2401] String-trimming, taking out whitespace from JAXB-bound XML
- * content.</li>
- * <li>[#4550] Property expression resolution</li>
+ *   <li>[#2401] String-trimming, taking out whitespace from JAXB-bound XML content.
+ *   <li>[#4550] Property expression resolution
  * </ul>
  *
  * @author Lukas Eder
  */
 public class StringAdapter extends XmlAdapter<String, String> {
 
-    private static final Pattern PROPERTY_PATTERN = Pattern.compile("\\$\\{(.*?)\\}");
+  private static final Pattern PROPERTY_PATTERN = Pattern.compile("\\$\\{(.*?)\\}");
 
-    @Override
-    public final String unmarshal(String v) throws Exception {
-        if (v == null)
-            return null;
+  @Override
+  public final String unmarshal(String v) throws Exception {
+    if (v == null) return null;
 
-        String result = v.trim();
+    String result = v.trim();
 
-        Matcher matcher = PROPERTY_PATTERN.matcher(result);
-        while (matcher.find()) {
-            String group0 = matcher.group(0);
-            String group1 = matcher.group(1);
+    Matcher matcher = PROPERTY_PATTERN.matcher(result);
+    while (matcher.find()) {
+      String group0 = matcher.group(0);
+      String group1 = matcher.group(1);
 
-            result = StringUtils.replace(result, group0, System.getProperty(group1, group0));
-        }
-
-        return result;
+      result = StringUtils.replace(result, group0, System.getProperty(group1, group0));
     }
 
-    @Override
-    public final String marshal(String v) throws Exception {
-        if (v == null)
-            return null;
-        return v.trim();
-    }
+    return result;
+  }
+
+  @Override
+  public final String marshal(String v) throws Exception {
+    if (v == null) return null;
+    return v.trim();
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,46 +46,35 @@ import java.util.List;
  */
 public interface ForeignKeyDefinition extends ConstraintDefinition {
 
-    /**
-     * The definition of the referencing table
-     *
-     * @deprecated - [#9672] - jOOQ 3.13 - Use {@link ConstraintDefinition#getTable()} instead.
-     */
-    @Deprecated
-    TableDefinition getKeyTable();
+  /**
+   * The definition of the referencing table
+   *
+   * @deprecated - [#9672] - jOOQ 3.13 - Use {@link ConstraintDefinition#getTable()} instead.
+   */
+  @Deprecated
+  TableDefinition getKeyTable();
 
-    /**
-     * The list of columns making up the foreign key.
-     */
-    List<ColumnDefinition> getKeyColumns();
+  /** The list of columns making up the foreign key. */
+  List<ColumnDefinition> getKeyColumns();
 
-    /**
-     * The referenced key.
-     */
-    UniqueKeyDefinition getReferencedKey();
+  /** The referenced key. */
+  UniqueKeyDefinition getReferencedKey();
 
-    /**
-     * Resolve a referenced key.
-     * <p>
-     * If {@link #getReferencedKey()} coincides itself with a foreign key,
-     * resolve that foreign key recursively. In case of ambiguity (two foreign
-     * keys coinciding with a single unique key), this returns
-     * <code>null</code>.
-     */
-    UniqueKeyDefinition resolveReferencedKey();
+  /**
+   * Resolve a referenced key.
+   *
+   * <p>If {@link #getReferencedKey()} coincides itself with a foreign key, resolve that foreign key
+   * recursively. In case of ambiguity (two foreign keys coinciding with a single unique key), this
+   * returns <code>null</code>.
+   */
+  UniqueKeyDefinition resolveReferencedKey();
 
-    /**
-     * The definition of the referenced table.
-     */
-    TableDefinition getReferencedTable();
+  /** The definition of the referenced table. */
+  TableDefinition getReferencedTable();
 
-    /**
-     * The list of columns referenced by this foreign key
-     */
-    List<ColumnDefinition> getReferencedColumns();
+  /** The list of columns referenced by this foreign key */
+  List<ColumnDefinition> getReferencedColumns();
 
-    /**
-     * Count the number of references between referencing and referenced tables.
-     */
-    int countSimilarReferences();
+  /** Count the number of references between referencing and referenced tables. */
+  int countSimilarReferences();
 }

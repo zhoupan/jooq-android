@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,55 +38,59 @@
 package org.jooq.impl;
 
 import java.util.Map;
-
 import org.jooq.BindingSQLContext;
 import org.jooq.Configuration;
 import org.jooq.Converter;
 import org.jooq.RenderContext;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 class DefaultBindingSQLContext<U> extends AbstractScope implements BindingSQLContext<U> {
 
-    private final RenderContext render;
-    private final U value;
-    private final String variable;
+  private final RenderContext render;
+  private final U value;
+  private final String variable;
 
-    DefaultBindingSQLContext(Configuration configuration, Map<Object, Object> data, RenderContext render, U value) {
-        this(configuration, data, render, value, "?");
-    }
+  DefaultBindingSQLContext(
+      Configuration configuration, Map<Object, Object> data, RenderContext render, U value) {
+    this(configuration, data, render, value, "?");
+  }
 
-    DefaultBindingSQLContext(Configuration configuration, Map<Object, Object> data, RenderContext render, U value, String variable) {
-        super(configuration, data);
+  DefaultBindingSQLContext(
+      Configuration configuration,
+      Map<Object, Object> data,
+      RenderContext render,
+      U value,
+      String variable) {
+    super(configuration, data);
 
-        this.render = render;
-        this.value = value;
-        this.variable = variable;
-    }
+    this.render = render;
+    this.value = value;
+    this.variable = variable;
+  }
 
-    @Override
-    public final RenderContext render() {
-        return render;
-    }
+  @Override
+  public final RenderContext render() {
+    return render;
+  }
 
-    @Override
-    public final U value() {
-        return value;
-    }
+  @Override
+  public final U value() {
+    return value;
+  }
 
-    @Override
-    public final String variable() {
-        return variable;
-    }
+  @Override
+  public final String variable() {
+    return variable;
+  }
 
-    @Override
-    public <T> BindingSQLContext<T> convert(Converter<? extends T, ? super U> converter) {
-        return new DefaultBindingSQLContext<>(configuration, data, render, converter.to(value), variable);
-    }
+  @Override
+  public <T> BindingSQLContext<T> convert(Converter<? extends T, ? super U> converter) {
+    return new DefaultBindingSQLContext<>(
+        configuration, data, render, converter.to(value), variable);
+  }
 
-    @Override
-    public String toString() {
-        return "DefaultBindingSQLContext [value=" + value + ", variable=" + variable + "]";
-    }
+  @Override
+  public String toString() {
+    return "DefaultBindingSQLContext [value=" + value + ", variable=" + variable + "]";
+  }
 }

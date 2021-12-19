@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,41 +44,36 @@ import static org.jooq.impl.SQLDataType.OTHER;
 import org.jooq.Context;
 import org.jooq.FieldOrRow;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class Rollup extends AbstractField<Object> {
-    private QueryPartList<FieldOrRow> arguments;
+  private QueryPartList<FieldOrRow> arguments;
 
-    Rollup(FieldOrRow... arguments) {
-        super(N_ROLLUP, OTHER);
+  Rollup(FieldOrRow... arguments) {
+    super(N_ROLLUP, OTHER);
 
-        this.arguments = new QueryPartList<>(arguments);
+    this.arguments = new QueryPartList<>(arguments);
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case CUBRID:
+      case MARIADB:
+      case MYSQL:
+        ctx.visit(new MySQLWithRollup());
+        break;
+
+      default:
+        ctx.visit(N_ROLLUP).sql('(').visit(arguments).sql(')');
+        break;
     }
+  }
+
+  final class MySQLWithRollup extends AbstractQueryPart {
 
     @Override
     public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-            case CUBRID:
-            case MARIADB:
-            case MYSQL:
-                ctx.visit(new MySQLWithRollup());
-                break;
-
-            default:
-                ctx.visit(N_ROLLUP).sql('(').visit(arguments).sql(')');
-                break;
-        }
+      ctx.visit(arguments).formatSeparator().visit(K_WITH_ROLLUP);
     }
-
-    final class MySQLWithRollup extends AbstractQueryPart {
-
-        @Override
-        public final void accept(Context<?> ctx) {
-            ctx.visit(arguments)
-               .formatSeparator()
-               .visit(K_WITH_ROLLUP);
-        }
-    }
+  }
 }

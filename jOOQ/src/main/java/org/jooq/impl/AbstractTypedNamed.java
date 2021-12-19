@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,6 @@
  *
  *
  */
-
 package org.jooq.impl;
 
 import org.jooq.Binding;
@@ -46,53 +45,48 @@ import org.jooq.DataType;
 import org.jooq.Name;
 import org.jooq.Typed;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 abstract class AbstractTypedNamed<T> extends AbstractNamed implements Typed<T> {
 
-    private final DataType<T> type;
+  private final DataType<T> type;
 
-    AbstractTypedNamed(Name name, Comment comment, DataType<T> type) {
-        super(name, comment);
+  AbstractTypedNamed(Name name, Comment comment, DataType<T> type) {
+    super(name, comment);
 
-        this.type = type;
-    }
+    this.type = type;
+  }
 
-    // -------------------------------------------------------------------------
-    // XXX: Typed API
-    // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // XXX: Typed API
+  // -------------------------------------------------------------------------
 
-    @Override
-    public final Converter<?, T> getConverter() {
-        return getDataType().getConverter();
-    }
+  @Override
+  public final Converter<?, T> getConverter() {
+    return getDataType().getConverter();
+  }
 
-    @Override
-    public final Binding<?, T> getBinding() {
-        return getDataType().getBinding();
-    }
+  @Override
+  public final Binding<?, T> getBinding() {
+    return getDataType().getBinding();
+  }
 
-    @Override
-    public final Class<T> getType() {
-        return getDataType().getType();
-    }
+  @Override
+  public final Class<T> getType() {
+    return getDataType().getType();
+  }
 
-    /**
-     * [#11959] A workaround to get access to the actual data type of an
-     * expression.
-     */
-    /* non-final */ DataType<?> getExpressionDataType() {
-        return getDataType();
-    }
+  /** [#11959] A workaround to get access to the actual data type of an expression. */
+  /* non-final */ DataType<?> getExpressionDataType() {
+    return getDataType();
+  }
 
-    @Override
-    public final DataType<T> getDataType() {
-        return type;
-    }
+  @Override
+  public final DataType<T> getDataType() {
+    return type;
+  }
 
-    @Override
-    public final DataType<T> getDataType(Configuration configuration) {
-        return getDataType().getDataType(configuration);
-    }
+  @Override
+  public final DataType<T> getDataType(Configuration configuration) {
+    return getDataType().getDataType(configuration);
+  }
 }

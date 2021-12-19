@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,13 +37,10 @@
  */
 package org.jooq;
 
-
 /**
- * A common base type for {@link Field} and {@link Row} where DSL API accepts
- * both types alike.
- * <p>
- * This is useful for expressions like <code>GROUPING SETS</code>, when
- * expressing things like
+ * A common base type for {@link Field} and {@link Row} where DSL API accepts both types alike.
+ *
+ * <p>This is useful for expressions like <code>GROUPING SETS</code>, when expressing things like
  *
  * <pre>
  * <code>
@@ -51,11 +48,9 @@ package org.jooq;
  * ROLLUP ( a, (b,c), d )
  * </code>
  * </pre>
- * <p>
- * Instances of this type cannot be created directly, only of its subtypes.
+ *
+ * <p>Instances of this type cannot be created directly, only of its subtypes.
  *
  * @author Lukas Eder
  */
-public interface FieldOrRow extends QueryPart {
-
-}
+public interface FieldOrRow extends QueryPart {}

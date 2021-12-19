@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,5 +46,5 @@ import org.jooq.conf.TransformUnneededArithmeticExpressions;
  * @author Lukas Eder
  */
 interface Transformable<T> extends Field<T> {
-    Field<?> transform(TransformUnneededArithmeticExpressions transform);
+  Field<?> transform(TransformUnneededArithmeticExpressions transform);
 }

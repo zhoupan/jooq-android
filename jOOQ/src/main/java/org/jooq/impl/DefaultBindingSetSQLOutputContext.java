@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,43 +39,44 @@ package org.jooq.impl;
 
 import java.sql.SQLOutput;
 import java.util.Map;
-
 import org.jooq.BindingSetSQLOutputContext;
 import org.jooq.Configuration;
 import org.jooq.Converter;
 
-/**
- * @author Lukas Eder
- */
-class DefaultBindingSetSQLOutputContext<U> extends AbstractResourceManagingScope implements BindingSetSQLOutputContext<U> {
+/** @author Lukas Eder */
+class DefaultBindingSetSQLOutputContext<U> extends AbstractResourceManagingScope
+    implements BindingSetSQLOutputContext<U> {
 
-    private final SQLOutput output;
-    private final U         value;
+  private final SQLOutput output;
+  private final U value;
 
-    DefaultBindingSetSQLOutputContext(Configuration configuration, Map<Object, Object> data, SQLOutput output, U value) {
-        super(configuration, data);
+  DefaultBindingSetSQLOutputContext(
+      Configuration configuration, Map<Object, Object> data, SQLOutput output, U value) {
+    super(configuration, data);
 
-        this.output = output;
-        this.value = value;
-    }
+    this.output = output;
+    this.value = value;
+  }
 
-    @Override
-    public final SQLOutput output() {
-        return output;
-    }
+  @Override
+  public final SQLOutput output() {
+    return output;
+  }
 
-    @Override
-    public final U value() {
-        return value;
-    }
+  @Override
+  public final U value() {
+    return value;
+  }
 
-    @Override
-    public final <T> BindingSetSQLOutputContext<T> convert(Converter<? extends T, ? super U> converter) {
-        return new DefaultBindingSetSQLOutputContext<>(configuration, data, output, converter.to(value));
-    }
+  @Override
+  public final <T> BindingSetSQLOutputContext<T> convert(
+      Converter<? extends T, ? super U> converter) {
+    return new DefaultBindingSetSQLOutputContext<>(
+        configuration, data, output, converter.to(value));
+  }
 
-    @Override
-    public String toString() {
-        return "DefaultBindingSetSQLOutputContext [value=" + value + "]";
-    }
+  @Override
+  public String toString() {
+    return "DefaultBindingSetSQLOutputContext [value=" + value + "]";
+  }
 }

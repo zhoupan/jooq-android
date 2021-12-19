@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,15 +41,14 @@ import org.jooq.impl.DSL;
 
 /**
  * A comment.
- * <p>
- * Most RDBMS support commenting (i.e. documenting) stored objects, such as
- * {@link Schema}, {@link Table}, {@link Field}, and other objects. Such
- * comments can be modelled in DDL statements as well as retrieved from meta
- * data through the {@link Comment} type.
- * <p>
- * <strong>Example:</strong>
- * <p>
- * <code><pre>
+ *
+ * <p>Most RDBMS support commenting (i.e. documenting) stored objects, such as {@link Schema},
+ * {@link Table}, {@link Field}, and other objects. Such comments can be modelled in DDL statements
+ * as well as retrieved from meta data through the {@link Comment} type.
+ *
+ * <p><strong>Example:</strong>
+ *
+ * <p><code><pre>
  * // Assuming import static org.jooq.impl.DSL.*;
  *
  * using(configuration)
@@ -57,15 +56,13 @@ import org.jooq.impl.DSL;
  *    .is(comment("My Comment"))
  *    .execute();
  * </pre></code>
- * <p>
- * Instances can be created using {@link DSL#comment(String)} and overloads.
+ *
+ * <p>Instances can be created using {@link DSL#comment(String)} and overloads.
  *
  * @author Lukas Eder
  */
 public interface Comment extends QueryPart {
 
-    /**
-     * Get the comment.
-     */
-    String getComment();
+  /** Get the comment. */
+  String getComment();
 }

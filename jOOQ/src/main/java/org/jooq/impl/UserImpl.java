@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -51,23 +51,23 @@ import org.jooq.User;
  * @author Timur Shaidullin
  */
 final class UserImpl extends AbstractNamed implements User {
-    private static final Clause[] CLAUSES          = { USER };
+  private static final Clause[] CLAUSES = {USER};
 
-    UserImpl(Name name) {
-        super(name, NO_COMMENT);
-    }
+  UserImpl(Name name) {
+    super(name, NO_COMMENT);
+  }
 
-    // ------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // ------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // ------------------------------------------------------------------------
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        ctx.visit(getQualifiedName());
-    }
+  @Override
+  public final void accept(Context<?> ctx) {
+    ctx.visit(getQualifiedName());
+  }
 
-    @Override
-    public final Clause[] clauses(Context<?> ctx) {
-        return CLAUSES;
-    }
+  @Override
+  public final Clause[] clauses(Context<?> ctx) {
+    return CLAUSES;
+  }
 }

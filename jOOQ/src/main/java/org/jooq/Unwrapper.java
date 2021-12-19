@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,38 +41,34 @@ import java.sql.Connection;
 import java.sql.Wrapper;
 
 /**
- * An unwrapper SPI that can be used to override the default unwrapping
- * algorithm.
+ * An unwrapper SPI that can be used to override the default unwrapping algorithm.
+ *
+ * <p>In some cases, jOOQ needs to get access to the native JDBC driver APIs in order to call vendor
+ * specific methods, such as Oracle's <code>OracleConnection.createARRAY()</code>. jOOQ doesn't
+ * expect clients to provide a native JDBC {@link Connection} through the {@link ConnectionProvider}
+ * SPI. Implementations may well provide jOOQ with some proxy that implements things like logging,
+ * thread-bound transactionality, connection pooling, etc.
+ *
+ * <p>In order to access the native API, {@link Wrapper#unwrap(Class)} needs to be called, or in
+ * some cases, when third party libraries do not properly implement this contract, some specific
+ * methods are called reflectively, including:
+ *
  * <p>
- * In some cases, jOOQ needs to get access to the native JDBC driver APIs in
- * order to call vendor specific methods, such as Oracle's
- * <code>OracleConnection.createARRAY()</code>. jOOQ doesn't expect clients to
- * provide a native JDBC {@link Connection} through the
- * {@link ConnectionProvider} SPI. Implementations may well provide jOOQ with
- * some proxy that implements things like logging, thread-bound
- * transactionality, connection pooling, etc.
- * <p>
- * In order to access the native API, {@link Wrapper#unwrap(Class)} needs to be
- * called, or in some cases, when third party libraries do not properly
- * implement this contract, some specific methods are called reflectively,
- * including:
- * <p>
+ *
  * <ul>
- * <li><code>org.springframework.jdbc.datasource.ConnectionProxy#getTargetConnection()</code></li>
- * <li><code>org.apache.commons.dbcp.DelegatingConnection#getDelegate()</code></li>
- * <li><code>org.jboss.jca.adapters.jdbc.WrappedConnection#getUnderlyingConnection()</code></li>
- * <li>...</li>
+ *   <li><code>org.springframework.jdbc.datasource.ConnectionProxy#getTargetConnection()</code>
+ *   <li><code>org.apache.commons.dbcp.DelegatingConnection#getDelegate()</code>
+ *   <li><code>org.jboss.jca.adapters.jdbc.WrappedConnection#getUnderlyingConnection()</code>
+ *   <li>...
  * </ul>
- * <p>
- * Not all such third party libraries are "known" to jOOQ, so clients can
- * implement their own unwrapper to support theirs.
+ *
+ * <p>Not all such third party libraries are "known" to jOOQ, so clients can implement their own
+ * unwrapper to support theirs.
  *
  * @author Lukas Eder
  */
 public interface Unwrapper {
 
-    /**
-     * Unwrap a wrapped type from a JDBC {@link Wrapper}.
-     */
-    <T> T unwrap(Wrapper wrapper, Class<T> iface);
+  /** Unwrap a wrapped type from a JDBC {@link Wrapper}. */
+  <T> T unwrap(Wrapper wrapper, Class<T> iface);
 }

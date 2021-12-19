@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,45 +38,41 @@
 package org.jooq;
 
 import java.util.function.Function;
-
 import org.jetbrains.annotations.Nullable;
 
 /**
- * A <code>RecordMapper</code> is a mapper that can receive {@link Record}
- * objects, when fetching data from the database, transforming them into a
- * custom type <code>&lt;E&gt;</code>.
- * <p>
- * <code>RecordMapper</code> is used behind the scenes in methods like
- * {@link ResultQuery#fetchInto(Class)}, {@link Result#into(Class)},
- * {@link Record#into(Class)} and other methods called <code>into(Class)</code>,
- * where the argument class is a <code>Class</code> of type <code>E</code>.
- * <p>
- * The default <code>RecordMapper</code> behaviour in the context of a
- * {@link Configuration} can be overridden through that
- * <code>configuration</code>'s {@link Configuration#recordMapperProvider()}
- * SPI. Custom record mappers can be constructed using lambda expressions, using
- * various {@link Records#mapping(Function1)},
- * {@link Records#mapping(Function2)}, etc. utilities, and other ways.
- * <p>
- * The inverse operation is modelled by {@link RecordUnmapper}.
+ * A <code>RecordMapper</code> is a mapper that can receive {@link Record} objects, when fetching
+ * data from the database, transforming them into a custom type <code>&lt;E&gt;</code>.
+ *
+ * <p><code>RecordMapper</code> is used behind the scenes in methods like {@link
+ * ResultQuery#fetchInto(Class)}, {@link Result#into(Class)}, {@link Record#into(Class)} and other
+ * methods called <code>into(Class)</code>, where the argument class is a <code>Class</code> of type
+ * <code>E</code>.
+ *
+ * <p>The default <code>RecordMapper</code> behaviour in the context of a {@link Configuration} can
+ * be overridden through that <code>configuration</code>'s {@link
+ * Configuration#recordMapperProvider()} SPI. Custom record mappers can be constructed using lambda
+ * expressions, using various {@link Records#mapping(Function1)}, {@link
+ * Records#mapping(Function2)}, etc. utilities, and other ways.
+ *
+ * <p>The inverse operation is modelled by {@link RecordUnmapper}.
  *
  * @author Lukas Eder
  */
 @FunctionalInterface
 public interface RecordMapper<R extends Record, E> extends Function<R, E> {
 
-    /**
-     * Map a record into a POJO.
-     *
-     * @param record The record to be mapped. This is never null.
-     * @return The mapped value, which may be <code>null</code> in some
-     *         implementations.
-     */
-    @Nullable
-    E map(R record);
+  /**
+   * Map a record into a POJO.
+   *
+   * @param record The record to be mapped. This is never null.
+   * @return The mapped value, which may be <code>null</code> in some implementations.
+   */
+  @Nullable
+  E map(R record);
 
-    @Override
-    default E apply(R record) {
-        return map(record);
-    }
+  @Override
+  default E apply(R record) {
+    return map(record);
+  }
 }

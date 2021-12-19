@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,66 +39,77 @@ package org.jooq.meta;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.jooq.tools.JooqLogger;
 
-public class DefaultUniqueKeyDefinition extends AbstractConstraintDefinition implements UniqueKeyDefinition {
+public class DefaultUniqueKeyDefinition extends AbstractConstraintDefinition
+    implements UniqueKeyDefinition {
 
-    private static final JooqLogger          log = JooqLogger.getLogger(DefaultUniqueKeyDefinition.class);
-    private final List<ForeignKeyDefinition> foreignKeys;
-    private final List<ColumnDefinition>     keyColumns;
-    private final boolean                    isPrimaryKey;
-    private transient boolean                resolvedUKCalculated;
-    private transient UniqueKeyDefinition    resolvedUK;
+  private static final JooqLogger log = JooqLogger.getLogger(DefaultUniqueKeyDefinition.class);
+  private final List<ForeignKeyDefinition> foreignKeys;
+  private final List<ColumnDefinition> keyColumns;
+  private final boolean isPrimaryKey;
+  private transient boolean resolvedUKCalculated;
+  private transient UniqueKeyDefinition resolvedUK;
 
-    public DefaultUniqueKeyDefinition(SchemaDefinition schema, String name, TableDefinition table, boolean isPrimaryKey) {
-        this(schema, name, table, isPrimaryKey, true);
-    }
+  public DefaultUniqueKeyDefinition(
+      SchemaDefinition schema, String name, TableDefinition table, boolean isPrimaryKey) {
+    this(schema, name, table, isPrimaryKey, true);
+  }
 
-    public DefaultUniqueKeyDefinition(SchemaDefinition schema, String name, TableDefinition table, boolean isPrimaryKey, boolean enforced) {
-        super(schema, table, name, enforced);
+  public DefaultUniqueKeyDefinition(
+      SchemaDefinition schema,
+      String name,
+      TableDefinition table,
+      boolean isPrimaryKey,
+      boolean enforced) {
+    super(schema, table, name, enforced);
 
-        this.foreignKeys = new ArrayList<>();
-        this.keyColumns = new ArrayList<>();
-        this.isPrimaryKey = isPrimaryKey;
-    }
+    this.foreignKeys = new ArrayList<>();
+    this.keyColumns = new ArrayList<>();
+    this.isPrimaryKey = isPrimaryKey;
+  }
 
-    @Override
-    public boolean isPrimaryKey() {
-        return isPrimaryKey;
-    }
+  @Override
+  public boolean isPrimaryKey() {
+    return isPrimaryKey;
+  }
 
-    @Override
-    public List<ColumnDefinition> getKeyColumns() {
-        return keyColumns;
-    }
+  @Override
+  public List<ColumnDefinition> getKeyColumns() {
+    return keyColumns;
+  }
 
-    @Override
-    public List<ForeignKeyDefinition> getForeignKeys() {
-        return foreignKeys;
-    }
+  @Override
+  public List<ForeignKeyDefinition> getForeignKeys() {
+    return foreignKeys;
+  }
 
-    @Override
-    public final UniqueKeyDefinition resolveReferencedKey() {
-        if (!resolvedUKCalculated) {
-            resolvedUKCalculated = true;
+  @Override
+  public final UniqueKeyDefinition resolveReferencedKey() {
+    if (!resolvedUKCalculated) {
+      resolvedUKCalculated = true;
 
-            ForeignKeyDefinition candidate = null;
-            for (ForeignKeyDefinition fk : getTable().getForeignKeys()) {
-                if (keyColumns.equals(fk.getKeyColumns())) {
-                    if (candidate == null) {
-                        candidate = fk;
-                    }
-                    else {
-                        log.info("Cannot resolve key", (isPrimaryKey ? "Primary" : "Unique") + " key coincides with at least two foreign keys: " + candidate + " and " + fk);
-                        return null;
-                    }
-                }
-            }
-
-            resolvedUK = candidate == null ? this : candidate.resolveReferencedKey();
+      ForeignKeyDefinition candidate = null;
+      for (ForeignKeyDefinition fk : getTable().getForeignKeys()) {
+        if (keyColumns.equals(fk.getKeyColumns())) {
+          if (candidate == null) {
+            candidate = fk;
+          } else {
+            log.info(
+                "Cannot resolve key",
+                (isPrimaryKey ? "Primary" : "Unique")
+                    + " key coincides with at least two foreign keys: "
+                    + candidate
+                    + " and "
+                    + fk);
+            return null;
+          }
         }
+      }
 
-        return resolvedUK;
+      resolvedUK = candidate == null ? this : candidate.resolveReferencedKey();
     }
+
+    return resolvedUK;
+  }
 }

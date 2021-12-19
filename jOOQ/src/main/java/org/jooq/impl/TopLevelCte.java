@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,20 +43,18 @@ import org.jooq.Context;
 import org.jooq.QueryPart;
 import org.jooq.impl.ScopeMarker.ScopeContent;
 
-/**
- * [#3607] [#8522] CTEs that need to be added to the top level CTE section.
- */
+/** [#3607] [#8522] CTEs that need to be added to the top level CTE section. */
 final class TopLevelCte extends QueryPartList<QueryPart> implements ScopeContent {
 
-    boolean recursive;
+  boolean recursive;
 
-    @Override
-    public void accept(Context<?> ctx) {
-        markTopLevelCteAndAccept(ctx, c -> super.accept(c));
-    }
+  @Override
+  public void accept(Context<?> ctx) {
+    markTopLevelCteAndAccept(ctx, c -> super.accept(c));
+  }
 
-    @Override
-    public final boolean declaresCTE() {
-        return true;
-    }
+  @Override
+  public final boolean declaresCTE() {
+    return true;
+  }
 }

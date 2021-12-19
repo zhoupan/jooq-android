@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,12 +38,9 @@
 package org.jooq.impl;
 
 // ...
-import static org.jooq.impl.DSL.val;
-import static org.jooq.impl.SQLDataType.DATE;
 
 import java.sql.SQLException;
 import java.sql.Timestamp;
-
 import org.jooq.Binding;
 import org.jooq.BindingGetResultSetContext;
 import org.jooq.BindingGetSQLInputContext;
@@ -54,77 +51,62 @@ import org.jooq.BindingSetSQLOutputContext;
 import org.jooq.BindingSetStatementContext;
 import org.jooq.Converter;
 import org.jooq.Converters;
-import org.jooq.RenderContext;
-import org.jooq.SQLDialect;
-import org.jooq.impl.Cast.CastNative;
 
 /**
- * A binding that implements the date-as-timestamp semantics of the jOOQ code
- * generator.
+ * A binding that implements the date-as-timestamp semantics of the jOOQ code generator.
  *
  * @author Lukas Eder
  * @see <a
- *      href="https://github.com/jOOQ/jOOQ/issues/3369">https://github.com/jOOQ/jOOQ/issues/3369</a>
+ *     href="https://github.com/jOOQ/jOOQ/issues/3369">https://github.com/jOOQ/jOOQ/issues/3369</a>
  */
 public class DateAsTimestampBinding implements Binding<Timestamp, Timestamp> {
 
-    private final Converter<Timestamp, Timestamp> converter;
-    private final Binding<Timestamp, Timestamp>   delegate;
+  private final Converter<Timestamp, Timestamp> converter;
+  private final Binding<Timestamp, Timestamp> delegate;
 
-    public DateAsTimestampBinding() {
-        this.converter = Converters.identity(Timestamp.class);
-        this.delegate = DefaultBinding.binding(converter);
-    }
+  public DateAsTimestampBinding() {
+    this.converter = Converters.identity(Timestamp.class);
+    this.delegate = DefaultBinding.binding(converter);
+  }
 
-    @Override
-    public final Converter<Timestamp, Timestamp> converter() {
-        return converter;
-    }
+  @Override
+  public final Converter<Timestamp, Timestamp> converter() {
+    return converter;
+  }
 
-    @Override
-    public final void sql(BindingSQLContext<Timestamp> ctx) throws SQLException {
+  @Override
+  public final void sql(BindingSQLContext<Timestamp> ctx) throws SQLException {
 
+    delegate.sql(ctx);
+  }
 
+  @Override
+  public final void register(BindingRegisterContext<Timestamp> ctx) throws SQLException {
+    delegate.register(ctx);
+  }
 
+  @Override
+  public final void set(BindingSetStatementContext<Timestamp> ctx) throws SQLException {
+    delegate.set(ctx);
+  }
 
+  @Override
+  public final void set(BindingSetSQLOutputContext<Timestamp> ctx) throws SQLException {
+    delegate.set(ctx);
+  }
 
+  @Override
+  public final void get(BindingGetResultSetContext<Timestamp> ctx) throws SQLException {
+    delegate.get(ctx);
+  }
 
+  @Override
+  public final void get(BindingGetStatementContext<Timestamp> ctx) throws SQLException {
+    delegate.get(ctx);
+  }
 
-
-
-
-
-
-        delegate.sql(ctx);
-    }
-
-    @Override
-    public final void register(BindingRegisterContext<Timestamp> ctx) throws SQLException {
-        delegate.register(ctx);
-    }
-
-    @Override
-    public final void set(BindingSetStatementContext<Timestamp> ctx) throws SQLException {
-        delegate.set(ctx);
-    }
-
-    @Override
-    public final void set(BindingSetSQLOutputContext<Timestamp> ctx) throws SQLException {
-        delegate.set(ctx);
-    }
-
-    @Override
-    public final void get(BindingGetResultSetContext<Timestamp> ctx) throws SQLException {
-        delegate.get(ctx);
-    }
-
-    @Override
-    public final void get(BindingGetStatementContext<Timestamp> ctx) throws SQLException {
-        delegate.get(ctx);
-    }
-
-    @Override
-    public final void get(BindingGetSQLInputContext<Timestamp> ctx) throws SQLException {
-        delegate.get(ctx);
-    }
+  @Override
+  public final void get(BindingGetSQLInputContext<Timestamp> ctx) throws SQLException {
+    delegate.get(ctx);
+  }
 }

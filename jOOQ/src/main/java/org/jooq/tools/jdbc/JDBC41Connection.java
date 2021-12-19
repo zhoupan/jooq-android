@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,44 +43,44 @@ import java.util.concurrent.Executor;
 
 /**
  * Add JDBC 4.1 API compliance to a JDBC 4.0 {@link Connection}.
- * <p>
- * Extend this type if you want to compile {@link Connection} implementations on
- * both JDBC 4.0 (JDK 6) and 4.1 (JDK 7).
+ *
+ * <p>Extend this type if you want to compile {@link Connection} implementations on both JDBC 4.0
+ * (JDK 6) and 4.1 (JDK 7).
  *
  * @author Lukas Eder
- * @deprecated - 3.15.0 - [#11618] - This type is no longer used by jOOQ and
- *             will be removed in the future.
+ * @deprecated - 3.15.0 - [#11618] - This type is no longer used by jOOQ and will be removed in the
+ *     future.
  */
 @Deprecated
 public abstract class JDBC41Connection {
 
-    // JDBC 4.1 compliance: @Override
-    @SuppressWarnings("unused")
-    public void setSchema(String s) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+  // JDBC 4.1 compliance: @Override
+  @SuppressWarnings("unused")
+  public void setSchema(String s) throws SQLException {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
 
-    // JDBC 4.1 compliance: @Override
-    @SuppressWarnings("unused")
-    public String getSchema() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+  // JDBC 4.1 compliance: @Override
+  @SuppressWarnings("unused")
+  public String getSchema() throws SQLException {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
 
-    // JDBC 4.1 compliance: @Override
-    @SuppressWarnings("unused")
-    public void abort(Executor executor) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+  // JDBC 4.1 compliance: @Override
+  @SuppressWarnings("unused")
+  public void abort(Executor executor) throws SQLException {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
 
-    // JDBC 4.1 compliance: @Override
-    @SuppressWarnings("unused")
-    public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+  // JDBC 4.1 compliance: @Override
+  @SuppressWarnings("unused")
+  public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
 
-    // JDBC 4.1 compliance: @Override
-    @SuppressWarnings("unused")
-    public int getNetworkTimeout() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+  // JDBC 4.1 compliance: @Override
+  @SuppressWarnings("unused")
+  public int getNetworkTimeout() throws SQLException {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
 }

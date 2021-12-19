@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,16 +44,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import org.jooq.meta.TableDefinition;
-import org.jooq.meta.extensions.AbstractInterpretingDatabase;
-import org.jooq.tools.Convert;
-import org.jooq.tools.JooqLogger;
-
 import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.DatabaseFactory;
@@ -61,110 +54,117 @@ import liquibase.database.jvm.JdbcConnection;
 import liquibase.resource.ClassLoaderResourceAccessor;
 import liquibase.resource.CompositeResourceAccessor;
 import liquibase.resource.FileSystemResourceAccessor;
+import org.jooq.meta.TableDefinition;
+import org.jooq.meta.extensions.AbstractInterpretingDatabase;
+import org.jooq.tools.Convert;
+import org.jooq.tools.JooqLogger;
 
 /**
  * The Liquibase database.
- * <p>
- * This meta data source parses a set of XML files that follow the Liquibase
- * migration DSL, runs them on an in-memory H2 database before reverse
- * engineering the outcome.
- * <p>
- * The XML scripts are located in the <code>scripts</code> scripts property
- * available from {@link #getProperties()}.
+ *
+ * <p>This meta data source parses a set of XML files that follow the Liquibase migration DSL, runs
+ * them on an in-memory H2 database before reverse engineering the outcome.
+ *
+ * <p>The XML scripts are located in the <code>scripts</code> scripts property available from {@link
+ * #getProperties()}.
  *
  * @author Lukas Eder
  */
 public class LiquibaseDatabase extends AbstractInterpretingDatabase {
 
-    private static final JooqLogger          log = JooqLogger.getLogger(LiquibaseDatabase.class);
-    private static final Map<String, Method> SETTERS;
-    private boolean                          includeLiquibaseTables;
-    private String                           databaseChangeLogTableName;
-    private String                           databaseChangeLogLockTableName;
+  private static final JooqLogger log = JooqLogger.getLogger(LiquibaseDatabase.class);
+  private static final Map<String, Method> SETTERS;
+  private boolean includeLiquibaseTables;
+  private String databaseChangeLogTableName;
+  private String databaseChangeLogLockTableName;
 
-    static {
-        SETTERS = new HashMap<>();
+  static {
+    SETTERS = new HashMap<>();
 
-        try {
-            for (Method method : Database.class.getMethods()) {
-                String name = method.getName();
+    try {
+      for (Method method : Database.class.getMethods()) {
+        String name = method.getName();
 
-                if (name.startsWith("set") && method.getParameterTypes().length == 1)
-                    SETTERS.put(name, method);
-            }
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        if (name.startsWith("set") && method.getParameterTypes().length == 1)
+          SETTERS.put(name, method);
+      }
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  @Override
+  protected void export() throws Exception {
+    String scripts = getProperties().getProperty("scripts");
+    includeLiquibaseTables =
+        Boolean.parseBoolean(getProperties().getProperty("includeLiquibaseTables", "false"));
+
+    if (isBlank(scripts)) {
+      scripts = "";
+      log.warn(
+          "No scripts defined",
+          "It is recommended that you provide an explicit script directory to scan");
     }
 
-    @Override
-    protected void export() throws Exception {
-        String scripts = getProperties().getProperty("scripts");
-        includeLiquibaseTables = Boolean.parseBoolean(getProperties().getProperty("includeLiquibaseTables", "false"));
+    Database database =
+        DatabaseFactory.getInstance()
+            .findCorrectDatabaseImplementation(new JdbcConnection(connection()));
+    String contexts = "";
 
-        if (isBlank(scripts)) {
-            scripts = "";
-            log.warn("No scripts defined", "It is recommended that you provide an explicit script directory to scan");
+    // [#9514] Forward all database.xyz properties to matching Liquibase
+    //         Database.setXyz() configuration setter calls
+    for (Entry<Object, Object> entry : getProperties().entrySet()) {
+      String key = "" + entry.getKey();
+
+      if (key.startsWith("database.")) {
+        String property = key.substring("database.".length());
+        Method setter =
+            SETTERS.get("set" + Character.toUpperCase(property.charAt(0)) + property.substring(1));
+
+        try {
+          if (setter != null)
+            setter.invoke(
+                database, Convert.convert(entry.getValue(), setter.getParameterTypes()[0]));
+        } catch (Exception e) {
+          log.warn("Configuration error", e.getMessage(), e);
         }
+      }
 
-        Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(connection()));
-        String contexts = "";
+      // [#9872] Some changeLogParameters can also be passed along
+      else if (key.startsWith("changeLogParameters.")) {
+        String property = key.substring("changeLogParameters.".length());
 
-        // [#9514] Forward all database.xyz properties to matching Liquibase
-        //         Database.setXyz() configuration setter calls
-        for (Entry<Object, Object> entry : getProperties().entrySet()) {
-            String key = "" + entry.getKey();
+        if ("contexts".equals(property)) contexts = "" + entry.getValue();
+      }
+    }
 
-            if (key.startsWith("database.")) {
-                String property = key.substring("database.".length());
-                Method setter = SETTERS.get("set" + Character.toUpperCase(property.charAt(0)) + property.substring(1));
+    // Retrieve changeLog table names as they might be overridden by configuration setters
+    databaseChangeLogTableName = database.getDatabaseChangeLogTableName();
+    databaseChangeLogLockTableName = database.getDatabaseChangeLogLockTableName();
 
-                try {
-                    if (setter != null)
-                        setter.invoke(database, Convert.convert(entry.getValue(), setter.getParameterTypes()[0]));
-                }
-                catch (Exception e) {
-                    log.warn("Configuration error", e.getMessage(), e);
-                }
-            }
-
-            // [#9872] Some changeLogParameters can also be passed along
-            else if (key.startsWith("changeLogParameters.")) {
-                String property = key.substring("changeLogParameters.".length());
-
-                if ("contexts".equals(property))
-                    contexts = "" + entry.getValue();
-            }
-        }
-
-        // Retrieve changeLog table names as they might be overridden by configuration setters
-        databaseChangeLogTableName = database.getDatabaseChangeLogTableName();
-        databaseChangeLogLockTableName = database.getDatabaseChangeLogLockTableName();
-
-        // [#9866] Allow for loading included files from the classpath or using absolute paths.
-        Liquibase liquibase = new Liquibase(
+    // [#9866] Allow for loading included files from the classpath or using absolute paths.
+    Liquibase liquibase =
+        new Liquibase(
             scripts,
             new CompositeResourceAccessor(
                 new FileSystemResourceAccessor(),
                 new ClassLoaderResourceAccessor(),
-                new ClassLoaderResourceAccessor(Thread.currentThread().getContextClassLoader())
-            ),
-            database
-        );
+                new ClassLoaderResourceAccessor(Thread.currentThread().getContextClassLoader())),
+            database);
 
-        liquibase.update(contexts);
+    liquibase.update(contexts);
+  }
+
+  @Override
+  protected List<TableDefinition> getTables0() throws SQLException {
+    List<TableDefinition> result = new ArrayList<>(super.getTables0());
+
+    if (!includeLiquibaseTables) {
+      List<String> liquibaseTables =
+          Arrays.asList(databaseChangeLogTableName, databaseChangeLogLockTableName);
+      result.removeIf(t -> liquibaseTables.contains(t.getName()));
     }
 
-    @Override
-    protected List<TableDefinition> getTables0() throws SQLException {
-        List<TableDefinition> result = new ArrayList<>(super.getTables0());
-
-        if (!includeLiquibaseTables) {
-            List<String> liquibaseTables = Arrays.asList(databaseChangeLogTableName, databaseChangeLogLockTableName);
-            result.removeIf(t -> liquibaseTables.contains(t.getName()));
-        }
-
-        return result;
-    }
+    return result;
+  }
 }

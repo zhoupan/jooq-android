@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,7 +41,6 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableList;
 
 import java.util.List;
-
 import org.jooq.Binding;
 import org.jooq.Catalog;
 import org.jooq.Check;
@@ -53,64 +52,62 @@ import org.jooq.Domain;
 import org.jooq.Name;
 import org.jooq.Schema;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 class DomainImpl<T> extends AbstractNamed implements Domain<T> {
-    private final Schema      schema;
-    private final Check<?>[]  checks;
-    private final DataType<T> type;
+  private final Schema schema;
+  private final Check<?>[] checks;
+  private final DataType<T> type;
 
-    DomainImpl(Schema schema, Name name, DataType<T> type, Check<?>... checks) {
-        super(qualify(schema, name), null);
+  DomainImpl(Schema schema, Name name, DataType<T> type, Check<?>... checks) {
+    super(qualify(schema, name), null);
 
-        this.schema = schema;
-        this.checks = checks;
-        this.type = new DomainDataType<>(this, type);
-    }
+    this.schema = schema;
+    this.checks = checks;
+    this.type = new DomainDataType<>(this, type);
+  }
 
-    @Override
-    public final Catalog getCatalog() {
-        return getSchema() == null ? null : getSchema().getCatalog();
-    }
+  @Override
+  public final Catalog getCatalog() {
+    return getSchema() == null ? null : getSchema().getCatalog();
+  }
 
-    @Override
-    public final Schema getSchema() {
-        return schema;
-    }
+  @Override
+  public final Schema getSchema() {
+    return schema;
+  }
 
-    @Override
-    public final List<Check<?>> getChecks() {
-        return unmodifiableList(asList(checks));
-    }
+  @Override
+  public final List<Check<?>> getChecks() {
+    return unmodifiableList(asList(checks));
+  }
 
-    @Override
-    public final Converter<?, T> getConverter() {
-        return type.getConverter();
-    }
+  @Override
+  public final Converter<?, T> getConverter() {
+    return type.getConverter();
+  }
 
-    @Override
-    public final Binding<?, T> getBinding() {
-        return type.getBinding();
-    }
+  @Override
+  public final Binding<?, T> getBinding() {
+    return type.getBinding();
+  }
 
-    @Override
-    public final Class<T> getType() {
-        return type.getType();
-    }
+  @Override
+  public final Class<T> getType() {
+    return type.getType();
+  }
 
-    @Override
-    public final DataType<T> getDataType() {
-        return type;
-    }
+  @Override
+  public final DataType<T> getDataType() {
+    return type;
+  }
 
-    @Override
-    public final DataType<T> getDataType(Configuration configuration) {
-        return type.getDataType(configuration);
-    }
+  @Override
+  public final DataType<T> getDataType(Configuration configuration) {
+    return type.getDataType(configuration);
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        ctx.visit(getUnqualifiedName());
-    }
+  @Override
+  public final void accept(Context<?> ctx) {
+    ctx.visit(getUnqualifiedName());
+  }
 }

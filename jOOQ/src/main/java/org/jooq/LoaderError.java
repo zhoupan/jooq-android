@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,42 +38,34 @@
 package org.jooq;
 
 import java.io.IOException;
-
 import org.jooq.exception.DataAccessException;
 
 /**
- * An error that occurred during loading. Errors are only handled when they were
- * caused by {@link DataAccessException}'s. {@link IOException}'s and other
- * problems will abort loading fatally.
+ * An error that occurred during loading. Errors are only handled when they were caused by {@link
+ * DataAccessException}'s. {@link IOException}'s and other problems will abort loading fatally.
  *
  * @author Lukas Eder
  */
 public interface LoaderError {
 
-    /**
-     * The underlying {@link DataAccessException} that caused the error.
-     */
-    DataAccessException exception();
+  /** The underlying {@link DataAccessException} that caused the error. */
+  DataAccessException exception();
 
-    /**
-     * The processed row index starting with <code>0</code> that caused the
-     * error.
-     * <p>
-     * If queries were executed in batch mode, this will be the row index of the
-     * last row added to the batch.
-     */
-    int rowIndex();
+  /**
+   * The processed row index starting with <code>0</code> that caused the error.
+   *
+   * <p>If queries were executed in batch mode, this will be the row index of the last row added to
+   * the batch.
+   */
+  int rowIndex();
 
-    /**
-     * The row data that caused the error.
-     * <p>
-     * If queries were executed in batch mode, this will be the last row added
-     * to the batch.
-     */
-    String[] row();
+  /**
+   * The row data that caused the error.
+   *
+   * <p>If queries were executed in batch mode, this will be the last row added to the batch.
+   */
+  String[] row();
 
-    /**
-     * The query whose execution failed.
-     */
-    Query query();
+  /** The query whose execution failed. */
+  Query query();
 }

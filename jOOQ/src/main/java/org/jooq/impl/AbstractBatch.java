@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,40 +42,37 @@ import static org.jooq.impl.Tools.blocking;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
-
 import org.jooq.Batch;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
-
 import org.reactivestreams.Subscriber;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 abstract class AbstractBatch implements Batch {
 
-    final Configuration configuration;
-    final DSLContext    dsl;
+  final Configuration configuration;
+  final DSLContext dsl;
 
-    AbstractBatch(Configuration configuration) {
-        this.configuration = configuration;
-        this.dsl = DSL.using(configuration);
-    }
+  AbstractBatch(Configuration configuration) {
+    this.configuration = configuration;
+    this.dsl = DSL.using(configuration);
+  }
 
-    @Override
-    public void subscribe(Subscriber<? super Integer> s) {
+  @Override
+  public void subscribe(Subscriber<? super Integer> s) {
 
-        // [#11700] TODO: Implement this
-        throw new UnsupportedOperationException();
-    }
+    // [#11700] TODO: Implement this
+    throw new UnsupportedOperationException();
+  }
 
-    @Override
-    public final CompletionStage<int[]> executeAsync() {
-        return executeAsync(configuration.executorProvider().provide());
-    }
+  @Override
+  public final CompletionStage<int[]> executeAsync() {
+    return executeAsync(configuration.executorProvider().provide());
+  }
 
-    @Override
-    public final CompletionStage<int[]> executeAsync(Executor executor) {
-        return ExecutorProviderCompletionStage.of(CompletableFuture.supplyAsync(blocking(this::execute), executor), () -> executor);
-    }
+  @Override
+  public final CompletionStage<int[]> executeAsync(Executor executor) {
+    return ExecutorProviderCompletionStage.of(
+        CompletableFuture.supplyAsync(blocking(this::execute), executor), () -> executor);
+  }
 }

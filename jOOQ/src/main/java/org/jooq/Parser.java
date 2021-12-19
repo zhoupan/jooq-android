@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,10 +37,9 @@
  */
 package org.jooq;
 
-import org.jooq.impl.ParserException;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jooq.impl.ParserException;
 
 /**
  * A SQL parser.
@@ -49,262 +48,233 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface Parser {
 
-    /**
-     * Parse a SQL string to a set of queries.
-     *
-     * @param sql The SQL string
-     * @throws ParserException If the SQL string could not be parsed.
-     */
-    @NotNull
-    @Support
-    @PlainSQL
-    Queries parse(String sql) throws ParserException;
+  /**
+   * Parse a SQL string to a set of queries.
+   *
+   * @param sql The SQL string
+   * @throws ParserException If the SQL string could not be parsed.
+   */
+  @NotNull
+  @Support
+  @PlainSQL
+  Queries parse(String sql) throws ParserException;
 
-    /**
-     * Parse a SQL string with bind variables to a set of queries.
-     *
-     * @param sql The SQL string
-     * @param bindings The bind variables
-     * @throws ParserException If the SQL string could not be parsed.
-     */
-    @NotNull
-    @Support
-    @PlainSQL
-    Queries parse(String sql, Object... bindings) throws ParserException;
+  /**
+   * Parse a SQL string with bind variables to a set of queries.
+   *
+   * @param sql The SQL string
+   * @param bindings The bind variables
+   * @throws ParserException If the SQL string could not be parsed.
+   */
+  @NotNull
+  @Support
+  @PlainSQL
+  Queries parse(String sql, Object... bindings) throws ParserException;
 
-    /**
-     * Parse a SQL string to a query.
-     *
-     * @param sql The SQL string
-     * @throws ParserException If the SQL string could not be parsed.
-     */
-    @Nullable
-    @Support
-    @PlainSQL
-    Query parseQuery(String sql) throws ParserException;
+  /**
+   * Parse a SQL string to a query.
+   *
+   * @param sql The SQL string
+   * @throws ParserException If the SQL string could not be parsed.
+   */
+  @Nullable
+  @Support
+  @PlainSQL
+  Query parseQuery(String sql) throws ParserException;
 
-    /**
-     * Parse a SQL string with bind variables to a query.
-     *
-     * @param sql The SQL string
-     * @param bindings The bind variables
-     * @throws ParserException If the SQL string could not be parsed.
-     */
-    @Nullable
-    @Support
-    @PlainSQL
-    Query parseQuery(String sql, Object... bindings) throws ParserException;
+  /**
+   * Parse a SQL string with bind variables to a query.
+   *
+   * @param sql The SQL string
+   * @param bindings The bind variables
+   * @throws ParserException If the SQL string could not be parsed.
+   */
+  @Nullable
+  @Support
+  @PlainSQL
+  Query parseQuery(String sql, Object... bindings) throws ParserException;
 
-    /**
-     * Parse a SQL string to a procedural statement.
-     *
-     * @param sql The SQL string
-     * @throws ParserException If the SQL string could not be parsed.
-     */
-    @Nullable
-    @Support
-    @PlainSQL
-    Statement parseStatement(String sql) throws ParserException;
+  /**
+   * Parse a SQL string to a procedural statement.
+   *
+   * @param sql The SQL string
+   * @throws ParserException If the SQL string could not be parsed.
+   */
+  @Nullable
+  @Support
+  @PlainSQL
+  Statement parseStatement(String sql) throws ParserException;
 
-    /**
-     * Parse a SQL string with bind variables to a procedural statement.
-     *
-     * @param sql The SQL string
-     * @param bindings The bind variables
-     * @throws ParserException If the SQL string could not be parsed.
-     */
-    @Nullable
-    @Support
-    @PlainSQL
-    Statement parseStatement(String sql, Object... bindings) throws ParserException;
+  /**
+   * Parse a SQL string with bind variables to a procedural statement.
+   *
+   * @param sql The SQL string
+   * @param bindings The bind variables
+   * @throws ParserException If the SQL string could not be parsed.
+   */
+  @Nullable
+  @Support
+  @PlainSQL
+  Statement parseStatement(String sql, Object... bindings) throws ParserException;
 
+  /**
+   * Parse a SQL string to a result query.
+   *
+   * @param sql The SQL string
+   * @throws ParserException If the SQL string could not be parsed.
+   */
+  @Nullable
+  @Support
+  @PlainSQL
+  ResultQuery<?> parseResultQuery(String sql) throws ParserException;
 
+  /**
+   * Parse a SQL string with bind variables to a result query.
+   *
+   * @param sql The SQL string
+   * @param bindings The bind variables
+   * @throws ParserException If the SQL string could not be parsed.
+   */
+  @Nullable
+  @Support
+  @PlainSQL
+  ResultQuery<?> parseResultQuery(String sql, Object... bindings) throws ParserException;
 
+  /**
+   * Parse a SQL string to a select statement.
+   *
+   * @param sql The SQL string
+   * @throws ParserException If the SQL string could not be parsed.
+   */
+  @Nullable
+  @Support
+  @PlainSQL
+  Select<?> parseSelect(String sql) throws ParserException;
 
+  /**
+   * Parse a SQL string to a select statement.
+   *
+   * @param sql The SQL string
+   * @param bindings The bind variables
+   * @throws ParserException If the SQL string could not be parsed.
+   */
+  @Nullable
+  @Support
+  @PlainSQL
+  Select<?> parseSelect(String sql, Object... bindings) throws ParserException;
 
+  /**
+   * Parse a SQL string to a table.
+   *
+   * @param sql The SQL string
+   * @throws ParserException If the SQL string could not be parsed.
+   */
+  @NotNull
+  @Support
+  @PlainSQL
+  Table<?> parseTable(String sql) throws ParserException;
 
+  /**
+   * Parse a SQL string with bind variables to a table.
+   *
+   * @param sql The SQL string
+   * @param bindings The bind variables
+   * @throws ParserException If the SQL string could not be parsed.
+   */
+  @NotNull
+  @Support
+  @PlainSQL
+  Table<?> parseTable(String sql, Object... bindings) throws ParserException;
 
+  /**
+   * Parse a SQL string to a field.
+   *
+   * @param sql The SQL string
+   * @throws ParserException If the SQL string could not be parsed.
+   */
+  @NotNull
+  @Support
+  @PlainSQL
+  Field<?> parseField(String sql) throws ParserException;
 
+  /**
+   * Parse a SQL string with bind variables to a field.
+   *
+   * @param sql The SQL string
+   * @param bindings The bind variables
+   * @throws ParserException If the SQL string could not be parsed.
+   */
+  @NotNull
+  @Support
+  @PlainSQL
+  Field<?> parseField(String sql, Object... bindings) throws ParserException;
 
+  /**
+   * Parse a SQL string to a row.
+   *
+   * @param sql The SQL string
+   * @throws ParserException If the SQL string could not be parsed.
+   */
+  @NotNull
+  @Support
+  @PlainSQL
+  Row parseRow(String sql) throws ParserException;
 
+  /**
+   * Parse a SQL string with bind variables to a row.
+   *
+   * @param sql The SQL string
+   * @param bindings The bind variables
+   * @throws ParserException If the SQL string could not be parsed.
+   */
+  @NotNull
+  @Support
+  @PlainSQL
+  Row parseRow(String sql, Object... bindings) throws ParserException;
 
+  /**
+   * Parse a SQL string to a condition.
+   *
+   * @param sql The SQL string
+   * @throws ParserException If the SQL string could not be parsed.
+   */
+  @NotNull
+  @Support
+  @PlainSQL
+  Condition parseCondition(String sql) throws ParserException;
 
+  /**
+   * Parse a SQL string with bind variables to a condition.
+   *
+   * @param sql The SQL string
+   * @param bindings The bind variables
+   * @throws ParserException If the SQL string could not be parsed.
+   */
+  @NotNull
+  @Support
+  @PlainSQL
+  Condition parseCondition(String sql, Object... bindings) throws ParserException;
 
+  /**
+   * Parse a SQL string to a name.
+   *
+   * @param sql The SQL string
+   * @throws ParserException If the SQL string could not be parsed.
+   */
+  @NotNull
+  @Support
+  @PlainSQL
+  Name parseName(String sql) throws ParserException;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    /**
-     * Parse a SQL string to a result query.
-     *
-     * @param sql The SQL string
-     * @throws ParserException If the SQL string could not be parsed.
-     */
-    @Nullable
-    @Support
-    @PlainSQL
-    ResultQuery<?> parseResultQuery(String sql) throws ParserException;
-
-    /**
-     * Parse a SQL string with bind variables to a result query.
-     *
-     * @param sql The SQL string
-     * @param bindings The bind variables
-     * @throws ParserException If the SQL string could not be parsed.
-     */
-    @Nullable
-    @Support
-    @PlainSQL
-    ResultQuery<?> parseResultQuery(String sql, Object... bindings) throws ParserException;
-
-    /**
-     * Parse a SQL string to a select statement.
-     *
-     * @param sql The SQL string
-     * @throws ParserException If the SQL string could not be parsed.
-     */
-    @Nullable
-    @Support
-    @PlainSQL
-    Select<?> parseSelect(String sql) throws ParserException;
-
-    /**
-     * Parse a SQL string to a select statement.
-     *
-     * @param sql The SQL string
-     * @param bindings The bind variables
-     * @throws ParserException If the SQL string could not be parsed.
-     */
-    @Nullable
-    @Support
-    @PlainSQL
-    Select<?> parseSelect(String sql, Object... bindings) throws ParserException;
-
-    /**
-     * Parse a SQL string to a table.
-     *
-     * @param sql The SQL string
-     * @throws ParserException If the SQL string could not be parsed.
-     */
-    @NotNull
-    @Support
-    @PlainSQL
-    Table<?> parseTable(String sql) throws ParserException;
-
-    /**
-     * Parse a SQL string with bind variables to a table.
-     *
-     * @param sql The SQL string
-     * @param bindings The bind variables
-     * @throws ParserException If the SQL string could not be parsed.
-     */
-    @NotNull
-    @Support
-    @PlainSQL
-    Table<?> parseTable(String sql, Object... bindings) throws ParserException;
-
-    /**
-     * Parse a SQL string to a field.
-     *
-     * @param sql The SQL string
-     * @throws ParserException If the SQL string could not be parsed.
-     */
-    @NotNull
-    @Support
-    @PlainSQL
-    Field<?> parseField(String sql) throws ParserException;
-
-    /**
-     * Parse a SQL string with bind variables to a field.
-     *
-     * @param sql The SQL string
-     * @param bindings The bind variables
-     * @throws ParserException If the SQL string could not be parsed.
-     */
-    @NotNull
-    @Support
-    @PlainSQL
-    Field<?> parseField(String sql, Object... bindings) throws ParserException;
-
-    /**
-     * Parse a SQL string to a row.
-     *
-     * @param sql The SQL string
-     * @throws ParserException If the SQL string could not be parsed.
-     */
-    @NotNull
-    @Support
-    @PlainSQL
-    Row parseRow(String sql) throws ParserException;
-
-    /**
-     * Parse a SQL string with bind variables to a row.
-     *
-     * @param sql The SQL string
-     * @param bindings The bind variables
-     * @throws ParserException If the SQL string could not be parsed.
-     */
-    @NotNull
-    @Support
-    @PlainSQL
-    Row parseRow(String sql, Object... bindings) throws ParserException;
-
-    /**
-     * Parse a SQL string to a condition.
-     *
-     * @param sql The SQL string
-     * @throws ParserException If the SQL string could not be parsed.
-     */
-    @NotNull
-    @Support
-    @PlainSQL
-    Condition parseCondition(String sql) throws ParserException;
-
-    /**
-     * Parse a SQL string with bind variables to a condition.
-     *
-     * @param sql The SQL string
-     * @param bindings The bind variables
-     * @throws ParserException If the SQL string could not be parsed.
-     */
-    @NotNull
-    @Support
-    @PlainSQL
-    Condition parseCondition(String sql, Object... bindings) throws ParserException;
-
-    /**
-     * Parse a SQL string to a name.
-     *
-     * @param sql The SQL string
-     * @throws ParserException If the SQL string could not be parsed.
-     */
-    @NotNull
-    @Support
-    @PlainSQL
-    Name parseName(String sql) throws ParserException;
-
-    /**
-     * Parse a SQL string with bind variables to a name.
-     *
-     * @param sql The SQL string
-     * @param bindings The bind variables
-     * @throws ParserException If the SQL string could not be parsed.
-     */
-    @NotNull
-    @Support
-    @PlainSQL
-    Name parseName(String sql, Object... bindings) throws ParserException;
+  /**
+   * Parse a SQL string with bind variables to a name.
+   *
+   * @param sql The SQL string
+   * @param bindings The bind variables
+   * @throws ParserException If the SQL string could not be parsed.
+   */
+  @NotNull
+  @Support
+  @PlainSQL
+  Name parseName(String sql, Object... bindings) throws ParserException;
 }

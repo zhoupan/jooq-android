@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,13 +39,33 @@ package org.jooq.impl;
 
 import org.jooq.RowId;
 
-/**
- * @author Lukas Eder
- */
-final /* record */ class RowIdImpl implements RowId { private final Object value; public RowIdImpl(Object value) { this.value = value; } public Object value() { return value; } @Override public boolean equals(Object o) { if (!(o instanceof RowIdImpl)) return false; RowIdImpl other = (RowIdImpl) o; if (!java.util.Objects.equals(this.value, other.value)) return false; return true; } @Override public int hashCode() { return java.util.Objects.hash(this.value); }
+/** @author Lukas Eder */
+final /* record */ class RowIdImpl implements RowId {
+  private final Object value;
 
-    @Override
-    public String toString() {
-        return "" + value;
-    }
+  public RowIdImpl(Object value) {
+    this.value = value;
+  }
+
+  public Object value() {
+    return value;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (!(o instanceof RowIdImpl)) return false;
+    RowIdImpl other = (RowIdImpl) o;
+    if (!java.util.Objects.equals(this.value, other.value)) return false;
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    return java.util.Objects.hash(this.value);
+  }
+
+  @Override
+  public String toString() {
+    return "" + value;
+  }
 }

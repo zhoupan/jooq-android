@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,7 +39,6 @@ package org.jooq;
 
 import org.jetbrains.annotations.NotNull;
 
-
 /**
  * The final step in creating a case statement of the type <code><pre>
  * CASE WHEN x &lt; 1  THEN 'one'
@@ -54,135 +53,135 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface CaseConditionStep<T> extends Field<T> {
 
-    /**
-     * Compare a condition to the already constructed case statement, return
-     * result if the condition holds true
-     *
-     * @param condition The condition to add to the case statement
-     * @param result The result value if the condition holds true
-     * @return An intermediary step for case statement construction
-     */
-    @NotNull
-    @Support
-    CaseConditionStep<T> when(Condition condition, T result);
+  /**
+   * Compare a condition to the already constructed case statement, return result if the condition
+   * holds true
+   *
+   * @param condition The condition to add to the case statement
+   * @param result The result value if the condition holds true
+   * @return An intermediary step for case statement construction
+   */
+  @NotNull
+  @Support
+  CaseConditionStep<T> when(Condition condition, T result);
 
-    /**
-     * Compare a condition to the already constructed case statement, return
-     * result if the condition holds true
-     *
-     * @param condition The condition to add to the case statement
-     * @param result The result value if the condition holds true
-     * @return An intermediary step for case statement construction
-     */
-    @NotNull
-    @Support
-    CaseConditionStep<T> when(Condition condition, Field<T> result);
+  /**
+   * Compare a condition to the already constructed case statement, return result if the condition
+   * holds true
+   *
+   * @param condition The condition to add to the case statement
+   * @param result The result value if the condition holds true
+   * @return An intermediary step for case statement construction
+   */
+  @NotNull
+  @Support
+  CaseConditionStep<T> when(Condition condition, Field<T> result);
 
-    /**
-     * Compare a condition to the already constructed case statement, return
-     * result if the condition holds true
-     *
-     * @param condition The condition to add to the case statement
-     * @param result The result value if the condition holds true
-     * @return An intermediary step for case statement construction
-     */
-    @NotNull
-    @Support
-    CaseConditionStep<T> when(Condition condition, Select<? extends Record1<T>> result);
+  /**
+   * Compare a condition to the already constructed case statement, return result if the condition
+   * holds true
+   *
+   * @param condition The condition to add to the case statement
+   * @param result The result value if the condition holds true
+   * @return An intermediary step for case statement construction
+   */
+  @NotNull
+  @Support
+  CaseConditionStep<T> when(Condition condition, Select<? extends Record1<T>> result);
 
-    /**
-     * Compare a condition to the already constructed case statement, return
-     * result if the condition holds true
-     *
-     * @param condition The condition to add to the case statement
-     * @param result The result value if the condition holds true
-     * @return An intermediary step for case statement construction
-     */
-    @NotNull
-    @Support
-    CaseConditionStep<T> when(Field<Boolean> condition, T result);
+  /**
+   * Compare a condition to the already constructed case statement, return result if the condition
+   * holds true
+   *
+   * @param condition The condition to add to the case statement
+   * @param result The result value if the condition holds true
+   * @return An intermediary step for case statement construction
+   */
+  @NotNull
+  @Support
+  CaseConditionStep<T> when(Field<Boolean> condition, T result);
 
-    /**
-     * Compare a condition to the already constructed case statement, return
-     * result if the condition holds true
-     *
-     * @param condition The condition to add to the case statement
-     * @param result The result value if the condition holds true
-     * @return An intermediary step for case statement construction
-     */
-    @NotNull
-    @Support
-    CaseConditionStep<T> when(Field<Boolean> condition, Field<T> result);
+  /**
+   * Compare a condition to the already constructed case statement, return result if the condition
+   * holds true
+   *
+   * @param condition The condition to add to the case statement
+   * @param result The result value if the condition holds true
+   * @return An intermediary step for case statement construction
+   */
+  @NotNull
+  @Support
+  CaseConditionStep<T> when(Field<Boolean> condition, Field<T> result);
 
-    /**
-     * Compare a condition to the already constructed case statement, return
-     * result if the condition holds true
-     *
-     * @param condition The condition to add to the case statement
-     * @param result The result value if the condition holds true
-     * @return An intermediary step for case statement construction
-     */
-    @NotNull
-    @Support
-    CaseConditionStep<T> when(Field<Boolean> condition, Select<? extends Record1<T>> result);
+  /**
+   * Compare a condition to the already constructed case statement, return result if the condition
+   * holds true
+   *
+   * @param condition The condition to add to the case statement
+   * @param result The result value if the condition holds true
+   * @return An intermediary step for case statement construction
+   */
+  @NotNull
+  @Support
+  CaseConditionStep<T> when(Field<Boolean> condition, Select<? extends Record1<T>> result);
 
-    /**
-     * Add an else clause to the already constructed case statement
-     *
-     * @param result The result value if no other value matches the case
-     * @return The resulting field from case statement construction
-     */
-    @NotNull
-    @Support
-    Field<T> otherwise(T result);
+  /**
+   * Add an else clause to the already constructed case statement
+   *
+   * @param result The result value if no other value matches the case
+   * @return The resulting field from case statement construction
+   */
+  @NotNull
+  @Support
+  Field<T> otherwise(T result);
 
-    /**
-     * Add an else clause to the already constructed case statement
-     *
-     * @param result The result value if no other value matches the case
-     * @return The resulting field from case statement construction
-     */
-    @NotNull
-    @Support
-    Field<T> otherwise(Field<T> result);
+  /**
+   * Add an else clause to the already constructed case statement
+   *
+   * @param result The result value if no other value matches the case
+   * @return The resulting field from case statement construction
+   */
+  @NotNull
+  @Support
+  Field<T> otherwise(Field<T> result);
 
-    /**
-     * Add an else clause to the already constructed case statement
-     *
-     * @param result The result value if no other value matches the case
-     * @return The resulting field from case statement construction
-     */
-    @NotNull
-    @Support
-    Field<T> otherwise(Select<? extends Record1<T>> result);
+  /**
+   * Add an else clause to the already constructed case statement
+   *
+   * @param result The result value if no other value matches the case
+   * @return The resulting field from case statement construction
+   */
+  @NotNull
+  @Support
+  Field<T> otherwise(Select<? extends Record1<T>> result);
 
-    /**
-     * Add an else clause to the already constructed case statement
-     *
-     * @param result The result value if no other value matches the case
-     * @return The resulting field from case statement construction
-     */
-    @NotNull
-    @Support
-    Field<T> else_(T result);
+  /**
+   * Add an else clause to the already constructed case statement
+   *
+   * @param result The result value if no other value matches the case
+   * @return The resulting field from case statement construction
+   */
+  @NotNull
+  @Support
+  Field<T> else_(T result);
 
-    /**
-     * Add an else clause to the already constructed case statement
-     *
-     * @param result The result value if no other value matches the case
-     * @return The resulting field from case statement construction
-     */
-    @NotNull
-    @Support
-    Field<T> else_(Field<T> result);
+  /**
+   * Add an else clause to the already constructed case statement
+   *
+   * @param result The result value if no other value matches the case
+   * @return The resulting field from case statement construction
+   */
+  @NotNull
+  @Support
+  Field<T> else_(Field<T> result);
 
-    /**
-     * Add an else clause to the already constructed case statement
-     *
-     * @param result The result value if no other value matches the case
-     * @return The resulting field from case statement construction
-     */
-    @NotNull
-    @Support
-    Field<T> else_(Select<? extends Record1<T>> result);
+  /**
+   * Add an else clause to the already constructed case statement
+   *
+   * @param result The result value if no other value matches the case
+   * @return The resulting field from case statement construction
+   */
+  @NotNull
+  @Support
+  Field<T> else_(Select<? extends Record1<T>> result);
 }

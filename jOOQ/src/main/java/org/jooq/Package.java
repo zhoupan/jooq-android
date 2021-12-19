@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,14 +39,11 @@ package org.jooq;
 
 /**
  * A container for stored procedures and functions
- * <p>
- * This is only supported in the {@link SQLDialect#ORACLE} dialect.
- * <p>
- * Instances of this type cannot be created directly. They are available from
- * generated code.
+ *
+ * <p>This is only supported in the {@link SQLDialect#ORACLE} dialect.
+ *
+ * <p>Instances of this type cannot be created directly. They are available from generated code.
  *
  * @author Lukas Eder
  */
-public interface Package extends Qualified {
-
-}
+public interface Package extends Qualified {}

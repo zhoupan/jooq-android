@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,7 +39,6 @@ package org.jooq.impl;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-
 import org.jooq.ConnectionProvider;
 import org.jooq.tools.jdbc.DefaultPreparedStatement;
 
@@ -50,25 +49,25 @@ import org.jooq.tools.jdbc.DefaultPreparedStatement;
  */
 final class ProviderEnabledPreparedStatement extends DefaultPreparedStatement {
 
-    private final ProviderEnabledConnection connection;
+  private final ProviderEnabledConnection connection;
 
-    ProviderEnabledPreparedStatement(ProviderEnabledConnection connection, PreparedStatement statement) {
-        super(statement);
+  ProviderEnabledPreparedStatement(
+      ProviderEnabledConnection connection, PreparedStatement statement) {
+    super(statement);
 
-        this.connection = connection;
+    this.connection = connection;
+  }
+
+  // ------------------------------------------------------------------------
+  // XXX Closing the Statement
+  // ------------------------------------------------------------------------
+
+  @Override
+  public final void close() throws SQLException {
+    try {
+      getDelegate().close();
+    } finally {
+      connection.close();
     }
-
-    // ------------------------------------------------------------------------
-    // XXX Closing the Statement
-    // ------------------------------------------------------------------------
-
-    @Override
-    public final void close() throws SQLException {
-        try {
-            getDelegate().close();
-        }
-        finally {
-            connection.close();
-        }
-    }
+  }
 }

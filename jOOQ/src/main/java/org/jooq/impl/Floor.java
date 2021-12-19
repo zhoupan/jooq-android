@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,7 @@
  */
 package org.jooq.impl;
 
+import static org.jooq.SQLDialect.*;
 import static org.jooq.impl.DSL.*;
 import static org.jooq.impl.Internal.*;
 import static org.jooq.impl.Keywords.*;
@@ -46,88 +47,58 @@ import static org.jooq.impl.Tools.*;
 import static org.jooq.impl.Tools.BooleanDataKey.*;
 import static org.jooq.impl.Tools.DataExtendedKey.*;
 import static org.jooq.impl.Tools.DataKey.*;
-import static org.jooq.SQLDialect.*;
-
-import org.jooq.*;
-import org.jooq.Record;
-import org.jooq.conf.*;
-import org.jooq.impl.*;
-import org.jooq.tools.*;
 
 import java.util.*;
+import org.jooq.*;
+import org.jooq.conf.*;
+import org.jooq.tools.*;
 
+/** The <code>FLOOR</code> statement. */
+@SuppressWarnings({"rawtypes", "unchecked", "unused"})
+final class Floor<T extends Number> extends AbstractField<T> {
 
-/**
- * The <code>FLOOR</code> statement.
- */
-@SuppressWarnings({ "rawtypes", "unchecked", "unused" })
-final class Floor<T extends Number>
-extends
-    AbstractField<T>
-{
+  private final Field<T> value;
 
-    private final Field<T> value;
+  Floor(Field<T> value) {
+    super(N_FLOOR, allNotNull((DataType) dataType(INTEGER, value, false), value));
 
-    Floor(
-        Field<T> value
-    ) {
-        super(
-            N_FLOOR,
-            allNotNull((DataType) dataType(INTEGER, value, false), value)
-        );
+    this.value = nullSafeNotNull(value, INTEGER);
+  }
 
-        this.value = nullSafeNotNull(value, INTEGER);
-    }
+  // -------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // -------------------------------------------------------------------------
 
-    // -------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // -------------------------------------------------------------------------
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-
-            case SQLITE: {
-                // [#8275] Improved emulation for SQLite                    
-                ctx.sql('(').visit(value.cast(BIGINT)).sql(" - (").visit(value).sql(" < ").visit(value.cast(BIGINT)).sql("))");
-                break;
-            }
-
-            default:
-                ctx.visit(function(N_FLOOR, getDataType(), value));
-                break;
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case SQLITE:
+        {
+          // [#8275] Improved emulation for SQLite
+          ctx.sql('(')
+              .visit(value.cast(BIGINT))
+              .sql(" - (")
+              .visit(value)
+              .sql(" < ")
+              .visit(value.cast(BIGINT))
+              .sql("))");
+          break;
         }
+
+      default:
+        ctx.visit(function(N_FLOOR, getDataType(), value));
+        break;
     }
+  }
 
+  // -------------------------------------------------------------------------
+  // The Object API
+  // -------------------------------------------------------------------------
 
-
-
-
-
-
-
-
-
-
-
-    // -------------------------------------------------------------------------
-    // The Object API
-    // -------------------------------------------------------------------------
-
-    @Override
-    public boolean equals(Object that) {
-        if (that instanceof Floor) {
-            return
-                StringUtils.equals(value, ((Floor) that).value)
-            ;
-        }
-        else
-            return super.equals(that);
-    }
+  @Override
+  public boolean equals(Object that) {
+    if (that instanceof Floor) {
+      return StringUtils.equals(value, ((Floor) that).value);
+    } else return super.equals(that);
+  }
 }

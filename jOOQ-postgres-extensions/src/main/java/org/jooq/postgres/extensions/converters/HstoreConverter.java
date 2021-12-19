@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -50,22 +50,20 @@ import org.jooq.postgres.extensions.types.Hstore;
  */
 public class HstoreConverter extends AbstractConverter<Object, Hstore> {
 
-    /**
-     * Generated UID
-     */
-    private static final long serialVersionUID = -2852275331366617696L;
+  /** Generated UID */
+  private static final long serialVersionUID = -2852275331366617696L;
 
-    public HstoreConverter() {
-        super(Object.class, Hstore.class);
-    }
+  public HstoreConverter() {
+    super(Object.class, Hstore.class);
+  }
 
-    @Override
-    public Hstore from(Object t) {
-        return t == null ? null : hstore(org.postgresql.util.HStoreConverter.fromString("" + t));
-    }
+  @Override
+  public Hstore from(Object t) {
+    return t == null ? null : hstore(org.postgresql.util.HStoreConverter.fromString("" + t));
+  }
 
-    @Override
-    public Object to(Hstore u) {
-        return u == null ? null : org.postgresql.util.HStoreConverter.toString(u.data());
-    }
+  @Override
+  public Object to(Hstore u) {
+    return u == null ? null : org.postgresql.util.HStoreConverter.toString(u.data());
+  }
 }

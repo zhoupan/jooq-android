@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,10 +41,10 @@ import org.jooq.impl.DSL;
 
 /**
  * A privilege for use in <code>GRANT</code> and <code>REVOKE</code> statements.
- * <p>
- * <strong>Example:</strong>
- * <p>
- * <code><pre>
+ *
+ * <p><strong>Example:</strong>
+ *
+ * <p><code><pre>
  * // Assuming import static org.jooq.impl.DSL.*;
  *
  * using(configuration)
@@ -53,8 +53,8 @@ import org.jooq.impl.DSL;
  *    .to(user("MY_USER"))
  *    .execute();
  * </pre></code>
- * <p>
- * Instances can be created using {@link DSL#user(Name)} and overloads.
+ *
+ * <p>Instances can be created using {@link DSL#user(Name)} and overloads.
  *
  * @author Timur Shaidullin
  */

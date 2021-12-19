@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,30 +40,21 @@ package org.jooq;
 import java.sql.PreparedStatement;
 
 /**
- * A container type for {@link Binding#set(BindingSetStatementContext)}
- * arguments.
+ * A container type for {@link Binding#set(BindingSetStatementContext)} arguments.
  *
  * @author Lukas Eder
  */
 public interface BindingSetStatementContext<U> extends ResourceManagingScope {
 
-    /**
-     * The {@link PreparedStatement} to which a bind variable should be bound.
-     */
-    PreparedStatement statement();
+  /** The {@link PreparedStatement} to which a bind variable should be bound. */
+  PreparedStatement statement();
 
-    /**
-     * The bind variable index at which a bind variable should be bound.
-     */
-    int index();
+  /** The bind variable index at which a bind variable should be bound. */
+  int index();
 
-    /**
-     * The bind value that is being bound.
-     */
-    U value();
+  /** The bind value that is being bound. */
+  U value();
 
-    /**
-     * Create a new context from this one using a converter.
-     */
-    <T> BindingSetStatementContext<T> convert(Converter<? extends T, ? super U> converter);
+  /** Create a new context from this one using a converter. */
+  <T> BindingSetStatementContext<T> convert(Converter<? extends T, ? super U> converter);
 }

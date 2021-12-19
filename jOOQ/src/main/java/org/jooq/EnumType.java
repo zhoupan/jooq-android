@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,54 +40,48 @@ package org.jooq;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-
 /**
  * A SQL enum type. This can be any of the following:
+ *
  * <ul>
- * <li>In {@link SQLDialect#MARIADB}, this can be a column-scope enum type</li>
- * <li>In {@link SQLDialect#MYSQL}, this can be a column-scope enum type</li>
- * <li>In {@link SQLDialect#POSTGRES}, this can be a schema-scope enum type</li>
- * <li>In all other dialects, this can be an enum type as defined in the code
- * generation configuration [#968]</li>
+ *   <li>In {@link SQLDialect#MARIADB}, this can be a column-scope enum type
+ *   <li>In {@link SQLDialect#MYSQL}, this can be a column-scope enum type
+ *   <li>In {@link SQLDialect#POSTGRES}, this can be a schema-scope enum type
+ *   <li>In all other dialects, this can be an enum type as defined in the code generation
+ *       configuration [#968]
  * </ul>
- * <p>
- * Client code should not assume that the actual enum reference is a Java
- * {@link Enum}. In Scala, for instance, enums are not idiomatic, and jOOQ
- * implements them differently. In any case, this {@link EnumType} API is
- * implemented by generated database enums.
+ *
+ * <p>Client code should not assume that the actual enum reference is a Java {@link Enum}. In Scala,
+ * for instance, enums are not idiomatic, and jOOQ implements them differently. In any case, this
+ * {@link EnumType} API is implemented by generated database enums.
  *
  * @author Lukas Eder
  */
 public interface EnumType {
 
-    /**
-     * The literal as defined in the database
-     */
-    @NotNull
-    String getLiteral();
+  /** The literal as defined in the database */
+  @NotNull
+  String getLiteral();
 
-    /**
-     * The catalog of the enum type, if applicable. Otherwise, this returns
-     * <code>null</code>
-     */
-    @Nullable
-    default Catalog getCatalog() {
-        return null;
-    }
+  /** The catalog of the enum type, if applicable. Otherwise, this returns <code>null</code> */
+  @Nullable
+  default Catalog getCatalog() {
+    return null;
+  }
 
-    /**
-     * The schema of the enum type, if applicable (Postgres schema-scope enum
-     * type only). Otherwise, this returns <code>null</code>
-     */
-    @Nullable
-    default Schema getSchema() {
-        return null;
-    }
+  /**
+   * The schema of the enum type, if applicable (Postgres schema-scope enum type only). Otherwise,
+   * this returns <code>null</code>
+   */
+  @Nullable
+  default Schema getSchema() {
+    return null;
+  }
 
-    /**
-     * The type name as registered in the database, if applicable (Postgres
-     * schema-scope enum type only). Otherwise, this returns <code>null</code>
-     */
-    @Nullable
-    String getName();
+  /**
+   * The type name as registered in the database, if applicable (Postgres schema-scope enum type
+   * only). Otherwise, this returns <code>null</code>
+   */
+  @Nullable
+  String getName();
 }

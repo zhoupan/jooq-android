@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,7 @@
  */
 package org.jooq.impl;
 
+import static org.jooq.SQLDialect.*;
 import static org.jooq.impl.DSL.*;
 import static org.jooq.impl.Internal.*;
 import static org.jooq.impl.Keywords.*;
@@ -46,132 +47,111 @@ import static org.jooq.impl.Tools.*;
 import static org.jooq.impl.Tools.BooleanDataKey.*;
 import static org.jooq.impl.Tools.DataExtendedKey.*;
 import static org.jooq.impl.Tools.DataKey.*;
-import static org.jooq.SQLDialect.*;
-
-import org.jooq.*;
-import org.jooq.Record;
-import org.jooq.conf.*;
-import org.jooq.impl.*;
-import org.jooq.tools.*;
 
 import java.util.*;
+import org.jooq.*;
+import org.jooq.conf.*;
+import org.jooq.tools.*;
 
+/** The <code>DROP TABLE</code> statement. */
+@SuppressWarnings({"rawtypes", "unused"})
+final class DropTableImpl extends AbstractDDLQuery implements DropTableStep, DropTableFinalStep {
 
-/**
- * The <code>DROP TABLE</code> statement.
- */
-@SuppressWarnings({ "rawtypes", "unused" })
-final class DropTableImpl
-extends
-    AbstractDDLQuery
-implements
-    DropTableStep,
-    DropTableFinalStep
-{
+  private final Boolean temporary;
+  private final Table<?> table;
+  private final boolean dropTableIfExists;
+  private Cascade cascade;
 
-    private final Boolean  temporary;
-    private final Table<?> table;
-    private final boolean  dropTableIfExists;
-    private       Cascade  cascade;
+  DropTableImpl(
+      Configuration configuration, Boolean temporary, Table<?> table, boolean dropTableIfExists) {
+    this(configuration, temporary, table, dropTableIfExists, null);
+  }
 
-    DropTableImpl(
-        Configuration configuration,
-        Boolean temporary,
-        Table<?> table,
-        boolean dropTableIfExists
-    ) {
-        this(
-            configuration,
-            temporary,
-            table,
-            dropTableIfExists,
-            null
-        );
-    }
+  DropTableImpl(
+      Configuration configuration,
+      Boolean temporary,
+      Table<?> table,
+      boolean dropTableIfExists,
+      Cascade cascade) {
+    super(configuration);
 
-    DropTableImpl(
-        Configuration configuration,
-        Boolean temporary,
-        Table<?> table,
-        boolean dropTableIfExists,
-        Cascade cascade
-    ) {
-        super(configuration);
+    this.temporary = temporary;
+    this.table = table;
+    this.dropTableIfExists = dropTableIfExists;
+    this.cascade = cascade;
+  }
 
-        this.temporary = temporary;
-        this.table = table;
-        this.dropTableIfExists = dropTableIfExists;
-        this.cascade = cascade;
-    }
+  final Boolean $temporary() {
+    return temporary;
+  }
 
-    final Boolean  $temporary()         { return temporary; }
-    final Table<?> $table()             { return table; }
-    final boolean  $dropTableIfExists() { return dropTableIfExists; }
-    final Cascade  $cascade()           { return cascade; }
+  final Table<?> $table() {
+    return table;
+  }
 
-    // -------------------------------------------------------------------------
-    // XXX: DSL API
-    // -------------------------------------------------------------------------
+  final boolean $dropTableIfExists() {
+    return dropTableIfExists;
+  }
 
-    @Override
-    public final DropTableImpl cascade() {
-        this.cascade = Cascade.CASCADE;
-        return this;
-    }
+  final Cascade $cascade() {
+    return cascade;
+  }
 
-    @Override
-    public final DropTableImpl restrict() {
-        this.cascade = Cascade.RESTRICT;
-        return this;
-    }
+  // -------------------------------------------------------------------------
+  // XXX: DSL API
+  // -------------------------------------------------------------------------
 
-    // -------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // -------------------------------------------------------------------------
+  @Override
+  public final DropTableImpl cascade() {
+    this.cascade = Cascade.CASCADE;
+    return this;
+  }
 
+  @Override
+  public final DropTableImpl restrict() {
+    this.cascade = Cascade.RESTRICT;
+    return this;
+  }
 
+  // -------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // -------------------------------------------------------------------------
 
-    private static final Clause[]        CLAUSES              = { Clause.DROP_TABLE };
-    private static final Set<SQLDialect> NO_SUPPORT_IF_EXISTS = SQLDialect.supportedBy(DERBY, FIREBIRD);
-    private static final Set<SQLDialect> TEMPORARY_SEMANTIC   = SQLDialect.supportedBy(MARIADB, MYSQL);
+  private static final Clause[] CLAUSES = {Clause.DROP_TABLE};
+  private static final Set<SQLDialect> NO_SUPPORT_IF_EXISTS =
+      SQLDialect.supportedBy(DERBY, FIREBIRD);
+  private static final Set<SQLDialect> TEMPORARY_SEMANTIC = SQLDialect.supportedBy(MARIADB, MYSQL);
 
-    private final boolean supportsIfExists(Context<?> ctx) {
-        return !NO_SUPPORT_IF_EXISTS.contains(ctx.dialect());
-    }
+  private final boolean supportsIfExists(Context<?> ctx) {
+    return !NO_SUPPORT_IF_EXISTS.contains(ctx.dialect());
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        if (dropTableIfExists && !supportsIfExists(ctx))
-            tryCatch(ctx, DDLStatementType.DROP_TABLE, c -> accept0(c));
-        else
-            accept0(ctx);
-    }
+  @Override
+  public final void accept(Context<?> ctx) {
+    if (dropTableIfExists && !supportsIfExists(ctx))
+      tryCatch(ctx, DDLStatementType.DROP_TABLE, c -> accept0(c));
+    else accept0(ctx);
+  }
 
-    private void accept0(Context<?> ctx) {
-        ctx.start(Clause.DROP_TABLE_TABLE);
+  private void accept0(Context<?> ctx) {
+    ctx.start(Clause.DROP_TABLE_TABLE);
 
-        // [#6371] [#9019] While many dialects do not require this keyword, in
-        //                 some dialects (e.g. MySQL), there is a semantic
-        //                 difference, e.g. with respect to transactions.
-        if (temporary && TEMPORARY_SEMANTIC.contains(ctx.dialect()))
-            ctx.visit(K_DROP).sql(' ').visit(K_TEMPORARY).sql(' ').visit(K_TABLE).sql(' ');
-        else
-            ctx.visit(K_DROP_TABLE).sql(' ');
+    // [#6371] [#9019] While many dialects do not require this keyword, in
+    //                 some dialects (e.g. MySQL), there is a semantic
+    //                 difference, e.g. with respect to transactions.
+    if (temporary && TEMPORARY_SEMANTIC.contains(ctx.dialect()))
+      ctx.visit(K_DROP).sql(' ').visit(K_TEMPORARY).sql(' ').visit(K_TABLE).sql(' ');
+    else ctx.visit(K_DROP_TABLE).sql(' ');
 
+    if (dropTableIfExists && supportsIfExists(ctx)) ctx.visit(K_IF_EXISTS).sql(' ');
 
-        if (dropTableIfExists && supportsIfExists(ctx))
-            ctx.visit(K_IF_EXISTS).sql(' ');
+    ctx.visit(table);
+    acceptCascade(ctx, cascade);
+    ctx.end(Clause.DROP_TABLE_TABLE);
+  }
 
-        ctx.visit(table);
-        acceptCascade(ctx, cascade);
-        ctx.end(Clause.DROP_TABLE_TABLE);
-    }
-
-
-    @Override
-    public final Clause[] clauses(Context<?> ctx) {
-        return CLAUSES;
-    }
-
-
+  @Override
+  public final Clause[] clauses(Context<?> ctx) {
+    return CLAUSES;
+  }
 }

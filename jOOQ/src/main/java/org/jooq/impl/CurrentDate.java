@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,73 +39,29 @@ package org.jooq.impl;
 
 import static org.jooq.impl.Keywords.K_CURRENT;
 import static org.jooq.impl.Keywords.K_DATE;
-import static org.jooq.impl.Keywords.K_YEAR_TO_DAY;
-import static org.jooq.impl.Names.N_CONVERT;
 import static org.jooq.impl.Names.N_CURRENT_DATE;
-import static org.jooq.impl.Names.N_CURRENT_TIMESTAMP;
-import static org.jooq.impl.Names.N_TRUNC;
-
-import java.sql.Date;
-import java.sql.Time;
 
 import org.jooq.Context;
 import org.jooq.DataType;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class CurrentDate<T> extends AbstractField<T> {
 
-    CurrentDate(DataType<T> type) {
-        super(N_CURRENT_DATE, type);
+  CurrentDate(DataType<T> type) {
+    super(N_CURRENT_DATE, type);
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case MARIADB:
+      case MYSQL:
+        ctx.visit(N_CURRENT_DATE).sql("()");
+        break;
+
+      default:
+        ctx.visit(K_CURRENT).sql('_').visit(K_DATE);
+        break;
     }
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            case MARIADB:
-            case MYSQL:
-                ctx.visit(N_CURRENT_DATE).sql("()");
-                break;
-
-            default:
-                ctx.visit(K_CURRENT).sql('_').visit(K_DATE);
-                break;
-        }
-    }
+  }
 }

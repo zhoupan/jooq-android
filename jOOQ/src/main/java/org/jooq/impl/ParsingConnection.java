@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -52,212 +52,248 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
-
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.Param;
 import org.jooq.conf.Settings;
-import org.jooq.conf.SettingsTools;
 import org.jooq.exception.DataAccessException;
 import org.jooq.exception.DetachedException;
 import org.jooq.impl.DefaultRenderContext.Rendered;
 import org.jooq.tools.JooqLogger;
 import org.jooq.tools.jdbc.DefaultConnection;
 
-import org.jetbrains.annotations.NotNull;
-
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class ParsingConnection extends DefaultConnection {
 
-    private static final JooqLogger log = JooqLogger.getLogger(ParsingConnection.class);
+  private static final JooqLogger log = JooqLogger.getLogger(ParsingConnection.class);
 
-    final Configuration             configuration;
+  final Configuration configuration;
 
-    ParsingConnection(Configuration configuration) {
-        super(configuration.connectionProvider().acquire());
+  ParsingConnection(Configuration configuration) {
+    super(configuration.connectionProvider().acquire());
 
-        if (getDelegate() == null)
-            if (configuration.connectionFactory() instanceof NoConnectionFactory)
-                throw new DetachedException("ConnectionProvider did not provide a JDBC Connection");
-            else
-                throw new DetachedException("Attempt to use a ParsingConnection (JDBC) when only an R2BDC ConnectionFactory was configured. Using ParsingConnectionFactory instead.");
+    if (getDelegate() == null)
+      if (configuration.connectionFactory() instanceof NoConnectionFactory)
+        throw new DetachedException("ConnectionProvider did not provide a JDBC Connection");
+      else
+        throw new DetachedException(
+            "Attempt to use a ParsingConnection (JDBC) when only an R2BDC ConnectionFactory was configured. Using ParsingConnectionFactory instead.");
 
-        this.configuration = configuration;
+    this.configuration = configuration;
+  }
+
+  static final class CacheValue {
+    final String output;
+    final int bindSize;
+    final Map<Integer, List<Integer>> bindMapping;
+
+    CacheValue(Configuration configuration, String input, Param<?>[] bindValues) {
+      DSLContext ctx = configuration.dsl();
+      DefaultRenderContext render = (DefaultRenderContext) ctx.renderContext();
+      render
+          .paramType(configuration.settings().getParamType())
+          .visit(ctx.parser().parseQuery(input, (Object[]) bindValues));
+
+      output = render.render();
+      bindSize = render.bindValues().size();
+      bindMapping = new HashMap<>();
+
+      // TODO: We shouldn't rely on identity for these reasons:
+      // - Copies are possible
+      // - Wrappings are possible
+      // - Conversions are possible
+      // Ideally, we should be able to maintain and extract the map directly in the
+      // DefaultRenderContext
+      // TODO: If anything goes wrong (probably because of the above), the cache must be invalid,
+      // and we must re-parse and re-render the query every time
+      for (int i = 0; i < bindValues.length; i++)
+        for (int j = 0; j < render.bindValues().size(); j++)
+          if (bindValues[i] == render.bindValues().get(j))
+            bindMapping.computeIfAbsent(i, x -> new ArrayList<>()).add(j);
     }
 
-    static final class CacheValue {
-        final String                      output;
-        final int                         bindSize;
-        final Map<Integer, List<Integer>> bindMapping;
+    Rendered rendered(Param<?>... bindValues) {
+      Param<?>[] binds = new Param[bindSize];
 
-        CacheValue(Configuration configuration, String input, Param<?>[] bindValues) {
-            DSLContext ctx = configuration.dsl();
-            DefaultRenderContext render = (DefaultRenderContext) ctx.renderContext();
-            render.paramType(configuration.settings().getParamType()).visit(ctx.parser().parseQuery(input, (Object[]) bindValues));
+      for (int i = 0; i < bindValues.length; i++)
+        for (int mapped : bindMapping.getOrDefault(i, emptyList())) binds[mapped] = bindValues[i];
 
-            output = render.render();
-            bindSize = render.bindValues().size();
-            bindMapping = new HashMap<>();
-
-            // TODO: We shouldn't rely on identity for these reasons:
-            // - Copies are possible
-            // - Wrappings are possible
-            // - Conversions are possible
-            // Ideally, we should be able to maintain and extract the map directly in the DefaultRenderContext
-            // TODO: If anything goes wrong (probably because of the above), the cache must be invalid, and we must re-parse and re-render the query every time
-            for (int i = 0; i < bindValues.length; i++)
-                for (int j = 0; j < render.bindValues().size(); j++)
-                    if (bindValues[i] == render.bindValues().get(j))
-                        bindMapping.computeIfAbsent(i, x -> new ArrayList<>()).add(j);
-        }
-
-        Rendered rendered(Param<?>... bindValues) {
-            Param<?>[] binds = new Param[bindSize];
-
-            for (int i = 0; i < bindValues.length; i++)
-                for (int mapped : bindMapping.getOrDefault(i, emptyList()))
-                    binds[mapped] = bindValues[i];
-
-            return new Rendered(output, new QueryPartList<>(binds), 0);
-        }
-
-        @Override
-        public String toString() {
-            return output;
-        }
+      return new Rendered(output, new QueryPartList<>(binds), 0);
     }
 
-    static final Rendered translate(Configuration configuration, String sql, Param<?>... bindValues) {
-        log.debug("Translating from", sql);
-        Rendered result = null;
+    @Override
+    public String toString() {
+      return output;
+    }
+  }
 
-        Supplier<CacheValue> miss = () -> {
-            log.debug("Translation cache miss", sql);
-            return new CacheValue(configuration, sql, bindValues);
+  static final Rendered translate(Configuration configuration, String sql, Param<?>... bindValues) {
+    log.debug("Translating from", sql);
+    Rendered result = null;
+
+    Supplier<CacheValue> miss =
+        () -> {
+          log.debug("Translation cache miss", sql);
+          return new CacheValue(configuration, sql, bindValues);
         };
 
-        Settings settings = configuration.settings();
-        if (CACHE_PARSING_CONNECTION.category.predicate.test(settings) && bindValues.length > 0) {
-            switch (getParamType(settings)) {
-                case INLINED:
-                case NAMED_OR_INLINED:
-                    result = miss.get().rendered(bindValues);
-                    break;
-            }
-        }
-
-        if (result == null)
-            result = Cache.run(
-                configuration,
-                miss,
-                CACHE_PARSING_CONNECTION,
-                () -> Cache.key(sql, map(nonNull(bindValues), f -> f.getDataType()))
-            ).rendered(bindValues);
-
-        log.debug("Translating to", result.sql);
-        return result;
+    Settings settings = configuration.settings();
+    if (CACHE_PARSING_CONNECTION.category.predicate.test(settings) && bindValues.length > 0) {
+      switch (getParamType(settings)) {
+        case INLINED:
+        case NAMED_OR_INLINED:
+          result = miss.get().rendered(bindValues);
+          break;
+      }
     }
 
-    private static Param<?>[] nonNull(Param<?>[] bindValues) {
-        for (int i = 0; i < bindValues.length; i++)
-            if (bindValues[i] == null)
-                throw new DataAccessException("Bind value at position " + i + " not set");
+    if (result == null)
+      result =
+          Cache.run(
+                  configuration,
+                  miss,
+                  CACHE_PARSING_CONNECTION,
+                  () -> Cache.key(sql, map(nonNull(bindValues), f -> f.getDataType())))
+              .rendered(bindValues);
 
-        return bindValues;
-    }
+    log.debug("Translating to", result.sql);
+    return result;
+  }
 
-    @Override
-    public final Statement createStatement() throws SQLException {
-        return new ParsingStatement(this, getDelegate().createStatement());
-    }
+  private static Param<?>[] nonNull(Param<?>[] bindValues) {
+    for (int i = 0; i < bindValues.length; i++)
+      if (bindValues[i] == null)
+        throw new DataAccessException("Bind value at position " + i + " not set");
 
-    @Override
-    public final Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
-        return new ParsingStatement(this, getDelegate().createStatement(resultSetType, resultSetConcurrency));
-    }
+    return bindValues;
+  }
 
-    @Override
-    public final Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
-        return new ParsingStatement(this, getDelegate().createStatement(resultSetType, resultSetConcurrency, resultSetHoldability));
-    }
+  @Override
+  public final Statement createStatement() throws SQLException {
+    return new ParsingStatement(this, getDelegate().createStatement());
+  }
 
-    private final ThrowingFunction<List<List<Param<?>>>, PreparedStatement, SQLException> prepareAndBind(
-        String sql,
-        ThrowingFunction<String, PreparedStatement, SQLException> prepare
-    ) {
-        return p -> {
-            int size = p.size();
-            Rendered rendered = size == 0 ? translate(configuration, sql) : translate(configuration, sql, p.get(0).toArray(EMPTY_PARAM));
-            PreparedStatement s = prepare.apply(rendered.sql);
+  @Override
+  public final Statement createStatement(int resultSetType, int resultSetConcurrency)
+      throws SQLException {
+    return new ParsingStatement(
+        this, getDelegate().createStatement(resultSetType, resultSetConcurrency));
+  }
 
-            for (int i = 0; i < size; i++) {
+  @Override
+  public final Statement createStatement(
+      int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
+    return new ParsingStatement(
+        this,
+        getDelegate().createStatement(resultSetType, resultSetConcurrency, resultSetHoldability));
+  }
 
-                // TODO: Can we avoid re-parsing and re-generating the SQL and mapping bind values only?
-                if (i > 0)
-                    rendered = translate(configuration, sql, p.get(i).toArray(EMPTY_PARAM));
+  private final ThrowingFunction<List<List<Param<?>>>, PreparedStatement, SQLException>
+      prepareAndBind(
+          String sql, ThrowingFunction<String, PreparedStatement, SQLException> prepare) {
+    return p -> {
+      int size = p.size();
+      Rendered rendered =
+          size == 0
+              ? translate(configuration, sql)
+              : translate(configuration, sql, p.get(0).toArray(EMPTY_PARAM));
+      PreparedStatement s = prepare.apply(rendered.sql);
 
-                new DefaultBindContext(configuration, s).visit(rendered.bindValues);
+      for (int i = 0; i < size; i++) {
 
-                // TODO: Find a less hacky way to signal that we're batching. Currently:
-                // - ArrayList<Arraylist<Param<?>>> = batching
-                // - SingletonList<ArrayList<Param<?>>> = not batching
-                if (size > 1 || p instanceof ArrayList)
-                    s.addBatch();
-            }
+        // TODO: Can we avoid re-parsing and re-generating the SQL and mapping bind values only?
+        if (i > 0) rendered = translate(configuration, sql, p.get(i).toArray(EMPTY_PARAM));
 
-            return s;
-        };
-    }
+        new DefaultBindContext(configuration, s).visit(rendered.bindValues);
 
-    @Override
-    public final PreparedStatement prepareStatement(String sql) throws SQLException {
-        return new ParsingStatement(this, prepareAndBind(sql, s -> getDelegate().prepareStatement(s)));
-    }
+        // TODO: Find a less hacky way to signal that we're batching. Currently:
+        // - ArrayList<Arraylist<Param<?>>> = batching
+        // - SingletonList<ArrayList<Param<?>>> = not batching
+        if (size > 1 || p instanceof ArrayList) s.addBatch();
+      }
 
-    @Override
-    public final PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
-        return new ParsingStatement(this, prepareAndBind(sql, s -> getDelegate().prepareStatement(s, resultSetType, resultSetConcurrency)));
-    }
+      return s;
+    };
+  }
 
-    @Override
-    public final PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
-        return new ParsingStatement(this, prepareAndBind(sql, s -> getDelegate().prepareStatement(s, resultSetType, resultSetConcurrency, resultSetHoldability)));
-    }
+  @Override
+  public final PreparedStatement prepareStatement(String sql) throws SQLException {
+    return new ParsingStatement(this, prepareAndBind(sql, s -> getDelegate().prepareStatement(s)));
+  }
 
-    @Override
-    public final PreparedStatement prepareStatement(String sql, int autoGeneratedKeys) throws SQLException {
-        return new ParsingStatement(this, prepareAndBind(sql, s -> getDelegate().prepareStatement(s, autoGeneratedKeys)));
-    }
+  @Override
+  public final PreparedStatement prepareStatement(
+      String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
+    return new ParsingStatement(
+        this,
+        prepareAndBind(
+            sql, s -> getDelegate().prepareStatement(s, resultSetType, resultSetConcurrency)));
+  }
 
-    @Override
-    public final PreparedStatement prepareStatement(String sql, int[] columnIndexes) throws SQLException {
-        return new ParsingStatement(this, prepareAndBind(sql, s -> getDelegate().prepareStatement(s, columnIndexes)));
-    }
+  @Override
+  public final PreparedStatement prepareStatement(
+      String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability)
+      throws SQLException {
+    return new ParsingStatement(
+        this,
+        prepareAndBind(
+            sql,
+            s ->
+                getDelegate()
+                    .prepareStatement(
+                        s, resultSetType, resultSetConcurrency, resultSetHoldability)));
+  }
 
-    @Override
-    public final PreparedStatement prepareStatement(String sql, String[] columnNames) throws SQLException {
-        return new ParsingStatement(this, prepareAndBind(sql, s -> getDelegate().prepareStatement(s, columnNames)));
-    }
+  @Override
+  public final PreparedStatement prepareStatement(String sql, int autoGeneratedKeys)
+      throws SQLException {
+    return new ParsingStatement(
+        this, prepareAndBind(sql, s -> getDelegate().prepareStatement(s, autoGeneratedKeys)));
+  }
 
-    @Override
-    public final CallableStatement prepareCall(String sql) throws SQLException {
-        return new ParsingStatement(this, prepareAndBind(sql, s -> getDelegate().prepareCall(s)));
-    }
+  @Override
+  public final PreparedStatement prepareStatement(String sql, int[] columnIndexes)
+      throws SQLException {
+    return new ParsingStatement(
+        this, prepareAndBind(sql, s -> getDelegate().prepareStatement(s, columnIndexes)));
+  }
 
-    @Override
-    public final CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
-        return new ParsingStatement(this, prepareAndBind(sql, s -> getDelegate().prepareCall(s, resultSetType, resultSetConcurrency)));
-    }
+  @Override
+  public final PreparedStatement prepareStatement(String sql, String[] columnNames)
+      throws SQLException {
+    return new ParsingStatement(
+        this, prepareAndBind(sql, s -> getDelegate().prepareStatement(s, columnNames)));
+  }
 
-    @Override
-    public final CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
-        return new ParsingStatement(this, prepareAndBind(sql, s -> getDelegate().prepareCall(s, resultSetType, resultSetConcurrency, resultSetHoldability)));
-    }
+  @Override
+  public final CallableStatement prepareCall(String sql) throws SQLException {
+    return new ParsingStatement(this, prepareAndBind(sql, s -> getDelegate().prepareCall(s)));
+  }
 
-    @Override
-    public final void close() throws SQLException {
-        configuration.connectionProvider().release(getDelegate());
-    }
+  @Override
+  public final CallableStatement prepareCall(
+      String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
+    return new ParsingStatement(
+        this,
+        prepareAndBind(
+            sql, s -> getDelegate().prepareCall(s, resultSetType, resultSetConcurrency)));
+  }
+
+  @Override
+  public final CallableStatement prepareCall(
+      String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability)
+      throws SQLException {
+    return new ParsingStatement(
+        this,
+        prepareAndBind(
+            sql,
+            s ->
+                getDelegate()
+                    .prepareCall(s, resultSetType, resultSetConcurrency, resultSetHoldability)));
+  }
+
+  @Override
+  public final void close() throws SQLException {
+    configuration.connectionProvider().release(getDelegate());
+  }
 }

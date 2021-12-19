@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,30 +42,29 @@ import org.jooq.DiagnosticsListener;
 
 /**
  * A publicly available default implementation of {@link DiagnosticsListener}.
- * <p>
- * Use this to stay compatible with future API changes (i.e. added methods to
- * <code>DiagnosticsListener</code>)
+ *
+ * <p>Use this to stay compatible with future API changes (i.e. added methods to <code>
+ * DiagnosticsListener</code>)
  *
  * @author Lukas Eder
  */
 public class DefaultDiagnosticsListener implements DiagnosticsListener {
 
-    @Override
-    public void tooManyRowsFetched(DiagnosticsContext ctx) {}
+  @Override
+  public void tooManyRowsFetched(DiagnosticsContext ctx) {}
 
-    @Override
-    public void tooManyColumnsFetched(DiagnosticsContext ctx) {}
+  @Override
+  public void tooManyColumnsFetched(DiagnosticsContext ctx) {}
 
-    @Override
-    public void unnecessaryWasNullCall(DiagnosticsContext ctx) {}
+  @Override
+  public void unnecessaryWasNullCall(DiagnosticsContext ctx) {}
 
-    @Override
-    public void missingWasNullCall(DiagnosticsContext ctx) {}
+  @Override
+  public void missingWasNullCall(DiagnosticsContext ctx) {}
 
-    @Override
-    public void duplicateStatements(DiagnosticsContext ctx) {}
+  @Override
+  public void duplicateStatements(DiagnosticsContext ctx) {}
 
-    @Override
-    public void repeatedStatements(DiagnosticsContext ctx) {}
-
+  @Override
+  public void repeatedStatements(DiagnosticsContext ctx) {}
 }

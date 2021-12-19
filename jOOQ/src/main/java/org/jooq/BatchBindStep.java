@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,16 +37,14 @@
  */
 package org.jooq;
 
-import org.jetbrains.annotations.*;
-
-
 import java.sql.Statement;
 import java.util.Map;
+import org.jetbrains.annotations.*;
 
 /**
  * This type is used for the {@link Batch}'s DSL API.
- * <p>
- * Use it to add bind values to a single operation in the batch statement.
+ *
+ * <p>Use it to add bind values to a single operation in the batch statement.
  *
  * @author Lukas Eder
  * @see Batch
@@ -54,65 +52,73 @@ import java.util.Map;
  */
 public interface BatchBindStep extends Batch {
 
-    /**
-     * Set indexed bind values onto the batch statement.
-     * <p>
-     * The argument array of <code>bindValues</code> will be set onto the
-     * indexed bind values of the batch statement:
-     * <ul>
-     * <li><code>:1</code> -&gt; <code>bindValues[0]</code></li>
-     * <li><code>:2</code> -&gt; <code>bindValues[1]</code></li>
-     * <li>...</li>
-     * <li><code>:N</code> -&gt; <code>bindValues[N - 1]</code></li>
-     * </ul>
-     * <p>
-     * "Unmatched" bind values will be left unmodified:
-     * <ul>
-     * <li><code>:N+1</code> -&gt; unmodified</li>
-     * <li><code>:N+2</code> -&gt; unmodified</li>
-     * </ul>
-     */
-    @NotNull @CheckReturnValue
-    @Support
-    BatchBindStep bind(Object... bindValues);
+  /**
+   * Set indexed bind values onto the batch statement.
+   *
+   * <p>The argument array of <code>bindValues</code> will be set onto the indexed bind values of
+   * the batch statement:
+   *
+   * <ul>
+   *   <li><code>:1</code> -&gt; <code>bindValues[0]</code>
+   *   <li><code>:2</code> -&gt; <code>bindValues[1]</code>
+   *   <li>...
+   *   <li><code>:N</code> -&gt; <code>bindValues[N - 1]</code>
+   * </ul>
+   *
+   * <p>"Unmatched" bind values will be left unmodified:
+   *
+   * <ul>
+   *   <li><code>:N+1</code> -&gt; unmodified
+   *   <li><code>:N+2</code> -&gt; unmodified
+   * </ul>
+   */
+  @NotNull
+  @CheckReturnValue
+  @Support
+  BatchBindStep bind(Object... bindValues);
 
-    /**
-     * Set several indexed bind values onto the batch statement.
-     * <p>
-     * This is the same as calling {@link #bind(Object...)} several times.
-     */
-    @NotNull @CheckReturnValue
-    @Support
-    BatchBindStep bind(Object[]... bindValues);
+  /**
+   * Set several indexed bind values onto the batch statement.
+   *
+   * <p>This is the same as calling {@link #bind(Object...)} several times.
+   */
+  @NotNull
+  @CheckReturnValue
+  @Support
+  BatchBindStep bind(Object[]... bindValues);
 
-    /**
-     * Set named bind values onto the batch statement.
-     * <p>
-     * The argument map of <code>namedBindValues</code> will be set onto the
-     * named bind values of the batch statement:
-     * <ul>
-     * <li><code>:name1</code> -&gt; <code>bindValues.get("name1")</code></li>
-     * <li><code>:name2</code> -&gt; <code>bindValues.get("name2")</code></li>
-     * <li>...</li>
-     * <li><code>:nameN</code> -&gt; <code>bindValues.get("nameN")</code></li>
-     * </ul>
-     * <p>
-     * "Unmatched" bind values will be left unmodified:
-     * <ul>
-     * <li><code>:nameN+1</code> -&gt; unmodified</li>
-     * <li><code>:nameN+2</code> -&gt; unmodified</li>
-     * </ul>
-     */
-    @NotNull @CheckReturnValue
-    @Support
-    BatchBindStep bind(Map<String, Object> namedBindValues);
+  /**
+   * Set named bind values onto the batch statement.
+   *
+   * <p>The argument map of <code>namedBindValues</code> will be set onto the named bind values of
+   * the batch statement:
+   *
+   * <ul>
+   *   <li><code>:name1</code> -&gt; <code>bindValues.get("name1")</code>
+   *   <li><code>:name2</code> -&gt; <code>bindValues.get("name2")</code>
+   *   <li>...
+   *   <li><code>:nameN</code> -&gt; <code>bindValues.get("nameN")</code>
+   * </ul>
+   *
+   * <p>"Unmatched" bind values will be left unmodified:
+   *
+   * <ul>
+   *   <li><code>:nameN+1</code> -&gt; unmodified
+   *   <li><code>:nameN+2</code> -&gt; unmodified
+   * </ul>
+   */
+  @NotNull
+  @CheckReturnValue
+  @Support
+  BatchBindStep bind(Map<String, Object> namedBindValues);
 
-    /**
-     * Set several named bind values onto the batch statement.
-     * <p>
-     * This is the same as calling {@link #bind(Map...)} several times.
-     */
-    @NotNull @CheckReturnValue
-    @Support
-    BatchBindStep bind(Map<String, Object>... namedBindValues);
+  /**
+   * Set several named bind values onto the batch statement.
+   *
+   * <p>This is the same as calling {@link #bind(Map...)} several times.
+   */
+  @NotNull
+  @CheckReturnValue
+  @Support
+  BatchBindStep bind(Map<String, Object>... namedBindValues);
 }

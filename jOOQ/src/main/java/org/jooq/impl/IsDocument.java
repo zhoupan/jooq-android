@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,6 @@
  *
  *
  */
-
 package org.jooq.impl;
 
 import static org.jooq.impl.Keywords.K_IS_DOCUMENT;
@@ -44,31 +43,23 @@ import static org.jooq.impl.Keywords.K_IS_NOT_DOCUMENT;
 import org.jooq.Context;
 import org.jooq.Field;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class IsDocument extends AbstractCondition {
 
-    private final Field<?> field;
-    private final boolean  isDocument;
+  private final Field<?> field;
+  private final boolean isDocument;
 
-    IsDocument(Field<?> field, boolean isDocument) {
-        this.field = field;
-        this.isDocument = isDocument;
+  IsDocument(Field<?> field, boolean isDocument) {
+    this.field = field;
+    this.isDocument = isDocument;
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      default:
+        ctx.visit(field).sql(' ').visit(isDocument ? K_IS_DOCUMENT : K_IS_NOT_DOCUMENT);
+        break;
     }
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-            default:
-                ctx.visit(field).sql(' ').visit(isDocument ? K_IS_DOCUMENT : K_IS_NOT_DOCUMENT);
-                break;
-        }
-    }
+  }
 }

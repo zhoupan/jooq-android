@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -47,14 +47,13 @@ import org.jooq.Configuration;
 @FunctionalInterface
 public interface MockCallable<T> {
 
-    /**
-     * Run the mockable code.
-     *
-     * @param configuration The {@link MockConfiguration} that executes all
-     *            queries using a {@link MockConnection} and the supplied
-     *            {@link MockDataProvider}.
-     * @return The outcome of the mockable code.
-     * @throws Exception Any exception.
-     */
-    T run(Configuration configuration) throws Exception;
+  /**
+   * Run the mockable code.
+   *
+   * @param configuration The {@link MockConfiguration} that executes all queries using a {@link
+   *     MockConnection} and the supplied {@link MockDataProvider}.
+   * @return The outcome of the mockable code.
+   * @throws Exception Any exception.
+   */
+  T run(Configuration configuration) throws Exception;
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,34 +41,32 @@ import org.jooq.impl.ThreadLocalTransactionProvider;
 
 /**
  * An <code>FunctionalInterface</code> that wraps transactional code.
- * <p>
- * This callable may depend on captured scope ("context") in order to discover a
- * contextual {@link Configuration} to be used to create new SQL statements.
- * Clients are responsible to implement such context state in appropriate
- * {@link ConnectionProvider} and {@link TransactionProvider} implementations.
- * <p>
- * An out-of-the-box implementation for a fitting {@link TransactionProvider} is
- * available through {@link ThreadLocalTransactionProvider}.
+ *
+ * <p>This callable may depend on captured scope ("context") in order to discover a contextual
+ * {@link Configuration} to be used to create new SQL statements. Clients are responsible to
+ * implement such context state in appropriate {@link ConnectionProvider} and {@link
+ * TransactionProvider} implementations.
+ *
+ * <p>An out-of-the-box implementation for a fitting {@link TransactionProvider} is available
+ * through {@link ThreadLocalTransactionProvider}.
  *
  * @author Lukas Eder
  */
 @FunctionalInterface
 public interface ContextTransactionalCallable<T> {
 
-    /**
-     * Run the transactional code.
-     * <p>
-     * If this method completes normally, and this is not a nested transaction,
-     * then the transaction will be committed. If this method completes with an
-     * exception (any {@link Throwable}), then the transaction is rolled back to
-     * the beginning of this <code>ContextTransactionalCallable</code>.
-     *
-     * @return The outcome of the transaction.
-     * @throws Throwable Any exception that will cause a rollback of the code
-     *             contained in this transaction. If this is a nested
-     *             transaction, the rollback may be performed only to the state
-     *             before executing this
-     *             <code>ContextTransactionalCallable</code>.
-     */
-    T run() throws Throwable;
+  /**
+   * Run the transactional code.
+   *
+   * <p>If this method completes normally, and this is not a nested transaction, then the
+   * transaction will be committed. If this method completes with an exception (any {@link
+   * Throwable}), then the transaction is rolled back to the beginning of this <code>
+   * ContextTransactionalCallable</code>.
+   *
+   * @return The outcome of the transaction.
+   * @throws Throwable Any exception that will cause a rollback of the code contained in this
+   *     transaction. If this is a nested transaction, the rollback may be performed only to the
+   *     state before executing this <code>ContextTransactionalCallable</code>.
+   */
+  T run() throws Throwable;
 }

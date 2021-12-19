@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,91 +41,87 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
-
 import org.jooq.Context;
 import org.jooq.QueryPart;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 abstract class AbstractQueryPartMap<K extends QueryPart, V extends QueryPart>
-extends AbstractQueryPart
-implements Map<K, V> {
+    extends AbstractQueryPart implements Map<K, V> {
 
-    private final Map<K, V> map;
+  private final Map<K, V> map;
 
-    AbstractQueryPartMap() {
-        map = new LinkedHashMap<>();
-    }
+  AbstractQueryPartMap() {
+    map = new LinkedHashMap<>();
+  }
 
-    // -------------------------------------------------------------------------
-    // The QueryPart API
-    // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // The QueryPart API
+  // -------------------------------------------------------------------------
 
-    @Override
-    public abstract void accept(Context<?> context);
+  @Override
+  public abstract void accept(Context<?> context);
 
-    // -------------------------------------------------------------------------
-    // The Map API
-    // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // The Map API
+  // -------------------------------------------------------------------------
 
-    @Override
-    public final int size() {
-        return map.size();
-    }
+  @Override
+  public final int size() {
+    return map.size();
+  }
 
-    @Override
-    public final boolean isEmpty() {
-        return map.isEmpty();
-    }
+  @Override
+  public final boolean isEmpty() {
+    return map.isEmpty();
+  }
 
-    @Override
-    public final boolean containsKey(Object key) {
-        return map.containsKey(key);
-    }
+  @Override
+  public final boolean containsKey(Object key) {
+    return map.containsKey(key);
+  }
 
-    @Override
-    public final boolean containsValue(Object value) {
-        return map.containsValue(value);
-    }
+  @Override
+  public final boolean containsValue(Object value) {
+    return map.containsValue(value);
+  }
 
-    @Override
-    public final V get(Object key) {
-        return map.get(key);
-    }
+  @Override
+  public final V get(Object key) {
+    return map.get(key);
+  }
 
-    @Override
-    public final V put(K key, V value) {
-        return map.put(key, value);
-    }
+  @Override
+  public final V put(K key, V value) {
+    return map.put(key, value);
+  }
 
-    @Override
-    public final V remove(Object key) {
-        return map.remove(key);
-    }
+  @Override
+  public final V remove(Object key) {
+    return map.remove(key);
+  }
 
-    @Override
-    public final void putAll(Map<? extends K, ? extends V> m) {
-        map.putAll(m);
-    }
+  @Override
+  public final void putAll(Map<? extends K, ? extends V> m) {
+    map.putAll(m);
+  }
 
-    @Override
-    public final void clear() {
-        map.clear();
-    }
+  @Override
+  public final void clear() {
+    map.clear();
+  }
 
-    @Override
-    public final Set<K> keySet() {
-        return map.keySet();
-    }
+  @Override
+  public final Set<K> keySet() {
+    return map.keySet();
+  }
 
-    @Override
-    public final Collection<V> values() {
-        return map.values();
-    }
+  @Override
+  public final Collection<V> values() {
+    return map.values();
+  }
 
-    @Override
-    public final Set<Entry<K, V>> entrySet() {
-        return map.entrySet();
-    }
+  @Override
+  public final Set<Entry<K, V>> entrySet() {
+    return map.entrySet();
+  }
 }

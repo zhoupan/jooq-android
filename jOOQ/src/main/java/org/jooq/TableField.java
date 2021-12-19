@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,16 +35,14 @@
  *
  *
  */
-
 package org.jooq;
 
 import org.jetbrains.annotations.Nullable;
 
 /**
  * A field contained in a table.
- * <p>
- * Instances of this type cannot be created directly. They are available from
- * generated code.
+ *
+ * <p>Instances of this type cannot be created directly. They are available from generated code.
  *
  * @param <R> The record type
  * @param <T> The field type
@@ -52,9 +50,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface TableField<R extends Record, T> extends Field<T> {
 
-    /**
-     * @return The table this field is contained in.
-     */
-    @Nullable
-    Table<R> getTable();
+  /** @return The table this field is contained in. */
+  @Nullable
+  Table<R> getTable();
 }

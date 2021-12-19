@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,43 +38,34 @@
 package org.jooq;
 
 import java.util.List;
-
-import org.jooq.impl.DSL;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jooq.impl.DSL;
 
 /**
  * A DDL index definition.
- * <p>
- * Instances can be created using {@link DSL#index(Name)} and overloads.
+ *
+ * <p>Instances can be created using {@link DSL#index(Name)} and overloads.
  *
  * @author Lukas Eder
  */
 public interface Index extends Named {
 
-    /**
-     * The table on which this index is defined.
-     */
-    @Nullable
-    Table<?> getTable();
+  /** The table on which this index is defined. */
+  @Nullable
+  Table<?> getTable();
 
-    /**
-     * The sort field expressions on which this index is defined.
-     */
-    @NotNull
-    List<SortField<?>> getFields();
+  /** The sort field expressions on which this index is defined. */
+  @NotNull
+  List<SortField<?>> getFields();
 
-    /**
-     * The condition of a filtered / partial index, or <code>null</code>, if
-     * this is an ordinary index.
-     */
-    @Nullable
-    Condition getWhere();
+  /**
+   * The condition of a filtered / partial index, or <code>null</code>, if this is an ordinary
+   * index.
+   */
+  @Nullable
+  Condition getWhere();
 
-    /**
-     * Whether this is a <code>UNIQUE</code> index.
-     */
-    boolean getUnique();
-
+  /** Whether this is a <code>UNIQUE</code> index. */
+  boolean getUnique();
 }

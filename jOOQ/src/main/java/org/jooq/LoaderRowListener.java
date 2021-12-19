@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,7 +37,6 @@
  */
 package org.jooq;
 
-
 /**
  * A listener for {@link Loader} progress.
  *
@@ -46,8 +45,6 @@ package org.jooq;
 @FunctionalInterface
 public interface LoaderRowListener {
 
-    /**
-     * A row will be or has been processed by the {@link Loader}.
-     */
-    void row(LoaderContext ctx);
+  /** A row will be or has been processed by the {@link Loader}. */
+  void row(LoaderContext ctx);
 }

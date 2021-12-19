@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,65 +44,60 @@ import static org.jooq.impl.Keywords.K_RESTRICT;
 import static org.jooq.impl.Keywords.K_TYPE;
 
 import java.util.Collection;
-
 import org.jooq.Configuration;
 import org.jooq.Context;
 import org.jooq.DropTypeFinalStep;
 import org.jooq.DropTypeStep;
 import org.jooq.Name;
 
-/**
- * @author Lukas Eder
- */
-final class DropTypeImpl extends AbstractDDLQuery implements
+/** @author Lukas Eder */
+final class DropTypeImpl extends AbstractDDLQuery
+    implements
 
     // Cascading interface implementations for CREATE TYPE behaviour
     DropTypeStep {
 
-    private final QueryPartList<Name> type;
-    private final boolean             ifExists;
-    private boolean                   cascade;
-    private boolean                   restrict;
+  private final QueryPartList<Name> type;
+  private final boolean ifExists;
+  private boolean cascade;
+  private boolean restrict;
 
-    DropTypeImpl(Configuration configuration, Collection<?> type, boolean ifExists) {
-        super(configuration);
+  DropTypeImpl(Configuration configuration, Collection<?> type, boolean ifExists) {
+    super(configuration);
 
-        this.type = new QueryPartList<>(Tools.names(type));
-        this.ifExists = ifExists;
-    }
+    this.type = new QueryPartList<>(Tools.names(type));
+    this.ifExists = ifExists;
+  }
 
-    // ------------------------------------------------------------------------
-    // XXX: DSL API
-    // ------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
+  // XXX: DSL API
+  // ------------------------------------------------------------------------
 
-    @Override
-    public final DropTypeFinalStep cascade() {
-        this.cascade = true;
-        return this;
-    }
+  @Override
+  public final DropTypeFinalStep cascade() {
+    this.cascade = true;
+    return this;
+  }
 
-    @Override
-    public final DropTypeFinalStep restrict() {
-        this.restrict = true;
-        return this;
-    }
+  @Override
+  public final DropTypeFinalStep restrict() {
+    this.restrict = true;
+    return this;
+  }
 
-    // ------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // ------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // ------------------------------------------------------------------------
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        ctx.visit(K_DROP).sql(' ').visit(K_TYPE);
+  @Override
+  public final void accept(Context<?> ctx) {
+    ctx.visit(K_DROP).sql(' ').visit(K_TYPE);
 
-        if (ifExists)
-            ctx.sql(' ').visit(K_IF_EXISTS);
+    if (ifExists) ctx.sql(' ').visit(K_IF_EXISTS);
 
-        ctx.sql(' ').visit(type);
+    ctx.sql(' ').visit(type);
 
-        if (cascade)
-            ctx.sql(' ').visit(K_CASCADE);
-        else if (restrict)
-            ctx.sql(' ').visit(K_RESTRICT);
-    }
+    if (cascade) ctx.sql(' ').visit(K_CASCADE);
+    else if (restrict) ctx.sql(' ').visit(K_RESTRICT);
+  }
 }

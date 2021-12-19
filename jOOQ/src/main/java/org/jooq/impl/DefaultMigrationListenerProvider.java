@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,51 +40,46 @@ package org.jooq.impl;
 import static org.jooq.impl.Tools.map;
 
 import java.io.Serializable;
-
-import org.jooq.ExecuteListenerProvider;
 import org.jooq.MigrationListener;
 import org.jooq.MigrationListenerProvider;
 
 /**
  * A default implementation for {@link MigrationListenerProvider}.
- * <p>
- * This implementation just wraps an instance of {@link MigrationListener}, always
- * providing the same.
+ *
+ * <p>This implementation just wraps an instance of {@link MigrationListener}, always providing the
+ * same.
  *
  * @author Lukas Eder
  */
 public class DefaultMigrationListenerProvider implements MigrationListenerProvider, Serializable {
 
-    /**
-     * The delegate listener.
-     */
-    private final MigrationListener listener;
+  /** The delegate listener. */
+  private final MigrationListener listener;
 
-    /**
-     * Convenience method to construct an array of
-     * <code>DefaultMigrationListenerProvider</code> from an array of
-     * <code>MigrationListener</code> instances.
-     */
-    public static MigrationListenerProvider[] providers(MigrationListener... listeners) {
-        return map(listeners, DefaultMigrationListenerProvider::new, MigrationListenerProvider[]::new);
-    }
+  /**
+   * Convenience method to construct an array of <code>DefaultMigrationListenerProvider</code> from
+   * an array of <code>MigrationListener</code> instances.
+   */
+  public static MigrationListenerProvider[] providers(MigrationListener... listeners) {
+    return map(listeners, DefaultMigrationListenerProvider::new, MigrationListenerProvider[]::new);
+  }
 
-    /**
-     * Create a new provider instance from an argument listener.
-     *
-     * @param listener The argument listener.
-     */
-    public DefaultMigrationListenerProvider(MigrationListener listener) {
-        this.listener = listener;
-    }
+  /**
+   * Create a new provider instance from an argument listener.
+   *
+   * @param listener The argument listener.
+   */
+  public DefaultMigrationListenerProvider(MigrationListener listener) {
+    this.listener = listener;
+  }
 
-    @Override
-    public final MigrationListener provide() {
-        return listener;
-    }
+  @Override
+  public final MigrationListener provide() {
+    return listener;
+  }
 
-    @Override
-    public String toString() {
-        return listener.toString();
-    }
+  @Override
+  public String toString() {
+    return listener.toString();
+  }
 }

@@ -1,4 +1,40 @@
-
+/* 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Other licenses:
+ * -----------------------------------------------------------------------------
+ * Commercial licenses for this work are available. These replace the above
+ * ASL 2.0 and offer limited warranties, support, maintenance, and commercial
+ * database integrations.
+ *
+ * For more information, please visit: http://www.jooq.org/licenses
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 package org.jooq.migrations.xml.jaxb;
 
 import java.io.Serializable;
@@ -13,12 +49,11 @@ import org.jooq.migrations.xml.ContentTypeAdapter;
 import org.jooq.util.jaxb.tools.XMLAppendable;
 import org.jooq.util.jaxb.tools.XMLBuilder;
 
-
 /**
- * <p>Java class for FileType complex type.
- * 
+ * Java class for FileType complex type.
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="FileType"&gt;
  *   &lt;complexContent&gt;
@@ -33,160 +68,155 @@ import org.jooq.util.jaxb.tools.XMLBuilder;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "FileType", propOrder = {
-    "path",
-    "content",
-    "contentType",
-    "change"
-})
-@SuppressWarnings({
-    "all"
-})
-public class FileType implements Serializable, XMLAppendable
-{
+@XmlType(
+    name = "FileType",
+    propOrder = {"path", "content", "contentType", "change"})
+@SuppressWarnings({"all"})
+public class FileType implements Serializable, XMLAppendable {
 
-    private final static long serialVersionUID = 31500L;
-    @XmlElement(required = true)
-    protected String path;
-    protected String content;
-    @XmlElement(type = String.class)
-    @XmlJavaTypeAdapter(ContentTypeAdapter.class)
-    protected ContentType contentType;
-    @XmlElement(required = true)
-    @XmlSchemaType(name = "string")
-    protected ChangeType change;
+  private static final long serialVersionUID = 31500L;
 
-    public String getPath() {
-        return path;
+  @XmlElement(required = true)
+  protected String path;
+
+  protected String content;
+
+  @XmlElement(type = String.class)
+  @XmlJavaTypeAdapter(ContentTypeAdapter.class)
+  protected ContentType contentType;
+
+  @XmlElement(required = true)
+  @XmlSchemaType(name = "string")
+  protected ChangeType change;
+
+  public String getPath() {
+    return path;
+  }
+
+  public void setPath(String value) {
+    this.path = value;
+  }
+
+  public String getContent() {
+    return content;
+  }
+
+  public void setContent(String value) {
+    this.content = value;
+  }
+
+  public ContentType getContentType() {
+    return contentType;
+  }
+
+  public void setContentType(ContentType value) {
+    this.contentType = value;
+  }
+
+  public ChangeType getChange() {
+    return change;
+  }
+
+  public void setChange(ChangeType value) {
+    this.change = value;
+  }
+
+  public FileType withPath(String value) {
+    setPath(value);
+    return this;
+  }
+
+  public FileType withContent(String value) {
+    setContent(value);
+    return this;
+  }
+
+  public FileType withContentType(ContentType value) {
+    setContentType(value);
+    return this;
+  }
+
+  public FileType withChange(ChangeType value) {
+    setChange(value);
+    return this;
+  }
+
+  @Override
+  public final void appendTo(XMLBuilder builder) {
+    builder.append("path", path);
+    builder.append("content", content);
+    builder.append("contentType", contentType);
+    builder.append("change", change);
+  }
+
+  @Override
+  public String toString() {
+    XMLBuilder builder = XMLBuilder.nonFormatting();
+    appendTo(builder);
+    return builder.toString();
+  }
+
+  @Override
+  public boolean equals(Object that) {
+    if (this == that) {
+      return true;
     }
-
-    public void setPath(String value) {
-        this.path = value;
+    if (that == null) {
+      return false;
     }
-
-    public String getContent() {
-        return content;
+    if (getClass() != that.getClass()) {
+      return false;
     }
-
-    public void setContent(String value) {
-        this.content = value;
+    FileType other = ((FileType) that);
+    if (path == null) {
+      if (other.path != null) {
+        return false;
+      }
+    } else {
+      if (!path.equals(other.path)) {
+        return false;
+      }
     }
-
-    public ContentType getContentType() {
-        return contentType;
+    if (content == null) {
+      if (other.content != null) {
+        return false;
+      }
+    } else {
+      if (!content.equals(other.content)) {
+        return false;
+      }
     }
-
-    public void setContentType(ContentType value) {
-        this.contentType = value;
+    if (contentType == null) {
+      if (other.contentType != null) {
+        return false;
+      }
+    } else {
+      if (!contentType.equals(other.contentType)) {
+        return false;
+      }
     }
-
-    public ChangeType getChange() {
-        return change;
+    if (change == null) {
+      if (other.change != null) {
+        return false;
+      }
+    } else {
+      if (!change.equals(other.change)) {
+        return false;
+      }
     }
+    return true;
+  }
 
-    public void setChange(ChangeType value) {
-        this.change = value;
-    }
-
-    public FileType withPath(String value) {
-        setPath(value);
-        return this;
-    }
-
-    public FileType withContent(String value) {
-        setContent(value);
-        return this;
-    }
-
-    public FileType withContentType(ContentType value) {
-        setContentType(value);
-        return this;
-    }
-
-    public FileType withChange(ChangeType value) {
-        setChange(value);
-        return this;
-    }
-
-    @Override
-    public final void appendTo(XMLBuilder builder) {
-        builder.append("path", path);
-        builder.append("content", content);
-        builder.append("contentType", contentType);
-        builder.append("change", change);
-    }
-
-    @Override
-    public String toString() {
-        XMLBuilder builder = XMLBuilder.nonFormatting();
-        appendTo(builder);
-        return builder.toString();
-    }
-
-    @Override
-    public boolean equals(Object that) {
-        if (this == that) {
-            return true;
-        }
-        if (that == null) {
-            return false;
-        }
-        if (getClass()!= that.getClass()) {
-            return false;
-        }
-        FileType other = ((FileType) that);
-        if (path == null) {
-            if (other.path!= null) {
-                return false;
-            }
-        } else {
-            if (!path.equals(other.path)) {
-                return false;
-            }
-        }
-        if (content == null) {
-            if (other.content!= null) {
-                return false;
-            }
-        } else {
-            if (!content.equals(other.content)) {
-                return false;
-            }
-        }
-        if (contentType == null) {
-            if (other.contentType!= null) {
-                return false;
-            }
-        } else {
-            if (!contentType.equals(other.contentType)) {
-                return false;
-            }
-        }
-        if (change == null) {
-            if (other.change!= null) {
-                return false;
-            }
-        } else {
-            if (!change.equals(other.change)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = ((prime*result)+((path == null)? 0 :path.hashCode()));
-        result = ((prime*result)+((content == null)? 0 :content.hashCode()));
-        result = ((prime*result)+((contentType == null)? 0 :contentType.hashCode()));
-        result = ((prime*result)+((change == null)? 0 :change.hashCode()));
-        return result;
-    }
-
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = ((prime * result) + ((path == null) ? 0 : path.hashCode()));
+    result = ((prime * result) + ((content == null) ? 0 : content.hashCode()));
+    result = ((prime * result) + ((contentType == null) ? 0 : contentType.hashCode()));
+    result = ((prime * result) + ((change == null) ? 0 : change.hashCode()));
+    return result;
+  }
 }

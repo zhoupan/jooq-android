@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,39 +40,34 @@ package org.jooq;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * An intermediate DSL type for the construction of a <code>BETWEEN</code>
- * predicate.
+ * An intermediate DSL type for the construction of a <code>BETWEEN</code> predicate.
  *
  * @author Lukas Eder
  */
 public interface BetweenAndStep5<T1, T2, T3, T4, T5> {
 
-    /**
-     * Create a condition to check this field against some bounds
-     */
-    @NotNull
-    @Support
-    Condition and(Field<T1> maxValue1, Field<T2> maxValue2, Field<T3> maxValue3, Field<T4> maxValue4, Field<T5> maxValue5);
+  /** Create a condition to check this field against some bounds */
+  @NotNull
+  @Support
+  Condition and(
+      Field<T1> maxValue1,
+      Field<T2> maxValue2,
+      Field<T3> maxValue3,
+      Field<T4> maxValue4,
+      Field<T5> maxValue5);
 
-    /**
-     * Create a condition to check this field against some bounds
-     */
-    @NotNull
-    @Support
-    Condition and(T1 maxValue1, T2 maxValue2, T3 maxValue3, T4 maxValue4, T5 maxValue5);
+  /** Create a condition to check this field against some bounds */
+  @NotNull
+  @Support
+  Condition and(T1 maxValue1, T2 maxValue2, T3 maxValue3, T4 maxValue4, T5 maxValue5);
 
-    /**
-     * Create a condition to check this field against some bounds
-     */
-    @NotNull
-    @Support
-    Condition and(Row5<T1, T2, T3, T4, T5> maxValue);
+  /** Create a condition to check this field against some bounds */
+  @NotNull
+  @Support
+  Condition and(Row5<T1, T2, T3, T4, T5> maxValue);
 
-    /**
-     * Create a condition to check this field against some bounds
-     */
-    @NotNull
-    @Support
-    Condition and(Record5<T1, T2, T3, T4, T5> maxValue);
-
+  /** Create a condition to check this field against some bounds */
+  @NotNull
+  @Support
+  Condition and(Record5<T1, T2, T3, T4, T5> maxValue);
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,48 +43,56 @@ import org.jooq.Param;
 import org.jooq.tools.JooqLogger;
 
 /**
- * A base implementation for {@link Param} handling deprecation warnings, see
- * [#11129]
+ * A base implementation for {@link Param} handling deprecation warnings, see [#11129]
  *
  * @author Lukas Eder
  */
 abstract class AbstractParamX<T> extends AbstractField<T> implements Param<T> {
-    private static final JooqLogger log              = JooqLogger.getLogger(AbstractParam.class);
+  private static final JooqLogger log = JooqLogger.getLogger(AbstractParam.class);
 
-    AbstractParamX(Name name, DataType<T> type) {
-        super(name, type);
-    }
+  AbstractParamX(Name name, DataType<T> type) {
+    super(name, type);
+  }
 
-    // ------------------------------------------------------------------------
-    // XXX: Param API
-    // ------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
+  // XXX: Param API
+  // ------------------------------------------------------------------------
 
-    @Override
-    @Deprecated
-    public final void setValue(T value) {
-        log.warn("Deprecation", "org.jooq.Param will soon be made immutable. It is recommended to no longer use its deprecated, mutating methods.", new UnsupportedOperationException("Param.setValue"));
-        setConverted0(value);
-    }
+  @Override
+  @Deprecated
+  public final void setValue(T value) {
+    log.warn(
+        "Deprecation",
+        "org.jooq.Param will soon be made immutable. It is recommended to no longer use its deprecated, mutating methods.",
+        new UnsupportedOperationException("Param.setValue"));
+    setConverted0(value);
+  }
 
-    final void setValue0(T value) {
-        setConverted0(value);
-    }
+  final void setValue0(T value) {
+    setConverted0(value);
+  }
 
-    @Override
-    @Deprecated
-    public final void setConverted(Object value) {
-        log.warn("Deprecation", "org.jooq.Param will soon be made immutable. It is recommended to no longer use its deprecated, mutating methods.", new UnsupportedOperationException("Param.setConverted"));
-        setConverted0(value);
-    }
+  @Override
+  @Deprecated
+  public final void setConverted(Object value) {
+    log.warn(
+        "Deprecation",
+        "org.jooq.Param will soon be made immutable. It is recommended to no longer use its deprecated, mutating methods.",
+        new UnsupportedOperationException("Param.setConverted"));
+    setConverted0(value);
+  }
 
-    abstract void setConverted0(Object value);
+  abstract void setConverted0(Object value);
 
-    @Override
-    @Deprecated
-    public final void setInline(boolean inline) {
-        log.warn("Deprecation", "org.jooq.Param will soon be made immutable. It is recommended to no longer use its deprecated, mutating methods.", new UnsupportedOperationException("Param.setInline"));
-        setInline0(inline);
-    }
+  @Override
+  @Deprecated
+  public final void setInline(boolean inline) {
+    log.warn(
+        "Deprecation",
+        "org.jooq.Param will soon be made immutable. It is recommended to no longer use its deprecated, mutating methods.",
+        new UnsupportedOperationException("Param.setInline"));
+    setInline0(inline);
+  }
 
-    abstract void setInline0(boolean inline);
+  abstract void setInline0(boolean inline);
 }

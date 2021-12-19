@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,7 @@
  */
 package org.jooq.impl;
 
+import static org.jooq.SQLDialect.*;
 import static org.jooq.impl.DSL.*;
 import static org.jooq.impl.Internal.*;
 import static org.jooq.impl.Keywords.*;
@@ -46,78 +47,45 @@ import static org.jooq.impl.Tools.*;
 import static org.jooq.impl.Tools.BooleanDataKey.*;
 import static org.jooq.impl.Tools.DataExtendedKey.*;
 import static org.jooq.impl.Tools.DataKey.*;
-import static org.jooq.SQLDialect.*;
 
+import java.math.BigDecimal;
+import java.util.*;
 import org.jooq.*;
-import org.jooq.Record;
 import org.jooq.conf.*;
-import org.jooq.impl.*;
 import org.jooq.tools.*;
 
-import java.util.*;
-import java.math.BigDecimal;
+/** The <code>VAR POP</code> statement. */
+@SuppressWarnings({"rawtypes", "unused"})
+final class VarPop extends DefaultAggregateFunction<BigDecimal> {
 
+  VarPop(Field<? extends Number> field) {
+    super(false, N_VAR_POP, NUMERIC, nullSafeNotNull(field, INTEGER));
+  }
 
-/**
- * The <code>VAR POP</code> statement.
- */
-@SuppressWarnings({ "rawtypes", "unused" })
-final class VarPop
-extends
-    DefaultAggregateFunction<BigDecimal>
-{
+  // -------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // -------------------------------------------------------------------------
 
-    VarPop(
-        Field<? extends Number> field
-    ) {
-        super(
-            false,
-            N_VAR_POP,
-            NUMERIC,
-            nullSafeNotNull(field, INTEGER)
-        );
+  private static final Set<SQLDialect> NO_SUPPORT_NATIVE =
+      SQLDialect.supportedUntil(DERBY, IGNITE, SQLITE);
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public void accept(Context<?> ctx) {
+    if (NO_SUPPORT_NATIVE.contains(ctx.dialect())) {
+      Field<? extends Number> x = (Field) getArguments().get(0);
+
+      ctx.visit(
+          fo(DSL.avg(DSL.square(x).cast(d(ctx)))).minus(DSL.square(fo(DSL.avg(x.cast(d(ctx)))))));
+    } else super.accept(ctx);
+  }
+
+  @Override
+  void acceptFunctionName(Context<?> ctx) {
+    switch (ctx.family()) {
+      default:
+        super.acceptFunctionName(ctx);
+        break;
     }
-
-    // -------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // -------------------------------------------------------------------------
-
-
-
-    private static final Set<SQLDialect> NO_SUPPORT_NATIVE = SQLDialect.supportedUntil(DERBY, IGNITE, SQLITE);
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public void accept(Context<?> ctx) {
-        if (NO_SUPPORT_NATIVE.contains(ctx.dialect())) {
-            Field<? extends Number> x = (Field) getArguments().get(0);
-
-            ctx.visit(fo(DSL.avg(DSL.square(x).cast(d(ctx)))).minus(DSL.square(fo(DSL.avg(x.cast(d(ctx)))))));
-        }
-        else
-            super.accept(ctx);
-    }
-
-    @Override
-    void acceptFunctionName(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-
-
-
-
-
-
-            default:
-                super.acceptFunctionName(ctx);
-                break;
-        }
-    }
-
-
+  }
 }

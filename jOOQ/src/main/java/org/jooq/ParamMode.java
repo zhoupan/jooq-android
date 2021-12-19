@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,8 +37,6 @@
  */
 package org.jooq;
 
-import org.jooq.impl.DSL;
-
 /**
  * The mode of a {@link Param}.
  *
@@ -46,20 +44,16 @@ import org.jooq.impl.DSL;
  */
 public enum ParamMode {
 
-    /**
-     * An <code>IN</code> parameter.
-     * <p>
-     * This is the default parameter mode if no explicit mode was specified.
-     */
-    IN,
+  /**
+   * An <code>IN</code> parameter.
+   *
+   * <p>This is the default parameter mode if no explicit mode was specified.
+   */
+  IN,
 
-    /**
-     * An <code>OUT</code> parameter.
-     */
-    OUT,
+  /** An <code>OUT</code> parameter. */
+  OUT,
 
-    /**
-     * An <code>IN OUT</code> parameter.
-     */
-    INOUT;
+  /** An <code>IN OUT</code> parameter. */
+  INOUT;
 }

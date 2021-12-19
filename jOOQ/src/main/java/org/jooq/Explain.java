@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,7 +37,6 @@
  */
 package org.jooq;
 
-
 /**
  * Results of an {@link DSLContext#explain(Query)} call.
  *
@@ -45,22 +44,20 @@ package org.jooq;
  */
 public interface Explain {
 
-    /**
-     * The number of rows (cardinality) that is estimated to be returned by the query.
-     * <p>
-     * This returns {@link Double#NaN} if rows could not be estimated.
-     */
-    double rows();
+  /**
+   * The number of rows (cardinality) that is estimated to be returned by the query.
+   *
+   * <p>This returns {@link Double#NaN} if rows could not be estimated.
+   */
+  double rows();
 
-    /**
-     * The cost the database associated with the execution of the query.
-     * <p>
-     * This returns {@link Double#NaN} if cost could not be retrieved.
-     */
-    double cost();
+  /**
+   * The cost the database associated with the execution of the query.
+   *
+   * <p>This returns {@link Double#NaN} if cost could not be retrieved.
+   */
+  double cost();
 
-    /**
-     * The formatted plan as returned by the database.
-     */
-    String plan();
+  /** The formatted plan as returned by the database. */
+  String plan();
 }

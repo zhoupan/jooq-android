@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,8 +40,6 @@ package org.jooq.impl;
 import static org.jooq.Name.Quoted.DEFAULT;
 import static org.jooq.Name.Quoted.QUOTED;
 import static org.jooq.Name.Quoted.UNQUOTED;
-// ...
-import static org.jooq.impl.Tools.stringLiteral;
 
 import org.jooq.Context;
 import org.jooq.Name;
@@ -56,104 +54,92 @@ import org.jooq.tools.StringUtils;
  */
 final class UnqualifiedName extends AbstractName {
 
-    private final String      name;
-    private final Quoted      quoted;
+  private final String name;
+  private final Quoted quoted;
 
-    UnqualifiedName(String name) {
-        this(name, DEFAULT);
-    }
+  UnqualifiedName(String name) {
+    this(name, DEFAULT);
+  }
 
-    UnqualifiedName(String name, Quoted quoted) {
-        this.name = name;
-        this.quoted = quoted;
-    }
+  UnqualifiedName(String name, Quoted quoted) {
+    this.name = name;
+    this.quoted = quoted;
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
+  @Override
+  public final void accept(Context<?> ctx) {
 
+    RenderQuotedNames q = SettingsTools.getRenderQuotedNames(ctx.settings());
 
+    boolean previous = ctx.quote();
+    boolean current =
+        q == RenderQuotedNames.ALWAYS
+            || q == RenderQuotedNames.EXPLICIT_DEFAULT_QUOTED
+                && (quoted == DEFAULT || quoted == QUOTED)
+            || q == RenderQuotedNames.EXPLICIT_DEFAULT_UNQUOTED && quoted == QUOTED;
 
+    ctx.quote(current);
+    ctx.literal(name);
+    ctx.quote(previous);
+  }
 
+  @Override
+  public final String first() {
+    return name;
+  }
 
+  @Override
+  public final String last() {
+    return name;
+  }
 
+  @Override
+  public final boolean empty() {
+    return StringUtils.isEmpty(name);
+  }
 
+  @Override
+  public final boolean qualified() {
+    return false;
+  }
 
+  @Override
+  public final boolean qualifierQualified() {
+    return false;
+  }
 
+  @Override
+  public final Name qualifier() {
+    return null;
+  }
 
+  @Override
+  public final Name unqualifiedName() {
+    return this;
+  }
 
+  @Override
+  public final Quoted quoted() {
+    return quoted;
+  }
 
+  @Override
+  public final Name quotedName() {
+    return new UnqualifiedName(name, QUOTED);
+  }
 
+  @Override
+  public final Name unquotedName() {
+    return new UnqualifiedName(name, UNQUOTED);
+  }
 
-        RenderQuotedNames q = SettingsTools.getRenderQuotedNames(ctx.settings());
+  @Override
+  public final String[] getName() {
+    return new String[] {name};
+  }
 
-        boolean previous = ctx.quote();
-        boolean current =
-             q == RenderQuotedNames.ALWAYS
-          || q == RenderQuotedNames.EXPLICIT_DEFAULT_QUOTED && (quoted == DEFAULT || quoted == QUOTED)
-          || q == RenderQuotedNames.EXPLICIT_DEFAULT_UNQUOTED && quoted == QUOTED;
-
-        ctx.quote(current);
-        ctx.literal(name);
-        ctx.quote(previous);
-    }
-
-    @Override
-    public final String first() {
-        return name;
-    }
-
-    @Override
-    public final String last() {
-        return name;
-    }
-
-    @Override
-    public final boolean empty() {
-        return StringUtils.isEmpty(name);
-    }
-
-    @Override
-    public final boolean qualified() {
-        return false;
-    }
-
-    @Override
-    public final boolean qualifierQualified() {
-        return false;
-    }
-
-    @Override
-    public final Name qualifier() {
-        return null;
-    }
-
-    @Override
-    public final Name unqualifiedName() {
-        return this;
-    }
-
-    @Override
-    public final Quoted quoted() {
-        return quoted;
-    }
-
-    @Override
-    public final Name quotedName() {
-        return new UnqualifiedName(name, QUOTED);
-    }
-
-    @Override
-    public final Name unquotedName() {
-        return new UnqualifiedName(name, UNQUOTED);
-    }
-
-    @Override
-    public final String[] getName() {
-        return new String[] { name };
-    }
-
-    @Override
-    public final Name[] parts() {
-        return new Name[] { this };
-    }
+  @Override
+  public final Name[] parts() {
+    return new Name[] {this};
+  }
 }

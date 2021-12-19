@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,7 @@
  */
 package org.jooq.impl;
 
+import static org.jooq.SQLDialect.*;
 import static org.jooq.impl.DSL.*;
 import static org.jooq.impl.Internal.*;
 import static org.jooq.impl.Keywords.*;
@@ -46,80 +47,42 @@ import static org.jooq.impl.Tools.*;
 import static org.jooq.impl.Tools.BooleanDataKey.*;
 import static org.jooq.impl.Tools.DataExtendedKey.*;
 import static org.jooq.impl.Tools.DataKey.*;
-import static org.jooq.SQLDialect.*;
-
-import org.jooq.*;
-import org.jooq.Record;
-import org.jooq.conf.*;
-import org.jooq.impl.*;
-import org.jooq.tools.*;
 
 import java.util.*;
+import org.jooq.*;
+import org.jooq.conf.*;
+import org.jooq.tools.*;
 
+/** The <code>XMLCOMMENT</code> statement. */
+@SuppressWarnings({"rawtypes", "unchecked", "unused"})
+final class Xmlcomment extends AbstractField<XML> {
 
-/**
- * The <code>XMLCOMMENT</code> statement.
- */
-@SuppressWarnings({ "rawtypes", "unchecked", "unused" })
-final class Xmlcomment
-extends
-    AbstractField<XML>
-{
+  private final Field<String> comment;
 
-    private final Field<String> comment;
+  Xmlcomment(Field<String> comment) {
+    super(N_XMLCOMMENT, allNotNull(XML, comment));
 
-    Xmlcomment(
-        Field<String> comment
-    ) {
-        super(
-            N_XMLCOMMENT,
-            allNotNull(XML, comment)
-        );
+    this.comment = nullSafeNotNull(comment, VARCHAR);
+  }
 
-        this.comment = nullSafeNotNull(comment, VARCHAR);
-    }
+  // -------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // -------------------------------------------------------------------------
 
-    // -------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // -------------------------------------------------------------------------
+  @Override
+  public final void accept(Context<?> ctx) {
 
+    ctx.visit(N_XMLCOMMENT).sql('(').visit(comment).sql(')');
+  }
 
+  // -------------------------------------------------------------------------
+  // The Object API
+  // -------------------------------------------------------------------------
 
-    @Override
-    public final void accept(Context<?> ctx) {
-
-
-
-
-
-        ctx.visit(N_XMLCOMMENT).sql('(').visit(comment).sql(')');
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // -------------------------------------------------------------------------
-    // The Object API
-    // -------------------------------------------------------------------------
-
-    @Override
-    public boolean equals(Object that) {
-        if (that instanceof Xmlcomment) {
-            return
-                StringUtils.equals(comment, ((Xmlcomment) that).comment)
-            ;
-        }
-        else
-            return super.equals(that);
-    }
+  @Override
+  public boolean equals(Object that) {
+    if (that instanceof Xmlcomment) {
+      return StringUtils.equals(comment, ((Xmlcomment) that).comment);
+    } else return super.equals(that);
+  }
 }

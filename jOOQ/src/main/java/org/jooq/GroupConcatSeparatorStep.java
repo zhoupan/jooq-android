@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,29 +37,15 @@
  */
 package org.jooq;
 
-import org.jetbrains.annotations.*;
-
-
-// ...
-// ...
-// ...
-// ...
 import static org.jooq.SQLDialect.CUBRID;
-// ...
-// ...
 import static org.jooq.SQLDialect.H2;
-// ...
 import static org.jooq.SQLDialect.HSQLDB;
 import static org.jooq.SQLDialect.MARIADB;
-// ...
 import static org.jooq.SQLDialect.MYSQL;
-// ...
 import static org.jooq.SQLDialect.POSTGRES;
 import static org.jooq.SQLDialect.SQLITE;
-// ...
-// ...
-// ...
 
+import org.jetbrains.annotations.*;
 import org.jooq.impl.DSL;
 
 /**
@@ -70,10 +56,8 @@ import org.jooq.impl.DSL;
  */
 public interface GroupConcatSeparatorStep extends AggregateFunction<String> {
 
-    /**
-     * Specify the separator on the <code>GROUP_CONCAT</code> function.
-     */
-    @NotNull
-    @Support({ CUBRID, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE })
-    AggregateFunction<String> separator(String separator);
+  /** Specify the separator on the <code>GROUP_CONCAT</code> function. */
+  @NotNull
+  @Support({CUBRID, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
+  AggregateFunction<String> separator(String separator);
 }

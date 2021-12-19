@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,13 +39,12 @@ package org.jooq;
 
 import java.util.Collection;
 import java.util.function.Function;
-
 import org.jetbrains.annotations.NotNull;
 
 /**
  * This type is used for the {@link Insert}'s DSL API.
- * <p>
- * Example: <code><pre>
+ *
+ * <p>Example: <code><pre>
  * using(configuration)
  *       .insertInto(table, field1, field2, field3)
  *       .values(field1, field2, field3)
@@ -60,97 +59,97 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface InsertValuesStep3<R extends Record, T1, T2, T3> extends InsertOnDuplicateStep<R> {
 
-    /**
-     * Add a single row of values to the insert statement.
-     */
-    @NotNull @CheckReturnValue
-    @Support
-    InsertValuesStep3<R, T1, T2, T3> values(T1 value1, T2 value2, T3 value3);
+  /** Add a single row of values to the insert statement. */
+  @NotNull
+  @CheckReturnValue
+  @Support
+  InsertValuesStep3<R, T1, T2, T3> values(T1 value1, T2 value2, T3 value3);
 
-    /**
-     * Add a single row of values to the insert statement.
-     */
-    @NotNull @CheckReturnValue
-    @Support
-    InsertValuesStep3<R, T1, T2, T3> values(Field<T1> value1, Field<T2> value2, Field<T3> value3);
+  /** Add a single row of values to the insert statement. */
+  @NotNull
+  @CheckReturnValue
+  @Support
+  InsertValuesStep3<R, T1, T2, T3> values(Field<T1> value1, Field<T2> value2, Field<T3> value3);
 
-    /**
-     * Add a single row of values to the insert statement.
-     */
-    @NotNull @CheckReturnValue
-    @Support
-    InsertValuesStep3<R, T1, T2, T3> values(Collection<?> values);
+  /** Add a single row of values to the insert statement. */
+  @NotNull
+  @CheckReturnValue
+  @Support
+  InsertValuesStep3<R, T1, T2, T3> values(Collection<?> values);
 
-    /**
-     * Add a single row of values to the insert statement.
-     */
-    @NotNull @CheckReturnValue
-    @Support
-    InsertValuesStep3<R, T1, T2, T3> values(Row3<T1, T2, T3> values);
+  /** Add a single row of values to the insert statement. */
+  @NotNull
+  @CheckReturnValue
+  @Support
+  InsertValuesStep3<R, T1, T2, T3> values(Row3<T1, T2, T3> values);
 
-    /**
-     * Add a single row of values to the insert statement.
-     */
-    @NotNull @CheckReturnValue
-    @Support
-    InsertValuesStep3<R, T1, T2, T3> values(Record3<T1, T2, T3> values);
+  /** Add a single row of values to the insert statement. */
+  @NotNull
+  @CheckReturnValue
+  @Support
+  InsertValuesStep3<R, T1, T2, T3> values(Record3<T1, T2, T3> values);
 
-    /**
-     * Add multiple rows of values to the insert statement.
-     * <p>
-     * This is equivalent to calling the other values clauses multiple times, but
-     * allows for dynamic construction of row arrays.
-     *
-     * @see Rows#toRowArray(Function, Function, Function)
-     */
-    @NotNull @CheckReturnValue
-    @Support
-    @SuppressWarnings("unchecked")
-    InsertValuesStep3<R, T1, T2, T3> valuesOfRows(Row3<T1, T2, T3>... values);
+  /**
+   * Add multiple rows of values to the insert statement.
+   *
+   * <p>This is equivalent to calling the other values clauses multiple times, but allows for
+   * dynamic construction of row arrays.
+   *
+   * @see Rows#toRowArray(Function, Function, Function)
+   */
+  @NotNull
+  @CheckReturnValue
+  @Support
+  @SuppressWarnings("unchecked")
+  InsertValuesStep3<R, T1, T2, T3> valuesOfRows(Row3<T1, T2, T3>... values);
 
-    /**
-     * Add multiple rows of values to the insert statement.
-     * <p>
-     * This is equivalent to calling the other values clauses multiple times, but
-     * allows for dynamic construction of row arrays.
-     *
-     * @see Rows#toRowList(Function, Function, Function)
-     */
-    @NotNull @CheckReturnValue
-    @Support
-    InsertValuesStep3<R, T1, T2, T3> valuesOfRows(Collection<? extends Row3<T1, T2, T3>> values);
+  /**
+   * Add multiple rows of values to the insert statement.
+   *
+   * <p>This is equivalent to calling the other values clauses multiple times, but allows for
+   * dynamic construction of row arrays.
+   *
+   * @see Rows#toRowList(Function, Function, Function)
+   */
+  @NotNull
+  @CheckReturnValue
+  @Support
+  InsertValuesStep3<R, T1, T2, T3> valuesOfRows(Collection<? extends Row3<T1, T2, T3>> values);
 
-    /**
-     * Add multiple rows of values to the insert statement.
-     * <p>
-     * This is equivalent to calling the other values clauses multiple times, but
-     * allows for dynamic construction of row arrays.
-     */
-    @NotNull @CheckReturnValue
-    @Support
-    @SuppressWarnings("unchecked")
-    InsertValuesStep3<R, T1, T2, T3> valuesOfRecords(Record3<T1, T2, T3>... values);
+  /**
+   * Add multiple rows of values to the insert statement.
+   *
+   * <p>This is equivalent to calling the other values clauses multiple times, but allows for
+   * dynamic construction of row arrays.
+   */
+  @NotNull
+  @CheckReturnValue
+  @Support
+  @SuppressWarnings("unchecked")
+  InsertValuesStep3<R, T1, T2, T3> valuesOfRecords(Record3<T1, T2, T3>... values);
 
-    /**
-     * Add multiple rows of values to the insert statement.
-     * <p>
-     * This is equivalent to calling the other values clauses multiple times, but
-     * allows for dynamic construction of row arrays.
-     */
-    @NotNull @CheckReturnValue
-    @Support
-    InsertValuesStep3<R, T1, T2, T3> valuesOfRecords(Collection<? extends Record3<T1, T2, T3>> values);
+  /**
+   * Add multiple rows of values to the insert statement.
+   *
+   * <p>This is equivalent to calling the other values clauses multiple times, but allows for
+   * dynamic construction of row arrays.
+   */
+  @NotNull
+  @CheckReturnValue
+  @Support
+  InsertValuesStep3<R, T1, T2, T3> valuesOfRecords(
+      Collection<? extends Record3<T1, T2, T3>> values);
 
-    /**
-     * Use a <code>SELECT</code> statement as the source of values for the
-     * <code>INSERT</code> statement
-     * <p>
-     * This variant of the <code>INSERT .. SELECT</code> statement expects a
-     * select returning exactly as many fields as specified previously in the
-     * <code>INTO</code> clause:
-     * {@link DSLContext#insertInto(Table, Field, Field, Field)}
-     */
-    @NotNull @CheckReturnValue
-    @Support
-    InsertOnDuplicateStep<R> select(Select<? extends Record3<T1, T2, T3>> select);
+  /**
+   * Use a <code>SELECT</code> statement as the source of values for the <code>INSERT</code>
+   * statement
+   *
+   * <p>This variant of the <code>INSERT .. SELECT</code> statement expects a select returning
+   * exactly as many fields as specified previously in the <code>INTO</code> clause: {@link
+   * DSLContext#insertInto(Table, Field, Field, Field)}
+   */
+  @NotNull
+  @CheckReturnValue
+  @Support
+  InsertOnDuplicateStep<R> select(Select<? extends Record3<T1, T2, T3>> select);
 }

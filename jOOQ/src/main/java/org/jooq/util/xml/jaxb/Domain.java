@@ -1,4 +1,40 @@
-
+/* 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Other licenses:
+ * -----------------------------------------------------------------------------
+ * Commercial licenses for this work are available. These replace the above
+ * ASL 2.0 and offer limited warranties, support, maintenance, and commercial
+ * database integrations.
+ *
+ * For more information, please visit: http://www.jooq.org/licenses
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 package org.jooq.util.xml.jaxb;
 
 import java.io.Serializable;
@@ -11,12 +47,11 @@ import org.jooq.util.jaxb.tools.StringAdapter;
 import org.jooq.util.jaxb.tools.XMLAppendable;
 import org.jooq.util.jaxb.tools.XMLBuilder;
 
-
 /**
- * <p>Java class for Domain complex type.
- * 
+ * Java class for Domain complex type.
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="Domain"&gt;
  *   &lt;complexContent&gt;
@@ -35,265 +70,269 @@ import org.jooq.util.jaxb.tools.XMLBuilder;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Domain", propOrder = {
+@XmlType(
+    name = "Domain",
+    propOrder = {})
+@SuppressWarnings({"all"})
+public class Domain implements Serializable, XMLAppendable {
 
-})
-@SuppressWarnings({
-    "all"
-})
-public class Domain implements Serializable, XMLAppendable
-{
+  private static final long serialVersionUID = 31400L;
 
-    private final static long serialVersionUID = 31400L;
-    @XmlElement(name = "domain_catalog")
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String domainCatalog;
-    @XmlElement(name = "domain_schema")
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String domainSchema;
-    @XmlElement(name = "domain_name", required = true)
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String domainName;
-    @XmlElement(name = "data_type", required = true)
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String dataType;
-    @XmlElement(name = "character_maximum_length")
-    protected Integer characterMaximumLength;
-    @XmlElement(name = "numeric_precision")
-    protected Integer numericPrecision;
-    @XmlElement(name = "numeric_scale")
-    protected Integer numericScale;
-    @XmlElement(name = "domain_default")
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String domainDefault;
+  @XmlElement(name = "domain_catalog")
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String domainCatalog;
 
-    public String getDomainCatalog() {
-        return domainCatalog;
+  @XmlElement(name = "domain_schema")
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String domainSchema;
+
+  @XmlElement(name = "domain_name", required = true)
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String domainName;
+
+  @XmlElement(name = "data_type", required = true)
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String dataType;
+
+  @XmlElement(name = "character_maximum_length")
+  protected Integer characterMaximumLength;
+
+  @XmlElement(name = "numeric_precision")
+  protected Integer numericPrecision;
+
+  @XmlElement(name = "numeric_scale")
+  protected Integer numericScale;
+
+  @XmlElement(name = "domain_default")
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String domainDefault;
+
+  public String getDomainCatalog() {
+    return domainCatalog;
+  }
+
+  public void setDomainCatalog(String value) {
+    this.domainCatalog = value;
+  }
+
+  public String getDomainSchema() {
+    return domainSchema;
+  }
+
+  public void setDomainSchema(String value) {
+    this.domainSchema = value;
+  }
+
+  public String getDomainName() {
+    return domainName;
+  }
+
+  public void setDomainName(String value) {
+    this.domainName = value;
+  }
+
+  public String getDataType() {
+    return dataType;
+  }
+
+  public void setDataType(String value) {
+    this.dataType = value;
+  }
+
+  public Integer getCharacterMaximumLength() {
+    return characterMaximumLength;
+  }
+
+  public void setCharacterMaximumLength(Integer value) {
+    this.characterMaximumLength = value;
+  }
+
+  public Integer getNumericPrecision() {
+    return numericPrecision;
+  }
+
+  public void setNumericPrecision(Integer value) {
+    this.numericPrecision = value;
+  }
+
+  public Integer getNumericScale() {
+    return numericScale;
+  }
+
+  public void setNumericScale(Integer value) {
+    this.numericScale = value;
+  }
+
+  public String getDomainDefault() {
+    return domainDefault;
+  }
+
+  public void setDomainDefault(String value) {
+    this.domainDefault = value;
+  }
+
+  public Domain withDomainCatalog(String value) {
+    setDomainCatalog(value);
+    return this;
+  }
+
+  public Domain withDomainSchema(String value) {
+    setDomainSchema(value);
+    return this;
+  }
+
+  public Domain withDomainName(String value) {
+    setDomainName(value);
+    return this;
+  }
+
+  public Domain withDataType(String value) {
+    setDataType(value);
+    return this;
+  }
+
+  public Domain withCharacterMaximumLength(Integer value) {
+    setCharacterMaximumLength(value);
+    return this;
+  }
+
+  public Domain withNumericPrecision(Integer value) {
+    setNumericPrecision(value);
+    return this;
+  }
+
+  public Domain withNumericScale(Integer value) {
+    setNumericScale(value);
+    return this;
+  }
+
+  public Domain withDomainDefault(String value) {
+    setDomainDefault(value);
+    return this;
+  }
+
+  @Override
+  public final void appendTo(XMLBuilder builder) {
+    builder.append("domain_catalog", domainCatalog);
+    builder.append("domain_schema", domainSchema);
+    builder.append("domain_name", domainName);
+    builder.append("data_type", dataType);
+    builder.append("character_maximum_length", characterMaximumLength);
+    builder.append("numeric_precision", numericPrecision);
+    builder.append("numeric_scale", numericScale);
+    builder.append("domain_default", domainDefault);
+  }
+
+  @Override
+  public String toString() {
+    XMLBuilder builder = XMLBuilder.nonFormatting();
+    appendTo(builder);
+    return builder.toString();
+  }
+
+  @Override
+  public boolean equals(Object that) {
+    if (this == that) {
+      return true;
     }
-
-    public void setDomainCatalog(String value) {
-        this.domainCatalog = value;
+    if (that == null) {
+      return false;
     }
-
-    public String getDomainSchema() {
-        return domainSchema;
+    if (getClass() != that.getClass()) {
+      return false;
     }
-
-    public void setDomainSchema(String value) {
-        this.domainSchema = value;
+    Domain other = ((Domain) that);
+    if (domainCatalog == null) {
+      if (other.domainCatalog != null) {
+        return false;
+      }
+    } else {
+      if (!domainCatalog.equals(other.domainCatalog)) {
+        return false;
+      }
     }
-
-    public String getDomainName() {
-        return domainName;
+    if (domainSchema == null) {
+      if (other.domainSchema != null) {
+        return false;
+      }
+    } else {
+      if (!domainSchema.equals(other.domainSchema)) {
+        return false;
+      }
     }
-
-    public void setDomainName(String value) {
-        this.domainName = value;
+    if (domainName == null) {
+      if (other.domainName != null) {
+        return false;
+      }
+    } else {
+      if (!domainName.equals(other.domainName)) {
+        return false;
+      }
     }
-
-    public String getDataType() {
-        return dataType;
+    if (dataType == null) {
+      if (other.dataType != null) {
+        return false;
+      }
+    } else {
+      if (!dataType.equals(other.dataType)) {
+        return false;
+      }
     }
-
-    public void setDataType(String value) {
-        this.dataType = value;
+    if (characterMaximumLength == null) {
+      if (other.characterMaximumLength != null) {
+        return false;
+      }
+    } else {
+      if (!characterMaximumLength.equals(other.characterMaximumLength)) {
+        return false;
+      }
     }
-
-    public Integer getCharacterMaximumLength() {
-        return characterMaximumLength;
+    if (numericPrecision == null) {
+      if (other.numericPrecision != null) {
+        return false;
+      }
+    } else {
+      if (!numericPrecision.equals(other.numericPrecision)) {
+        return false;
+      }
     }
-
-    public void setCharacterMaximumLength(Integer value) {
-        this.characterMaximumLength = value;
+    if (numericScale == null) {
+      if (other.numericScale != null) {
+        return false;
+      }
+    } else {
+      if (!numericScale.equals(other.numericScale)) {
+        return false;
+      }
     }
-
-    public Integer getNumericPrecision() {
-        return numericPrecision;
+    if (domainDefault == null) {
+      if (other.domainDefault != null) {
+        return false;
+      }
+    } else {
+      if (!domainDefault.equals(other.domainDefault)) {
+        return false;
+      }
     }
+    return true;
+  }
 
-    public void setNumericPrecision(Integer value) {
-        this.numericPrecision = value;
-    }
-
-    public Integer getNumericScale() {
-        return numericScale;
-    }
-
-    public void setNumericScale(Integer value) {
-        this.numericScale = value;
-    }
-
-    public String getDomainDefault() {
-        return domainDefault;
-    }
-
-    public void setDomainDefault(String value) {
-        this.domainDefault = value;
-    }
-
-    public Domain withDomainCatalog(String value) {
-        setDomainCatalog(value);
-        return this;
-    }
-
-    public Domain withDomainSchema(String value) {
-        setDomainSchema(value);
-        return this;
-    }
-
-    public Domain withDomainName(String value) {
-        setDomainName(value);
-        return this;
-    }
-
-    public Domain withDataType(String value) {
-        setDataType(value);
-        return this;
-    }
-
-    public Domain withCharacterMaximumLength(Integer value) {
-        setCharacterMaximumLength(value);
-        return this;
-    }
-
-    public Domain withNumericPrecision(Integer value) {
-        setNumericPrecision(value);
-        return this;
-    }
-
-    public Domain withNumericScale(Integer value) {
-        setNumericScale(value);
-        return this;
-    }
-
-    public Domain withDomainDefault(String value) {
-        setDomainDefault(value);
-        return this;
-    }
-
-    @Override
-    public final void appendTo(XMLBuilder builder) {
-        builder.append("domain_catalog", domainCatalog);
-        builder.append("domain_schema", domainSchema);
-        builder.append("domain_name", domainName);
-        builder.append("data_type", dataType);
-        builder.append("character_maximum_length", characterMaximumLength);
-        builder.append("numeric_precision", numericPrecision);
-        builder.append("numeric_scale", numericScale);
-        builder.append("domain_default", domainDefault);
-    }
-
-    @Override
-    public String toString() {
-        XMLBuilder builder = XMLBuilder.nonFormatting();
-        appendTo(builder);
-        return builder.toString();
-    }
-
-    @Override
-    public boolean equals(Object that) {
-        if (this == that) {
-            return true;
-        }
-        if (that == null) {
-            return false;
-        }
-        if (getClass()!= that.getClass()) {
-            return false;
-        }
-        Domain other = ((Domain) that);
-        if (domainCatalog == null) {
-            if (other.domainCatalog!= null) {
-                return false;
-            }
-        } else {
-            if (!domainCatalog.equals(other.domainCatalog)) {
-                return false;
-            }
-        }
-        if (domainSchema == null) {
-            if (other.domainSchema!= null) {
-                return false;
-            }
-        } else {
-            if (!domainSchema.equals(other.domainSchema)) {
-                return false;
-            }
-        }
-        if (domainName == null) {
-            if (other.domainName!= null) {
-                return false;
-            }
-        } else {
-            if (!domainName.equals(other.domainName)) {
-                return false;
-            }
-        }
-        if (dataType == null) {
-            if (other.dataType!= null) {
-                return false;
-            }
-        } else {
-            if (!dataType.equals(other.dataType)) {
-                return false;
-            }
-        }
-        if (characterMaximumLength == null) {
-            if (other.characterMaximumLength!= null) {
-                return false;
-            }
-        } else {
-            if (!characterMaximumLength.equals(other.characterMaximumLength)) {
-                return false;
-            }
-        }
-        if (numericPrecision == null) {
-            if (other.numericPrecision!= null) {
-                return false;
-            }
-        } else {
-            if (!numericPrecision.equals(other.numericPrecision)) {
-                return false;
-            }
-        }
-        if (numericScale == null) {
-            if (other.numericScale!= null) {
-                return false;
-            }
-        } else {
-            if (!numericScale.equals(other.numericScale)) {
-                return false;
-            }
-        }
-        if (domainDefault == null) {
-            if (other.domainDefault!= null) {
-                return false;
-            }
-        } else {
-            if (!domainDefault.equals(other.domainDefault)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = ((prime*result)+((domainCatalog == null)? 0 :domainCatalog.hashCode()));
-        result = ((prime*result)+((domainSchema == null)? 0 :domainSchema.hashCode()));
-        result = ((prime*result)+((domainName == null)? 0 :domainName.hashCode()));
-        result = ((prime*result)+((dataType == null)? 0 :dataType.hashCode()));
-        result = ((prime*result)+((characterMaximumLength == null)? 0 :characterMaximumLength.hashCode()));
-        result = ((prime*result)+((numericPrecision == null)? 0 :numericPrecision.hashCode()));
-        result = ((prime*result)+((numericScale == null)? 0 :numericScale.hashCode()));
-        result = ((prime*result)+((domainDefault == null)? 0 :domainDefault.hashCode()));
-        return result;
-    }
-
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = ((prime * result) + ((domainCatalog == null) ? 0 : domainCatalog.hashCode()));
+    result = ((prime * result) + ((domainSchema == null) ? 0 : domainSchema.hashCode()));
+    result = ((prime * result) + ((domainName == null) ? 0 : domainName.hashCode()));
+    result = ((prime * result) + ((dataType == null) ? 0 : dataType.hashCode()));
+    result =
+        ((prime * result)
+            + ((characterMaximumLength == null) ? 0 : characterMaximumLength.hashCode()));
+    result = ((prime * result) + ((numericPrecision == null) ? 0 : numericPrecision.hashCode()));
+    result = ((prime * result) + ((numericScale == null) ? 0 : numericScale.hashCode()));
+    result = ((prime * result) + ((domainDefault == null) ? 0 : domainDefault.hashCode()));
+    return result;
+  }
 }

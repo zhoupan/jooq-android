@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,7 @@
  */
 package org.jooq.impl;
 
+import static org.jooq.SQLDialect.*;
 import static org.jooq.impl.DSL.*;
 import static org.jooq.impl.Internal.*;
 import static org.jooq.impl.Keywords.*;
@@ -46,118 +47,73 @@ import static org.jooq.impl.Tools.*;
 import static org.jooq.impl.Tools.BooleanDataKey.*;
 import static org.jooq.impl.Tools.DataExtendedKey.*;
 import static org.jooq.impl.Tools.DataKey.*;
-import static org.jooq.SQLDialect.*;
-
-import org.jooq.*;
-import org.jooq.Record;
-import org.jooq.conf.*;
-import org.jooq.impl.*;
-import org.jooq.tools.*;
 
 import java.util.*;
+import org.jooq.*;
+import org.jooq.conf.*;
+import org.jooq.tools.*;
 
+/** The <code>TO CHAR</code> statement. */
+@SuppressWarnings({"rawtypes", "unchecked", "unused"})
+final class ToChar extends AbstractField<String> {
 
-/**
- * The <code>TO CHAR</code> statement.
- */
-@SuppressWarnings({ "rawtypes", "unchecked", "unused" })
-final class ToChar
-extends
-    AbstractField<String>
-{
+  private final Field<?> value;
+  private final Field<String> formatMask;
 
-    private final Field<?>      value;
-    private final Field<String> formatMask;
+  ToChar(Field<?> value) {
+    super(N_TO_CHAR, allNotNull(VARCHAR, value));
 
-    ToChar(
-        Field<?> value
-    ) {
-        super(
-            N_TO_CHAR,
-            allNotNull(VARCHAR, value)
-        );
+    this.value = nullSafeNotNull(value, OTHER);
+    this.formatMask = null;
+  }
 
-        this.value = nullSafeNotNull(value, OTHER);
-        this.formatMask = null;
-    }
+  ToChar(Field<?> value, Field<String> formatMask) {
+    super(N_TO_CHAR, allNotNull(VARCHAR, value, formatMask));
 
-    ToChar(
-        Field<?> value,
-        Field<String> formatMask
-    ) {
-        super(
-            N_TO_CHAR,
-            allNotNull(VARCHAR, value, formatMask)
-        );
+    this.value = nullSafeNotNull(value, OTHER);
+    this.formatMask = nullSafeNotNull(formatMask, VARCHAR);
+  }
 
-        this.value = nullSafeNotNull(value, OTHER);
-        this.formatMask = nullSafeNotNull(formatMask, VARCHAR);
-    }
+  // -------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // -------------------------------------------------------------------------
 
-    // -------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // -------------------------------------------------------------------------
+  private static final Set<SQLDialect> NO_SUPPORT_NATIVE_WITHOUT_MASK =
+      SQLDialect.supportedBy(
+          CUBRID, DERBY, FIREBIRD, HSQLDB, IGNITE, MARIADB, MYSQL, POSTGRES, SQLITE);
+  private static final Set<SQLDialect> NO_SUPPORT_NATIVE_WITH_MASK =
+      SQLDialect.supportedBy(CUBRID, DERBY, FIREBIRD, HSQLDB, IGNITE, MARIADB, MYSQL, SQLITE);
 
+  @Override
+  public final void accept(Context<?> ctx) {
+    if (formatMask == null && NO_SUPPORT_NATIVE_WITHOUT_MASK.contains(ctx.dialect()))
+      acceptCast(ctx);
+    else if (formatMask != null && NO_SUPPORT_NATIVE_WITH_MASK.contains(ctx.dialect()))
+      acceptCast(ctx);
+    else acceptNative(ctx);
+  }
 
+  private final void acceptNative(Context<?> ctx) {
+    ctx.visit(N_TO_CHAR).sql('(').visit(value);
 
-    private static final Set<SQLDialect> NO_SUPPORT_NATIVE_WITHOUT_MASK = SQLDialect.supportedBy(CUBRID, DERBY, FIREBIRD, HSQLDB, IGNITE, MARIADB, MYSQL, POSTGRES, SQLITE);
-    private static final Set<SQLDialect> NO_SUPPORT_NATIVE_WITH_MASK    = SQLDialect.supportedBy(CUBRID, DERBY, FIREBIRD, HSQLDB, IGNITE, MARIADB, MYSQL, SQLITE);
+    if (formatMask != null) ctx.sql(", ").visit(formatMask);
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        if (formatMask == null && NO_SUPPORT_NATIVE_WITHOUT_MASK.contains(ctx.dialect()))
-            acceptCast(ctx);
-        else if (formatMask != null && NO_SUPPORT_NATIVE_WITH_MASK.contains(ctx.dialect()))
-            acceptCast(ctx);
+    ctx.sql(')');
+  }
 
+  private final void acceptCast(Context<?> ctx) {
+    ctx.visit(DSL.cast(value, VARCHAR));
+  }
 
+  // -------------------------------------------------------------------------
+  // The Object API
+  // -------------------------------------------------------------------------
 
-
-        else
-            acceptNative(ctx);
-    }
-
-    private final void acceptNative(Context<?> ctx) {
-        ctx.visit(N_TO_CHAR).sql('(').visit(value);
-
-        if (formatMask != null)
-            ctx.sql(", ").visit(formatMask);
-
-        ctx.sql(')');
-    }
-
-    private final void acceptCast(Context<?> ctx) {
-        ctx.visit(DSL.cast(value, VARCHAR));
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // -------------------------------------------------------------------------
-    // The Object API
-    // -------------------------------------------------------------------------
-
-    @Override
-    public boolean equals(Object that) {
-        if (that instanceof ToChar) {
-            return
-                StringUtils.equals(value, ((ToChar) that).value) &&
-                StringUtils.equals(formatMask, ((ToChar) that).formatMask)
-            ;
-        }
-        else
-            return super.equals(that);
-    }
+  @Override
+  public boolean equals(Object that) {
+    if (that instanceof ToChar) {
+      return StringUtils.equals(value, ((ToChar) that).value)
+          && StringUtils.equals(formatMask, ((ToChar) that).formatMask);
+    } else return super.equals(that);
+  }
 }

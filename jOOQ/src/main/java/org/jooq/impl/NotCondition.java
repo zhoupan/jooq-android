@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -47,36 +47,31 @@ import org.jooq.Context;
 
 final class NotCondition extends AbstractCondition {
 
-    private static final Clause[] CLAUSES = { CONDITION, CONDITION_NOT };
+  private static final Clause[] CLAUSES = {CONDITION, CONDITION_NOT};
 
-    final Condition               condition;
+  final Condition condition;
 
-    NotCondition(Condition condition) {
-        this.condition = condition;
+  NotCondition(Condition condition) {
+    this.condition = condition;
+  }
+
+  @Override
+  boolean isNullable() {
+    return !(condition instanceof AbstractCondition)
+        || ((AbstractCondition) condition).isNullable();
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      default:
+        ctx.visit(K_NOT).sql(" (").visit(condition).sql(')');
+        break;
     }
+  }
 
-    @Override
-    boolean isNullable() {
-        return !(condition instanceof AbstractCondition) || ((AbstractCondition) condition).isNullable();
-    }
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-            default:
-                ctx.visit(K_NOT).sql(" (").visit(condition).sql(')');
-                break;
-        }
-    }
-
-    @Override
-    public final Clause[] clauses(Context<?> ctx) {
-        return CLAUSES;
-    }
+  @Override
+  public final Clause[] clauses(Context<?> ctx) {
+    return CLAUSES;
+  }
 }

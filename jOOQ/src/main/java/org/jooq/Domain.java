@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,7 +38,6 @@
 package org.jooq;
 
 import java.util.List;
-
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -48,9 +47,7 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface Domain<T> extends Qualified, Typed<T> {
 
-    /**
-     * The <code>DOMAIN</code>'s condition.
-     */
-    @NotNull
-    List<Check<?>> getChecks();
+  /** The <code>DOMAIN</code>'s condition. */
+  @NotNull
+  List<Check<?>> getChecks();
 }

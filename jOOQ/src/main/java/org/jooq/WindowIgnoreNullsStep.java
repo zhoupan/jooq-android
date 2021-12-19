@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,12 +37,9 @@
  */
 package org.jooq;
 
-import org.jetbrains.annotations.*;
-
-// ...
-// ...
-// ...
 import static org.jooq.SQLDialect.H2;
+
+import org.jetbrains.annotations.*;
 // ...
 // ...
 // ...
@@ -53,8 +50,8 @@ import static org.jooq.SQLDialect.H2;
 
 /**
  * This type is used for the window function DSL API.
- * <p>
- * Example: <code><pre>
+ *
+ * <p>Example: <code><pre>
  * field.firstValue()
  *      .ignoreNulls()
  *      .over()
@@ -69,19 +66,19 @@ import static org.jooq.SQLDialect.H2;
  */
 public interface WindowIgnoreNullsStep<T> extends WindowOverStep<T> {
 
-    /**
-     * Add an <code>IGNORE NULLS</code> clause to the window function. This
-     * might not be supported by all dialects.
-     */
-    @NotNull
-    @Support({ H2 })
-    WindowOverStep<T> ignoreNulls();
+  /**
+   * Add an <code>IGNORE NULLS</code> clause to the window function. This might not be supported by
+   * all dialects.
+   */
+  @NotNull
+  @Support({H2})
+  WindowOverStep<T> ignoreNulls();
 
-    /**
-     * Add a <code>RESPECT NULLS</code> clause to the window function. This
-     * might not be supported by all dialects.
-     */
-    @NotNull
-    @Support({ H2 })
-    WindowOverStep<T> respectNulls();
+  /**
+   * Add a <code>RESPECT NULLS</code> clause to the window function. This might not be supported by
+   * all dialects.
+   */
+  @NotNull
+  @Support({H2})
+  WindowOverStep<T> respectNulls();
 }

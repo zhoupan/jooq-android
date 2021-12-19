@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,6 @@
  *
  *
  */
-
 package org.jooq.meta;
 
 import java.util.List;
@@ -47,45 +46,27 @@ import java.util.List;
  */
 public interface RoutineDefinition extends Definition {
 
-    /**
-     * A list of IN or INOUT parameter column definitions
-     */
-    List<ParameterDefinition> getInParameters();
+  /** A list of IN or INOUT parameter column definitions */
+  List<ParameterDefinition> getInParameters();
 
-    /**
-     * A list of OUT or INOUT parameter column definitions
-     */
-    List<ParameterDefinition> getOutParameters();
+  /** A list of OUT or INOUT parameter column definitions */
+  List<ParameterDefinition> getOutParameters();
 
-    /**
-     * A list of all IN, OUT, and INOUT parameter column definitions
-     */
-    List<ParameterDefinition> getAllParameters();
+  /** A list of all IN, OUT, and INOUT parameter column definitions */
+  List<ParameterDefinition> getAllParameters();
 
-    /**
-     * @return The return value column definition
-     */
-    ParameterDefinition getReturnValue();
+  /** @return The return value column definition */
+  ParameterDefinition getReturnValue();
 
-    /**
-     * @return The return value simple Java type
-     */
-    DataTypeDefinition getReturnType();
+  /** @return The return value simple Java type */
+  DataTypeDefinition getReturnType();
 
-    /**
-     * @return The return value simple Java type
-     */
-    DataTypeDefinition getReturnType(JavaTypeResolver resolver);
+  /** @return The return value simple Java type */
+  DataTypeDefinition getReturnType(JavaTypeResolver resolver);
 
-    /**
-     * @return Whether this routine can be used in SQL (a function without OUT
-     *         parameters)
-     */
-    boolean isSQLUsable();
+  /** @return Whether this routine can be used in SQL (a function without OUT parameters) */
+  boolean isSQLUsable();
 
-    /**
-     * @return Whether this routine is an aggregate function
-     */
-    boolean isAggregate();
-
+  /** @return Whether this routine is an aggregate function */
+  boolean isAggregate();
 }

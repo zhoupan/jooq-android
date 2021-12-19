@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,7 @@
  */
 package org.jooq.impl;
 
+import static org.jooq.SQLDialect.*;
 import static org.jooq.impl.DSL.*;
 import static org.jooq.impl.Internal.*;
 import static org.jooq.impl.Keywords.*;
@@ -46,101 +47,50 @@ import static org.jooq.impl.Tools.*;
 import static org.jooq.impl.Tools.BooleanDataKey.*;
 import static org.jooq.impl.Tools.DataExtendedKey.*;
 import static org.jooq.impl.Tools.DataKey.*;
-import static org.jooq.SQLDialect.*;
 
+import java.math.BigDecimal;
+import java.util.*;
 import org.jooq.*;
-import org.jooq.Record;
 import org.jooq.conf.*;
-import org.jooq.impl.*;
 import org.jooq.tools.*;
 
-import java.util.*;
-import java.math.BigDecimal;
+/** The <code>SQRT</code> statement. */
+@SuppressWarnings({"rawtypes", "unused"})
+final class Sqrt extends AbstractField<BigDecimal> {
 
+  private final Field<? extends Number> value;
 
-/**
- * The <code>SQRT</code> statement.
- */
-@SuppressWarnings({ "rawtypes", "unused" })
-final class Sqrt
-extends
-    AbstractField<BigDecimal>
-{
+  Sqrt(Field<? extends Number> value) {
+    super(N_SQRT, allNotNull(NUMERIC, value));
 
-    private final Field<? extends Number> value;
+    this.value = nullSafeNotNull(value, INTEGER);
+  }
 
-    Sqrt(
-        Field<? extends Number> value
-    ) {
-        super(
-            N_SQRT,
-            allNotNull(NUMERIC, value)
-        );
+  // -------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // -------------------------------------------------------------------------
 
-        this.value = nullSafeNotNull(value, INTEGER);
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case SQLITE:
+        ctx.visit(DSL.power(value, inline(0.5)));
+        break;
+
+      default:
+        ctx.visit(function(N_SQRT, getDataType(), value));
+        break;
     }
+  }
 
-    // -------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // The Object API
+  // -------------------------------------------------------------------------
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            case SQLITE:
-                ctx.visit(DSL.power(value, inline(0.5)));
-                break;
-
-            default:
-                ctx.visit(function(N_SQRT, getDataType(), value));
-                break;
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-    // -------------------------------------------------------------------------
-    // The Object API
-    // -------------------------------------------------------------------------
-
-    @Override
-    public boolean equals(Object that) {
-        if (that instanceof Sqrt) {
-            return
-                StringUtils.equals(value, ((Sqrt) that).value)
-            ;
-        }
-        else
-            return super.equals(that);
-    }
+  @Override
+  public boolean equals(Object that) {
+    if (that instanceof Sqrt) {
+      return StringUtils.equals(value, ((Sqrt) that).value);
+    } else return super.equals(that);
+  }
 }

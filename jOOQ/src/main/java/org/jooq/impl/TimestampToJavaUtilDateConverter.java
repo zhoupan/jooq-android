@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,23 +39,21 @@ package org.jooq.impl;
 
 import java.sql.Timestamp;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class TimestampToJavaUtilDateConverter extends AbstractConverter<Timestamp, java.util.Date> {
-    static final TimestampToJavaUtilDateConverter INSTANCE         = new TimestampToJavaUtilDateConverter();
+  static final TimestampToJavaUtilDateConverter INSTANCE = new TimestampToJavaUtilDateConverter();
 
-    private TimestampToJavaUtilDateConverter () {
-        super(Timestamp.class, java.util.Date.class);
-    }
+  private TimestampToJavaUtilDateConverter() {
+    super(Timestamp.class, java.util.Date.class);
+  }
 
-    @Override
-    public final java.util.Date from(Timestamp t) {
-        return t == null ? null : new java.util.Date(t.getTime());
-    }
+  @Override
+  public final java.util.Date from(Timestamp t) {
+    return t == null ? null : new java.util.Date(t.getTime());
+  }
 
-    @Override
-    public final Timestamp to(java.util.Date u) {
-        return u == null ? null : new Timestamp(u.getTime());
-    }
+  @Override
+  public final Timestamp to(java.util.Date u) {
+    return u == null ? null : new Timestamp(u.getTime());
+  }
 }

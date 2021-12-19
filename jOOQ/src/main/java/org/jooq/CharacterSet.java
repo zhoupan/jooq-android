@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,22 +37,19 @@
  */
 package org.jooq;
 
-import org.jooq.impl.DSL;
-
 import org.jetbrains.annotations.NotNull;
+import org.jooq.impl.DSL;
 
 /**
  * A character set.
- * <p>
- * Instances can be created using {@link DSL#characterSet(Name)} and overloads.
+ *
+ * <p>Instances can be created using {@link DSL#characterSet(Name)} and overloads.
  *
  * @author Lukas Eder
  */
 public interface CharacterSet extends QueryPart {
 
-    /**
-     * The name of the collation.
-     */
-    @NotNull
-    String getName();
+  /** The name of the collation. */
+  @NotNull
+  String getName();
 }

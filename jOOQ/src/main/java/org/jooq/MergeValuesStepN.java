@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,33 +40,21 @@ package org.jooq;
 // ...
 // ...
 import static org.jooq.SQLDialect.CUBRID;
-// ...
 import static org.jooq.SQLDialect.DERBY;
-// ...
 import static org.jooq.SQLDialect.FIREBIRD;
 import static org.jooq.SQLDialect.H2;
-// ...
 import static org.jooq.SQLDialect.HSQLDB;
-// ...
 import static org.jooq.SQLDialect.MARIADB;
-// ...
 import static org.jooq.SQLDialect.MYSQL;
-// ...
 import static org.jooq.SQLDialect.POSTGRES;
-// ...
-// ...
-// ...
-// ...
-// ...
 
 import java.util.Collection;
-
 import org.jetbrains.annotations.NotNull;
 
 /**
  * This type is used for the H2-specific variant of the {@link Merge}'s DSL API.
- * <p>
- * Example: <code><pre>
+ *
+ * <p>Example: <code><pre>
  * DSLContext create = DSL.using(configuration);
  *
  * create.mergeInto(table, field1, field2)
@@ -79,38 +67,34 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface MergeValuesStepN<R extends Record> {
 
-    /**
-     * Specify a <code>VALUES</code> clause
-     */
-    @NotNull @CheckReturnValue
-    @Support({ CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES })
-    Merge<R> values(Object... values);
+  /** Specify a <code>VALUES</code> clause */
+  @NotNull
+  @CheckReturnValue
+  @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
+  Merge<R> values(Object... values);
 
-    /**
-     * Specify a <code>VALUES</code> clause
-     */
-    @NotNull @CheckReturnValue
-    @Support({ CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES })
-    Merge<R> values(Field<?>... values);
+  /** Specify a <code>VALUES</code> clause */
+  @NotNull
+  @CheckReturnValue
+  @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
+  Merge<R> values(Field<?>... values);
 
-    /**
-     * Specify a <code>VALUES</code> clause
-     */
-    @NotNull @CheckReturnValue
-    @Support({ CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES })
-    Merge<R> values(Collection<?> values);
+  /** Specify a <code>VALUES</code> clause */
+  @NotNull
+  @CheckReturnValue
+  @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
+  Merge<R> values(Collection<?> values);
 
-    /**
-     * Use a <code>SELECT</code> statement as the source of values for the
-     * <code>MERGE</code> statement
-     * <p>
-     * This variant of the <code>MERGE .. SELECT</code> statement expects a
-     * select returning exactly as many fields as specified previously in the
-     * <code>INTO</code> clause:
-     * {@link DSLContext#mergeInto(Table, Field...)} or
-     * {@link DSLContext#mergeInto(Table, Collection)}
-     */
-    @NotNull @CheckReturnValue
-    @Support({ CUBRID, FIREBIRD, H2, HSQLDB })
-    Merge<R> select(Select<?> select);
+  /**
+   * Use a <code>SELECT</code> statement as the source of values for the <code>MERGE</code>
+   * statement
+   *
+   * <p>This variant of the <code>MERGE .. SELECT</code> statement expects a select returning
+   * exactly as many fields as specified previously in the <code>INTO</code> clause: {@link
+   * DSLContext#mergeInto(Table, Field...)} or {@link DSLContext#mergeInto(Table, Collection)}
+   */
+  @NotNull
+  @CheckReturnValue
+  @Support({CUBRID, FIREBIRD, H2, HSQLDB})
+  Merge<R> select(Select<?> select);
 }

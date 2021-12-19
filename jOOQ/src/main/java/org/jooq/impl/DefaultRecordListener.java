@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,57 +42,56 @@ import org.jooq.RecordListener;
 
 /**
  * A publicly available default implementation of {@link RecordListener}.
- * <p>
- * Use this to stay compatible with future API changes (i.e. added methods to
- * <code>RecordListener</code>)
+ *
+ * <p>Use this to stay compatible with future API changes (i.e. added methods to <code>
+ * RecordListener</code>)
  *
  * @author Lukas Eder
  */
 public class DefaultRecordListener implements RecordListener {
 
-    @Override
-    public void storeStart(RecordContext ctx) {}
+  @Override
+  public void storeStart(RecordContext ctx) {}
 
-    @Override
-    public void storeEnd(RecordContext ctx) {}
+  @Override
+  public void storeEnd(RecordContext ctx) {}
 
-    @Override
-    public void insertStart(RecordContext ctx) {}
+  @Override
+  public void insertStart(RecordContext ctx) {}
 
-    @Override
-    public void insertEnd(RecordContext ctx) {}
+  @Override
+  public void insertEnd(RecordContext ctx) {}
 
-    @Override
-    public void updateStart(RecordContext ctx) {}
+  @Override
+  public void updateStart(RecordContext ctx) {}
 
-    @Override
-    public void updateEnd(RecordContext ctx) {}
+  @Override
+  public void updateEnd(RecordContext ctx) {}
 
-    @Override
-    public void mergeStart(RecordContext ctx) {}
+  @Override
+  public void mergeStart(RecordContext ctx) {}
 
-    @Override
-    public void mergeEnd(RecordContext ctx) {}
+  @Override
+  public void mergeEnd(RecordContext ctx) {}
 
-    @Override
-    public void deleteStart(RecordContext ctx) {}
+  @Override
+  public void deleteStart(RecordContext ctx) {}
 
-    @Override
-    public void deleteEnd(RecordContext ctx) {}
+  @Override
+  public void deleteEnd(RecordContext ctx) {}
 
-    @Override
-    public void loadStart(RecordContext ctx) {}
+  @Override
+  public void loadStart(RecordContext ctx) {}
 
-    @Override
-    public void loadEnd(RecordContext ctx) {}
+  @Override
+  public void loadEnd(RecordContext ctx) {}
 
-    @Override
-    public void refreshStart(RecordContext ctx) {}
+  @Override
+  public void refreshStart(RecordContext ctx) {}
 
-    @Override
-    public void refreshEnd(RecordContext ctx) {}
+  @Override
+  public void refreshEnd(RecordContext ctx) {}
 
-    @Override
-    public void exception(RecordContext ctx) {}
-
+  @Override
+  public void exception(RecordContext ctx) {}
 }

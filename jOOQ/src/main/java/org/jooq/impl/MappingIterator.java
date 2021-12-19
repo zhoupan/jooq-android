@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,31 +40,29 @@ package org.jooq.impl;
 import java.util.Iterator;
 import java.util.function.Function;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class MappingIterator<T, U> implements Iterator<U> {
 
-    final Iterator<? extends T>            delegate;
-    final Function<? super T, ? extends U> mapper;
+  final Iterator<? extends T> delegate;
+  final Function<? super T, ? extends U> mapper;
 
-    MappingIterator(Iterator<? extends T> delegate, Function<? super T, ? extends U> mapper) {
-        this.delegate = delegate;
-        this.mapper = mapper;
-    }
+  MappingIterator(Iterator<? extends T> delegate, Function<? super T, ? extends U> mapper) {
+    this.delegate = delegate;
+    this.mapper = mapper;
+  }
 
-    @Override
-    public boolean hasNext() {
-        return delegate.hasNext();
-    }
+  @Override
+  public boolean hasNext() {
+    return delegate.hasNext();
+  }
 
-    @Override
-    public U next() {
-        return mapper.apply(delegate.next());
-    }
+  @Override
+  public U next() {
+    return mapper.apply(delegate.next());
+  }
 
-    @Override
-    public void remove() {
-        delegate.remove();
-    }
+  @Override
+  public void remove() {
+    delegate.remove();
+  }
 }

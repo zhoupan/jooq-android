@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,59 +35,38 @@
  *
  *
  */
-
 package org.jooq.impl;
 
 import static org.jooq.impl.DSL.function;
-import static org.jooq.impl.DSL.inline;
-import static org.jooq.impl.Keywords.K_IS_DOCUMENT;
 import static org.jooq.impl.Keywords.K_IS_JSON;
-import static org.jooq.impl.Keywords.K_IS_NOT_DOCUMENT;
 import static org.jooq.impl.Keywords.K_IS_NOT_JSON;
-import static org.jooq.impl.Names.N_ISJSON;
 import static org.jooq.impl.Names.N_JSON_VALID;
 import static org.jooq.impl.SQLDataType.BOOLEAN;
-import static org.jooq.impl.SQLDataType.INTEGER;
 
 import org.jooq.Context;
 import org.jooq.Field;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class IsJSON extends AbstractCondition {
-    private final Field<?>    field;
-    private final boolean     isJSON;
+  private final Field<?> field;
+  private final boolean isJSON;
 
-    IsJSON(Field<?> field, boolean isJSON) {
-        this.field = field;
-        this.isJSON = isJSON;
+  IsJSON(Field<?> field, boolean isJSON) {
+    this.field = field;
+    this.isJSON = isJSON;
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+
+    switch (ctx.family()) {
+      case MYSQL:
+        ctx.visit(function(N_JSON_VALID, BOOLEAN, field));
+        break;
+
+      default:
+        ctx.visit(field).sql(' ').visit(isJSON ? K_IS_JSON : K_IS_NOT_JSON);
+        break;
     }
-
-    @Override
-    public final void accept(Context<?> ctx) {
-
-        switch (ctx.family()) {
-
-
-
-
-
-
-            case MYSQL:
-                ctx.visit(function(N_JSON_VALID, BOOLEAN, field));
-                break;
-
-
-
-
-
-
-
-
-            default:
-                ctx.visit(field).sql(' ').visit(isJSON ? K_IS_JSON : K_IS_NOT_JSON);
-                break;
-        }
-    }
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,8 +38,6 @@
 package org.jooq.meta;
 
 import java.util.List;
-
-// ...
 import org.jooq.Name;
 import org.jooq.meta.jaxb.ForcedType;
 
@@ -50,116 +48,77 @@ import org.jooq.meta.jaxb.ForcedType;
  */
 public interface DataTypeDefinition {
 
-    /**
-     * The dialect-specific column type.
-     */
-    String getType();
+  /** The dialect-specific column type. */
+  String getType();
 
-    /**
-     * The converter type that is applied to this data type, or
-     * <code>null</code>, if no such converter type is configured.
-     */
-    String getConverter();
+  /**
+   * The converter type that is applied to this data type, or <code>null</code>, if no such
+   * converter type is configured.
+   */
+  String getConverter();
 
-    /**
-     * The binding type that is applied to this data type, or
-     * <code>null</code>, if no such binding type is configured.
-     */
-    String getBinding();
+  /**
+   * The binding type that is applied to this data type, or <code>null</code>, if no such binding
+   * type is configured.
+   */
+  String getBinding();
 
-    /**
-     * The type's length.
-     */
-    int getLength();
+  /** The type's length. */
+  int getLength();
 
-    /**
-     * The type's precision.
-     */
-    int getPrecision();
+  /** The type's precision. */
+  int getPrecision();
 
-    /**
-     * The type's scale.
-     */
-    int getScale();
+  /** The type's scale. */
+  int getScale();
 
-    /**
-     * The user type, if applicable.
-     */
-    String getUserType();
+  /** The user type, if applicable. */
+  String getUserType();
 
-    /**
-     * The qualified user type, if applicable.
-     */
-    Name getQualifiedUserType();
+  /** The qualified user type, if applicable. */
+  Name getQualifiedUserType();
 
-    /**
-     * The custom Java type to represent this data type, if applicable.
-     * <p>
-     * This is the same as calling {@link #getJavaType(JavaTypeResolver)} with a
-     * <code>null</code> resolver.
-     */
-    String getJavaType();
+  /**
+   * The custom Java type to represent this data type, if applicable.
+   *
+   * <p>This is the same as calling {@link #getJavaType(JavaTypeResolver)} with a <code>null</code>
+   * resolver.
+   */
+  String getJavaType();
 
-    /**
-     * The custom Java type to represent this data type, if applicable.
-     */
-    String getJavaType(JavaTypeResolver resolver);
+  /** The custom Java type to represent this data type, if applicable. */
+  String getJavaType(JavaTypeResolver resolver);
 
-    /**
-     * Whether this data type is nullable.
-     */
-    boolean isNullable();
+  /** Whether this data type is nullable. */
+  boolean isNullable();
 
-    /**
-     * Whether this data type is an identity.
-     */
-    boolean isIdentity();
+  /** Whether this data type is an identity. */
+  boolean isIdentity();
 
-    /**
-     * Whether this data type is defaultable.
-     */
-    boolean isDefaulted();
+  /** Whether this data type is defaultable. */
+  boolean isDefaulted();
 
-    /**
-     * The default value expression.
-     */
-    String getDefaultValue();
+  /** The default value expression. */
+  String getDefaultValue();
 
-    /**
-     * Whether this data type represents a udt.
-     */
-    boolean isUDT();
+  /** Whether this data type represents a udt. */
+  boolean isUDT();
 
-    /**
-     * Whether this data type represents an array producing an
-     * {@link ArrayRecord}.
-     */
-    boolean isArray();
+  /** Whether this data type represents an array producing an {@link ArrayRecord}. */
+  boolean isArray();
 
-    /**
-     * Whether this data type represens an array producing an
-     * {@link ArrayRecord} of udt types.
-     */
-    boolean isUDTArray();
+  /** Whether this data type represens an array producing an {@link ArrayRecord} of udt types. */
+  boolean isUDTArray();
 
-    /**
-     * Whether this data type is a NUMBER type without precision and scale.
-     */
-    boolean isGenericNumberType();
+  /** Whether this data type is a NUMBER type without precision and scale. */
+  boolean isGenericNumberType();
 
-    /**
-     * The underlying database.
-     */
-    Database getDatabase();
+  /** The underlying database. */
+  Database getDatabase();
 
-    /**
-     * The underlying schema.
-     */
-    SchemaDefinition getSchema();
+  /** The underlying schema. */
+  SchemaDefinition getSchema();
 
-    /**
-     * The various type names by which this type can be matched by a
-     * {@link ForcedType}.
-     */
-    List<String> getMatchNames();
+  /** The various type names by which this type can be matched by a {@link ForcedType}. */
+  List<String> getMatchNames();
 }

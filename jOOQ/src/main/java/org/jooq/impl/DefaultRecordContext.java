@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,7 +38,6 @@
 package org.jooq.impl;
 
 import java.util.Arrays;
-
 import org.jooq.Configuration;
 import org.jooq.ExecuteType;
 import org.jooq.Record;
@@ -53,52 +52,51 @@ import org.jooq.Result;
  */
 class DefaultRecordContext extends AbstractScope implements RecordContext {
 
-    private final ExecuteType type;
-    private final Record[]    records;
-    Exception                 exception;
+  private final ExecuteType type;
+  private final Record[] records;
+  Exception exception;
 
-    DefaultRecordContext(Configuration configuration, ExecuteType type, Record... records) {
-        super(configuration);
+  DefaultRecordContext(Configuration configuration, ExecuteType type, Record... records) {
+    super(configuration);
 
-        this.type = type;
-        this.records = records;
+    this.type = type;
+    this.records = records;
+  }
+
+  @Override
+  public final ExecuteType type() {
+    return type;
+  }
+
+  @Override
+  public final Record record() {
+    return records != null && records.length > 0 ? records[0] : null;
+  }
+
+  @Override
+  public final Record[] batchRecords() {
+    return records;
+  }
+
+  @Override
+  public final RecordType<?> recordType() {
+    Record record = record();
+    return record != null ? new FieldsImpl<>(record.fields()) : null;
+  }
+
+  @Override
+  public final Exception exception() {
+    return exception;
+  }
+
+  @Override
+  public String toString() {
+    if (records != null && records.length > 0) {
+      Result<Record> result = DSL.using(configuration).newResult(records[0].fields());
+      result.addAll(Arrays.asList(records));
+      return result.toString();
+    } else {
+      return "No Records";
     }
-
-    @Override
-    public final ExecuteType type() {
-        return type;
-    }
-
-    @Override
-    public final Record record() {
-        return records != null && records.length > 0 ? records[0] : null;
-    }
-
-    @Override
-    public final Record[] batchRecords() {
-        return records;
-    }
-
-    @Override
-    public final RecordType<?> recordType() {
-        Record record = record();
-        return record != null ? new FieldsImpl<>(record.fields()) : null;
-    }
-
-    @Override
-    public final Exception exception() {
-        return exception;
-    }
-
-    @Override
-    public String toString() {
-        if (records != null && records.length > 0) {
-            Result<Record> result = DSL.using(configuration).newResult(records[0].fields());
-            result.addAll(Arrays.asList(records));
-            return result.toString();
-        }
-        else {
-            return "No Records";
-        }
-    }
+  }
 }

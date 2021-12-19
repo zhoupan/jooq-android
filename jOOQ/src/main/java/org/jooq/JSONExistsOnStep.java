@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,55 +38,12 @@
 package org.jooq;
 
 import org.jetbrains.annotations.*;
-
-
-// ...
-// ...
-
 import org.jooq.impl.DSL;
 
 /**
- * A step in the construction of {@link DSL#jsonExists(Field, Field)} or
- * {@link DSL#jsonbExists(Field, Field)} functions where the
- * <code>ON ERROR</code> clause can be defined.
+ * A step in the construction of {@link DSL#jsonExists(Field, Field)} or {@link
+ * DSL#jsonbExists(Field, Field)} functions where the <code>ON ERROR</code> clause can be defined.
  *
  * @author Lukas Eder
  */
-public interface JSONExistsOnStep extends Condition {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}
+public interface JSONExistsOnStep extends Condition {}

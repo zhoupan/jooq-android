@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -48,49 +48,48 @@ import org.jooq.Domain;
  */
 final class DomainDataType<T> extends DefaultDataType<T> {
 
-    private final Domain<T>   domain;
-    private final DataType<T> baseType;
+  private final Domain<T> domain;
+  private final DataType<T> baseType;
 
-    DomainDataType(Domain<T> domain, DataType<T> baseType) {
-        super(
-            null,
-            baseType.getSQLDataType(),
-            baseType.getType(),
-            baseType.getBinding(),
-            baseType.getQualifiedName(),
-            baseType.getTypeName(),
-            baseType.getCastTypeName(),
-            baseType.precisionDefined() ? baseType.precision() : null,
-            baseType.scaleDefined() ? baseType.scale() : null,
-            baseType.lengthDefined() ? baseType.length() : null,
-            baseType.nullability(),
-            null, // TODO: Collation
-            null, // TODO: CharacterSet (?)
-            false,
-            baseType.default_()
-        );
+  DomainDataType(Domain<T> domain, DataType<T> baseType) {
+    super(
+        null,
+        baseType.getSQLDataType(),
+        baseType.getType(),
+        baseType.getBinding(),
+        baseType.getQualifiedName(),
+        baseType.getTypeName(),
+        baseType.getCastTypeName(),
+        baseType.precisionDefined() ? baseType.precision() : null,
+        baseType.scaleDefined() ? baseType.scale() : null,
+        baseType.lengthDefined() ? baseType.length() : null,
+        baseType.nullability(),
+        null, // TODO: Collation
+        null, // TODO: CharacterSet (?)
+        false,
+        baseType.default_());
 
-        this.domain = domain;
-        this.baseType = baseType;
-    }
+    this.domain = domain;
+    this.baseType = baseType;
+  }
 
-    @Override
-    public final Domain<T> getDomain() {
-        return domain;
-    }
+  @Override
+  public final Domain<T> getDomain() {
+    return domain;
+  }
 
-    @Override
-    public final int getSQLType() {
-        return baseType.getSQLType();
-    }
+  @Override
+  public final int getSQLType() {
+    return baseType.getSQLType();
+  }
 
-    @Override
-    public final String getTypeName(Configuration configuration) {
-        return baseType.getTypeName(configuration);
-    }
+  @Override
+  public final String getTypeName(Configuration configuration) {
+    return baseType.getTypeName(configuration);
+  }
 
-    @Override
-    public final String getCastTypeName(Configuration configuration) {
-        return baseType.getCastTypeName(configuration);
-    }
+  @Override
+  public final String getCastTypeName(Configuration configuration) {
+    return baseType.getCastTypeName(configuration);
+  }
 }

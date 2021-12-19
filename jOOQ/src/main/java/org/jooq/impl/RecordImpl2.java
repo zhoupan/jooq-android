@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,90 +44,90 @@ import org.jooq.Record2;
 
 /**
  * A general purpose record, typically used for ad-hoc types.
- * <p>
- * This type implements both the general-purpose, type-unsafe {@link Record}
- * interface, as well as the more specific, type-safe {@link Record2}
- * interfaces
+ *
+ * <p>This type implements both the general-purpose, type-unsafe {@link Record} interface, as well
+ * as the more specific, type-safe {@link Record2} interfaces
  *
  * @author Lukas Eder
  */
-@SuppressWarnings({ "unchecked" })
+@SuppressWarnings({"unchecked"})
 final class RecordImpl2<T1, T2> extends AbstractRecord implements InternalRecord, Record2<T1, T2> {
 
-    RecordImpl2(AbstractRow<?> row) {
-        super(row);
-    }
+  RecordImpl2(AbstractRow<?> row) {
+    super(row);
+  }
 
-    // ------------------------------------------------------------------------
-    // XXX: Type-safe Record APIs
-    // ------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
+  // XXX: Type-safe Record APIs
+  // ------------------------------------------------------------------------
 
-    @Override
-    public RowImpl2<T1, T2> fieldsRow() {
-        return new RowImpl2<>(field1(), field2());
-    }
+  @Override
+  public RowImpl2<T1, T2> fieldsRow() {
+    return new RowImpl2<>(field1(), field2());
+  }
 
-    @Override
-    public final RowImpl2<T1, T2> valuesRow() {
-        return new RowImpl2<>(Tools.field(value1(), field1()), Tools.field(value2(), field2()));
-    }
+  @Override
+  public final RowImpl2<T1, T2> valuesRow() {
+    return new RowImpl2<>(Tools.field(value1(), field1()), Tools.field(value2(), field2()));
+  }
 
-    @Override
-    public final Field<T1> field1() {
-        return (Field<T1>) fields.field(0);
-    }
+  @Override
+  public final Field<T1> field1() {
+    return (Field<T1>) fields.field(0);
+  }
 
-    @Override
-    public final Field<T2> field2() {
-        return (Field<T2>) fields.field(1);
-    }
+  @Override
+  public final Field<T2> field2() {
+    return (Field<T2>) fields.field(1);
+  }
 
-    @Override
-    public final T1 value1() {
-        return (T1) get(0);
-    }
+  @Override
+  public final T1 value1() {
+    return (T1) get(0);
+  }
 
-    @Override
-    public final T2 value2() {
-        return (T2) get(1);
-    }
+  @Override
+  public final T2 value2() {
+    return (T2) get(1);
+  }
 
-    @Override
-    public final Record2<T1, T2> value1(T1 value) {
-        set(0, value);
-        return this;
-    }
+  @Override
+  public final Record2<T1, T2> value1(T1 value) {
+    set(0, value);
+    return this;
+  }
 
-    @Override
-    public final Record2<T1, T2> value2(T2 value) {
-        set(1, value);
-        return this;
-    }
+  @Override
+  public final Record2<T1, T2> value2(T2 value) {
+    set(1, value);
+    return this;
+  }
 
-    @Override
-    public final Record2<T1, T2> values(T1 t1, T2 t2) {
-        set(0, t1);
-        set(1, t2);
-        return this;
-    }
+  @Override
+  public final Record2<T1, T2> values(T1 t1, T2 t2) {
+    set(0, t1);
+    set(1, t2);
+    return this;
+  }
 
-    @Override
-    public <T> Record2<T1, T2> with(Field<T> field, T value) {
-        return (Record2<T1, T2>) super.with(field, value);
-    }
+  @Override
+  public <T> Record2<T1, T2> with(Field<T> field, T value) {
+    return (Record2<T1, T2>) super.with(field, value);
+  }
 
-    @Override
-    public <T, U> Record2<T1, T2> with(Field<T> field, U value, Converter<? extends T, ? super U> converter) {
-        return (Record2<T1, T2>) super.with(field, value, converter);
-    }
+  @Override
+  public <T, U> Record2<T1, T2> with(
+      Field<T> field, U value, Converter<? extends T, ? super U> converter) {
+    return (Record2<T1, T2>) super.with(field, value, converter);
+  }
 
-    @Override
-    public final T1 component1() {
-        return value1();
-    }
+  @Override
+  public final T1 component1() {
+    return value1();
+  }
 
-    @Override
-    public final T2 component2() {
-        return value2();
-    }
+  @Override
+  public final T2 component2() {
+    return value2();
+  }
 }

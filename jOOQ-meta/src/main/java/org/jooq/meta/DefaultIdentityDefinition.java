@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,26 +46,26 @@ import java.util.List;
  */
 public class DefaultIdentityDefinition extends AbstractDefinition implements IdentityDefinition {
 
-    private final ColumnDefinition column;
+  private final ColumnDefinition column;
 
-    public DefaultIdentityDefinition(ColumnDefinition column) {
-        super(column.getDatabase(), column.getSchema(), column.getName());
+  public DefaultIdentityDefinition(ColumnDefinition column) {
+    super(column.getDatabase(), column.getSchema(), column.getName());
 
-        this.column = column;
-    }
+    this.column = column;
+  }
 
-    @Override
-    public List<Definition> getDefinitionPath() {
-        return getColumn().getDefinitionPath();
-    }
+  @Override
+  public List<Definition> getDefinitionPath() {
+    return getColumn().getDefinitionPath();
+  }
 
-    @Override
-    public final TableDefinition getTable() {
-        return getColumn().getContainer();
-    }
+  @Override
+  public final TableDefinition getTable() {
+    return getColumn().getContainer();
+  }
 
-    @Override
-    public ColumnDefinition getColumn() {
-        return column;
-    }
+  @Override
+  public ColumnDefinition getColumn() {
+    return column;
+  }
 }

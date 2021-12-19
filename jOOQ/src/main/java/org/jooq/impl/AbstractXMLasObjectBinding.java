@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,7 +45,6 @@ import java.io.ObjectOutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.sql.SQLXML;
-
 import javax.xml.bind.DataBindingException;
 import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBContext;
@@ -54,102 +53,96 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.namespace.QName;
-
 import org.jooq.Converter;
 import org.jooq.XML;
 
 /**
- * A binding that binds JAXB-annotated {@link Object} types to {@link SQLXML}
- * types from your database.
- * <p>
- * Subtypes may extend this type to provide actual bound type.
+ * A binding that binds JAXB-annotated {@link Object} types to {@link SQLXML} types from your
+ * database.
+ *
+ * <p>Subtypes may extend this type to provide actual bound type.
  *
  * @author Lukas Eder
  */
 public class AbstractXMLasObjectBinding<T> extends AbstractXMLBinding<T> {
 
+  private final Converter<XML, T> converter;
 
-    private final Converter<XML, T> converter;
+  protected AbstractXMLasObjectBinding(final Class<T> theType) {
+    this.converter = new XMLasObjectConverter<>(theType);
+  }
 
-    protected AbstractXMLasObjectBinding(final Class<T> theType) {
-        this.converter = new XMLasObjectConverter<>(theType);
+  @Override
+  public final Converter<XML, T> converter() {
+    return converter;
+  }
+
+  private static final class XMLasObjectConverter<T> implements Converter<XML, T> {
+
+    Class<T> type;
+    XmlRootElement root;
+    transient JAXBContext ctx;
+
+    private XMLasObjectConverter(Class<T> type) {
+      this.type = type;
+      this.root = type.getAnnotation(XmlRootElement.class);
+      this.ctx = initCtx();
+    }
+
+    private final JAXBContext initCtx() {
+      try {
+        return JAXBContext.newInstance(type);
+      } catch (JAXBException e) {
+        throw new DataBindingException(e);
+      }
     }
 
     @Override
-    public final Converter<XML, T> converter() {
-        return converter;
+    public T from(XML t) {
+      if (t == null) return null;
+
+      return JAXB.unmarshal(new StringReader("" + t), type);
     }
 
-    private static final class XMLasObjectConverter<T> implements Converter<XML, T> {
+    @Override
+    public XML to(T u) {
+      if (u == null) return null;
 
-        Class<T>                  type;
-        XmlRootElement            root;
-        transient JAXBContext     ctx;
+      try {
+        StringWriter s = new StringWriter();
 
-        private XMLasObjectConverter(Class<T> type) {
-            this.type = type;
-            this.root = type.getAnnotation(XmlRootElement.class);
-            this.ctx = initCtx();
+        Object o = u;
+        if (root == null) {
+          o = new JAXBElement<>(new QName(decapitalize(type.getSimpleName())), type, u);
         }
 
-        private final JAXBContext initCtx() {
-            try {
-                return JAXBContext.newInstance(type);
-            }
-            catch (JAXBException e) {
-                throw new DataBindingException(e);
-            }
-        }
-
-        @Override
-        public T from(XML t) {
-            if (t == null)
-                return null;
-
-            return JAXB.unmarshal(new StringReader("" + t), type);
-        }
-
-        @Override
-        public XML to(T u) {
-            if (u == null)
-                return null;
-
-            try {
-                StringWriter s = new StringWriter();
-
-                Object o = u;
-                if (root == null) {
-                    o = new JAXBElement<>(new QName(decapitalize(type.getSimpleName())), type, u);
-                }
-
-                Marshaller m = ctx.createMarshaller();
-                m.setProperty(Marshaller.JAXB_FRAGMENT, true);
-                m.marshal(o, s);
-                return XML.xml(s.toString());
-            }
-            catch (JAXBException e) {
-                throw new DataBindingException(e);
-            }
-        }
-
-        @Override
-        public Class<XML> fromType() {
-            return XML.class;
-        }
-
-        @Override
-        public Class<T> toType() {
-            return type;
-        }
-
-        private void writeObject(ObjectOutputStream oos) throws IOException {
-            oos.defaultWriteObject();
-        }
-
-        private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
-            ois.defaultReadObject();
-
-            ctx = initCtx();
-        }
+        Marshaller m = ctx.createMarshaller();
+        m.setProperty(Marshaller.JAXB_FRAGMENT, true);
+        m.marshal(o, s);
+        return XML.xml(s.toString());
+      } catch (JAXBException e) {
+        throw new DataBindingException(e);
+      }
     }
+
+    @Override
+    public Class<XML> fromType() {
+      return XML.class;
+    }
+
+    @Override
+    public Class<T> toType() {
+      return type;
+    }
+
+    private void writeObject(ObjectOutputStream oos) throws IOException {
+      oos.defaultWriteObject();
+    }
+
+    private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
+      ois.defaultReadObject();
+
+      ctx = initCtx();
+    }
+  }
 }

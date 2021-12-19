@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,36 +42,25 @@ import static org.jooq.impl.Names.N_ARRAY_AGG;
 import org.jooq.Context;
 import org.jooq.Field;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class ArrayAgg<T> extends DefaultAggregateFunction<T[]> {
 
-    ArrayAgg(boolean distinct, Field<T> arg) {
-        super(distinct, N_ARRAY_AGG, arg.getDataType().getArrayDataType(), arg);
+  ArrayAgg(boolean distinct, Field<T> arg) {
+    super(distinct, N_ARRAY_AGG, arg.getDataType().getArrayDataType(), arg);
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      default:
+        ctx.visit(N_ARRAY_AGG).sql('(');
+        acceptArguments1(ctx, new QueryPartListView<>(arguments.get(0)));
+        acceptOrderBy(ctx);
+        ctx.sql(')');
+        break;
     }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-
-
-
-            default:
-                ctx.visit(N_ARRAY_AGG).sql('(');
-                acceptArguments1(ctx, new QueryPartListView<>(arguments.get(0)));
-                acceptOrderBy(ctx);
-                ctx.sql(')');
-                break;
-        }
-
-        acceptFilterClause(ctx);
-        acceptOverClause(ctx);
-    }
+    acceptFilterClause(ctx);
+    acceptOverClause(ctx);
+  }
 }

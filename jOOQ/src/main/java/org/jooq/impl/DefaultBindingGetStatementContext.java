@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,60 +39,63 @@ package org.jooq.impl;
 
 import java.sql.CallableStatement;
 import java.util.Map;
-
 import org.jooq.BindingGetStatementContext;
 import org.jooq.Configuration;
 import org.jooq.Converter;
 
-/**
- * @author Lukas Eder
- */
-class DefaultBindingGetStatementContext<U> extends AbstractScope implements BindingGetStatementContext<U> {
+/** @author Lukas Eder */
+class DefaultBindingGetStatementContext<U> extends AbstractScope
+    implements BindingGetStatementContext<U> {
 
-    private final CallableStatement statement;
-    private final int               index;
-    private U                       value;
+  private final CallableStatement statement;
+  private final int index;
+  private U value;
 
-    DefaultBindingGetStatementContext(Configuration configuration, Map<Object, Object> data, CallableStatement statement, int index) {
-        super(configuration, data);
+  DefaultBindingGetStatementContext(
+      Configuration configuration,
+      Map<Object, Object> data,
+      CallableStatement statement,
+      int index) {
+    super(configuration, data);
 
-        this.statement = statement;
-        this.index = index;
-    }
+    this.statement = statement;
+    this.index = index;
+  }
 
-    @Override
-    public final CallableStatement statement() {
-        return statement;
-    }
+  @Override
+  public final CallableStatement statement() {
+    return statement;
+  }
 
-    @Override
-    public final int index() {
-        return index;
-    }
+  @Override
+  public final int index() {
+    return index;
+  }
 
-    @Override
-    public void value(U v) {
-        this.value = v;
-    }
+  @Override
+  public void value(U v) {
+    this.value = v;
+  }
 
-    final U value() {
-        return value;
-    }
+  final U value() {
+    return value;
+  }
 
-    @Override
-    public final <T> BindingGetStatementContext<T> convert(final Converter<? super T, ? extends U> converter) {
-        final DefaultBindingGetStatementContext<U> outer = this;
+  @Override
+  public final <T> BindingGetStatementContext<T> convert(
+      final Converter<? super T, ? extends U> converter) {
+    final DefaultBindingGetStatementContext<U> outer = this;
 
-        return new DefaultBindingGetStatementContext<T>(configuration, data, statement, index) {
-            @Override
-            public void value(T v) {
-                outer.value(converter.from(v));
-            }
-        };
-    }
+    return new DefaultBindingGetStatementContext<T>(configuration, data, statement, index) {
+      @Override
+      public void value(T v) {
+        outer.value(converter.from(v));
+      }
+    };
+  }
 
-    @Override
-    public String toString() {
-        return "DefaultBindingGetStatementContext [index=" + index + ", value=" + value + "]";
-    }
+  @Override
+  public String toString() {
+    return "DefaultBindingGetStatementContext [index=" + index + ", value=" + value + "]";
+  }
 }

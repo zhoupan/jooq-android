@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,8 +42,6 @@ import static org.jooq.Clause.CONDITION_COMPARISON;
 import static org.jooq.impl.DSL.inline;
 
 import org.jooq.Clause;
-import org.jooq.Condition;
-import org.jooq.Configuration;
 import org.jooq.Context;
 import org.jooq.Field;
 
@@ -54,54 +52,40 @@ import org.jooq.Field;
  */
 final class ContainsIgnoreCase extends AbstractCondition {
 
-    private static final Clause[] CLAUSES          = { CONDITION, CONDITION_COMPARISON };
+  private static final Clause[] CLAUSES = {CONDITION, CONDITION_COMPARISON};
 
-    private final Field<?>        lhs;
-    private final Field<?>        rhs;
-    private final boolean         leftWildcard;
-    private final boolean         rightWildcard;
+  private final Field<?> lhs;
+  private final Field<?> rhs;
+  private final boolean leftWildcard;
+  private final boolean rightWildcard;
 
-    ContainsIgnoreCase(Field<?> field, Field<?> rhs, boolean leftWildcard, boolean rightWildcard) {
-        this.lhs = field;
-        this.rhs = rhs;
-        this.leftWildcard = leftWildcard;
-        this.rightWildcard = rightWildcard;
+  ContainsIgnoreCase(Field<?> field, Field<?> rhs, boolean leftWildcard, boolean rightWildcard) {
+    this.lhs = field;
+    this.rhs = rhs;
+    this.leftWildcard = leftWildcard;
+    this.rightWildcard = rightWildcard;
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      default:
+        Field<?>[] array = new Field[1 + (leftWildcard ? 1 : 0) + (rightWildcard ? 1 : 0)];
+
+        int i = 0;
+        if (leftWildcard) array[i++] = inline("%");
+
+        array[i++] = Tools.escapeForLike(rhs, ctx.configuration());
+
+        if (rightWildcard) array[i++] = inline("%");
+
+        ctx.visit(lhs.likeIgnoreCase(DSL.concat(array), Tools.ESCAPE));
+        break;
     }
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-
-
-
-
-
-
-            default:
-                Field<?>[] array = new Field[1 + (leftWildcard ? 1 : 0) + (rightWildcard ? 1 : 0)];
-
-                int i = 0;
-                if (leftWildcard)
-                    array[i++] = inline("%");
-
-                array[i++] = Tools.escapeForLike(rhs, ctx.configuration());
-
-                if (rightWildcard)
-                    array[i++] = inline("%");
-
-                ctx.visit(lhs.likeIgnoreCase(DSL.concat(array), Tools.ESCAPE));
-                break;
-        }
-    }
-
-    @Override
-    public final Clause[] clauses(Context<?> ctx) {
-        return CLAUSES;
-    }
+  @Override
+  public final Clause[] clauses(Context<?> ctx) {
+    return CLAUSES;
+  }
 }

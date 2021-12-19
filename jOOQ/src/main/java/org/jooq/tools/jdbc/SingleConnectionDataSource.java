@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,75 +42,73 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLFeatureNotSupportedException;
 import java.util.logging.Logger;
-
 import javax.sql.DataSource;
 
 /**
- * A {@link DataSource} that wraps a single connection, preventing its closing
- * when it is obtained from this data source.
+ * A {@link DataSource} that wraps a single connection, preventing its closing when it is obtained
+ * from this data source.
  *
  * @author Lukas Eder
  */
 public class SingleConnectionDataSource implements DataSource {
 
-    private final Connection delegate;
+  private final Connection delegate;
 
-    public SingleConnectionDataSource(Connection delegate) {
-        this.delegate = delegate;
-    }
+  public SingleConnectionDataSource(Connection delegate) {
+    this.delegate = delegate;
+  }
 
-    @Override
-    public Logger getParentLogger() throws SQLFeatureNotSupportedException {
-        // Cannot use Logger.getGlobal() in JDK 6 yet
-        return Logger.getAnonymousLogger().getParent();
-    }
+  @Override
+  public Logger getParentLogger() throws SQLFeatureNotSupportedException {
+    // Cannot use Logger.getGlobal() in JDK 6 yet
+    return Logger.getAnonymousLogger().getParent();
+  }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T unwrap(Class<T> iface) throws SQLException {
-        if (isWrapperFor(iface))
-            return (T) this;
-        else
-            throw new SQLException("DataSource does not implement " + iface);
-    }
+  @SuppressWarnings("unchecked")
+  @Override
+  public <T> T unwrap(Class<T> iface) throws SQLException {
+    if (isWrapperFor(iface)) return (T) this;
+    else throw new SQLException("DataSource does not implement " + iface);
+  }
 
-    @Override
-    public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        return iface.isInstance(this);
-    }
+  @Override
+  public boolean isWrapperFor(Class<?> iface) throws SQLException {
+    return iface.isInstance(this);
+  }
 
-    @Override
-    public Connection getConnection() throws SQLException {
-        return new DefaultConnection(delegate) {
-            @Override
-            public void close() throws SQLException {
-                // Ignore close calls
-            }
-        };
-    }
+  @Override
+  public Connection getConnection() throws SQLException {
+    return new DefaultConnection(delegate) {
+      @Override
+      public void close() throws SQLException {
+        // Ignore close calls
+      }
+    };
+  }
 
-    @Override
-    public Connection getConnection(String username, String password) throws SQLException {
-        throw new SQLFeatureNotSupportedException("SingleConnectionDataSource cannot create new connections");
-    }
+  @Override
+  public Connection getConnection(String username, String password) throws SQLException {
+    throw new SQLFeatureNotSupportedException(
+        "SingleConnectionDataSource cannot create new connections");
+  }
 
-    @Override
-    public PrintWriter getLogWriter() throws SQLException {
-        throw new SQLFeatureNotSupportedException("getLogWriter");
-    }
+  @Override
+  public PrintWriter getLogWriter() throws SQLException {
+    throw new SQLFeatureNotSupportedException("getLogWriter");
+  }
 
-    @Override
-    public void setLogWriter(PrintWriter out) throws SQLException {
-        throw new SQLFeatureNotSupportedException("setLogWriter");
-    }
+  @Override
+  public void setLogWriter(PrintWriter out) throws SQLException {
+    throw new SQLFeatureNotSupportedException("setLogWriter");
+  }
 
-    @Override
-    public void setLoginTimeout(int seconds) throws SQLException {
-        throw new SQLFeatureNotSupportedException("setLoginTimeout");
-    }
+  @Override
+  public void setLoginTimeout(int seconds) throws SQLException {
+    throw new SQLFeatureNotSupportedException("setLoginTimeout");
+  }
 
-    @Override
-    public int getLoginTimeout() throws SQLException {
-        throw new SQLFeatureNotSupportedException("getLoginTimeout");
-    }
+  @Override
+  public int getLoginTimeout() throws SQLException {
+    throw new SQLFeatureNotSupportedException("getLoginTimeout");
+  }
 }

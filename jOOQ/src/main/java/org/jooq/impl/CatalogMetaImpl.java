@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -48,7 +48,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Predicate;
-
 import org.jooq.Catalog;
 import org.jooq.Configuration;
 import org.jooq.Meta;
@@ -57,86 +56,97 @@ import org.jooq.QueryPart;
 import org.jooq.Schema;
 import org.jooq.Table;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class CatalogMetaImpl extends AbstractMeta {
 
-    private final Catalog[] catalogs;
+  private final Catalog[] catalogs;
 
-    private CatalogMetaImpl(Configuration configuration, Catalog[] catalogs) {
-        super(configuration);
+  private CatalogMetaImpl(Configuration configuration, Catalog[] catalogs) {
+    super(configuration);
 
-        this.catalogs = catalogs;
-    }
+    this.catalogs = catalogs;
+  }
 
-    @Override
-    final List<Catalog> getCatalogs0() {
-        return Arrays.asList(catalogs);
-    }
+  @Override
+  final List<Catalog> getCatalogs0() {
+    return Arrays.asList(catalogs);
+  }
 
-    static final Meta filterCatalogs(Configuration configuration, Catalog[] catalogs) {
-        return filterCatalogs0(configuration, catalogs, new LinkedHashSet<>(Arrays.asList(catalogs)));
-    }
+  static final Meta filterCatalogs(Configuration configuration, Catalog[] catalogs) {
+    return filterCatalogs0(configuration, catalogs, new LinkedHashSet<>(Arrays.asList(catalogs)));
+  }
 
-    static final Meta filterCatalogs(Configuration configuration, Set<Catalog> catalogs) {
-        return filterCatalogs0(configuration, catalogs.toArray(EMPTY_CATALOG), catalogs);
-    }
+  static final Meta filterCatalogs(Configuration configuration, Set<Catalog> catalogs) {
+    return filterCatalogs0(configuration, catalogs.toArray(EMPTY_CATALOG), catalogs);
+  }
 
-    private static final Meta filterCatalogs0(Configuration configuration, Catalog[] array, Set<Catalog> set) {
-        return new CatalogMetaImpl(configuration, array).filterCatalogs(set::contains);
-    }
+  private static final Meta filterCatalogs0(
+      Configuration configuration, Catalog[] array, Set<Catalog> set) {
+    return new CatalogMetaImpl(configuration, array).filterCatalogs(set::contains);
+  }
 
-    static final Meta filterSchemas(Configuration configuration, Schema[] schemas) {
-        return filterSchemas(configuration, new LinkedHashSet<>(Arrays.asList(schemas)));
-    }
+  static final Meta filterSchemas(Configuration configuration, Schema[] schemas) {
+    return filterSchemas(configuration, new LinkedHashSet<>(Arrays.asList(schemas)));
+  }
 
-    static final Meta filterSchemas(Configuration configuration, Set<Schema> schemas) {
-        Map<Name, Catalog> c = new LinkedHashMap<>();
-        Map<Name, List<Schema>> mapping = new LinkedHashMap<>();
+  static final Meta filterSchemas(Configuration configuration, Set<Schema> schemas) {
+    Map<Name, Catalog> c = new LinkedHashMap<>();
+    Map<Name, List<Schema>> mapping = new LinkedHashMap<>();
 
-        for (Schema schema : schemas)
-            mapping.computeIfAbsent(nameOrDefault(schema.getCatalog()), k -> new ArrayList<>()).add(schema);
+    for (Schema schema : schemas)
+      mapping
+          .computeIfAbsent(nameOrDefault(schema.getCatalog()), k -> new ArrayList<>())
+          .add(schema);
 
-        for (Schema schema : schemas)
-            c.computeIfAbsent(nameOrDefault(schema.getCatalog()), k -> new CatalogImpl(k) {
+    for (Schema schema : schemas)
+      c.computeIfAbsent(
+          nameOrDefault(schema.getCatalog()),
+          k ->
+              new CatalogImpl(k) {
                 @Override
                 public List<Schema> getSchemas() {
-                    return mapping.get(getQualifiedName());
+                  return mapping.get(getQualifiedName());
                 }
-            });
+              });
 
-        return filterCatalogs(configuration, new LinkedHashSet<>(c.values())).filterSchemas(schemas::contains);
-    }
+    return filterCatalogs(configuration, new LinkedHashSet<>(c.values()))
+        .filterSchemas(schemas::contains);
+  }
 
-    static final Meta filterTables(Configuration configuration, Table<?>[] tables) {
-        return filterTables(configuration, new LinkedHashSet<>(Arrays.asList(tables)));
-    }
+  static final Meta filterTables(Configuration configuration, Table<?>[] tables) {
+    return filterTables(configuration, new LinkedHashSet<>(Arrays.asList(tables)));
+  }
 
-    static final Meta filterTables(Configuration configuration, Set<Table<?>> tables) {
-        Map<Name, Schema> s = new LinkedHashMap<>();
-        Map<Name, List<Table<?>>> mapping = new LinkedHashMap<>();
+  static final Meta filterTables(Configuration configuration, Set<Table<?>> tables) {
+    Map<Name, Schema> s = new LinkedHashMap<>();
+    Map<Name, List<Table<?>>> mapping = new LinkedHashMap<>();
 
-        // TODO: [#7172] Can't use Table.getQualifiedName() here, yet
-        for (Table<?> table : tables)
-            mapping.computeIfAbsent(nameOrDefault(table.getCatalog()).append(nameOrDefault(table.getSchema())), k -> new ArrayList<>()).add(table);
+    // TODO: [#7172] Can't use Table.getQualifiedName() here, yet
+    for (Table<?> table : tables)
+      mapping
+          .computeIfAbsent(
+              nameOrDefault(table.getCatalog()).append(nameOrDefault(table.getSchema())),
+              k -> new ArrayList<>())
+          .add(table);
 
-        for (Table<?> table : tables)
-            s.computeIfAbsent(nameOrDefault(table.getCatalog()).append(nameOrDefault(table.getSchema())), k -> new SchemaImpl(k, table.getCatalog()) {
+    for (Table<?> table : tables)
+      s.computeIfAbsent(
+          nameOrDefault(table.getCatalog()).append(nameOrDefault(table.getSchema())),
+          k ->
+              new SchemaImpl(k, table.getCatalog()) {
                 @Override
                 public List<Table<?>> getTables() {
-                    return mapping.get(getQualifiedName());
+                  return mapping.get(getQualifiedName());
                 }
-            });
+              });
 
-        return filterSchemas(configuration, new LinkedHashSet<>(s.values()))
-              .filterTables(tables::contains)
-              .filterSequences(none())
-              .filterDomains(none())
-              ;
-    }
+    return filterSchemas(configuration, new LinkedHashSet<>(s.values()))
+        .filterTables(tables::contains)
+        .filterSequences(none())
+        .filterDomains(none());
+  }
 
-    static final <Q extends QueryPart> Predicate<Q> none() {
-        return t -> false;
-    }
+  static final <Q extends QueryPart> Predicate<Q> none() {
+    return t -> false;
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,31 +38,23 @@
 package org.jooq;
 
 import java.util.List;
-
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A <code>UniqueKey</code> is an object representing a <code>UNIQUE KEY</code>
- * or a <code>PRIMARY KEY</code>. It can be referenced by a {@link ForeignKey}.
- * <p>
- * Instances of this type cannot be created directly. They are available from
- * generated code.
+ * A <code>UniqueKey</code> is an object representing a <code>UNIQUE KEY</code> or a <code>
+ * PRIMARY KEY</code>. It can be referenced by a {@link ForeignKey}.
+ *
+ * <p>Instances of this type cannot be created directly. They are available from generated code.
  *
  * @param <R> The <code>KEY</code>'s owner table record
  * @author Lukas Eder
  */
 public interface UniqueKey<R extends Record> extends Key<R> {
 
-    /**
-     * A list of all <code>ForeignKeys</code>, referencing this
-     * <code>UniqueKey</code>
-     */
-    @NotNull
-    List<ForeignKey<?, R>> getReferences();
+  /** A list of all <code>ForeignKeys</code>, referencing this <code>UniqueKey</code> */
+  @NotNull
+  List<ForeignKey<?, R>> getReferences();
 
-    /**
-     * Whether this is the table's primary key.
-     */
-    boolean isPrimary();
-
+  /** Whether this is the table's primary key. */
+  boolean isPrimary();
 }

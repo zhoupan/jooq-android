@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,12 +37,10 @@
  */
 package org.jooq.meta.h2;
 
-
 import static org.jooq.impl.DSL.noCondition;
 import static org.jooq.meta.h2.information_schema.Tables.FUNCTION_COLUMNS;
 
 import java.sql.SQLException;
-
 import org.jooq.Record;
 import org.jooq.meta.AbstractRoutineDefinition;
 import org.jooq.meta.DataTypeDefinition;
@@ -62,79 +60,91 @@ import org.jooq.util.h2.H2DataType;
  */
 public class H2RoutineDefinition extends AbstractRoutineDefinition {
 
-    public H2RoutineDefinition(SchemaDefinition schema, String name, String comment, String typeName, Number precision, Number scale) {
-        this(schema, name, comment, typeName, precision, scale, null);
+  public H2RoutineDefinition(
+      SchemaDefinition schema,
+      String name,
+      String comment,
+      String typeName,
+      Number precision,
+      Number scale) {
+    this(schema, name, comment, typeName, precision, scale, null);
+  }
+
+  public H2RoutineDefinition(
+      SchemaDefinition schema,
+      String name,
+      String comment,
+      String typeName,
+      Number precision,
+      Number scale,
+      String overload) {
+    super(schema, null, name, comment, overload);
+
+    if (!StringUtils.isBlank(typeName)) {
+      DataTypeDefinition type =
+          new DefaultDataTypeDefinition(
+              getDatabase(), schema, typeName, precision, precision, scale, null, (String) null);
+
+      this.returnValue = new DefaultParameterDefinition(this, "RETURN_VALUE", -1, type);
     }
+  }
 
-    public H2RoutineDefinition(SchemaDefinition schema, String name, String comment, String typeName, Number precision, Number scale, String overload) {
-        super(schema, null, name, comment, overload);
+  @Override
+  protected void init0() throws SQLException {
+    for (Record record :
+        create()
+            .select(
+                FUNCTION_COLUMNS.COLUMN_NAME,
+                FUNCTION_COLUMNS.TYPE_NAME,
+                FUNCTION_COLUMNS.PRECISION,
+                FUNCTION_COLUMNS.SCALE,
+                FUNCTION_COLUMNS.POS,
+                FUNCTION_COLUMNS.NULLABLE,
+                FUNCTION_COLUMNS.COLUMN_DEFAULT)
+            .from(FUNCTION_COLUMNS)
+            .where(FUNCTION_COLUMNS.ALIAS_SCHEMA.equal(getSchema().getName()))
+            .and(FUNCTION_COLUMNS.ALIAS_NAME.equal(getName()))
 
-        if (!StringUtils.isBlank(typeName)) {
-            DataTypeDefinition type = new DefaultDataTypeDefinition(
-                getDatabase(),
-                schema,
-                typeName,
-                precision,
-                precision,
-                scale,
-                null,
-                (String) null
-            );
-
-            this.returnValue = new DefaultParameterDefinition(this, "RETURN_VALUE", -1, type);
-        }
-    }
-
-    @Override
-    protected void init0() throws SQLException {
-        for (Record record : create()
-                .select(
-                    FUNCTION_COLUMNS.COLUMN_NAME,
-                    FUNCTION_COLUMNS.TYPE_NAME,
-                    FUNCTION_COLUMNS.PRECISION,
-                    FUNCTION_COLUMNS.SCALE,
-                    FUNCTION_COLUMNS.POS,
-                    FUNCTION_COLUMNS.NULLABLE,
-                    FUNCTION_COLUMNS.COLUMN_DEFAULT)
-                .from(FUNCTION_COLUMNS)
-                .where(FUNCTION_COLUMNS.ALIAS_SCHEMA.equal(getSchema().getName()))
-                .and(FUNCTION_COLUMNS.ALIAS_NAME.equal(getName()))
-
-                // [#4193] recent versions of H2 produce a row for the function
-                // return value at position 0
-                .and(FUNCTION_COLUMNS.POS.gt(0))
-                .and(getOverload() == null
+            // [#4193] recent versions of H2 produce a row for the function
+            // return value at position 0
+            .and(FUNCTION_COLUMNS.POS.gt(0))
+            .and(
+                getOverload() == null
                     ? noCondition()
-                    : FUNCTION_COLUMNS.COLUMN_COUNT.eq(FUNCTION_COLUMNS.COLUMN_COUNT.getDataType().convert(getOverload())))
-                .orderBy(FUNCTION_COLUMNS.POS.asc()).fetch()) {
+                    : FUNCTION_COLUMNS.COLUMN_COUNT.eq(
+                        FUNCTION_COLUMNS.COLUMN_COUNT.getDataType().convert(getOverload())))
+            .orderBy(FUNCTION_COLUMNS.POS.asc())
+            .fetch()) {
 
-            String paramName = record.get(FUNCTION_COLUMNS.COLUMN_NAME);
-            String typeName = record.get(FUNCTION_COLUMNS.TYPE_NAME);
-            Integer precision = record.get(FUNCTION_COLUMNS.PRECISION);
-            Short scale = record.get(FUNCTION_COLUMNS.SCALE);
-            int position = record.get(FUNCTION_COLUMNS.POS);
-            boolean nullable = record.get(FUNCTION_COLUMNS.NULLABLE, boolean.class);
-            String defaultValue = record.get(FUNCTION_COLUMNS.COLUMN_DEFAULT);
+      String paramName = record.get(FUNCTION_COLUMNS.COLUMN_NAME);
+      String typeName = record.get(FUNCTION_COLUMNS.TYPE_NAME);
+      Integer precision = record.get(FUNCTION_COLUMNS.PRECISION);
+      Short scale = record.get(FUNCTION_COLUMNS.SCALE);
+      int position = record.get(FUNCTION_COLUMNS.POS);
+      boolean nullable = record.get(FUNCTION_COLUMNS.NULLABLE, boolean.class);
+      String defaultValue = record.get(FUNCTION_COLUMNS.COLUMN_DEFAULT);
 
-            // VERY special case for H2 alias/function parameters. The first parameter
-            // may be a java.sql.Connection object and in such cases it should NEVER be used.
-            // It is only used internally by H2 to provide a connection to the current database.
-            if (position == 0 && H2DataType.OTHER.getTypeName().equalsIgnoreCase(typeName)) {
-                continue;
-            }
+      // VERY special case for H2 alias/function parameters. The first parameter
+      // may be a java.sql.Connection object and in such cases it should NEVER be used.
+      // It is only used internally by H2 to provide a connection to the current database.
+      if (position == 0 && H2DataType.OTHER.getTypeName().equalsIgnoreCase(typeName)) {
+        continue;
+      }
 
-            DataTypeDefinition type = new DefaultDataTypeDefinition(
-                getDatabase(),
-                getSchema(), typeName,
-                precision,
-                precision,
-                scale,
-                nullable,
-                defaultValue
-            );
+      DataTypeDefinition type =
+          new DefaultDataTypeDefinition(
+              getDatabase(),
+              getSchema(),
+              typeName,
+              precision,
+              precision,
+              scale,
+              nullable,
+              defaultValue);
 
-            ParameterDefinition parameter = new DefaultParameterDefinition(this, paramName, position, type);
-            addParameter(InOutDefinition.IN, parameter);
-        }
+      ParameterDefinition parameter =
+          new DefaultParameterDefinition(this, paramName, position, type);
+      addParameter(InOutDefinition.IN, parameter);
     }
+  }
 }

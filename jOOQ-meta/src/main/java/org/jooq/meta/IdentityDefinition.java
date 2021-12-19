@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,13 +44,9 @@ package org.jooq.meta;
  */
 public interface IdentityDefinition extends Definition {
 
-    /**
-     * The <code>IDENTITY</code> column's table
-     */
-    TableDefinition getTable();
+  /** The <code>IDENTITY</code> column's table */
+  TableDefinition getTable();
 
-    /**
-     * The <code>IDENTITY</code> column
-     */
-    ColumnDefinition getColumn();
+  /** The <code>IDENTITY</code> column */
+  ColumnDefinition getColumn();
 }

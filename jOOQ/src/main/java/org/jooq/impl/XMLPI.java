@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,28 +45,25 @@ import org.jooq.Field;
 import org.jooq.Name;
 import org.jooq.XML;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class XMLPI extends AbstractField<XML> {
 
-    private final Name        target;
-    private final Field<?>    content;
+  private final Name target;
+  private final Field<?> content;
 
-    XMLPI(Name target, Field<?> content) {
-        super(N_XMLPI, SQLDataType.XML);
+  XMLPI(Name target, Field<?> content) {
+    super(N_XMLPI, SQLDataType.XML);
 
-        this.target = target;
-        this.content = content;
-    }
+    this.target = target;
+    this.content = content;
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        ctx.visit(N_XMLPI).sql('(').visit(K_NAME).sql(' ').visit(target);
+  @Override
+  public final void accept(Context<?> ctx) {
+    ctx.visit(N_XMLPI).sql('(').visit(K_NAME).sql(' ').visit(target);
 
-        if (content != null)
-            ctx.sql(", ").visit(content);
+    if (content != null) ctx.sql(", ").visit(content);
 
-        ctx.sql(')');
-    }
+    ctx.sql(')');
+  }
 }

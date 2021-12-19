@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,7 @@
  */
 package org.jooq.impl;
 
+import static org.jooq.SQLDialect.*;
 import static org.jooq.impl.DSL.*;
 import static org.jooq.impl.Internal.*;
 import static org.jooq.impl.Keywords.*;
@@ -46,161 +47,99 @@ import static org.jooq.impl.Tools.*;
 import static org.jooq.impl.Tools.BooleanDataKey.*;
 import static org.jooq.impl.Tools.DataExtendedKey.*;
 import static org.jooq.impl.Tools.DataKey.*;
-import static org.jooq.SQLDialect.*;
-
-import org.jooq.*;
-import org.jooq.Record;
-import org.jooq.conf.*;
-import org.jooq.impl.*;
-import org.jooq.tools.*;
 
 import java.util.*;
+import org.jooq.*;
+import org.jooq.conf.*;
+import org.jooq.tools.*;
 
+/** The <code>SUBSTRING</code> statement. */
+@SuppressWarnings({"rawtypes", "unchecked", "unused"})
+final class Substring extends AbstractField<String> {
 
-/**
- * The <code>SUBSTRING</code> statement.
- */
-@SuppressWarnings({ "rawtypes", "unchecked", "unused" })
-final class Substring
-extends
-    AbstractField<String>
-{
+  private final Field<String> string;
+  private final Field<? extends Number> startingPosition;
+  private final Field<? extends Number> length;
 
-    private final Field<String>           string;
-    private final Field<? extends Number> startingPosition;
-    private final Field<? extends Number> length;
+  Substring(Field<String> string, Field<? extends Number> startingPosition) {
+    super(N_SUBSTRING, allNotNull(VARCHAR, string, startingPosition));
 
-    Substring(
-        Field<String> string,
-        Field<? extends Number> startingPosition
-    ) {
-        super(
-            N_SUBSTRING,
-            allNotNull(VARCHAR, string, startingPosition)
-        );
+    this.string = nullSafeNotNull(string, VARCHAR);
+    this.startingPosition = nullSafeNotNull(startingPosition, INTEGER);
+    this.length = null;
+  }
 
-        this.string = nullSafeNotNull(string, VARCHAR);
-        this.startingPosition = nullSafeNotNull(startingPosition, INTEGER);
-        this.length = null;
-    }
+  Substring(
+      Field<String> string,
+      Field<? extends Number> startingPosition,
+      Field<? extends Number> length) {
+    super(N_SUBSTRING, allNotNull(VARCHAR, string, startingPosition, length));
 
-    Substring(
-        Field<String> string,
-        Field<? extends Number> startingPosition,
-        Field<? extends Number> length
-    ) {
-        super(
-            N_SUBSTRING,
-            allNotNull(VARCHAR, string, startingPosition, length)
-        );
+    this.string = nullSafeNotNull(string, VARCHAR);
+    this.startingPosition = nullSafeNotNull(startingPosition, INTEGER);
+    this.length = nullSafeNotNull(length, INTEGER);
+  }
 
-        this.string = nullSafeNotNull(string, VARCHAR);
-        this.startingPosition = nullSafeNotNull(startingPosition, INTEGER);
-        this.length = nullSafeNotNull(length, INTEGER);
-    }
+  // -------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // -------------------------------------------------------------------------
 
-    // -------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // -------------------------------------------------------------------------
+  @Override
+  public final void accept(Context<?> ctx) {
+    Name functionName = N_SUBSTRING;
 
+    switch (ctx.family()) {
 
+        // [#430] These databases use SQL standard syntax
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        Name functionName = N_SUBSTRING;
+      case FIREBIRD:
+        {
+          if (length == null)
+            ctx.visit(N_SUBSTRING)
+                .sql('(')
+                .visit(string)
+                .sql(' ')
+                .visit(K_FROM)
+                .sql(' ')
+                .visit(startingPosition)
+                .sql(')');
+          else
+            ctx.visit(N_SUBSTRING)
+                .sql('(')
+                .visit(string)
+                .sql(' ')
+                .visit(K_FROM)
+                .sql(' ')
+                .visit(startingPosition)
+                .sql(' ')
+                .visit(K_FOR)
+                .sql(' ')
+                .visit(length)
+                .sql(')');
 
-        switch (ctx.family()) {
-
-
-
-
-
-
-            // [#430] These databases use SQL standard syntax
-
-            case FIREBIRD: {
-                if (length == null)
-                    ctx.visit(N_SUBSTRING).sql('(').visit(string).sql(' ').visit(K_FROM).sql(' ').visit(startingPosition).sql(')');
-                else
-                    ctx.visit(N_SUBSTRING).sql('(').visit(string).sql(' ').visit(K_FROM).sql(' ').visit(startingPosition).sql(' ').visit(K_FOR).sql(' ').visit(length).sql(')');
-
-                return;
-            }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            case DERBY:
-            case SQLITE:
-                functionName = N_SUBSTR;
-                break;
+          return;
         }
 
-        if (length == null)
-            ctx.visit(function(functionName, getDataType(), string, startingPosition));
-        else
-            ctx.visit(function(functionName, getDataType(), string, startingPosition, length));
+      case DERBY:
+      case SQLITE:
+        functionName = N_SUBSTR;
+        break;
     }
 
+    if (length == null) ctx.visit(function(functionName, getDataType(), string, startingPosition));
+    else ctx.visit(function(functionName, getDataType(), string, startingPosition, length));
+  }
 
+  // -------------------------------------------------------------------------
+  // The Object API
+  // -------------------------------------------------------------------------
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // -------------------------------------------------------------------------
-    // The Object API
-    // -------------------------------------------------------------------------
-
-    @Override
-    public boolean equals(Object that) {
-        if (that instanceof Substring) {
-            return
-                StringUtils.equals(string, ((Substring) that).string) &&
-                StringUtils.equals(startingPosition, ((Substring) that).startingPosition) &&
-                StringUtils.equals(length, ((Substring) that).length)
-            ;
-        }
-        else
-            return super.equals(that);
-    }
+  @Override
+  public boolean equals(Object that) {
+    if (that instanceof Substring) {
+      return StringUtils.equals(string, ((Substring) that).string)
+          && StringUtils.equals(startingPosition, ((Substring) that).startingPosition)
+          && StringUtils.equals(length, ((Substring) that).length);
+    } else return super.equals(that);
+  }
 }

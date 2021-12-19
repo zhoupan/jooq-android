@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,15 +41,14 @@ import org.jooq.impl.DSL;
 
 /**
  * An expression to be used exclusively in <code>GROUP BY</code> clauses.
- * <p>
- * The <code>SELECT .. GROUP BY</code> clause accepts a variety of expressions,
- * mostly ordinary {@link Field} expressions, but also some special expressions
- * usable only in the <code>GROUP BY</code> clause, such as
- * {@link DSL#groupingSets(Field[][])}.
- * <p>
- * <strong>Example:</strong>
- * <p>
- * <code><pre>
+ *
+ * <p>The <code>SELECT .. GROUP BY</code> clause accepts a variety of expressions, mostly ordinary
+ * {@link Field} expressions, but also some special expressions usable only in the <code>GROUP BY
+ * </code> clause, such as {@link DSL#groupingSets(Field[][])}.
+ *
+ * <p><strong>Example:</strong>
+ *
+ * <p><code><pre>
  * // Assuming import static org.jooq.impl.DSL.*;
  *
  * using(configuration)
@@ -58,12 +57,10 @@ import org.jooq.impl.DSL;
  *    .groupBy(ACTOR.LAST_NAME) // GroupField reference here
  *    .fetch();
  * </pre></code>
- * <p>
- * Instances can be created using {@link DSL#groupingSets(Field[][])} and
- * related methods, or by creating a subtype.
+ *
+ * <p>Instances can be created using {@link DSL#groupingSets(Field[][])} and related methods, or by
+ * creating a subtype.
  *
  * @author Lukas Eder
  */
-public interface GroupField extends QueryPart {
-
-}
+public interface GroupField extends QueryPart {}

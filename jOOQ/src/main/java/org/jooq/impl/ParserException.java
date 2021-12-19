@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,88 +42,78 @@ import org.jooq.exception.DataAccessException;
 import org.jooq.exception.SQLStateSubclass;
 
 /**
- * An exception that arises while parsing SQL through
- * {@link DSLContext#parser()}.
+ * An exception that arises while parsing SQL through {@link DSLContext#parser()}.
  *
  * @author Lukas Eder
  */
 public final class ParserException extends DataAccessException {
-    private final String      sql;
-    private int               position;
-    private int               line;
-    private int               column;
+  private final String sql;
+  private int position;
+  private int line;
+  private int column;
 
-    public ParserException(String sql) {
-        this(sql, null);
-    }
+  public ParserException(String sql) {
+    this(sql, null);
+  }
 
-    public ParserException(String sql, String message) {
-        this(sql, message, null);
-    }
+  public ParserException(String sql, String message) {
+    this(sql, message, null);
+  }
 
-    public ParserException(String sql, String message, SQLStateSubclass state) {
-        this(sql, message, state, null);
-    }
+  public ParserException(String sql, String message, SQLStateSubclass state) {
+    this(sql, message, state, null);
+  }
 
-    public ParserException(String sql, String message, SQLStateSubclass state, Throwable cause) {
-        super(
-            (state == null ? "" : state + ": ")
-          + (message == null ? "" : message + ": ")
-          + sql, cause
-        );
+  public ParserException(String sql, String message, SQLStateSubclass state, Throwable cause) {
+    super(
+        (state == null ? "" : state + ": ") + (message == null ? "" : message + ": ") + sql, cause);
 
-        this.sql = sql;
-    }
+    this.sql = sql;
+  }
 
-    /**
-     * The zero-based position within the SQL string at which an exception was thrown, if applicable.
-     */
-    public final int position() {
-        return position;
-    }
+  /**
+   * The zero-based position within the SQL string at which an exception was thrown, if applicable.
+   */
+  public final int position() {
+    return position;
+  }
 
-    /**
-     * Set the {@link #position()}.
-     */
-    public final ParserException position(int p) {
-        this.position = p;
-        return this;
-    }
+  /** Set the {@link #position()}. */
+  public final ParserException position(int p) {
+    this.position = p;
+    return this;
+  }
 
-    /**
-     * The one-based line number within the SQL string at which an exception was thrown, if applicable.
-     */
-    public final int line() {
-        return line;
-    }
+  /**
+   * The one-based line number within the SQL string at which an exception was thrown, if
+   * applicable.
+   */
+  public final int line() {
+    return line;
+  }
 
-    /**
-     * Set the {@link #line()}.
-     */
-    public final ParserException line(int l) {
-        this.line = l;
-        return this;
-    }
+  /** Set the {@link #line()}. */
+  public final ParserException line(int l) {
+    this.line = l;
+    return this;
+  }
 
-    /**
-     * The one-based column number within the SQL string at which an exception was thrown, if applicable.
-     */
-    public final int column() {
-        return column;
-    }
+  /**
+   * The one-based column number within the SQL string at which an exception was thrown, if
+   * applicable.
+   */
+  public final int column() {
+    return column;
+  }
 
-    /**
-     * Set the {@link #column()}.
-     */
-    public final ParserException column(int c) {
-        this.column = c;
-        return this;
-    }
+  /** Set the {@link #column()}. */
+  public final ParserException column(int c) {
+    this.column = c;
+    return this;
+  }
 
-    /**
-     * The SQL string that caused the exception.
-     */
-    public final String sql() {
-        return sql;
-    }
+  /** The SQL string that caused the exception. */
+  public final String sql() {
+    return sql;
+  }
 }

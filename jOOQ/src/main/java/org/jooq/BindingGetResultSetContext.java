@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,36 +40,24 @@ package org.jooq;
 import java.sql.ResultSet;
 
 /**
- * A container type for {@link Binding#get(BindingGetResultSetContext)}
- * arguments.
+ * A container type for {@link Binding#get(BindingGetResultSetContext)} arguments.
  *
  * @author Lukas Eder
  */
 public interface BindingGetResultSetContext<U> extends Scope {
 
-    /**
-     * The {@link ResultSet} from which a value is retrieved.
-     */
-    ResultSet resultSet();
+  /** The {@link ResultSet} from which a value is retrieved. */
+  ResultSet resultSet();
 
-    /**
-     * The column index at which the value is retrieved.
-     */
-    int index();
+  /** The column index at which the value is retrieved. */
+  int index();
 
-    /**
-     * The {@link Field} at column index {@link #index()} whose value is
-     * retrieved.
-     */
-    Field<U> field();
+  /** The {@link Field} at column index {@link #index()} whose value is retrieved. */
+  Field<U> field();
 
-    /**
-     * A callback to which the resulting value is registered.
-     */
-    void value(U value);
+  /** A callback to which the resulting value is registered. */
+  void value(U value);
 
-    /**
-     * Create a new context from this one using a converter.
-     */
-    <T> BindingGetResultSetContext<T> convert(Converter<? super T, ? extends U> converter);
+  /** Create a new context from this one using a converter. */
+  <T> BindingGetResultSetContext<T> convert(Converter<? super T, ? extends U> converter);
 }

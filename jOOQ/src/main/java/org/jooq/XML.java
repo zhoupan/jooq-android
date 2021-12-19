@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,77 +38,69 @@
 package org.jooq;
 
 import java.io.Serializable;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 /**
  * An XML wrapper type for XML data obtained from the database.
- * <p>
- * The wrapper represents XML {@link #data()} in serialised string form. A
- * <code>CAST(NULL AS XML)</code> value is represented by a <code>null</code>
- * reference of type {@link XML}, not as <code>data() == null</code>. This is
- * consistent with jOOQ's general way of returning <code>NULL</code> from
- * {@link Result} and {@link Record} methods.
+ *
+ * <p>The wrapper represents XML {@link #data()} in serialised string form. A <code>
+ * CAST(NULL AS XML)</code> value is represented by a <code>null</code> reference of type {@link
+ * XML}, not as <code>data() == null</code>. This is consistent with jOOQ's general way of returning
+ * <code>NULL</code> from {@link Result} and {@link Record} methods.
  */
 public final class XML implements Serializable {
 
-    private final String data;
+  private final String data;
 
-    private XML(String data) {
-        this.data = String.valueOf(data);
-    }
+  private XML(String data) {
+    this.data = String.valueOf(data);
+  }
 
-    @NotNull
-    public final String data() {
-        return data;
-    }
+  @NotNull
+  public final String data() {
+    return data;
+  }
 
-    /**
-     * Create a new {@link XML} instance from string data input.
-     */
-    @NotNull
-    public static final XML valueOf(String data) {
-        return new XML(data);
-    }
+  /** Create a new {@link XML} instance from string data input. */
+  @NotNull
+  public static final XML valueOf(String data) {
+    return new XML(data);
+  }
 
-    /**
-     * Create a new {@link XML} instance from string data input.
-     * <p>
-     * This is the same as {@link #valueOf(String)}, but it can be static
-     * imported.
-     */
-    @NotNull
-    public static final XML xml(String data) {
-        return new XML(data);
-    }
+  /**
+   * Create a new {@link XML} instance from string data input.
+   *
+   * <p>This is the same as {@link #valueOf(String)}, but it can be static imported.
+   */
+  @NotNull
+  public static final XML xml(String data) {
+    return new XML(data);
+  }
 
-    /**
-     * Create a new {@link XML} instance from string data input, or
-     * <code>null</code> if the input is <code>null</code>.
-     */
-    @Nullable
-    public static final XML xmlOrNull(String data) {
-        return data == null ? null : xml(data);
-    }
+  /**
+   * Create a new {@link XML} instance from string data input, or <code>null</code> if the input is
+   * <code>null</code>.
+   */
+  @Nullable
+  public static final XML xmlOrNull(String data) {
+    return data == null ? null : xml(data);
+  }
 
-    @Override
-    public int hashCode() {
-        return data.hashCode();
-    }
+  @Override
+  public int hashCode() {
+    return data.hashCode();
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj instanceof XML)
-            return data.equals(((XML) obj).data);
-        return false;
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (obj instanceof XML) return data.equals(((XML) obj).data);
+    return false;
+  }
 
-    }
-
-    @Override
-    public String toString() {
-        return String.valueOf(data);
-    }
+  @Override
+  public String toString() {
+    return String.valueOf(data);
+  }
 }

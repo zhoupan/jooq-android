@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,25 +42,23 @@ import java.io.Serializable;
 
 /**
  * This base class is extended by all XJC-generated {@link Settings} classes
- * <p>
- * Using such a base class seems to be a lot simpler than depending on any one
- * of those many JAXB / XJC plugins. Besides, cloning objects through the
- * standard Java {@link Cloneable} mechanism is around factor 1000x faster than
- * using {@link Serializable}, and even 10000x faster than using
- * {@link javax.xml.bind.JAXB#marshal(Object, java.io.OutputStream)},
- * marshalling a JAXB object into a {@link ByteArrayOutputStream}.
+ *
+ * <p>Using such a base class seems to be a lot simpler than depending on any one of those many JAXB
+ * / XJC plugins. Besides, cloning objects through the standard Java {@link Cloneable} mechanism is
+ * around factor 1000x faster than using {@link Serializable}, and even 10000x faster than using
+ * {@link javax.xml.bind.JAXB#marshal(Object, java.io.OutputStream)}, marshalling a JAXB object into
+ * a {@link ByteArrayOutputStream}.
  *
  * @author Lukas Eder
  */
 abstract class SettingsBase implements Serializable, Cloneable {
 
-    @Override
-    public Object clone() {
-        try {
-            return super.clone();
-        }
-        catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
-        }
+  @Override
+  public Object clone() {
+    try {
+      return super.clone();
+    } catch (CloneNotSupportedException e) {
+      throw new RuntimeException(e);
     }
+  }
 }

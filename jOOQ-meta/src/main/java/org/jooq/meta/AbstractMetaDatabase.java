@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,15 +35,12 @@
  *
  *
  */
-
 package org.jooq.meta;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
 import org.jooq.Catalog;
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -62,212 +59,200 @@ import org.jooq.impl.DSL;
  */
 public abstract class AbstractMetaDatabase extends AbstractDatabase {
 
-    private List<Catalog> catalogs;
-    private List<Schema>  schemas;
+  private List<Catalog> catalogs;
+  private List<Schema> schemas;
 
-    @Override
-    protected DSLContext create0() {
-        return DSL.using(getConnection());
+  @Override
+  protected DSLContext create0() {
+    return DSL.using(getConnection());
+  }
+
+  protected abstract Meta getMeta0();
+
+  @Override
+  protected void loadPrimaryKeys(DefaultRelations relations) throws SQLException {}
+
+  @Override
+  protected void loadUniqueKeys(DefaultRelations relations) throws SQLException {
+    for (Schema schema : getSchemasFromMeta()) {
+      SchemaDefinition s = getSchema(schema.getName());
+
+      if (s != null) {
+        for (Table<?> table : schema.getTables()) {
+          TableDefinition t = getTable(s, table.getName());
+
+          if (t != null) {
+            UniqueKey<?> key = table.getPrimaryKey();
+
+            if (key != null)
+              for (Field<?> field : key.getFields())
+                relations.addPrimaryKey(
+                    "PK_" + key.getTable().getName(), t, t.getColumn(field.getName()));
+          }
+        }
+      }
     }
+  }
 
-    abstract protected Meta getMeta0();
+  @Override
+  protected void loadForeignKeys(DefaultRelations relations) throws SQLException {
+    for (Schema referencingS : getSchemasFromMeta()) {
+      SchemaDefinition referencingSD = getSchema(referencingS.getName());
 
-    @Override
-    protected void loadPrimaryKeys(DefaultRelations relations) throws SQLException {
-    }
+      if (referencingSD != null) {
+        for (Table<?> referencingT : referencingS.getTables()) {
+          TableDefinition referencingTD = getTable(referencingSD, referencingT.getName());
 
-    @Override
-    protected void loadUniqueKeys(DefaultRelations relations) throws SQLException {
-        for (Schema schema : getSchemasFromMeta()) {
-            SchemaDefinition s = getSchema(schema.getName());
+          if (referencingTD != null) {
+            for (ForeignKey<?, ?> fk : referencingT.getReferences()) {
 
-            if (s != null) {
-                for (Table<?> table : schema.getTables()) {
-                    TableDefinition t = getTable(s, table.getName());
+              UniqueKey<?> uk = fk.getKey();
+              if (uk != null) {
+                Table<?> referencedT = uk.getTable();
 
-                    if (t != null) {
-                        UniqueKey<?> key = table.getPrimaryKey();
+                if (referencedT != null) {
+                  Schema referencedS = referencedT.getSchema();
 
-                        if (key != null)
-                            for (Field<?> field : key.getFields())
-                                relations.addPrimaryKey("PK_" + key.getTable().getName(), t, t.getColumn(field.getName()));
-                    }
+                  if (referencedS == null) referencedS = referencingS;
+
+                  SchemaDefinition referencedSD = getSchema(referencedS.getName());
+                  TableDefinition referencedTD = getTable(referencedSD, referencedT.getName());
+
+                  addForeignKey:
+                  if (referencedTD != null) {
+                    for (Field<?> fkField : fk.getFields())
+                      if (referencingTD.getColumn(fkField.getName()) == null) break addForeignKey;
+
+                    for (Field<?> fkField : fk.getFields())
+                      relations.addForeignKey(
+                          fk.getName(),
+                          referencingTD,
+                          referencingTD.getColumn(fkField.getName()),
+                          uk.getName(),
+                          referencedTD);
+                  }
                 }
+              }
             }
+          }
         }
+      }
+    }
+  }
+
+  @Override
+  protected void loadCheckConstraints(DefaultRelations r) throws SQLException {}
+
+  @Override
+  protected List<CatalogDefinition> getCatalogs0() throws SQLException {
+    List<CatalogDefinition> result = new ArrayList<>();
+
+    for (Catalog catalog : getCatalogsFromMeta())
+      result.add(new CatalogDefinition(this, catalog.getName(), ""));
+
+    result.sort(COMP);
+    return result;
+  }
+
+  private List<Catalog> getCatalogsFromMeta() {
+    if (catalogs == null) catalogs = new ArrayList<>(getMeta0().getCatalogs());
+
+    return catalogs;
+  }
+
+  @Override
+  protected List<SchemaDefinition> getSchemata0() throws SQLException {
+    List<SchemaDefinition> result = new ArrayList<>();
+
+    for (Schema schema : getSchemasFromMeta()) {
+      if (schema.getCatalog() != null) {
+        CatalogDefinition catalog = getCatalog(schema.getCatalog().getName());
+
+        if (catalog != null) result.add(new SchemaDefinition(this, schema.getName(), "", catalog));
+      } else result.add(new SchemaDefinition(this, schema.getName(), ""));
     }
 
-    @Override
-    protected void loadForeignKeys(DefaultRelations relations) throws SQLException {
-        for (Schema referencingS : getSchemasFromMeta()) {
-            SchemaDefinition referencingSD = getSchema(referencingS.getName());
+    result.sort(COMP);
+    return result;
+  }
 
-            if (referencingSD != null) {
-                for (Table<?> referencingT : referencingS.getTables()) {
-                    TableDefinition referencingTD = getTable(referencingSD, referencingT.getName());
+  private List<Schema> getSchemasFromMeta() {
+    if (schemas == null) schemas = new ArrayList<>(getMeta0().getSchemas());
 
-                    if (referencingTD != null) {
-                        for (ForeignKey<?, ?> fk : referencingT.getReferences()) {
+    return schemas;
+  }
 
-                            UniqueKey<?> uk = fk.getKey();
-                            if (uk != null) {
-                                Table<?> referencedT = uk.getTable();
+  @Override
+  protected List<SequenceDefinition> getSequences0() throws SQLException {
+    List<SequenceDefinition> result = new ArrayList<>();
 
-                                if (referencedT != null) {
-                                    Schema referencedS = referencedT.getSchema();
+    for (Schema schema : getSchemasFromMeta()) {
+      for (Sequence<?> sequence : schema.getSequences()) {
+        SchemaDefinition sd = getSchema(schema.getName());
 
-                                    if (referencedS == null)
-                                        referencedS = referencingS;
+        DataTypeDefinition type =
+            new DefaultDataTypeDefinition(this, sd, sequence.getDataType().getTypeName());
 
-                                    SchemaDefinition referencedSD = getSchema(referencedS.getName());
-                                    TableDefinition referencedTD = getTable(referencedSD, referencedT.getName());
-
-                                    addForeignKey:
-                                    if (referencedTD != null) {
-                                        for (Field<?> fkField : fk.getFields())
-                                            if (referencingTD.getColumn(fkField.getName()) == null)
-                                                break addForeignKey;
-
-                                        for (Field<?> fkField : fk.getFields())
-                                            relations.addForeignKey(
-                                                fk.getName(),
-                                                referencingTD,
-                                                referencingTD.getColumn(fkField.getName()),
-                                                uk.getName(),
-                                                referencedTD
-                                            );
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        result.add(new DefaultSequenceDefinition(sd, sequence.getName(), type));
+      }
     }
 
-    @Override
-    protected void loadCheckConstraints(DefaultRelations r) throws SQLException {
+    result.sort(COMP);
+    return result;
+  }
+
+  @Override
+  protected List<TableDefinition> getTables0() throws SQLException {
+    List<TableDefinition> result = new ArrayList<>();
+
+    for (Schema schema : getSchemasFromMeta()) {
+      SchemaDefinition sd = getSchema(schema.getName());
+
+      if (sd != null)
+        for (Table<?> table : schema.getTables())
+          result.add(new DefaultMetaTableDefinition(sd, table));
     }
 
-    @Override
-    protected List<CatalogDefinition> getCatalogs0() throws SQLException {
-        List<CatalogDefinition> result = new ArrayList<>();
+    result.sort(COMP);
+    return result;
+  }
 
-        for (Catalog catalog : getCatalogsFromMeta())
-            result.add(new CatalogDefinition(this, catalog.getName(), ""));
+  @Override
+  protected List<EnumDefinition> getEnums0() throws SQLException {
+    List<EnumDefinition> result = new ArrayList<>();
+    return result;
+  }
 
-        result.sort(COMP);
-        return result;
-    }
+  @Override
+  protected List<DomainDefinition> getDomains0() throws SQLException {
+    List<DomainDefinition> result = new ArrayList<>();
+    return result;
+  }
 
-    private List<Catalog> getCatalogsFromMeta() {
-        if (catalogs == null)
-            catalogs = new ArrayList<>(getMeta0().getCatalogs());
+  @Override
+  protected List<UDTDefinition> getUDTs0() throws SQLException {
+    List<UDTDefinition> result = new ArrayList<>();
+    return result;
+  }
 
-        return catalogs;
-    }
+  @Override
+  protected List<ArrayDefinition> getArrays0() throws SQLException {
+    List<ArrayDefinition> result = new ArrayList<>();
+    return result;
+  }
 
-    @Override
-    protected List<SchemaDefinition> getSchemata0() throws SQLException {
-        List<SchemaDefinition> result = new ArrayList<>();
+  @Override
+  protected List<RoutineDefinition> getRoutines0() throws SQLException {
+    List<RoutineDefinition> result = new ArrayList<>();
+    return result;
+  }
 
-        for (Schema schema : getSchemasFromMeta()) {
-            if (schema.getCatalog() != null) {
-                CatalogDefinition catalog = getCatalog(schema.getCatalog().getName());
+  @Override
+  protected List<PackageDefinition> getPackages0() throws SQLException {
+    List<PackageDefinition> result = new ArrayList<>();
+    return result;
+  }
 
-                if (catalog != null)
-                    result.add(new SchemaDefinition(this, schema.getName(), "", catalog));
-            }
-            else
-                result.add(new SchemaDefinition(this, schema.getName(), ""));
-        }
-
-        result.sort(COMP);
-        return result;
-    }
-
-    private List<Schema> getSchemasFromMeta() {
-        if (schemas == null)
-            schemas = new ArrayList<>(getMeta0().getSchemas());
-
-        return schemas;
-    }
-
-    @Override
-    protected List<SequenceDefinition> getSequences0() throws SQLException {
-        List<SequenceDefinition> result = new ArrayList<>();
-
-        for (Schema schema : getSchemasFromMeta()) {
-            for (Sequence<?> sequence : schema.getSequences()) {
-                SchemaDefinition sd = getSchema(schema.getName());
-
-                DataTypeDefinition type = new DefaultDataTypeDefinition(
-                    this,
-                    sd,
-                    sequence.getDataType().getTypeName()
-                );
-
-                result.add(new DefaultSequenceDefinition(
-                    sd, sequence.getName(), type));
-            }
-        }
-
-        result.sort(COMP);
-        return result;
-    }
-
-    @Override
-    protected List<TableDefinition> getTables0() throws SQLException {
-        List<TableDefinition> result = new ArrayList<>();
-
-        for (Schema schema : getSchemasFromMeta()) {
-            SchemaDefinition sd = getSchema(schema.getName());
-
-            if (sd != null)
-                for (Table<?> table : schema.getTables())
-                    result.add(new DefaultMetaTableDefinition(sd, table));
-        }
-
-        result.sort(COMP);
-        return result;
-    }
-
-    @Override
-    protected List<EnumDefinition> getEnums0() throws SQLException {
-        List<EnumDefinition> result = new ArrayList<>();
-        return result;
-    }
-
-    @Override
-    protected List<DomainDefinition> getDomains0() throws SQLException {
-        List<DomainDefinition> result = new ArrayList<>();
-        return result;
-    }
-
-    @Override
-    protected List<UDTDefinition> getUDTs0() throws SQLException {
-        List<UDTDefinition> result = new ArrayList<>();
-        return result;
-    }
-
-    @Override
-    protected List<ArrayDefinition> getArrays0() throws SQLException {
-        List<ArrayDefinition> result = new ArrayList<>();
-        return result;
-    }
-
-    @Override
-    protected List<RoutineDefinition> getRoutines0() throws SQLException {
-        List<RoutineDefinition> result = new ArrayList<>();
-        return result;
-    }
-
-    @Override
-    protected List<PackageDefinition> getPackages0() throws SQLException {
-        List<PackageDefinition> result = new ArrayList<>();
-        return result;
-    }
-
-    private static final Comparator<Definition> COMP = Comparator.comparing(Definition::getQualifiedInputName);
+  private static final Comparator<Definition> COMP =
+      Comparator.comparing(Definition::getQualifiedInputName);
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,17 +40,15 @@ package org.jooq.impl;
 import org.jooq.QueryPart;
 
 /**
- * A marker interface for {@link QueryPart} implementations that might produce
- * separators at the end.
+ * A marker interface for {@link QueryPart} implementations that might produce separators at the
+ * end.
  *
  * @author Lukas Eder
  */
 interface SeparatedQueryPart {
 
-    /**
-     * Whether a separator is rendered at the end of the content.
-     */
-    default boolean rendersSeparator() {
-        return true;
-    }
+  /** Whether a separator is rendered at the end of the content. */
+  default boolean rendersSeparator() {
+    return true;
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,82 +38,50 @@
 package org.jooq.impl;
 
 // ...
-import static org.jooq.impl.DSL.inline;
-import static org.jooq.impl.DSL.xmlparseDocument;
-import static org.jooq.impl.DSL.xmlquery;
 import static org.jooq.impl.Keywords.K_CONTENT;
 import static org.jooq.impl.Keywords.K_DOCUMENT;
-import static org.jooq.impl.Keywords.K_PRESERVE;
-import static org.jooq.impl.Keywords.K_WHITESPACE;
 import static org.jooq.impl.Names.N_XMLPARSE;
-import static org.jooq.impl.SQLDataType.VARCHAR;
 import static org.jooq.impl.XMLParse.DocumentOrContent.DOCUMENT;
 
 import org.jooq.Context;
 import org.jooq.Field;
 import org.jooq.XML;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class XMLParse extends AbstractField<XML> {
-    private final Field<String>     content;
-    private final DocumentOrContent documentOrContent;
+  private final Field<String> content;
+  private final DocumentOrContent documentOrContent;
 
-    XMLParse(Field<String> content, DocumentOrContent documentOrContent) {
-        super(N_XMLPARSE, SQLDataType.XML);
+  XMLParse(Field<String> content, DocumentOrContent documentOrContent) {
+    super(N_XMLPARSE, SQLDataType.XML);
 
-        this.content = content;
-        this.documentOrContent = documentOrContent;
+    this.content = content;
+    this.documentOrContent = documentOrContent;
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case POSTGRES:
+      default:
+        acceptStandard(ctx, documentOrContent, content);
+        break;
     }
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
+  private static final void acceptStandard(
+      Context<?> ctx, DocumentOrContent documentOrContent, Field<String> content) {
+    ctx.visit(N_XMLPARSE)
+        .sql('(')
+        .visit(documentOrContent == DOCUMENT ? K_DOCUMENT : K_CONTENT)
+        .sql(' ')
+        .visit(content);
 
+    ctx.sql(')');
+  }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            case POSTGRES:
-            default:
-                acceptStandard(ctx, documentOrContent, content);
-                break;
-        }
-    }
-
-    private static final void acceptStandard(
-        Context<?> ctx,
-        DocumentOrContent documentOrContent,
-        Field<String> content
-    ) {
-        ctx.visit(N_XMLPARSE).sql('(')
-           .visit(documentOrContent == DOCUMENT ? K_DOCUMENT : K_CONTENT).sql(' ')
-           .visit(content);
-
-
-
-
-
-
-        ctx.sql(')');
-    }
-
-    enum DocumentOrContent { DOCUMENT, CONTENT }
+  enum DocumentOrContent {
+    DOCUMENT,
+    CONTENT
+  }
 }

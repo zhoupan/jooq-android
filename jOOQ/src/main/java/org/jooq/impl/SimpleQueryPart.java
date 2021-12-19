@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,19 +42,19 @@ import org.jooq.QueryPart;
 import org.jooq.QueryPartInternal;
 
 /**
- * A marker interface for all query parts that are capable of generating
- * "simple" SQL. This information is used mainly for formatting decisions.
+ * A marker interface for all query parts that are capable of generating "simple" SQL. This
+ * information is used mainly for formatting decisions.
  *
  * @author Lukas Eder
  */
 interface SimpleQueryPart extends QueryPartInternal {
 
-    /**
-     * Whether the {@link QueryPart} really is simple.
-     * <p>
-     * e.g. an {@link OrderField} can be simple if its contents are also simple.
-     */
-    default boolean isSimple() {
-        return true;
-    }
+  /**
+   * Whether the {@link QueryPart} really is simple.
+   *
+   * <p>e.g. an {@link OrderField} can be simple if its contents are also simple.
+   */
+  default boolean isSimple() {
+    return true;
+  }
 }

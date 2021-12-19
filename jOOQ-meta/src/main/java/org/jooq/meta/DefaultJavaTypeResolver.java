@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,31 +38,31 @@
 package org.jooq.meta;
 
 final class DefaultJavaTypeResolver implements JavaTypeResolver {
-    // [#10553] TODO: This was introduced as a dummy implementation
-    //          to make [#10534] work. jOOQ-meta should not have any
-    //          such implementation
-    @Override
-    public String resolve(DataTypeDefinition type) {
-        return "java.lang.Object";
-    }
+  // [#10553] TODO: This was introduced as a dummy implementation
+  //          to make [#10534] work. jOOQ-meta should not have any
+  //          such implementation
+  @Override
+  public String resolve(DataTypeDefinition type) {
+    return "java.lang.Object";
+  }
 
-    @Override
-    public String ref(Class<?> type) {
-        return type.getName();
-    }
+  @Override
+  public String ref(Class<?> type) {
+    return type.getName();
+  }
 
-    @Override
-    public String ref(String type) {
-        return type;
-    }
+  @Override
+  public String ref(String type) {
+    return type;
+  }
 
-    @Override
-    public String classLiteral(String type) {
-        return type + ".class";
-    }
+  @Override
+  public String classLiteral(String type) {
+    return type + ".class";
+  }
 
-    @Override
-    public String constructorCall(String type) {
-        return "new " + type;
-    }
+  @Override
+  public String constructorCall(String type) {
+    return "new " + type;
+  }
 }

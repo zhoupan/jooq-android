@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,43 +44,40 @@ import org.jooq.SQLDialect;
 import org.jooq.Schema;
 
 /**
- * A default implementation for packages (containers of stored procedures and
- * functions)
- * <p>
- * Currently, this is only supported for the {@link SQLDialect#ORACLE} dialect.
- * <p>
- * This type is for JOOQ INTERNAL USE only. Do not reference directly
+ * A default implementation for packages (containers of stored procedures and functions)
+ *
+ * <p>Currently, this is only supported for the {@link SQLDialect#ORACLE} dialect.
+ *
+ * <p>This type is for JOOQ INTERNAL USE only. Do not reference directly
  *
  * @author Lukas Eder
  */
 @org.jooq.Internal
 public class PackageImpl extends AbstractNamed implements Package {
 
-    private Schema            schema;
+  private Schema schema;
 
-    public PackageImpl(String name, Schema schema) {
-        super(qualify(schema, DSL.name(name)), CommentImpl.NO_COMMENT);
+  public PackageImpl(String name, Schema schema) {
+    super(qualify(schema, DSL.name(name)), CommentImpl.NO_COMMENT);
 
-        this.schema = schema;
-    }
+    this.schema = schema;
+  }
 
-    @Override
-    public final Catalog getCatalog() {
-        return getSchema() == null ? null : getSchema().getCatalog();
-    }
+  @Override
+  public final Catalog getCatalog() {
+    return getSchema() == null ? null : getSchema().getCatalog();
+  }
 
-    @Override
-    public final Schema getSchema() {
-        if (schema == null)
-            schema = getQualifiedName().qualified()
-                   ? DSL.schema(getQualifiedName().qualifier())
-                   : null;
+  @Override
+  public final Schema getSchema() {
+    if (schema == null)
+      schema = getQualifiedName().qualified() ? DSL.schema(getQualifiedName().qualifier()) : null;
 
-        return schema;
-    }
+    return schema;
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        ctx.visit(getUnqualifiedName());
-    }
+  @Override
+  public final void accept(Context<?> ctx) {
+    ctx.visit(getUnqualifiedName());
+  }
 }

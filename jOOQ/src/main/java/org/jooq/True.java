@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,11 +41,9 @@ import org.jooq.impl.DSL;
 
 /**
  * A {@link Condition} that always yields <code>true</code>.
- * <p>
- * Instances can be created using {@link DSL#trueCondition()}.
+ *
+ * <p>Instances can be created using {@link DSL#trueCondition()}.
  *
  * @author Lukas Eder
  */
-public interface True extends Condition {
-
-}
+public interface True extends Condition {}

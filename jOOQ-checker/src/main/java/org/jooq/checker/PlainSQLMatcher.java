@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,18 +40,16 @@ package org.jooq.checker;
 import static com.google.errorprone.BugPattern.LinkType.NONE;
 import static com.google.errorprone.BugPattern.SeverityLevel.ERROR;
 
-import org.jooq.PlainSQL;
-
 import com.google.auto.service.AutoService;
 import com.google.errorprone.BugPattern;
 import com.google.errorprone.VisitorState;
 import com.google.errorprone.bugpatterns.BugChecker;
 import com.google.errorprone.matchers.Description;
 import com.sun.source.tree.MethodInvocationTree;
+import org.jooq.PlainSQL;
 
 /**
- * A checker to disallow usage of {@link PlainSQL} API, except where allowed
- * explicitly.
+ * A checker to disallow usage of {@link PlainSQL} API, except where allowed explicitly.
  *
  * @author Lukas Eder
  */
@@ -60,22 +58,19 @@ import com.sun.source.tree.MethodInvocationTree;
     name = "PlainSQLMatcher",
     summary = "jOOQ Plain SQL usage where this is not allowed",
     severity = ERROR,
-    linkType = NONE
-)
+    linkType = NONE)
 public class PlainSQLMatcher extends AbstractMatcher {
 
-    /**
-     * Generated UID
-     */
-    private static final long serialVersionUID = -690695693050288771L;
+  /** Generated UID */
+  private static final long serialVersionUID = -690695693050288771L;
 
-    @Override
-    public Description matchMethodInvocation(MethodInvocationTree node, VisitorState state) {
-        return nullSafe(Tools.checkPlainSQL(
+  @Override
+  public Description matchMethodInvocation(MethodInvocationTree node, VisitorState state) {
+    return nullSafe(
+        Tools.checkPlainSQL(
             node,
             () -> Tools.enclosing(state.getPath()),
             message -> error(node, message),
-            printer -> print(printer)
-        ));
-    }
+            printer -> print(printer)));
+  }
 }

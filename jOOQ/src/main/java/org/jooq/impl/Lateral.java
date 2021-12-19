@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,45 +45,43 @@ import org.jooq.Record;
 import org.jooq.Table;
 import org.jooq.TableOptions;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class Lateral<R extends Record> extends AbstractTable<R> {
-    private final Table<R>    table;
+  private final Table<R> table;
 
-    Lateral(Table<R> table) {
-        super(TableOptions.expression(), table.getQualifiedName(), table.getSchema());
+  Lateral(Table<R> table) {
+    super(TableOptions.expression(), table.getQualifiedName(), table.getSchema());
 
-        this.table = table;
-    }
+    this.table = table;
+  }
 
-    @Override
-    public final boolean declaresTables() {
-        return true;
-    }
+  @Override
+  public final boolean declaresTables() {
+    return true;
+  }
 
-    @Override
-    public final Class<? extends R> getRecordType() {
-        return table.getRecordType();
-    }
+  @Override
+  public final Class<? extends R> getRecordType() {
+    return table.getRecordType();
+  }
 
-    @Override
-    public final Table<R> as(Name alias) {
-        return new Lateral<>(table.as(alias));
-    }
+  @Override
+  public final Table<R> as(Name alias) {
+    return new Lateral<>(table.as(alias));
+  }
 
-    @Override
-    public final Table<R> as(Name alias, Name... fieldAliases) {
-        return new Lateral<>(table.as(alias, fieldAliases));
-    }
+  @Override
+  public final Table<R> as(Name alias, Name... fieldAliases) {
+    return new Lateral<>(table.as(alias, fieldAliases));
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        ctx.visit(K_LATERAL).sql(' ').visit(table);
-    }
+  @Override
+  public final void accept(Context<?> ctx) {
+    ctx.visit(K_LATERAL).sql(' ').visit(table);
+  }
 
-    @Override
-    final FieldsImpl<R> fields0() {
-        return new FieldsImpl<>(table.fields());
-    }
+  @Override
+  final FieldsImpl<R> fields0() {
+    return new FieldsImpl<>(table.fields());
+  }
 }

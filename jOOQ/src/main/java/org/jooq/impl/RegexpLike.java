@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -47,84 +47,62 @@ import org.jooq.Clause;
 import org.jooq.Context;
 import org.jooq.Field;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class RegexpLike extends AbstractCondition {
-    private static final Clause[] CLAUSES          = { CONDITION, CONDITION_COMPARISON };
+  private static final Clause[] CLAUSES = {CONDITION, CONDITION_COMPARISON};
 
-    private final Field<?>        search;
-    private final Field<String>   pattern;
+  private final Field<?> search;
+  private final Field<String> pattern;
 
-    RegexpLike(Field<?> search, Field<String> pattern) {
-        this.search = search;
-        this.pattern = pattern;
-    }
+  RegexpLike(Field<?> search, Field<String> pattern) {
+    this.search = search;
+    this.pattern = pattern;
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
 
-            // [#620] These databases are compatible with the MySQL syntax
+        // [#620] These databases are compatible with the MySQL syntax
 
+      case CUBRID:
+      case H2:
+      case MARIADB:
+      case MYSQL:
+      case SQLITE:
+        ctx.visit(search).sql(' ').visit(K_REGEXP).sql(' ').visit(pattern);
 
+        break;
 
-            case CUBRID:
-            case H2:
-            case MARIADB:
-            case MYSQL:
-            case SQLITE:
-                ctx.visit(search)
-                   .sql(' ')
-                   .visit(K_REGEXP)
-                   .sql(' ')
-                   .visit(pattern);
+        // [#620] HSQLDB has its own syntax
+      case HSQLDB:
+        ctx.visit(keyword("regexp_matches"))
+            .sql('(')
+            .visit(search)
+            .sql(", ")
+            .visit(pattern)
+            .sql(')');
+        break;
 
-                break;
+        // [#620] Postgres has its own syntax
 
-            // [#620] HSQLDB has its own syntax
-            case HSQLDB:
-                ctx.visit(keyword("regexp_matches")).sql('(').visit(search).sql(", ").visit(pattern).sql(')');
-                break;
+      case POSTGRES:
+        ctx.sql('(').visit(search).sql(" ~ ").visit(pattern).sql(')');
+        break;
 
-            // [#620] Postgres has its own syntax
+        // Render the SQL standard for those databases that do not support
+        // regular expressions
+      default:
+        {
+          ctx.sql('(').visit(search).sql(' ').visit(K_LIKE_REGEX).sql(' ').visit(pattern).sql(')');
 
-
-
-            case POSTGRES:
-                ctx.sql('(').visit(search).sql(" ~ ").visit(pattern).sql(')');
-                break;
-
-
-
-
-
-
-
-
-
-
-
-
-
-            // Render the SQL standard for those databases that do not support
-            // regular expressions
-            default: {
-                ctx.sql('(')
-                   .visit(search)
-                   .sql(' ')
-                   .visit(K_LIKE_REGEX)
-                   .sql(' ')
-                   .visit(pattern)
-                   .sql(')');
-
-                break;
-            }
+          break;
         }
     }
+  }
 
-    @Override
-    public final Clause[] clauses(Context<?> ctx) {
-        return CLAUSES;
-    }
+  @Override
+  public final Clause[] clauses(Context<?> ctx) {
+    return CLAUSES;
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,39 +42,37 @@ import org.jooq.Context;
 import org.jooq.Field;
 import org.jooq.Record;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class RecordCondition extends AbstractCondition {
 
-    private final Record      record;
+  private final Record record;
 
-    RecordCondition(Record record) {
-        this.record = record;
+  RecordCondition(Record record) {
+    this.record = record;
+  }
+
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  @Override
+  public void accept(Context<?> ctx) {
+    ConditionProviderImpl condition = new ConditionProviderImpl();
+
+    int size = record.size();
+    for (int i = 0; i < size; i++) {
+      Object value = record.get(i);
+
+      if (value != null) {
+        Field f1 = record.field(i);
+        Field f2 = DSL.val(value, f1.getDataType());
+
+        condition.addConditions(f1.eq(f2));
+      }
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Override
-    public void accept(Context<?> ctx) {
-        ConditionProviderImpl condition = new ConditionProviderImpl();
+    ctx.visit(condition);
+  }
 
-        int size = record.size();
-        for (int i = 0; i < size; i++) {
-            Object value = record.get(i);
-
-            if (value != null) {
-                Field f1 = record.field(i);
-                Field f2 = DSL.val(value, f1.getDataType());
-
-                condition.addConditions(f1.eq(f2));
-            }
-        }
-
-        ctx.visit(condition);
-    }
-
-    @Override // Avoid AbstractCondition implementation
-    public final Clause[] clauses(Context<?> ctx) {
-        return null;
-    }
+  @Override // Avoid AbstractCondition implementation
+  public final Clause[] clauses(Context<?> ctx) {
+    return null;
+  }
 }

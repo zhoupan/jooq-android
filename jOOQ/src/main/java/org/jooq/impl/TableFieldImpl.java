@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,17 +35,11 @@
  *
  *
  */
-
 package org.jooq.impl;
 
-import static java.util.stream.Collectors.joining;
 import static org.jooq.Clause.FIELD;
 import static org.jooq.Clause.FIELD_REFERENCE;
-// ...
-import static org.jooq.impl.DefaultMetaProvider.meta;
 import static org.jooq.impl.Tools.BooleanDataKey.DATA_OMIT_CLAUSE_EVENT_EMISSION;
-
-import java.util.stream.Stream;
 
 import org.jooq.Binding;
 import org.jooq.Clause;
@@ -63,82 +57,72 @@ import org.jooq.tools.StringUtils;
  *
  * @author Lukas Eder
  */
-class TableFieldImpl<R extends Record, T> extends AbstractField<T> implements TableField<R, T>, SimpleQueryPart {
+class TableFieldImpl<R extends Record, T> extends AbstractField<T>
+    implements TableField<R, T>, SimpleQueryPart {
 
-    private static final Clause[] CLAUSES = { FIELD, FIELD_REFERENCE };
+  private static final Clause[] CLAUSES = {FIELD, FIELD_REFERENCE};
 
-    private final Table<R>        table;
+  private final Table<R> table;
 
-    @SuppressWarnings("unchecked")
-    TableFieldImpl(Name name, DataType<T> type, Comment comment) {
-        this(name, type, (Table<R>) table(name), comment, type.getBinding());
-    }
+  @SuppressWarnings("unchecked")
+  TableFieldImpl(Name name, DataType<T> type, Comment comment) {
+    this(name, type, (Table<R>) table(name), comment, type.getBinding());
+  }
 
-    TableFieldImpl(Name name, DataType<T> type, Table<R> table, Comment comment, Binding<?, T> binding) {
-        super(qualify(table, name), type, comment, binding);
+  TableFieldImpl(
+      Name name, DataType<T> type, Table<R> table, Comment comment, Binding<?, T> binding) {
+    super(qualify(table, name), type, comment, binding);
 
-        this.table = table;
-    }
+    this.table = table;
+  }
 
-    private static final Table<Record> table(Name name) {
-        return name.qualified() ? DSL.table(name.qualifier()) : null;
-    }
+  private static final Table<Record> table(Name name) {
+    return name.qualified() ? DSL.table(name.qualifier()) : null;
+  }
 
-    @Override
-    public final Table<R> getTable() {
-        return table;
-    }
+  @Override
+  public final Table<R> getTable() {
+    return table;
+  }
 
-    // ------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // ------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // ------------------------------------------------------------------------
 
-    @Override
-    public final Clause[] clauses(Context<?> ctx) {
-        return CLAUSES;
-    }
+  @Override
+  public final Clause[] clauses(Context<?> ctx) {
+    return CLAUSES;
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
+  @Override
+  public final void accept(Context<?> ctx) {
 
+    ctx.data(
+        DATA_OMIT_CLAUSE_EVENT_EMISSION,
+        true,
+        c -> {
+          if (c.qualify() && getTable() != null) c.visit(getTable()).sql('.');
 
-
-
-
-
-
-
-
-
-
-
-
-        ctx.data(DATA_OMIT_CLAUSE_EVENT_EMISSION, true, c -> {
-            if (c.qualify() && getTable() != null)
-                c.visit(getTable()).sql('.');
-
-            c.visit(getUnqualifiedName());
+          c.visit(getUnqualifiedName());
         });
+  }
+
+  // ------------------------------------------------------------------------
+  // XXX: Object API
+  // ------------------------------------------------------------------------
+
+  @Override
+  public boolean equals(Object that) {
+    if (this == that) return true;
+
+    // [#2144] TableFieldImpl equality can be decided without executing the
+    // rather expensive implementation of AbstractQueryPart.equals()
+    if (that instanceof TableField) {
+      TableField<?, ?> other = (TableField<?, ?>) that;
+      return StringUtils.equals(getTable(), other.getTable())
+          && StringUtils.equals(getName(), other.getName());
     }
 
-    // ------------------------------------------------------------------------
-    // XXX: Object API
-    // ------------------------------------------------------------------------
-
-    @Override
-    public boolean equals(Object that) {
-        if (this == that)
-            return true;
-
-        // [#2144] TableFieldImpl equality can be decided without executing the
-        // rather expensive implementation of AbstractQueryPart.equals()
-        if (that instanceof TableField) {
-            TableField<?, ?> other = (TableField<?, ?>) that;
-            return
-                StringUtils.equals(getTable(), other.getTable()) &&
-                StringUtils.equals(getName(), other.getName());
-        }
-
-        return super.equals(that);
-    }
+    return super.equals(that);
+  }
 }

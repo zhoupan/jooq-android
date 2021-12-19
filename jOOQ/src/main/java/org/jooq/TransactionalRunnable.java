@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,52 +42,49 @@ import java.util.Collection;
 
 /**
  * An <code>FunctionalInterface</code> that wraps transactional code.
- * <p>
- * Transactional code should not depend on any captured scope, but use the
- * argument {@link Configuration} passed to the {@link #run(Configuration)}
- * method to derive its transaction context.
- * <p>
- * If transactional code needs to depend on captured scope ("context"), then
- * {@link ContextTransactionalRunnable} is a better fit.
+ *
+ * <p>Transactional code should not depend on any captured scope, but use the argument {@link
+ * Configuration} passed to the {@link #run(Configuration)} method to derive its transaction
+ * context.
+ *
+ * <p>If transactional code needs to depend on captured scope ("context"), then {@link
+ * ContextTransactionalRunnable} is a better fit.
  *
  * @author Lukas Eder
  */
 @FunctionalInterface
 public interface TransactionalRunnable {
 
-    /**
-     * Run the transactional code.
-     * <p>
-     * If this method completes normally, and this is not a nested transaction,
-     * then the transaction will be committed. If this method completes with an
-     * exception (any {@link Throwable}), then the transaction is rolled back to
-     * the beginning of this <code>TransactionalRunnable</code>.
-     *
-     * @param configuration The <code>Configuration</code> in whose context the
-     *            transaction is run.
-     * @throws Throwable Any exception that will cause a rollback of the code
-     *             contained in this transaction. If this is a nested
-     *             transaction, the rollback may be performed only to the state
-     *             before executing this <code>TransactionalRunnable</code>.
-     */
-    void run(Configuration configuration) throws Throwable;
+  /**
+   * Run the transactional code.
+   *
+   * <p>If this method completes normally, and this is not a nested transaction, then the
+   * transaction will be committed. If this method completes with an exception (any {@link
+   * Throwable}), then the transaction is rolled back to the beginning of this <code>
+   * TransactionalRunnable</code>.
+   *
+   * @param configuration The <code>Configuration</code> in whose context the transaction is run.
+   * @throws Throwable Any exception that will cause a rollback of the code contained in this
+   *     transaction. If this is a nested transaction, the rollback may be performed only to the
+   *     state before executing this <code>TransactionalRunnable</code>.
+   */
+  void run(Configuration configuration) throws Throwable;
 
-    /**
-     * Wrap a set of nested {@link TransactionalRunnable} objects in a single
-     * global {@link TransactionalRunnable}.
-     */
-    static TransactionalRunnable of(TransactionalRunnable... runnables) {
-        return of(Arrays.asList(runnables));
-    }
+  /**
+   * Wrap a set of nested {@link TransactionalRunnable} objects in a single global {@link
+   * TransactionalRunnable}.
+   */
+  static TransactionalRunnable of(TransactionalRunnable... runnables) {
+    return of(Arrays.asList(runnables));
+  }
 
-    /**
-     * Wrap a set of nested {@link TransactionalRunnable} objects in a single
-     * global {@link TransactionalRunnable}.
-     */
-    static TransactionalRunnable of(Collection<? extends TransactionalRunnable> runnables) {
-        return configuration -> {
-            for (TransactionalRunnable runnable : runnables)
-                configuration.dsl().transaction(runnable);
-        };
-    }
+  /**
+   * Wrap a set of nested {@link TransactionalRunnable} objects in a single global {@link
+   * TransactionalRunnable}.
+   */
+  static TransactionalRunnable of(Collection<? extends TransactionalRunnable> runnables) {
+    return configuration -> {
+      for (TransactionalRunnable runnable : runnables) configuration.dsl().transaction(runnable);
+    };
+  }
 }

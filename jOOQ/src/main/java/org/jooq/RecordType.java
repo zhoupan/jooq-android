@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,27 +37,21 @@
  */
 package org.jooq;
 
-import org.jooq.impl.DefaultRecordMapper;
-
 /**
- * A record type for {@link Table}, {@link Cursor}, {@link Result} and other
- * objects.
- * <p>
- * This type differs from {@link Row} in several ways:
+ * A record type for {@link Table}, {@link Cursor}, {@link Result} and other objects.
+ *
+ * <p>This type differs from {@link Row} in several ways:
+ *
  * <ul>
- * <li>It is generic using <code>&lt;R&gt;</code></li>
- * <li>It is not repeated for degrees 1 to 22, such as {@link Row1} ..
- * {@link RowN}</li>
- * <li>It is not part of the DSL</li>
+ *   <li>It is generic using <code>&lt;R&gt;</code>
+ *   <li>It is not repeated for degrees 1 to 22, such as {@link Row1} .. {@link RowN}
+ *   <li>It is not part of the DSL
  * </ul>
  *
  * @author Lukas Eder
  */
 public interface RecordType<R extends Record> extends Fields {
 
-    /**
-     * Get the degree of this record type.
-     */
-    int size();
-
+  /** Get the degree of this record type. */
+  int size();
 }

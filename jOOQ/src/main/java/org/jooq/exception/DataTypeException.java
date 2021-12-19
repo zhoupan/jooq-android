@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,32 +37,29 @@
  */
 package org.jooq.exception;
 
-
 /**
- * An error occurred while handling data types. This typically happens when
- * converting types
+ * An error occurred while handling data types. This typically happens when converting types
  *
  * @author Lukas Eder
  */
 public class DataTypeException extends DataAccessException {
 
-    /**
-     * Constructor for DataTypeException.
-     *
-     * @param message the detail message
-     */
-    public DataTypeException(String message) {
-        super(message);
-    }
+  /**
+   * Constructor for DataTypeException.
+   *
+   * @param message the detail message
+   */
+  public DataTypeException(String message) {
+    super(message);
+  }
 
-    /**
-     * Constructor for DataTypeException.
-     *
-     * @param message the detail message
-     * @param cause the root cause (usually from using a underlying data access
-     *            API such as JDBC)
-     */
-    public DataTypeException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  /**
+   * Constructor for DataTypeException.
+   *
+   * @param message the detail message
+   * @param cause the root cause (usually from using a underlying data access API such as JDBC)
+   */
+  public DataTypeException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

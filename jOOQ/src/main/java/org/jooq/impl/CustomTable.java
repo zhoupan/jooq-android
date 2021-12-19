@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,7 +38,6 @@
 package org.jooq.impl;
 
 import java.util.List;
-
 import org.jooq.Cursor;
 import org.jooq.ForeignKey;
 import org.jooq.Identity;
@@ -53,100 +52,93 @@ import org.jooq.UniqueKey;
 
 /**
  * A base class for custom {@link Table} implementations in client code.
- * <p>
- * Client code may provide proper {@link Table} implementations extending this
- * useful base class. All necessary parts of the {@link Table} interface are
- * already implemented. Only this method needs further implementation:
+ *
+ * <p>Client code may provide proper {@link Table} implementations extending this useful base class.
+ * All necessary parts of the {@link Table} interface are already implemented. Only this method
+ * needs further implementation:
+ *
  * <ul>
- * <li>{@link #getRecordType()}</li>
+ *   <li>{@link #getRecordType()}
  * </ul>
- * Refer to this method's Javadoc for further details about its expected
- * behaviour.
- * <p>
- * Use this base class when providing custom tables to any of the following
- * methods:
+ *
+ * Refer to this method's Javadoc for further details about its expected behaviour.
+ *
+ * <p>Use this base class when providing custom tables to any of the following methods:
+ *
  * <ul>
- * <li>{@link ResultQuery#fetchInto(Table)}</li>
- * <li>{@link Cursor#fetchInto(Table)}</li>
- * <li>{@link Result#into(Table)}</li>
- * <li>{@link Record#into(Table)}</li>
+ *   <li>{@link ResultQuery#fetchInto(Table)}
+ *   <li>{@link Cursor#fetchInto(Table)}
+ *   <li>{@link Result#into(Table)}
+ *   <li>{@link Record#into(Table)}
  * </ul>
  *
  * @author Lukas Eder
  */
 public abstract class CustomTable<R extends TableRecord<R>> extends TableImpl<R> {
 
-    protected CustomTable(Name name) {
-        super(name);
-    }
+  protected CustomTable(Name name) {
+    super(name);
+  }
 
-    protected CustomTable(Name name, Schema schema) {
-        super(name, schema);
-    }
+  protected CustomTable(Name name, Schema schema) {
+    super(name, schema);
+  }
 
-    /**
-     * @deprecated - 3.10 - [#5996] - Use {@link #CustomTable(Name)} instead.
-     */
-    @Deprecated
-    protected CustomTable(String name) {
-        super(name);
-    }
+  /** @deprecated - 3.10 - [#5996] - Use {@link #CustomTable(Name)} instead. */
+  @Deprecated
+  protected CustomTable(String name) {
+    super(name);
+  }
 
-    /**
-     * @deprecated - 3.10 - [#5996] - Use {@link #CustomTable(Name, Schema)} instead.
-     */
-    @Deprecated
-    protected CustomTable(String name, Schema schema) {
-        super(name, schema);
-    }
+  /** @deprecated - 3.10 - [#5996] - Use {@link #CustomTable(Name, Schema)} instead. */
+  @Deprecated
+  protected CustomTable(String name, Schema schema) {
+    super(name, schema);
+  }
 
-    // -------------------------------------------------------------------------
-    // Implementation required
-    // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // Implementation required
+  // -------------------------------------------------------------------------
 
-    /**
-     * Subclasses must implement this method
-     * <hr/>
-     * {@inheritDoc}
-     */
-    @Override
-    public abstract Class<? extends R> getRecordType();
+  /** Subclasses must implement this method <hr/> {@inheritDoc} */
+  @Override
+  public abstract Class<? extends R> getRecordType();
 
-    // -------------------------------------------------------------------------
-    // Further overrides allowed
-    // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // Further overrides allowed
+  // -------------------------------------------------------------------------
 
-    @Override
-    public Identity<R, ?> getIdentity() {
-        return super.getIdentity();
-    }
+  @Override
+  public Identity<R, ?> getIdentity() {
+    return super.getIdentity();
+  }
 
-    @Override
-    public UniqueKey<R> getPrimaryKey() {
-        return super.getPrimaryKey();
-    }
+  @Override
+  public UniqueKey<R> getPrimaryKey() {
+    return super.getPrimaryKey();
+  }
 
-    @Override
-    public List<UniqueKey<R>> getUniqueKeys() {
-        return super.getUniqueKeys();
-    }
+  @Override
+  public List<UniqueKey<R>> getUniqueKeys() {
+    return super.getUniqueKeys();
+  }
 
-    @Override
-    public List<ForeignKey<R, ?>> getReferences() {
-        return super.getReferences();
-    }
+  @Override
+  public List<ForeignKey<R, ?>> getReferences() {
+    return super.getReferences();
+  }
 
-    // -------------------------------------------------------------------------
-    // No further overrides allowed
-    // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // No further overrides allowed
+  // -------------------------------------------------------------------------
 
-    @Override
-    public final boolean declaresFields() {
-        return super.declaresFields();
-    }
+  @Override
+  public final boolean declaresFields() {
+    return super.declaresFields();
+  }
 
-    @Override
-    public final boolean declaresTables() {
-        return super.declaresTables();
-    }
+  @Override
+  public final boolean declaresTables() {
+    return super.declaresTables();
+  }
 }

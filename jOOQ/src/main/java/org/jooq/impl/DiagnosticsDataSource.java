@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,27 +39,24 @@ package org.jooq.impl;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-
 import org.jooq.Configuration;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class DiagnosticsDataSource extends AbstractDataSource {
 
-    private final Configuration configuration;
+  private final Configuration configuration;
 
-    DiagnosticsDataSource(Configuration configuration) {
-        this.configuration = configuration;
-    }
+  DiagnosticsDataSource(Configuration configuration) {
+    this.configuration = configuration;
+  }
 
-    @Override
-    public final Connection getConnection() throws SQLException {
-        return new DiagnosticsConnection(configuration);
-    }
+  @Override
+  public final Connection getConnection() throws SQLException {
+    return new DiagnosticsConnection(configuration);
+  }
 
-    @Override
-    public final Connection getConnection(String username, String password) throws SQLException {
-        return new DiagnosticsConnection(configuration);
-    }
+  @Override
+  public final Connection getConnection(String username, String password) throws SQLException {
+    return new DiagnosticsConnection(configuration);
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,22 +37,29 @@
  */
 package org.jooq.meta;
 
-public class DefaultCheckConstraintDefinition extends AbstractConstraintDefinition implements CheckConstraintDefinition {
+public class DefaultCheckConstraintDefinition extends AbstractConstraintDefinition
+    implements CheckConstraintDefinition {
 
-    private final String checkClause;
+  private final String checkClause;
 
-    public DefaultCheckConstraintDefinition(SchemaDefinition schema, TableDefinition table, String name, String checkClause) {
-        this(schema, table, name, checkClause, true);
-    }
+  public DefaultCheckConstraintDefinition(
+      SchemaDefinition schema, TableDefinition table, String name, String checkClause) {
+    this(schema, table, name, checkClause, true);
+  }
 
-    public DefaultCheckConstraintDefinition(SchemaDefinition schema, TableDefinition table, String name, String checkClause, boolean enforced) {
-        super(schema, table, name, enforced);
+  public DefaultCheckConstraintDefinition(
+      SchemaDefinition schema,
+      TableDefinition table,
+      String name,
+      String checkClause,
+      boolean enforced) {
+    super(schema, table, name, enforced);
 
-        this.checkClause = checkClause;
-    }
+    this.checkClause = checkClause;
+  }
 
-    @Override
-    public String getCheckClause() {
-        return checkClause;
-    }
+  @Override
+  public String getCheckClause() {
+    return checkClause;
+  }
 }

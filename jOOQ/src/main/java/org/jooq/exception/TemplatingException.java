@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,19 +42,19 @@ import org.jooq.SQL;
 
 /**
  * An exception that occurs with plain {@link SQL} templating.
- * <p>
- * Possible exceptions occur when the number of placeholders and the number of
- * provided {@link QueryPart} objects mismatch.
+ *
+ * <p>Possible exceptions occur when the number of placeholders and the number of provided {@link
+ * QueryPart} objects mismatch.
  *
  * @author Lukas Eder
  */
 public class TemplatingException extends DataAccessException {
 
-    public TemplatingException(String message) {
-        super(message);
-    }
+  public TemplatingException(String message) {
+    super(message);
+  }
 
-    public TemplatingException(String message, Throwable throwable) {
-        super(message, throwable);
-    }
+  public TemplatingException(String message, Throwable throwable) {
+    super(message, throwable);
+  }
 }

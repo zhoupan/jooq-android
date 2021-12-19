@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,15 +37,11 @@
  */
 package org.jooq;
 
-
 /**
- * A statement that can be placed inside of a {@link Block}, but not executed on
- * its own.
- * <p>
- * Instances of this type cannot be created directly, only of its subtypes.
+ * A statement that can be placed inside of a {@link Block}, but not executed on its own.
+ *
+ * <p>Instances of this type cannot be created directly, only of its subtypes.
  *
  * @author Lukas Eder
  */
-public interface Statement extends QueryPart {
-
-}
+public interface Statement extends QueryPart {}

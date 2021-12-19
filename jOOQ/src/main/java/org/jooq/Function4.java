@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,9 +39,9 @@ package org.jooq;
 
 /**
  * A function of degree 4.
- * <p>
- * This is EXPERIMENTAL API. Future jOOQ versions may instead use the
- * functional interfaces from jOOλ, and remove these types again.
+ *
+ * <p>This is EXPERIMENTAL API. Future jOOQ versions may instead use the functional interfaces from
+ * jOOλ, and remove these types again.
  *
  * @author Lukas Eder
  */
@@ -49,8 +49,6 @@ package org.jooq;
 @FunctionalInterface
 public interface Function4<T1, T2, T3, T4, R> {
 
-    /**
-     * Applies this function to the given arguments.
-     */
-    R apply(T1 t1, T2 t2, T3 t3, T4 t4);
+  /** Applies this function to the given arguments. */
+  R apply(T1 t1, T2 t2, T3 t3, T4 t4);
 }

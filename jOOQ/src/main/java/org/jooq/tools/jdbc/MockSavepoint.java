@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,28 +40,26 @@ package org.jooq.tools.jdbc;
 import java.sql.SQLException;
 import java.sql.Savepoint;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 public class MockSavepoint implements Savepoint {
 
-    private final String name;
+  private final String name;
 
-    MockSavepoint() {
-        this(null);
-    }
+  MockSavepoint() {
+    this(null);
+  }
 
-    MockSavepoint(String name) {
-        this.name = name;
-    }
+  MockSavepoint(String name) {
+    this.name = name;
+  }
 
-    @Override
-    public int getSavepointId() throws SQLException {
-        return name != null ? name.hashCode() : hashCode();
-    }
+  @Override
+  public int getSavepointId() throws SQLException {
+    return name != null ? name.hashCode() : hashCode();
+  }
 
-    @Override
-    public String getSavepointName() throws SQLException {
-        return name != null ? name : toString();
-    }
+  @Override
+  public String getSavepointName() throws SQLException {
+    return name != null ? name : toString();
+  }
 }

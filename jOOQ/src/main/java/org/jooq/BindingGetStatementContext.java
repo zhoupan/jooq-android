@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,30 +40,21 @@ package org.jooq;
 import java.sql.CallableStatement;
 
 /**
- * A container type for {@link Binding#get(BindingGetStatementContext)}
- * arguments.
+ * A container type for {@link Binding#get(BindingGetStatementContext)} arguments.
  *
  * @author Lukas Eder
  */
 public interface BindingGetStatementContext<U> extends Scope {
 
-    /**
-     * The {@link CallableStatement} from which a value is retrieved.
-     */
-    CallableStatement statement();
+  /** The {@link CallableStatement} from which a value is retrieved. */
+  CallableStatement statement();
 
-    /**
-     * The column index at which the value is retrieved.
-     */
-    int index();
+  /** The column index at which the value is retrieved. */
+  int index();
 
-    /**
-     * A callback to which the resulting value is registered.
-     */
-    void value(U value);
+  /** A callback to which the resulting value is registered. */
+  void value(U value);
 
-    /**
-     * Create a new context from this one using a converter.
-     */
-    <T> BindingGetStatementContext<T> convert(Converter<? super T, ? extends U> converter);
+  /** Create a new context from this one using a converter. */
+  <T> BindingGetStatementContext<T> convert(Converter<? super T, ? extends U> converter);
 }

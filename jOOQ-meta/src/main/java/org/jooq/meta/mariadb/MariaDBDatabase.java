@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,6 @@
  *
  *
  */
-
 package org.jooq.meta.mariadb;
 
 import static org.jooq.impl.DSL.field;
@@ -50,7 +49,6 @@ import java.math.BigDecimal;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
@@ -64,72 +62,85 @@ import org.jooq.meta.SchemaDefinition;
 import org.jooq.meta.SequenceDefinition;
 import org.jooq.meta.mysql.MySQLDatabase;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 public class MariaDBDatabase extends MySQLDatabase {
 
-    private static final long DEFAULT_SEQUENCE_MAXVALUE = Long.MAX_VALUE - 1;
-    private static final long DEFAULT_SEQUENCE_CACHE = 1000L;
+  private static final long DEFAULT_SEQUENCE_MAXVALUE = Long.MAX_VALUE - 1;
+  private static final long DEFAULT_SEQUENCE_CACHE = 1000L;
 
-    @Override
-    protected DSLContext create0() {
-        return DSL.using(getConnection(), SQLDialect.MARIADB);
+  @Override
+  protected DSLContext create0() {
+    return DSL.using(getConnection(), SQLDialect.MARIADB);
+  }
+
+  @Override
+  public ResultQuery<
+          Record12<
+              String,
+              String,
+              String,
+              String,
+              Integer,
+              Integer,
+              Long,
+              Long,
+              BigDecimal,
+              BigDecimal,
+              Boolean,
+              Long>>
+      sequences(List<String> schemas) {
+
+    // [#10844] [#10854] TODO We need a way to create a dynamic FROM clause in order to group the
+    // below sequences in a single one
+    return null;
+  }
+
+  @Override
+  protected List<SequenceDefinition> getSequences0() throws SQLException {
+    List<SequenceDefinition> result = new ArrayList<>();
+
+    for (Record record :
+        create()
+            .select(TABLES.TABLE_SCHEMA, TABLES.TABLE_NAME)
+            .from(TABLES)
+            .where(TABLES.TABLE_TYPE.eq("SEQUENCE"))) {
+
+      SchemaDefinition schema = getSchema(record.get(TABLES.TABLE_SCHEMA));
+      if (schema != null) {
+        String name = record.get(TABLES.TABLE_NAME);
+
+        DefaultDataTypeDefinition type =
+            new DefaultDataTypeDefinition(this, schema, BIGINT.getTypeName());
+
+        Field<Long> startWith = nullif(field("start_value", BIGINT), inline(1L));
+        Field<Long> incrementBy = nullif(field("increment", BIGINT), inline(1L));
+        Field<Long> minValue = inline(field("minimum_value", BIGINT), inline(1L));
+        Field<Long> maxValue =
+            nullif(field("maximum_value", BIGINT), inline(DEFAULT_SEQUENCE_MAXVALUE));
+        Field<Boolean> cycle = field("cycle_option", BOOLEAN);
+        Field<Long> cache = nullif(field("cache_size", BIGINT), inline(DEFAULT_SEQUENCE_CACHE));
+
+        Record flags =
+            create()
+                .select(startWith, incrementBy, minValue, maxValue, cycle, cache)
+                .from(name(schema.getName(), name))
+                .fetchOne();
+
+        result.add(
+            new DefaultSequenceDefinition(
+                schema,
+                name,
+                type,
+                null,
+                flags.get(startWith),
+                flags.get(incrementBy),
+                flags.get(minValue),
+                flags.get(maxValue),
+                flags.get(cycle),
+                flags.get(cache)));
+      }
     }
 
-    @Override
-    public ResultQuery<Record12<String, String, String, String, Integer, Integer, Long, Long, BigDecimal, BigDecimal, Boolean, Long>> sequences(List<String> schemas) {
-
-        // [#10844] [#10854] TODO We need a way to create a dynamic FROM clause in order to group the below sequences in a single one
-        return null;
-    }
-
-    @Override
-    protected List<SequenceDefinition> getSequences0() throws SQLException {
-        List<SequenceDefinition> result = new ArrayList<>();
-
-        for (Record record : create()
-                .select(TABLES.TABLE_SCHEMA, TABLES.TABLE_NAME)
-                .from(TABLES)
-                .where(TABLES.TABLE_TYPE.eq("SEQUENCE"))) {
-
-            SchemaDefinition schema = getSchema(record.get(TABLES.TABLE_SCHEMA));
-            if (schema != null) {
-                String name = record.get(TABLES.TABLE_NAME);
-
-                DefaultDataTypeDefinition type = new DefaultDataTypeDefinition(
-                    this,
-                    schema,
-                    BIGINT.getTypeName()
-                );
-
-                Field<Long> startWith = nullif(field("start_value", BIGINT), inline(1L));
-                Field<Long> incrementBy = nullif(field("increment", BIGINT), inline(1L));
-                Field<Long> minValue = inline(field("minimum_value", BIGINT), inline(1L));
-                Field<Long> maxValue = nullif(field("maximum_value", BIGINT), inline(DEFAULT_SEQUENCE_MAXVALUE));
-                Field<Boolean> cycle = field("cycle_option", BOOLEAN);
-                Field<Long> cache = nullif(field("cache_size", BIGINT), inline(DEFAULT_SEQUENCE_CACHE));
-
-                Record flags = create()
-                    .select(startWith, incrementBy, minValue, maxValue, cycle, cache)
-                    .from(name(schema.getName(), name))
-                    .fetchOne();
-
-                result.add(new DefaultSequenceDefinition(
-                    schema,
-                    name,
-                    type,
-                    null,
-                    flags.get(startWith),
-                    flags.get(incrementBy),
-                    flags.get(minValue),
-                    flags.get(maxValue),
-                    flags.get(cycle),
-                    flags.get(cache)
-                ));
-            }
-        }
-
-        return result;
-    }
+    return result;
+  }
 }

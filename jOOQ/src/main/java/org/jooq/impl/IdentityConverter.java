@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,34 +40,34 @@ package org.jooq.impl;
 import org.jooq.Converter;
 
 public final class IdentityConverter<T> implements Converter<T, T> {
-    private final Class<T> type;
+  private final Class<T> type;
 
-    public IdentityConverter(Class<T> type) {
-        this.type = type;
-    }
+  public IdentityConverter(Class<T> type) {
+    this.type = type;
+  }
 
-    @Override
-    public final T from(T t) {
-        return t;
-    }
+  @Override
+  public final T from(T t) {
+    return t;
+  }
 
-    @Override
-    public final T to(T t) {
-        return t;
-    }
+  @Override
+  public final T to(T t) {
+    return t;
+  }
 
-    @Override
-    public final Class<T> fromType() {
-        return type;
-    }
+  @Override
+  public final Class<T> fromType() {
+    return type;
+  }
 
-    @Override
-    public final Class<T> toType() {
-        return type;
-    }
+  @Override
+  public final Class<T> toType() {
+    return type;
+  }
 
-    @Override
-    public String toString() {
-        return "IdentityConverter [ " + fromType().getName() + " ]";
-    }
+  @Override
+  public String toString() {
+    return "IdentityConverter [ " + fromType().getName() + " ]";
+  }
 }

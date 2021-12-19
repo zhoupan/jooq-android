@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -52,23 +52,21 @@ import java.util.stream.Stream;
  */
 public final class Files {
 
-    private final Map<File, String[]> lists;
-    private final Set<File> mkdirs;
+  private final Map<File, String[]> lists;
+  private final Set<File> mkdirs;
 
-    public Files() {
-        this.lists = new HashMap<>();
-        this.mkdirs = new HashSet<>();
-    }
+  public Files() {
+    this.lists = new HashMap<>();
+    this.mkdirs = new HashSet<>();
+  }
 
-    public final String[] list(File dir, FilenameFilter filter) {
-        return Stream
-            .of(lists.computeIfAbsent(dir, File::list))
-            .filter(e -> filter.accept(dir, e))
-            .toArray(String[]::new);
-    }
+  public final String[] list(File dir, FilenameFilter filter) {
+    return Stream.of(lists.computeIfAbsent(dir, File::list))
+        .filter(e -> filter.accept(dir, e))
+        .toArray(String[]::new);
+  }
 
-    public final void mkdirs(File dir) {
-        if (mkdirs.add(dir))
-            dir.mkdirs();
-    }
+  public final void mkdirs(File dir) {
+    if (mkdirs.add(dir)) dir.mkdirs();
+  }
 }

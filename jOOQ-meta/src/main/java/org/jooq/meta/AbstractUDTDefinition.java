@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,65 +46,67 @@ import java.util.List;
  * @author Lukas Eder
  */
 public abstract class AbstractUDTDefinition
-extends
-    AbstractElementContainerDefinition<AttributeDefinition>
-implements
-    UDTDefinition {
+    extends AbstractElementContainerDefinition<AttributeDefinition> implements UDTDefinition {
 
-    private List<RoutineDefinition> routines;
-    private final boolean           synthetic;
+  private List<RoutineDefinition> routines;
+  private final boolean synthetic;
 
-    public AbstractUDTDefinition(SchemaDefinition schema, String name, String comment) {
-        this(schema, null, name, false, comment);
-    }
+  public AbstractUDTDefinition(SchemaDefinition schema, String name, String comment) {
+    this(schema, null, name, false, comment);
+  }
 
-    public AbstractUDTDefinition(SchemaDefinition schema, PackageDefinition pkg, String name, String comment) {
-        this(schema, pkg, name, false, comment);
-    }
+  public AbstractUDTDefinition(
+      SchemaDefinition schema, PackageDefinition pkg, String name, String comment) {
+    this(schema, pkg, name, false, comment);
+  }
 
-    public AbstractUDTDefinition(SchemaDefinition schema, PackageDefinition pkg, String name, boolean synthetic, String comment) {
-        super(schema, pkg, name, comment);
+  public AbstractUDTDefinition(
+      SchemaDefinition schema,
+      PackageDefinition pkg,
+      String name,
+      boolean synthetic,
+      String comment) {
+    super(schema, pkg, name, comment);
 
-        this.synthetic = synthetic;
-    }
+    this.synthetic = synthetic;
+  }
 
-    @Override
-    public final List<AttributeDefinition> getAttributes() {
-        return getElements();
-    }
+  @Override
+  public final List<AttributeDefinition> getAttributes() {
+    return getElements();
+  }
 
-    @Override
-    public final AttributeDefinition getAttribute(String attributeName) {
-        return getElement(attributeName);
-    }
+  @Override
+  public final AttributeDefinition getAttribute(String attributeName) {
+    return getElement(attributeName);
+  }
 
-    @Override
-    public final AttributeDefinition getAttribute(int attributeIndex) {
-        return getElement(attributeIndex);
-    }
+  @Override
+  public final AttributeDefinition getAttribute(int attributeIndex) {
+    return getElement(attributeIndex);
+  }
 
-    @Override
-    public final List<RoutineDefinition> getRoutines() {
-        if (routines == null)
-            routines = getRoutines0();
+  @Override
+  public final List<RoutineDefinition> getRoutines() {
+    if (routines == null) routines = getRoutines0();
 
-        return routines;
-    }
+    return routines;
+  }
 
-    @Override
-    public List<UDTDefinition> getUDTs() {
-        return getDatabase().getUDTs(this);
-    }
+  @Override
+  public List<UDTDefinition> getUDTs() {
+    return getDatabase().getUDTs(this);
+  }
 
-    protected abstract List<RoutineDefinition> getRoutines0();
+  protected abstract List<RoutineDefinition> getRoutines0();
 
-    @Override
-    public List<AttributeDefinition> getConstants() {
-        return Collections.emptyList();
-    }
+  @Override
+  public List<AttributeDefinition> getConstants() {
+    return Collections.emptyList();
+  }
 
-    @Override
-    public boolean isSynthetic() {
-        return synthetic;
-    }
+  @Override
+  public boolean isSynthetic() {
+    return synthetic;
+  }
 }

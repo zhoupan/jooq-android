@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,38 +41,27 @@ import java.util.List;
 
 /**
  * A definition for a UDT
- * <p>
- * This extends {@link PackageDefinition} because Oracle internally models UDT's
- * in similar ways as packages. This is especially true for the way, member
- * procedures and functions are called.
+ *
+ * <p>This extends {@link PackageDefinition} because Oracle internally models UDT's in similar ways
+ * as packages. This is especially true for the way, member procedures and functions are called.
  *
  * @author Lukas Eder
  */
 public interface UDTDefinition extends PackageDefinition {
 
-    /**
-     * All attributes in the UDT
-     */
-    List<AttributeDefinition> getAttributes();
+  /** All attributes in the UDT */
+  List<AttributeDefinition> getAttributes();
 
-    /**
-     * Get an attribute in this UDT by its name
-     */
-    AttributeDefinition getAttribute(String attributeName);
+  /** Get an attribute in this UDT by its name */
+  AttributeDefinition getAttribute(String attributeName);
 
-    /**
-     * Get an attribute in this UDT by its index (starting at 0)
-     */
-    AttributeDefinition getAttribute(int attributeIndex);
+  /** Get an attribute in this UDT by its index (starting at 0) */
+  AttributeDefinition getAttribute(int attributeIndex);
 
-    /**
-     * All routines in the UDT
-     */
-    @Override
-    List<RoutineDefinition> getRoutines();
+  /** All routines in the UDT */
+  @Override
+  List<RoutineDefinition> getRoutines();
 
-    /**
-     * Whether this UDT is a synthetic type.
-     */
-    boolean isSynthetic();
+  /** Whether this UDT is a synthetic type. */
+  boolean isSynthetic();
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,22 +42,21 @@ import org.jooq.meta.Definition;
 
 /**
  * A generator strategy that prefixes class names with a letter <code>J</code>.
- * <p>
- * An example variant of the default naming strategy
- * {@link DefaultGeneratorStrategy} adding the prefix 'J' to generated class
- * names (e.g. to avoid name clashes with existing JPA entities and such).
- * <p>
- * This strategy is to be understood as a working example, not part of the code
- * generation library. It may be modified / adapted in the future. Use at your
- * own risk.
+ *
+ * <p>An example variant of the default naming strategy {@link DefaultGeneratorStrategy} adding the
+ * prefix 'J' to generated class names (e.g. to avoid name clashes with existing JPA entities and
+ * such).
+ *
+ * <p>This strategy is to be understood as a working example, not part of the code generation
+ * library. It may be modified / adapted in the future. Use at your own risk.
  *
  * @author Peter Ertl
  * @author Lukas Eder
  */
 public class JPrefixGeneratorStrategy extends DefaultGeneratorStrategy {
 
-    @Override
-    public String getJavaClassName(final Definition definition, final Mode mode) {
-        return 'J' + super.getJavaClassName(definition, mode);
-    }
+  @Override
+  public String getJavaClassName(final Definition definition, final Mode mode) {
+    return 'J' + super.getJavaClassName(definition, mode);
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,7 +45,6 @@ import static org.jooq.meta.hsqldb.information_schema.Tables.PARAMETERS;
 import static org.jooq.meta.hsqldb.information_schema.Tables.ROUTINES;
 
 import java.sql.SQLException;
-
 import org.jooq.Record;
 import org.jooq.Result;
 import org.jooq.meta.AbstractRoutineDefinition;
@@ -65,36 +64,51 @@ import org.jooq.tools.StringUtils;
  */
 public class HSQLDBRoutineDefinition extends AbstractRoutineDefinition {
 
-    private final String specificName; // internal name for the function used by HSQLDB
+  private final String specificName; // internal name for the function used by HSQLDB
 
-    public HSQLDBRoutineDefinition(SchemaDefinition schema, String name, String specificName, String dataType, Number precision, Number scale) {
-        this(schema, name, specificName, dataType, precision, scale, false);
+  public HSQLDBRoutineDefinition(
+      SchemaDefinition schema,
+      String name,
+      String specificName,
+      String dataType,
+      Number precision,
+      Number scale) {
+    this(schema, name, specificName, dataType, precision, scale, false);
+  }
+
+  public HSQLDBRoutineDefinition(
+      SchemaDefinition schema,
+      String name,
+      String specificName,
+      String dataType,
+      Number precision,
+      Number scale,
+      boolean aggregate) {
+    super(schema, null, name, null, null, aggregate);
+
+    if (!StringUtils.isBlank(dataType)) {
+      DataTypeDefinition type =
+          new DefaultDataTypeDefinition(
+              getDatabase(),
+              getSchema(),
+              dataType,
+              precision,
+              precision,
+              scale,
+              null,
+              (String) null);
+
+      this.returnValue = new DefaultParameterDefinition(this, "RETURN_VALUE", -1, type);
     }
 
-    public HSQLDBRoutineDefinition(SchemaDefinition schema, String name, String specificName, String dataType, Number precision, Number scale, boolean aggregate) {
-        super(schema, null, name, null, null, aggregate);
+    this.specificName = specificName;
+  }
 
-        if (!StringUtils.isBlank(dataType)) {
-            DataTypeDefinition type = new DefaultDataTypeDefinition(
-                getDatabase(),
-                getSchema(),
-                dataType,
-                precision,
-                precision,
-                scale,
-                null,
-                (String) null
-            );
-
-            this.returnValue = new DefaultParameterDefinition(this, "RETURN_VALUE", -1, type);
-        }
-
-        this.specificName = specificName;
-    }
-
-    @Override
-    protected void init0() throws SQLException {
-        Result<?> result = create().select(
+  @Override
+  protected void init0() throws SQLException {
+    Result<?> result =
+        create()
+            .select(
                 PARAMETERS.PARAMETER_MODE,
                 PARAMETERS.PARAMETER_NAME,
                 nvl(ELEMENT_TYPES.COLLECTION_TYPE_IDENTIFIER, PARAMETERS.DATA_TYPE).as("datatype"),
@@ -116,30 +130,31 @@ public class HSQLDBRoutineDefinition extends AbstractRoutineDefinition {
             // [#3015] HSQLDB user-defined AGGREGATE functions have four parameters, but only one
             // is relevant to client code
             .and(condition(val(!isAggregate())).or(PARAMETERS.ORDINAL_POSITION.eq(1L)))
-            .orderBy(PARAMETERS.ORDINAL_POSITION.asc()).fetch();
+            .orderBy(PARAMETERS.ORDINAL_POSITION.asc())
+            .fetch();
 
-        for (Record record : result) {
-            String inOut = record.get(PARAMETERS.PARAMETER_MODE);
+    for (Record record : result) {
+      String inOut = record.get(PARAMETERS.PARAMETER_MODE);
 
-            DataTypeDefinition type = new DefaultDataTypeDefinition(
-                getDatabase(),
-                getSchema(),
-                record.get("datatype", String.class),
-                record.get(PARAMETERS.CHARACTER_MAXIMUM_LENGTH),
-                record.get(PARAMETERS.NUMERIC_PRECISION),
-                record.get(PARAMETERS.NUMERIC_SCALE),
-                null,
-                (String) null
-            );
+      DataTypeDefinition type =
+          new DefaultDataTypeDefinition(
+              getDatabase(),
+              getSchema(),
+              record.get("datatype", String.class),
+              record.get(PARAMETERS.CHARACTER_MAXIMUM_LENGTH),
+              record.get(PARAMETERS.NUMERIC_PRECISION),
+              record.get(PARAMETERS.NUMERIC_SCALE),
+              null,
+              (String) null);
 
-            ParameterDefinition parameter = new DefaultParameterDefinition(
-                this,
-                record.get(PARAMETERS.PARAMETER_NAME).replaceAll("@", ""),
-                record.get(PARAMETERS.ORDINAL_POSITION, int.class),
-                type
-            );
+      ParameterDefinition parameter =
+          new DefaultParameterDefinition(
+              this,
+              record.get(PARAMETERS.PARAMETER_NAME).replaceAll("@", ""),
+              record.get(PARAMETERS.ORDINAL_POSITION, int.class),
+              type);
 
-            addParameter(InOutDefinition.getFromString(inOut), parameter);
-        }
+      addParameter(InOutDefinition.getFromString(inOut), parameter);
     }
+  }
 }

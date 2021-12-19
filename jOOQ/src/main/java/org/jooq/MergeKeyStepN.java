@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,29 +39,18 @@ package org.jooq;
 
 // ...
 import static org.jooq.SQLDialect.CUBRID;
-// ...
-// ...
 import static org.jooq.SQLDialect.FIREBIRD;
 import static org.jooq.SQLDialect.H2;
-// ...
 import static org.jooq.SQLDialect.HSQLDB;
-// ...
-// ...
 import static org.jooq.SQLDialect.POSTGRES;
-// ...
-// ...
-// ...
-// ...
-// ...
 
 import java.util.Collection;
-
 import org.jetbrains.annotations.NotNull;
 
 /**
  * This type is used for the H2-specific variant of the {@link Merge}'s DSL API.
- * <p>
- * Example: <code><pre>
+ *
+ * <p>Example: <code><pre>
  * DSLContext create = DSL.using(configuration);
  *
  * create.mergeInto(table, field1, field2)
@@ -74,23 +63,23 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface MergeKeyStepN<R extends Record> extends MergeValuesStepN<R> {
 
-    /**
-     * Specify an optional <code>KEY</code> clause.
-     * <p>
-     * Use this optional clause in order to override using the underlying
-     * <code>PRIMARY KEY</code>.
-     */
-    @NotNull @CheckReturnValue
-    @Support({ CUBRID, FIREBIRD, H2, HSQLDB, POSTGRES })
-    MergeValuesStepN<R> key(Field<?>... keys);
+  /**
+   * Specify an optional <code>KEY</code> clause.
+   *
+   * <p>Use this optional clause in order to override using the underlying <code>PRIMARY KEY</code>.
+   */
+  @NotNull
+  @CheckReturnValue
+  @Support({CUBRID, FIREBIRD, H2, HSQLDB, POSTGRES})
+  MergeValuesStepN<R> key(Field<?>... keys);
 
-    /**
-     * Specify an optional <code>KEY</code> clause.
-     * <p>
-     * Use this optional clause in order to override using the underlying
-     * <code>PRIMARY KEY</code>.
-     */
-    @NotNull @CheckReturnValue
-    @Support({ CUBRID, FIREBIRD, H2, HSQLDB, POSTGRES })
-    MergeValuesStepN<R> key(Collection<? extends Field<?>> keys);
+  /**
+   * Specify an optional <code>KEY</code> clause.
+   *
+   * <p>Use this optional clause in order to override using the underlying <code>PRIMARY KEY</code>.
+   */
+  @NotNull
+  @CheckReturnValue
+  @Support({CUBRID, FIREBIRD, H2, HSQLDB, POSTGRES})
+  MergeValuesStepN<R> key(Collection<? extends Field<?>> keys);
 }

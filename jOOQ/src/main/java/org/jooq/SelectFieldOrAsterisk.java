@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,13 +38,10 @@
 package org.jooq;
 
 /**
- * A <code>QueryPart</code> to be used exclusively in <code>SELECT</code>
- * clauses.
- * <p>
- * Instances of this type cannot be created directly, only of its subtypes.
+ * A <code>QueryPart</code> to be used exclusively in <code>SELECT</code> clauses.
+ *
+ * <p>Instances of this type cannot be created directly, only of its subtypes.
  *
  * @author Lukas Eder
  */
-public interface SelectFieldOrAsterisk extends QueryPart {
-
-}
+public interface SelectFieldOrAsterisk extends QueryPart {}

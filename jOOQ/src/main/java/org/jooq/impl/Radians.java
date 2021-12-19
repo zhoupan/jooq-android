@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,7 @@
  */
 package org.jooq.impl;
 
+import static org.jooq.SQLDialect.*;
 import static org.jooq.impl.DSL.*;
 import static org.jooq.impl.Internal.*;
 import static org.jooq.impl.Keywords.*;
@@ -46,98 +47,51 @@ import static org.jooq.impl.Tools.*;
 import static org.jooq.impl.Tools.BooleanDataKey.*;
 import static org.jooq.impl.Tools.DataExtendedKey.*;
 import static org.jooq.impl.Tools.DataKey.*;
-import static org.jooq.SQLDialect.*;
 
+import java.math.BigDecimal;
+import java.util.*;
 import org.jooq.*;
-import org.jooq.Record;
 import org.jooq.conf.*;
-import org.jooq.impl.*;
 import org.jooq.tools.*;
 
-import java.util.*;
-import java.math.BigDecimal;
+/** The <code>RAD</code> statement. */
+@SuppressWarnings({"rawtypes", "unused"})
+final class Radians extends AbstractField<BigDecimal> {
 
+  private final Field<? extends Number> degrees;
 
-/**
- * The <code>RAD</code> statement.
- */
-@SuppressWarnings({ "rawtypes", "unused" })
-final class Radians
-extends
-    AbstractField<BigDecimal>
-{
+  Radians(Field<? extends Number> degrees) {
+    super(N_RADIANS, allNotNull(NUMERIC, degrees));
 
-    private final Field<? extends Number> degrees;
+    this.degrees = nullSafeNotNull(degrees, INTEGER);
+  }
 
-    Radians(
-        Field<? extends Number> degrees
-    ) {
-        super(
-            N_RADIANS,
-            allNotNull(NUMERIC, degrees)
-        );
+  // -------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // -------------------------------------------------------------------------
 
-        this.degrees = nullSafeNotNull(degrees, INTEGER);
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case FIREBIRD:
+      case SQLITE:
+        ctx.visit(idiv(imul(castIfNeeded(degrees, BigDecimal.class), pi()), inline(180)));
+        break;
+
+      default:
+        ctx.visit(function(N_RADIANS, getDataType(), degrees));
+        break;
     }
+  }
 
-    // -------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // The Object API
+  // -------------------------------------------------------------------------
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-
-
-
-
-
-            case FIREBIRD:
-            case SQLITE:
-                ctx.visit(idiv(
-                    imul(
-                        castIfNeeded(degrees, BigDecimal.class),
-                        pi()
-                    ),
-                    inline(180)
-                ));
-                break;
-
-            default:
-                ctx.visit(function(N_RADIANS, getDataType(), degrees));
-                break;
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-    // -------------------------------------------------------------------------
-    // The Object API
-    // -------------------------------------------------------------------------
-
-    @Override
-    public boolean equals(Object that) {
-        if (that instanceof Radians) {
-            return
-                StringUtils.equals(degrees, ((Radians) that).degrees)
-            ;
-        }
-        else
-            return super.equals(that);
-    }
+  @Override
+  public boolean equals(Object that) {
+    if (that instanceof Radians) {
+      return StringUtils.equals(degrees, ((Radians) that).degrees);
+    } else return super.equals(that);
+  }
 }

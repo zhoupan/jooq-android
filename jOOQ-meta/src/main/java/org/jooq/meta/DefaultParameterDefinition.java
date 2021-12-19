@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,70 +35,103 @@
  *
  *
  */
-
 package org.jooq.meta;
-
 
 /**
  * A base implementation for column definitions.
  *
  * @author Lukas Eder
  */
-public class DefaultParameterDefinition
-    extends AbstractTypedElementDefinition<RoutineDefinition>
+public class DefaultParameterDefinition extends AbstractTypedElementDefinition<RoutineDefinition>
     implements ParameterDefinition {
 
-    private final int     position;
-    private final boolean isDefaulted;
-    private final boolean isUnnamed;
-    private final boolean isSynthetic;
+  private final int position;
+  private final boolean isDefaulted;
+  private final boolean isUnnamed;
+  private final boolean isSynthetic;
 
-    public DefaultParameterDefinition(RoutineDefinition routine, String name, int position, DataTypeDefinition type) {
-        this(routine, name, position, type, false, false);
-    }
+  public DefaultParameterDefinition(
+      RoutineDefinition routine, String name, int position, DataTypeDefinition type) {
+    this(routine, name, position, type, false, false);
+  }
 
-    public DefaultParameterDefinition(RoutineDefinition routine, String name, int position, DataTypeDefinition type, boolean isDefaulted) {
-        this(routine, name, position, type, isDefaulted, false);
-    }
+  public DefaultParameterDefinition(
+      RoutineDefinition routine,
+      String name,
+      int position,
+      DataTypeDefinition type,
+      boolean isDefaulted) {
+    this(routine, name, position, type, isDefaulted, false);
+  }
 
-    public DefaultParameterDefinition(RoutineDefinition routine, String name, int position, DataTypeDefinition type, boolean isDefaulted, boolean isUnnamed) {
-        this(routine, name, position, type, isDefaulted, isUnnamed, null);
-    }
+  public DefaultParameterDefinition(
+      RoutineDefinition routine,
+      String name,
+      int position,
+      DataTypeDefinition type,
+      boolean isDefaulted,
+      boolean isUnnamed) {
+    this(routine, name, position, type, isDefaulted, isUnnamed, null);
+  }
 
-    public DefaultParameterDefinition(RoutineDefinition routine, String name, int position, DataTypeDefinition type, boolean isDefaulted, boolean isUnnamed, String comment) {
-        this(routine, name, position, type, isDefaulted, isUnnamed, comment, null);
-    }
+  public DefaultParameterDefinition(
+      RoutineDefinition routine,
+      String name,
+      int position,
+      DataTypeDefinition type,
+      boolean isDefaulted,
+      boolean isUnnamed,
+      String comment) {
+    this(routine, name, position, type, isDefaulted, isUnnamed, comment, null);
+  }
 
-    public DefaultParameterDefinition(RoutineDefinition routine, String name, int position, DataTypeDefinition type, boolean isDefaulted, boolean isUnnamed, String comment, String overload) {
-        this(routine, name, position, type, isDefaulted, isUnnamed, comment, overload, false);
-    }
+  public DefaultParameterDefinition(
+      RoutineDefinition routine,
+      String name,
+      int position,
+      DataTypeDefinition type,
+      boolean isDefaulted,
+      boolean isUnnamed,
+      String comment,
+      String overload) {
+    this(routine, name, position, type, isDefaulted, isUnnamed, comment, overload, false);
+  }
 
-    public DefaultParameterDefinition(RoutineDefinition routine, String name, int position, DataTypeDefinition type, boolean isDefaulted, boolean isUnnamed, String comment, String overload, boolean isSynthetic) {
-        super(routine, name, position, type, comment, overload);
+  public DefaultParameterDefinition(
+      RoutineDefinition routine,
+      String name,
+      int position,
+      DataTypeDefinition type,
+      boolean isDefaulted,
+      boolean isUnnamed,
+      String comment,
+      String overload,
+      boolean isSynthetic) {
+    super(routine, name, position, type, comment, overload);
 
-        this.position = position;
-        this.isDefaulted = isDefaulted;
-        this.isUnnamed = isUnnamed;
-        this.isSynthetic = isSynthetic;
-    }
+    this.position = position;
+    this.isDefaulted = isDefaulted;
+    this.isUnnamed = isUnnamed;
+    this.isSynthetic = isSynthetic;
+  }
 
-    @Override
-    public int getPosition() {
-        return position;
-    }
+  @Override
+  public int getPosition() {
+    return position;
+  }
 
-    @Override
-    public boolean isDefaulted() {
-        return isDefaulted;
-    }
+  @Override
+  public boolean isDefaulted() {
+    return isDefaulted;
+  }
 
-    @Override
-    public boolean isUnnamed() {
-        return isUnnamed;
-    }
+  @Override
+  public boolean isUnnamed() {
+    return isUnnamed;
+  }
 
-    @Override
-    public boolean isSynthetic() {
-        return isSynthetic;
-    }
+  @Override
+  public boolean isSynthetic() {
+    return isSynthetic;
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,60 +35,56 @@
  *
  *
  */
-
 package org.jooq.meta;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.jooq.DataType;
 import org.jooq.Field;
 import org.jooq.Name;
 import org.jooq.Table;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 public class DefaultMetaTableDefinition extends AbstractTableDefinition {
 
-    private final Table<?> table;
+  private final Table<?> table;
 
-    public DefaultMetaTableDefinition(SchemaDefinition schema, Table<?> table) {
-        super(schema, table.getName(), table.getComment(), table.getType(), null);
+  public DefaultMetaTableDefinition(SchemaDefinition schema, Table<?> table) {
+    super(schema, table.getName(), table.getComment(), table.getType(), null);
 
-        this.table = table;
+    this.table = table;
+  }
+
+  @Override
+  public List<ColumnDefinition> getElements0() throws SQLException {
+    List<ColumnDefinition> result = new ArrayList<>();
+
+    for (Field<?> field : table.fields()) {
+      DataType<?> dataType = field.getDataType();
+
+      DataTypeDefinition type =
+          new DefaultDataTypeDefinition(
+              getDatabase(),
+              getSchema(),
+              dataType.getTypeName(),
+              dataType.lengthDefined() ? dataType.length() : null,
+              dataType.precisionDefined() ? dataType.precision() : null,
+              dataType.scaleDefined() ? dataType.scale() : null,
+              dataType.nullable(),
+              dataType.defaulted() ? create().renderInlined(dataType.defaultValue()) : null,
+              (Name) null);
+
+      result.add(
+          new DefaultColumnDefinition(
+              getDatabase().getTable(getSchema(), getName()),
+              field.getName(),
+              result.size() + 1,
+              type,
+              dataType.identity(),
+              field.getComment()));
     }
 
-    @Override
-    public List<ColumnDefinition> getElements0() throws SQLException {
-        List<ColumnDefinition> result = new ArrayList<>();
-
-        for (Field<?> field : table.fields()) {
-            DataType<?> dataType = field.getDataType();
-
-            DataTypeDefinition type = new DefaultDataTypeDefinition(
-                getDatabase(),
-                getSchema(),
-                dataType.getTypeName(),
-                dataType.lengthDefined() ? dataType.length() : null,
-                dataType.precisionDefined() ? dataType.precision() : null,
-                dataType.scaleDefined() ? dataType.scale() : null,
-                dataType.nullable(),
-                dataType.defaulted() ? create().renderInlined(dataType.defaultValue()) : null,
-                (Name) null
-            );
-
-            result.add(new DefaultColumnDefinition(
-                getDatabase().getTable(getSchema(), getName()),
-                field.getName(),
-                result.size() + 1,
-                type,
-                dataType.identity(),
-                field.getComment()
-            ));
-        }
-
-        return result;
-    }
+    return result;
+  }
 }

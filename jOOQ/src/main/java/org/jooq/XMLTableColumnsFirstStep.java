@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,8 +41,6 @@ package org.jooq;
 // ...
 // ...
 import static org.jooq.SQLDialect.POSTGRES;
-// ...
-// ...
 
 import org.jetbrains.annotations.NotNull;
 
@@ -53,52 +51,33 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface XMLTableColumnsFirstStep {
 
-    /**
-     * Add a column to the <code>COLUMNS</code> clause of the
-     * <code>XMLTABLE</code> expression.
-     */
-    @NotNull
-    @Support({ POSTGRES })
-    XMLTableColumnForOrdinalityStep column(String name);
+  /** Add a column to the <code>COLUMNS</code> clause of the <code>XMLTABLE</code> expression. */
+  @NotNull
+  @Support({POSTGRES})
+  XMLTableColumnForOrdinalityStep column(String name);
 
-    /**
-     * Add a column to the <code>COLUMNS</code> clause of the
-     * <code>XMLTABLE</code> expression.
-     */
-    @NotNull
-    @Support({ POSTGRES })
-    XMLTableColumnForOrdinalityStep column(Name name);
+  /** Add a column to the <code>COLUMNS</code> clause of the <code>XMLTABLE</code> expression. */
+  @NotNull
+  @Support({POSTGRES})
+  XMLTableColumnForOrdinalityStep column(Name name);
 
-    /**
-     * Add a column to the <code>COLUMNS</code> clause of the
-     * <code>XMLTABLE</code> expression.
-     */
-    @NotNull
-    @Support({ POSTGRES })
-    XMLTableColumnPathStep column(Field<?> name);
+  /** Add a column to the <code>COLUMNS</code> clause of the <code>XMLTABLE</code> expression. */
+  @NotNull
+  @Support({POSTGRES})
+  XMLTableColumnPathStep column(Field<?> name);
 
-    /**
-     * Add a column to the <code>COLUMNS</code> clause of the
-     * <code>XMLTABLE</code> expression.
-     */
-    @NotNull
-    @Support({ POSTGRES })
-    XMLTableColumnPathStep column(String name, DataType<?> type);
+  /** Add a column to the <code>COLUMNS</code> clause of the <code>XMLTABLE</code> expression. */
+  @NotNull
+  @Support({POSTGRES})
+  XMLTableColumnPathStep column(String name, DataType<?> type);
 
-    /**
-     * Add a column to the <code>COLUMNS</code> clause of the
-     * <code>XMLTABLE</code> expression.
-     */
-    @NotNull
-    @Support({ POSTGRES })
-    XMLTableColumnPathStep column(Name name, DataType<?> type);
+  /** Add a column to the <code>COLUMNS</code> clause of the <code>XMLTABLE</code> expression. */
+  @NotNull
+  @Support({POSTGRES})
+  XMLTableColumnPathStep column(Name name, DataType<?> type);
 
-    /**
-     * Add a column to the <code>COLUMNS</code> clause of the
-     * <code>XMLTABLE</code> expression.
-     */
-    @NotNull
-    @Support({ POSTGRES })
-    XMLTableColumnPathStep column(Field<?> name, DataType<?> type);
-
+  /** Add a column to the <code>COLUMNS</code> clause of the <code>XMLTABLE</code> expression. */
+  @NotNull
+  @Support({POSTGRES})
+  XMLTableColumnPathStep column(Field<?> name, DataType<?> type);
 }

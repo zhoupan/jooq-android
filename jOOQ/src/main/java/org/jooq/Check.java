@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,35 +37,25 @@
  */
 package org.jooq;
 
-
 /**
  * A check constraint.
- * <p>
- * Instances of this type cannot be created directly. They are available from
- * generated code.
+ *
+ * <p>Instances of this type cannot be created directly. They are available from generated code.
  *
  * @param <R> The <code>CHECK</code>'s owner table record
  * @author Lukas Eder
  */
 public interface Check<R extends Record> extends Named {
 
-    /**
-     * The <code>Key</code>'s owner table
-     */
-    Table<R> getTable();
+  /** The <code>Key</code>'s owner table */
+  Table<R> getTable();
 
-    /**
-     * The <code>CHECK</code> constraint's condition.
-     */
-    Condition condition();
+  /** The <code>CHECK</code> constraint's condition. */
+  Condition condition();
 
-    /**
-     * Get this <code>CHECK</code> as a formal {@link Constraint} specification.
-     */
-    Constraint constraint();
+  /** Get this <code>CHECK</code> as a formal {@link Constraint} specification. */
+  Constraint constraint();
 
-    /**
-     * Whether this check is being enforced.
-     */
-    boolean enforced();
+  /** Whether this check is being enforced. */
+  boolean enforced();
 }

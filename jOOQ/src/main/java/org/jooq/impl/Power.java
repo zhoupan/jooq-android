@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,7 @@
  */
 package org.jooq.impl;
 
+import static org.jooq.SQLDialect.*;
 import static org.jooq.impl.DSL.*;
 import static org.jooq.impl.Internal.*;
 import static org.jooq.impl.Keywords.*;
@@ -46,100 +47,54 @@ import static org.jooq.impl.Tools.*;
 import static org.jooq.impl.Tools.BooleanDataKey.*;
 import static org.jooq.impl.Tools.DataExtendedKey.*;
 import static org.jooq.impl.Tools.DataKey.*;
-import static org.jooq.SQLDialect.*;
 
+import java.math.BigDecimal;
+import java.util.*;
 import org.jooq.*;
-import org.jooq.Record;
 import org.jooq.conf.*;
-import org.jooq.impl.*;
 import org.jooq.tools.*;
 
-import java.util.*;
-import java.math.BigDecimal;
+/** The <code>POWER</code> statement. */
+@SuppressWarnings({"rawtypes", "unused"})
+final class Power extends AbstractField<BigDecimal> {
 
+  private final Field<? extends Number> value;
+  private final Field<? extends Number> exponent;
 
-/**
- * The <code>POWER</code> statement.
- */
-@SuppressWarnings({ "rawtypes", "unused" })
-final class Power
-extends
-    AbstractField<BigDecimal>
-{
+  Power(Field<? extends Number> value, Field<? extends Number> exponent) {
+    super(N_POWER, allNotNull(NUMERIC, value, exponent));
 
-    private final Field<? extends Number> value;
-    private final Field<? extends Number> exponent;
+    this.value = nullSafeNotNull(value, INTEGER);
+    this.exponent = nullSafeNotNull(exponent, INTEGER);
+  }
 
-    Power(
-        Field<? extends Number> value,
-        Field<? extends Number> exponent
-    ) {
-        super(
-            N_POWER,
-            allNotNull(NUMERIC, value, exponent)
-        );
+  // -------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // -------------------------------------------------------------------------
 
-        this.value = nullSafeNotNull(value, INTEGER);
-        this.exponent = nullSafeNotNull(exponent, INTEGER);
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case DERBY:
+      case SQLITE:
+        ctx.visit(DSL.exp(imul(DSL.ln(value), exponent)));
+        break;
+
+      default:
+        ctx.visit(function(N_POWER, getDataType(), value, exponent));
+        break;
     }
+  }
 
-    // -------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // The Object API
+  // -------------------------------------------------------------------------
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-
-
-
-
-
-
-
-            case DERBY:
-            case SQLITE:
-                ctx.visit(DSL.exp(imul(DSL.ln(value), exponent)));
-                break;
-
-            default:
-                ctx.visit(function(N_POWER, getDataType(), value, exponent));
-                break;
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // -------------------------------------------------------------------------
-    // The Object API
-    // -------------------------------------------------------------------------
-
-    @Override
-    public boolean equals(Object that) {
-        if (that instanceof Power) {
-            return
-                StringUtils.equals(value, ((Power) that).value) &&
-                StringUtils.equals(exponent, ((Power) that).exponent)
-            ;
-        }
-        else
-            return super.equals(that);
-    }
+  @Override
+  public boolean equals(Object that) {
+    if (that instanceof Power) {
+      return StringUtils.equals(value, ((Power) that).value)
+          && StringUtils.equals(exponent, ((Power) that).exponent);
+    } else return super.equals(that);
+  }
 }

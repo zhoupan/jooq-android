@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,27 +46,26 @@ import org.jooq.TableRecord;
 
 /**
  * A base class for custom {@link TableRecord} implementations in client code.
- * <p>
- * Client code may provide proper {@link TableRecord} implementations extending
- * this useful base class. All necessary parts of the {@link TableRecord}
- * interface are already implemented. No methods need further implementation,
- * but implementations have to provide a no-arg constructor that can be called
- * reflectively.
- * <p>
- * Use this base class when providing custom tables to any of the following
- * methods:
+ *
+ * <p>Client code may provide proper {@link TableRecord} implementations extending this useful base
+ * class. All necessary parts of the {@link TableRecord} interface are already implemented. No
+ * methods need further implementation, but implementations have to provide a no-arg constructor
+ * that can be called reflectively.
+ *
+ * <p>Use this base class when providing custom tables to any of the following methods:
+ *
  * <ul>
- * <li>{@link ResultQuery#fetchInto(Table)}</li>
- * <li>{@link Cursor#fetchInto(Table)}</li>
- * <li>{@link Result#into(Table)}</li>
- * <li>{@link Record#into(Table)}</li>
+ *   <li>{@link ResultQuery#fetchInto(Table)}
+ *   <li>{@link Cursor#fetchInto(Table)}
+ *   <li>{@link Result#into(Table)}
+ *   <li>{@link Record#into(Table)}
  * </ul>
  *
  * @author Lukas Eder
  */
 public abstract class CustomRecord<R extends TableRecord<R>> extends TableRecordImpl<R> {
 
-    protected CustomRecord(Table<R> table) {
-        super(table);
-    }
+  protected CustomRecord(Table<R> table) {
+    super(table);
+  }
 }

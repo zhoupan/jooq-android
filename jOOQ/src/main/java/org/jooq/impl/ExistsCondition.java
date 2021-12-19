@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,6 @@
  *
  *
  */
-
 package org.jooq.impl;
 
 import static org.jooq.Clause.CONDITION;
@@ -47,43 +46,34 @@ import org.jooq.Clause;
 import org.jooq.Context;
 import org.jooq.Select;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class ExistsCondition extends AbstractCondition {
 
-    private static final Clause[] CLAUSES_EXISTS = { CONDITION, CONDITION_EXISTS };
+  private static final Clause[] CLAUSES_EXISTS = {CONDITION, CONDITION_EXISTS};
 
-    private final Select<?>       query;
+  private final Select<?> query;
 
-    ExistsCondition(Select<?> query) {
-        this.query = query;
+  ExistsCondition(Select<?> query) {
+    this.query = query;
+  }
+
+  @Override
+  final boolean isNullable() {
+    return false;
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      default:
+        ctx.visit(K_EXISTS).sql(' ');
+        visitSubquery(ctx, query);
+        break;
     }
+  }
 
-    @Override
-    final boolean isNullable() {
-        return false;
-    }
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-
-            default:
-                ctx.visit(K_EXISTS).sql(' ');
-                visitSubquery(ctx, query);
-                break;
-        }
-    }
-
-    @Override
-    public final Clause[] clauses(Context<?> ctx) {
-        return CLAUSES_EXISTS;
-    }
+  @Override
+  public final Clause[] clauses(Context<?> ctx) {
+    return CLAUSES_EXISTS;
+  }
 }

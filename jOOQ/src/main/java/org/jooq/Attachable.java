@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,52 +39,47 @@ package org.jooq;
 
 import java.io.Serializable;
 import java.sql.Connection;
-
 import javax.sql.DataSource;
-
 import org.jetbrains.annotations.Nullable;
 
 /**
- * An object in jOOQ that can have an underlying {@link Configuration} attached
- * or detached.
- * <p>
- * Detaching an <code>Attachable</code> from its configuration means, that the
- * underlying {@link Connection} or {@link DataSource} is removed. Attaching an
- * <code>Attachable</code> to a new <code>Configuration</code> means, that its
- * underlying <code>Connection</code> or <code>DataSource</code> will be
- * restored.
- * <p>
- * Detaching an <code>Attachable</code> will <b>NOT</b> close the underlying
- * <code>Connection</code> or <code>DataSource</code>!
- * <p>
- * Attachables are also {@link Serializable}. The underlying
- * <code>Connection</code> or <code>DataSource</code> is <code>transient</code>.
- * Serialising an Attachable will always detach it first.
+ * An object in jOOQ that can have an underlying {@link Configuration} attached or detached.
+ *
+ * <p>Detaching an <code>Attachable</code> from its configuration means, that the underlying {@link
+ * Connection} or {@link DataSource} is removed. Attaching an <code>Attachable</code> to a new
+ * <code>Configuration</code> means, that its underlying <code>Connection</code> or <code>DataSource
+ * </code> will be restored.
+ *
+ * <p>Detaching an <code>Attachable</code> will <b>NOT</b> close the underlying <code>Connection
+ * </code> or <code>DataSource</code>!
+ *
+ * <p>Attachables are also {@link Serializable}. The underlying <code>Connection</code> or <code>
+ * DataSource</code> is <code>transient</code>. Serialising an Attachable will always detach it
+ * first.
  *
  * @author Lukas Eder
  */
 public interface Attachable extends Serializable {
 
-    /**
-     * Attach this object to a new {@link Configuration}.
-     *
-     * @param configuration A configuration or <code>null</code>, if you wish to
-     *            detach this <code>Attachable</code> from its previous
-     *            configuration.
-     */
-    void attach(Configuration configuration);
+  /**
+   * Attach this object to a new {@link Configuration}.
+   *
+   * @param configuration A configuration or <code>null</code>, if you wish to detach this <code>
+   *     Attachable</code> from its previous configuration.
+   */
+  void attach(Configuration configuration);
 
-    /**
-     * Detach this object from its current {@link Configuration}.
-     * <p>
-     * This is the same as calling <code>attach(null)</code>.
-     */
-    void detach();
+  /**
+   * Detach this object from its current {@link Configuration}.
+   *
+   * <p>This is the same as calling <code>attach(null)</code>.
+   */
+  void detach();
 
-    /**
-     * Get the currently attached {@link Configuration}, or <code>null</code> if
-     * no <code>Configuration</code> is attached.
-     */
-    @Nullable
-    Configuration configuration();
+  /**
+   * Get the currently attached {@link Configuration}, or <code>null</code> if no <code>
+   * Configuration</code> is attached.
+   */
+  @Nullable
+  Configuration configuration();
 }

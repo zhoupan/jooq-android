@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,26 +41,23 @@ import org.jooq.impl.DSL;
 
 /**
  * A window specification.
- * <p>
- * Window specifications are the syntactic clauses that can be passed to both
- * window definitions in <code>WINDOW</code> clauses, as well as to the
- * <code>OVER</code> clause of window functions. This makes window
- * specifications highly reusable across several queries.
- * <p>
- * Example: <code><pre>
+ *
+ * <p>Window specifications are the syntactic clauses that can be passed to both window definitions
+ * in <code>WINDOW</code> clauses, as well as to the <code>OVER</code> clause of window functions.
+ * This makes window specifications highly reusable across several queries.
+ *
+ * <p>Example: <code><pre>
  * WindowSpecification spec =
  * DSL.partitionBy(BOOK.AUTHOR_ID)
  *    .orderBy(BOOK.ID)
  *    .rowsBetweenUnboundedPreceding()
  *    .andCurrentRow();
  * </pre></code>
- * <p>
- * Instances can be created using {@link DSL#partitionBy(Field...)},
- * {@link DSL#orderBy(OrderField...)}, and overloads as well as rows / range /
- * groups related methods in {@link DSL}.
+ *
+ * <p>Instances can be created using {@link DSL#partitionBy(Field...)}, {@link
+ * DSL#orderBy(OrderField...)}, and overloads as well as rows / range / groups related methods in
+ * {@link DSL}.
  *
  * @author Lukas Eder
  */
-public interface WindowSpecification extends QueryPart {
-
-}
+public interface WindowSpecification extends QueryPart {}

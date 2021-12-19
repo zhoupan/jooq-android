@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,12 +38,9 @@
 package org.jooq.impl;
 
 import static org.jooq.Clause.TEMPLATE;
-import static org.jooq.impl.DSL.list;
 import static org.jooq.impl.Tools.renderAndBind;
-import static org.jooq.impl.Tools.stringLiteral;
 
 import java.util.List;
-
 import org.jooq.Clause;
 import org.jooq.Context;
 import org.jooq.QueryPart;
@@ -51,41 +48,31 @@ import org.jooq.SQL;
 
 final class SQLImpl extends AbstractQueryPart implements SQL {
 
-    private static final Clause[] CLAUSES = { TEMPLATE };
-    private final String          sql;
-    private final List<QueryPart> substitutes;
+  private static final Clause[] CLAUSES = {TEMPLATE};
+  private final String sql;
+  private final List<QueryPart> substitutes;
 
-    SQLImpl(String sql, Object... input) {
-        this.sql = sql;
-        this.substitutes = Tools.queryParts(input);
+  SQLImpl(String sql, Object... input) {
+    this.sql = sql;
+    this.substitutes = Tools.queryParts(input);
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      default:
+        renderAndBind(ctx, sql, substitutes);
+        break;
     }
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
+  @Override
+  public final Clause[] clauses(Context<?> ctx) {
+    return CLAUSES;
+  }
 
-
-
-
-
-
-
-
-
-
-            default:
-                renderAndBind(ctx, sql, substitutes);
-                break;
-        }
-    }
-
-    @Override
-    public final Clause[] clauses(Context<?> ctx) {
-        return CLAUSES;
-    }
-
-    @Override
-    public String toString() {
-        return sql;
-    }
+  @Override
+  public String toString() {
+    return sql;
+  }
 }

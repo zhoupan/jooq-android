@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,40 +42,36 @@ import org.jooq.UpdatableRecord;
 
 /**
  * An exception that is used to influence control flows.
- * <p>
- * There are some specific cases, where control flows can be aborted or
- * otherwise influenced using well-defined exceptions. Some examples where this
- * can be very useful:
+ *
+ * <p>There are some specific cases, where control flows can be aborted or otherwise influenced
+ * using well-defined exceptions. Some examples where this can be very useful:
+ *
  * <ul>
- * <li>When generating SQL from {@link UpdatableRecord#store()} methods, without
- * actually executing the SQL</li>
+ *   <li>When generating SQL from {@link UpdatableRecord#store()} methods, without actually
+ *       executing the SQL
  * </ul>
- * <p>
- * Typically, a <code>ControlFlowException</code> is thrown from within an
- * {@link ExecuteListener}.
+ *
+ * <p>Typically, a <code>ControlFlowException</code> is thrown from within an {@link
+ * ExecuteListener}.
  *
  * @author Lukas Eder
  * @see ExecuteListener
  */
 public class ControlFlowSignal extends RuntimeException {
 
-    /**
-     * Create a new <code>ControlFlowException</code>.
-     */
-    public ControlFlowSignal() {}
+  /** Create a new <code>ControlFlowException</code>. */
+  public ControlFlowSignal() {}
 
-    /**
-     * Create a new <code>ControlFlowException</code>.
-     */
-    public ControlFlowSignal(String message) {
-        super(message);
-    }
+  /** Create a new <code>ControlFlowException</code>. */
+  public ControlFlowSignal(String message) {
+    super(message);
+  }
 
-    @SuppressWarnings("sync-override")
-    @Override
-    public Throwable fillInStackTrace() {
+  @SuppressWarnings("sync-override")
+  @Override
+  public Throwable fillInStackTrace() {
 
-        // Prevent "expensive" operation of filling in a stack trace for signals
-        return this;
-    }
+    // Prevent "expensive" operation of filling in a stack trace for signals
+    return this;
+  }
 }

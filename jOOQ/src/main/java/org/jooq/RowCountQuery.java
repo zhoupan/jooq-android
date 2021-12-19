@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,11 +38,9 @@
 package org.jooq;
 
 /**
- * Any query that is not a {@link ResultQuery}, and thus possibly produces a row
- * count as a result, instead of a {@link Result}.
+ * Any query that is not a {@link ResultQuery}, and thus possibly produces a row count as a result,
+ * instead of a {@link Result}.
  *
  * @author Lukas Eder
  */
-public interface RowCountQuery extends Query, Publisher<Integer> {
-
-}
+public interface RowCountQuery extends Query, Publisher<Integer> {}

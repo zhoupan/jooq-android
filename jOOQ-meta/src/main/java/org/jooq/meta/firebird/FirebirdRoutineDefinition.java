@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,7 +46,6 @@ import static org.jooq.meta.firebird.rdb.Tables.RDB$FUNCTION_ARGUMENTS;
 import static org.jooq.meta.firebird.rdb.Tables.RDB$PROCEDURE_PARAMETERS;
 
 import java.sql.SQLException;
-
 import org.jooq.Record;
 import org.jooq.impl.DSL;
 import org.jooq.meta.AbstractRoutineDefinition;
@@ -61,97 +60,97 @@ import org.jooq.meta.firebird.rdb.tables.Rdb$functionArguments;
 import org.jooq.meta.firebird.rdb.tables.Rdb$procedureParameters;
 import org.jooq.tools.StringUtils;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 public class FirebirdRoutineDefinition extends AbstractRoutineDefinition {
 
-    public FirebirdRoutineDefinition(SchemaDefinition schema, String name) {
-        this(schema, name, null, null, null);
+  public FirebirdRoutineDefinition(SchemaDefinition schema, String name) {
+    this(schema, name, null, null, null);
+  }
+
+  public FirebirdRoutineDefinition(
+      SchemaDefinition schema, String name, String dataType, Number precision, Number scale) {
+    super(schema, null, name, null, null, false);
+
+    if (!StringUtils.isBlank(dataType)) {
+      DataTypeDefinition type =
+          new DefaultDataTypeDefinition(
+              getDatabase(),
+              getSchema(),
+              dataType,
+              precision,
+              precision,
+              scale,
+              null,
+              (String) null);
+
+      this.returnValue = new DefaultParameterDefinition(this, "RETURN_VALUE", -1, type);
     }
+  }
 
-    public FirebirdRoutineDefinition(SchemaDefinition schema, String name, String dataType, Number precision, Number scale) {
-        super(schema, null, name, null, null, false);
+  @Override
+  protected void init0() throws SQLException {
+    Rdb$procedureParameters p = RDB$PROCEDURE_PARAMETERS.as("p");
+    Rdb$functionArguments a = RDB$FUNCTION_ARGUMENTS.as("a");
+    Rdb$fields f = RDB$FIELDS.as("f");
+    int i = 0;
 
-        if (!StringUtils.isBlank(dataType)) {
-            DataTypeDefinition type = new DefaultDataTypeDefinition(
-                getDatabase(),
-                getSchema(),
-                dataType,
-                precision,
-                precision,
-                scale,
-                null,
-                (String) null
-            );
+    for (Record record :
+        returnValue == null
+            ? create()
+                .select(
+                    p.RDB$PARAMETER_NUMBER,
+                    p.RDB$PARAMETER_TYPE,
+                    p.RDB$PARAMETER_NAME.trim().as(p.RDB$PARAMETER_NAME),
+                    FIELD_TYPE(f).as("FIELD_TYPE"),
+                    CHARACTER_LENGTH(f).as("CHAR_LEN"),
+                    f.RDB$FIELD_PRECISION,
+                    FIELD_SCALE(f).as("FIELD_SCALE"),
+                    DSL.bitOr(p.RDB$NULL_FLAG.nvl((short) 0), f.RDB$NULL_FLAG.nvl((short) 0))
+                        .as(p.RDB$NULL_FLAG),
+                    p.RDB$DEFAULT_SOURCE)
+                .from(p)
+                .leftOuterJoin(f)
+                .on(p.RDB$FIELD_SOURCE.eq(f.RDB$FIELD_NAME))
+                .where(p.RDB$PROCEDURE_NAME.eq(getName()))
+                .orderBy(p.RDB$PARAMETER_TYPE.desc(), p.RDB$PARAMETER_NUMBER.asc())
+            : create()
+                .select(
+                    a.RDB$ARGUMENT_POSITION.as(p.RDB$PARAMETER_NUMBER),
+                    inline(0).as(p.RDB$PARAMETER_TYPE),
+                    a.RDB$ARGUMENT_NAME.trim().as(p.RDB$PARAMETER_NAME),
+                    FIELD_TYPE(f).as("FIELD_TYPE"),
+                    CHARACTER_LENGTH(f).as("CHAR_LEN"),
+                    f.RDB$FIELD_PRECISION,
+                    FIELD_SCALE(f).as("FIELD_SCALE"),
+                    DSL.bitOr(a.RDB$NULL_FLAG.nvl((short) 0), f.RDB$NULL_FLAG.nvl((short) 0))
+                        .as(p.RDB$NULL_FLAG),
+                    a.RDB$DEFAULT_SOURCE)
+                .from(a)
+                .leftOuterJoin(f)
+                .on(a.RDB$FIELD_SOURCE.eq(f.RDB$FIELD_NAME))
+                .where(a.RDB$FUNCTION_NAME.eq(getName()))
+                .and(a.RDB$ARGUMENT_POSITION.gt(inline((short) 0)))
+                .orderBy(a.RDB$ARGUMENT_POSITION)) {
 
-            this.returnValue = new DefaultParameterDefinition(this, "RETURN_VALUE", -1, type);
-        }
+      DataTypeDefinition type =
+          new DefaultDataTypeDefinition(
+              getDatabase(),
+              getSchema(),
+              record.get("FIELD_TYPE", String.class),
+              record.get("CHAR_LEN", short.class),
+              record.get(f.RDB$FIELD_PRECISION),
+              record.get("FIELD_SCALE", Integer.class),
+              record.get(p.RDB$NULL_FLAG) == 0,
+              record.get(p.RDB$DEFAULT_SOURCE));
+
+      ParameterDefinition parameter =
+          new DefaultParameterDefinition(this, record.get(p.RDB$PARAMETER_NAME), i++, type);
+
+      addParameter(
+          record.get(p.RDB$PARAMETER_TYPE, int.class).equals(0)
+              ? InOutDefinition.IN
+              : InOutDefinition.OUT,
+          parameter);
     }
-
-    @Override
-    protected void init0() throws SQLException {
-        Rdb$procedureParameters p = RDB$PROCEDURE_PARAMETERS.as("p");
-        Rdb$functionArguments a = RDB$FUNCTION_ARGUMENTS.as("a");
-        Rdb$fields f = RDB$FIELDS.as("f");
-        int i = 0;
-
-        for (Record record : returnValue == null
-                ? create()
-                    .select(
-                        p.RDB$PARAMETER_NUMBER,
-                        p.RDB$PARAMETER_TYPE,
-                        p.RDB$PARAMETER_NAME.trim().as(p.RDB$PARAMETER_NAME),
-                        FIELD_TYPE(f).as("FIELD_TYPE"),
-                        CHARACTER_LENGTH(f).as("CHAR_LEN"),
-                        f.RDB$FIELD_PRECISION,
-                        FIELD_SCALE(f).as("FIELD_SCALE"),
-                        DSL.bitOr(p.RDB$NULL_FLAG.nvl((short) 0), f.RDB$NULL_FLAG.nvl((short) 0)).as(p.RDB$NULL_FLAG),
-                        p.RDB$DEFAULT_SOURCE)
-                    .from(p)
-                    .leftOuterJoin(f).on(p.RDB$FIELD_SOURCE.eq(f.RDB$FIELD_NAME))
-                    .where(p.RDB$PROCEDURE_NAME.eq(getName()))
-                    .orderBy(
-                        p.RDB$PARAMETER_TYPE.desc(),
-                        p.RDB$PARAMETER_NUMBER.asc())
-                : create()
-                    .select(
-                        a.RDB$ARGUMENT_POSITION.as(p.RDB$PARAMETER_NUMBER),
-                        inline(0).as(p.RDB$PARAMETER_TYPE),
-                        a.RDB$ARGUMENT_NAME.trim().as(p.RDB$PARAMETER_NAME),
-                        FIELD_TYPE(f).as("FIELD_TYPE"),
-                        CHARACTER_LENGTH(f).as("CHAR_LEN"),
-                        f.RDB$FIELD_PRECISION,
-                        FIELD_SCALE(f).as("FIELD_SCALE"),
-                        DSL.bitOr(a.RDB$NULL_FLAG.nvl((short) 0), f.RDB$NULL_FLAG.nvl((short) 0)).as(p.RDB$NULL_FLAG),
-                        a.RDB$DEFAULT_SOURCE)
-                    .from(a)
-                    .leftOuterJoin(f).on(a.RDB$FIELD_SOURCE.eq(f.RDB$FIELD_NAME))
-                    .where(a.RDB$FUNCTION_NAME.eq(getName()))
-                    .and(a.RDB$ARGUMENT_POSITION.gt(inline((short) 0)))
-                    .orderBy(a.RDB$ARGUMENT_POSITION)
-            ) {
-
-            DataTypeDefinition type = new DefaultDataTypeDefinition(
-                getDatabase(),
-                getSchema(),
-                record.get("FIELD_TYPE", String.class),
-                record.get("CHAR_LEN", short.class),
-                record.get(f.RDB$FIELD_PRECISION),
-                record.get("FIELD_SCALE", Integer.class),
-                record.get(p.RDB$NULL_FLAG) == 0,
-                record.get(p.RDB$DEFAULT_SOURCE)
-            );
-
-            ParameterDefinition parameter = new DefaultParameterDefinition(
-                this,
-                record.get(p.RDB$PARAMETER_NAME),
-                i++,
-                type
-            );
-
-            addParameter(record.get(p.RDB$PARAMETER_TYPE, int.class).equals(0) ? InOutDefinition.IN : InOutDefinition.OUT, parameter);
-        }
-
-    }
+  }
 }

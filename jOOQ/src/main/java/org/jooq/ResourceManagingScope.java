@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,20 +46,19 @@ import java.sql.SQLXML;
 
 /**
  * A scope that can manage resources.
- * <p>
- * This is a type of {@link Scope} that can manage resources on behalf of the
- * call site, and free / close those resources once the scope ends.
- * <p>
- * For example, {@link Binding} implementations may wish to create {@link Clob}
- * or {@link InputStream} or other kinds of resources in order to bind them to
- * JDBC. Instead of remembering to close them manually through some delicate
- * logic involving e.g. clever usage of {@link ThreadLocal}, implementations can
- * register their resources with the methods exposed here, and jOOQ will take
- * care of freeing / closing them at the right moment.
- * <p>
- * <strong>Example:</strong>
- * <p>
- * <code><pre>
+ *
+ * <p>This is a type of {@link Scope} that can manage resources on behalf of the call site, and free
+ * / close those resources once the scope ends.
+ *
+ * <p>For example, {@link Binding} implementations may wish to create {@link Clob} or {@link
+ * InputStream} or other kinds of resources in order to bind them to JDBC. Instead of remembering to
+ * close them manually through some delicate logic involving e.g. clever usage of {@link
+ * ThreadLocal}, implementations can register their resources with the methods exposed here, and
+ * jOOQ will take care of freeing / closing them at the right moment.
+ *
+ * <p><strong>Example:</strong>
+ *
+ * <p><code><pre>
  * class StreamingLobBinding implements Binding&lt;String, File&gt; {
  *     ...
  *     public void set(BindingSetStatementContext&lt;File&gt; ctx) {
@@ -73,45 +72,45 @@ import java.sql.SQLXML;
  */
 public interface ResourceManagingScope extends Scope {
 
-    /**
-     * Register a {@link Array} for auto freeing after this scope ends.
-     *
-     * @return The argument array, for convenience.
-     */
-    Array autoFree(Array array);
+  /**
+   * Register a {@link Array} for auto freeing after this scope ends.
+   *
+   * @return The argument array, for convenience.
+   */
+  Array autoFree(Array array);
 
-    /**
-     * Register a {@link Blob} for auto freeing after this scope ends.
-     *
-     * @return The argument blob, for convenience.
-     */
-    Blob autoFree(Blob blob);
+  /**
+   * Register a {@link Blob} for auto freeing after this scope ends.
+   *
+   * @return The argument blob, for convenience.
+   */
+  Blob autoFree(Blob blob);
 
-    /**
-     * Register a {@link Clob} for auto freeing after this scope ends.
-     *
-     * @return The argument clob, for convenience.
-     */
-    Clob autoFree(Clob clob);
+  /**
+   * Register a {@link Clob} for auto freeing after this scope ends.
+   *
+   * @return The argument clob, for convenience.
+   */
+  Clob autoFree(Clob clob);
 
-    /**
-     * Register a {@link SQLXML} for auto freeing after this scope ends.
-     *
-     * @return The argument xml, for convenience.
-     */
-    SQLXML autoFree(SQLXML xml);
+  /**
+   * Register a {@link SQLXML} for auto freeing after this scope ends.
+   *
+   * @return The argument xml, for convenience.
+   */
+  SQLXML autoFree(SQLXML xml);
 
-    /**
-     * Register a {@link Closeable} for auto closing after this scope ends.
-     *
-     * @return The argument closeable, for convenience.
-     */
-    <R extends Closeable> R autoClose(R closeable);
+  /**
+   * Register a {@link Closeable} for auto closing after this scope ends.
+   *
+   * @return The argument closeable, for convenience.
+   */
+  <R extends Closeable> R autoClose(R closeable);
 
-    /**
-     * Register an {@link AutoCloseable} for auto closing after this scope ends.
-     *
-     * @return The argument closeable, for convenience.
-     */
-    <R extends AutoCloseable> R autoClose(R closeable);
+  /**
+   * Register an {@link AutoCloseable} for auto closing after this scope ends.
+   *
+   * @return The argument closeable, for convenience.
+   */
+  <R extends AutoCloseable> R autoClose(R closeable);
 }

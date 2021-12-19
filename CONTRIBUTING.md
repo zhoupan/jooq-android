@@ -1,5 +1,4 @@
-To PR or not to PR?
-===================
+# To PR or not to PR?
 
 Thanks for offering your help. We really appreciate your intentions. But let's review whether a PR is really reasonable for what you're trying to do.
 
@@ -7,8 +6,7 @@ Thanks for offering your help. We really appreciate your intentions. But let's r
 - **Do you want to show some code in diff/PR form** Sure! That's a clever usage of PRs, often better than prose. If there's no expectation of it to be merged, go for it!
 - **Are you about to suggest a concrete implementation of a new feature, API, etc?** Please don't! We're very very likely to reject your PR and you will have wasted your time. Please use the [issue tracker](https://github.com/jOOQ/jOOQ/issues/new) or the [mailing list](https://groups.google.com/d/forum/jooq-user) to discuss your ideas first. Then, quite possibly, it's much more reasonable to leave the implementation to us. Here's why:
 
-Overlooking things
-------------------
+## Overlooking things
 
 First and foremost, from our experience, most contributors are overlooking a ton of things. That's because jOOQ has become quite complex over the past 10 years. They will apply a small change to parts of the API without...:
 
@@ -20,22 +18,19 @@ First and foremost, from our experience, most contributors are overlooking a ton
 - thinking about the many places in the manual that need to be updated
 - thinking about the fact that jOOQ is dual licensed, and your contribution won't work on commercial database (but it has to, so that'll be our job again)
 
-Often, workarounds are good enough
-----------------------------------
+## Often, workarounds are good enough
 
-But even more importantly, just because you have an itch *right now*, doesn't mean it needs to be scratched *right now* (with new API). Quite possibly, a simple workaround will do just as well for you, and it won't cause all of the above efforts both on your side and on our side. In fact, we've become really good at listing 3-4 useful workarounds (using features you probably don't know yet) for just about any problem (which we've probably even seen before). Just because you're about to make a PR doesn't mean we'll prioritise merging it. In fact, experience shows that we hardly ever merge them *at all*!
+But even more importantly, just because you have an itch _right now_, doesn't mean it needs to be scratched _right now_ (with new API). Quite possibly, a simple workaround will do just as well for you, and it won't cause all of the above efforts both on your side and on our side. In fact, we've become really good at listing 3-4 useful workarounds (using features you probably don't know yet) for just about any problem (which we've probably even seen before). Just because you're about to make a PR doesn't mean we'll prioritise merging it. In fact, experience shows that we hardly ever merge them _at all_!
 
-Product roadmap
----------------
+## Product roadmap
 
 Over time, we will remember the many itches reported by jOOQ users and consolidate them into a much more thoroughly designed new feature that helps many other users, not just your immediate itch. It will be much easier to maintain and have much better quality.
 
-Unfortunately, Github doesn't allow for turning on the issue tracker (very well done and useful) without turning on the PR subsystem (which seems to hint at users that they can contribute *anything* to *anyone* and reasonably expect the contribution to be merged). Think about the OpenJDK. Would you contribute tons of new methods to the `java.util.Collection` API without thoroughly discussing things first on the many OpenJDK mailing lists? Probably not. The same is true here.
+Unfortunately, Github doesn't allow for turning on the issue tracker (very well done and useful) without turning on the PR subsystem (which seems to hint at users that they can contribute _anything_ to _anyone_ and reasonably expect the contribution to be merged). Think about the OpenJDK. Would you contribute tons of new methods to the `java.util.Collection` API without thoroughly discussing things first on the many OpenJDK mailing lists? Probably not. The same is true here.
 
 Thanks a lot for your understanding, and we're definitely looking forward to your suggestions and discussions on the [issue tracker](https://github.com/jOOQ/jOOQ/issues/new) or the [mailing list](https://groups.google.com/d/forum/jooq-user)
 
-The ideal PR
-============
+# The ideal PR
 
 Thanks again for offering your help. This section is for PRs that fix simple issues, which don't need any discussion - like typos, minor bugs, etc.
 
@@ -52,8 +47,7 @@ In order to make our cooperation as smooth as possible, we have a couple of guid
 - Add your name to our [jOOQ/src/main/resources/META-INF/ABOUT.txt](https://github.com/jOOQ/jOOQ/blob/main/jOOQ/src/main/resources/META-INF/ABOUT.txt) file
 - Be sure you agree to transfer your rights to us (see below) before contributing.
 
-Contributing to dual-licensed Open Source
-=========================================
+# Contributing to dual-licensed Open Source
 
 Thank you very much for contributing to jOOQ.
 

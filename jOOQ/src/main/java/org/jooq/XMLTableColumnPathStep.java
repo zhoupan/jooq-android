@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,8 +41,6 @@ package org.jooq;
 // ...
 // ...
 import static org.jooq.SQLDialect.POSTGRES;
-// ...
-// ...
 
 import org.jetbrains.annotations.NotNull;
 
@@ -51,14 +49,14 @@ import org.jetbrains.annotations.NotNull;
  *
  * @author Lukas Eder
  */
-public interface XMLTableColumnPathStep extends XMLTableColumnForOrdinalityStep, XMLTableColumnsStep {
+public interface XMLTableColumnPathStep
+    extends XMLTableColumnForOrdinalityStep, XMLTableColumnsStep {
 
-    /**
-     * Specify the <code>PATH</code> of a column in the <code>COLUMNS</code>
-     * clause of the <code>XMLTABLE</code> predicate.
-     */
-    @NotNull
-    @Support({ POSTGRES })
-    XMLTableColumnsStep path(String path);
-
+  /**
+   * Specify the <code>PATH</code> of a column in the <code>COLUMNS</code> clause of the <code>
+   * XMLTABLE</code> predicate.
+   */
+  @NotNull
+  @Support({POSTGRES})
+  XMLTableColumnsStep path(String path);
 }

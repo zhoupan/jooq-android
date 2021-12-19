@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,6 @@
  *
  *
  */
-
 package org.jooq.meta;
 
 import java.util.List;
@@ -47,41 +46,24 @@ import java.util.List;
  *
  * @author Lukas Eder
  */
-public interface ColumnDefinition extends TypedElementDefinition<TableDefinition>, PositionedDefinition {
+public interface ColumnDefinition
+    extends TypedElementDefinition<TableDefinition>, PositionedDefinition {
 
-    /**
-     * A definition for the primary key that this column is part of, or
-     * <code>null</code> if this column is not part of a primary key.
-     */
-    UniqueKeyDefinition getPrimaryKey();
+  /**
+   * A definition for the primary key that this column is part of, or <code>null</code> if this
+   * column is not part of a primary key.
+   */
+  UniqueKeyDefinition getPrimaryKey();
 
-    /**
-     * All definitions of unique keys that this column is part of.
-     */
-    List<UniqueKeyDefinition> getUniqueKeys();
+  /** All definitions of unique keys that this column is part of. */
+  List<UniqueKeyDefinition> getUniqueKeys();
 
-    /**
-     * All definitions of unique and primary keys that this column is part of.
-     */
-    List<UniqueKeyDefinition> getKeys();
+  /** All definitions of unique and primary keys that this column is part of. */
+  List<UniqueKeyDefinition> getKeys();
 
-    /**
-     * All definitions of foreign keys that this column is part of.
-     */
-    List<ForeignKeyDefinition> getForeignKeys();
+  /** All definitions of foreign keys that this column is part of. */
+  List<ForeignKeyDefinition> getForeignKeys();
 
-    /**
-     * Whether this column is the table's <code>IDENTITY</code> column.
-     */
-    boolean isIdentity();
-
-
-
-
-
-
-
-
-
-
+  /** Whether this column is the table's <code>IDENTITY</code> column. */
+  boolean isIdentity();
 }

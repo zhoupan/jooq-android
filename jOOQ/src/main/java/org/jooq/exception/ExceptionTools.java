@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,57 +37,46 @@
  */
 package org.jooq.exception;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 public final class ExceptionTools {
 
-    /**
-     * Never run infinite loops
-     */
-    private static int maxCauseLookups = 256;
+  /** Never run infinite loops */
+  private static int maxCauseLookups = 256;
 
-    /**
-     * Find a root cause of a given type, or <code>null</code> if no root cause
-     * of that type was found.
-     */
-    @SuppressWarnings("unchecked")
-    public static <T extends Throwable> T getCause(Throwable t, Class<? extends T> type) {
-        Throwable next = t.getCause();
-        Throwable prev;
+  /**
+   * Find a root cause of a given type, or <code>null</code> if no root cause of that type was
+   * found.
+   */
+  @SuppressWarnings("unchecked")
+  public static <T extends Throwable> T getCause(Throwable t, Class<? extends T> type) {
+    Throwable next = t.getCause();
+    Throwable prev;
 
-        for (int i = 0; i < maxCauseLookups; i++) {
-            if (next == null)
-                return null;
+    for (int i = 0; i < maxCauseLookups; i++) {
+      if (next == null) return null;
 
-            if (type.isInstance(next))
-                return (T) next;
+      if (type.isInstance(next)) return (T) next;
 
-            prev = next;
-            next = next.getCause();
+      prev = next;
+      next = next.getCause();
 
-            // Don't trust exceptions to respect the default behaviour of Throwable.getCause()
-            if (prev == next)
-                return null;
-        }
-
-        return null;
+      // Don't trust exceptions to respect the default behaviour of Throwable.getCause()
+      if (prev == next) return null;
     }
 
-    /**
-     * Sneaky throw any type of Throwable.
-     */
-    public static void sneakyThrow(Throwable throwable) {
-        ExceptionTools.sneakyThrow0(throwable);
-    }
+    return null;
+  }
 
-    /**
-     * Sneaky throw any type of Throwable.
-     */
-    @SuppressWarnings("unchecked")
-    private static <E extends Throwable> void sneakyThrow0(Throwable throwable) throws E {
-        throw (E) throwable;
-    }
+  /** Sneaky throw any type of Throwable. */
+  public static void sneakyThrow(Throwable throwable) {
+    ExceptionTools.sneakyThrow0(throwable);
+  }
 
-    private ExceptionTools() {}
+  /** Sneaky throw any type of Throwable. */
+  @SuppressWarnings("unchecked")
+  private static <E extends Throwable> void sneakyThrow0(Throwable throwable) throws E {
+    throw (E) throwable;
+  }
+
+  private ExceptionTools() {}
 }

@@ -1,4 +1,40 @@
-
+/* 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Other licenses:
+ * -----------------------------------------------------------------------------
+ * Commercial licenses for this work are available. These replace the above
+ * ASL 2.0 and offer limited warranties, support, maintenance, and commercial
+ * database integrations.
+ *
+ * For more information, please visit: http://www.jooq.org/licenses
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 package org.jooq.util.xml.jaxb;
 
 import java.io.Serializable;
@@ -11,12 +47,11 @@ import org.jooq.util.jaxb.tools.StringAdapter;
 import org.jooq.util.jaxb.tools.XMLAppendable;
 import org.jooq.util.jaxb.tools.XMLBuilder;
 
-
 /**
- * <p>Java class for View complex type.
- * 
+ * Java class for View complex type.
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="View"&gt;
  *   &lt;complexContent&gt;
@@ -31,160 +66,158 @@ import org.jooq.util.jaxb.tools.XMLBuilder;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "View", propOrder = {
+@XmlType(
+    name = "View",
+    propOrder = {})
+@SuppressWarnings({"all"})
+public class View implements Serializable, XMLAppendable {
 
-})
-@SuppressWarnings({
-    "all"
-})
-public class View implements Serializable, XMLAppendable
-{
+  private static final long serialVersionUID = 31400L;
 
-    private final static long serialVersionUID = 31400L;
-    @XmlElement(name = "table_catalog")
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String tableCatalog;
-    @XmlElement(name = "table_schema")
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String tableSchema;
-    @XmlElement(name = "table_name", required = true)
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String tableName;
-    @XmlElement(name = "view_definition", required = true)
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String viewDefinition;
+  @XmlElement(name = "table_catalog")
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String tableCatalog;
 
-    public String getTableCatalog() {
-        return tableCatalog;
+  @XmlElement(name = "table_schema")
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String tableSchema;
+
+  @XmlElement(name = "table_name", required = true)
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String tableName;
+
+  @XmlElement(name = "view_definition", required = true)
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String viewDefinition;
+
+  public String getTableCatalog() {
+    return tableCatalog;
+  }
+
+  public void setTableCatalog(String value) {
+    this.tableCatalog = value;
+  }
+
+  public String getTableSchema() {
+    return tableSchema;
+  }
+
+  public void setTableSchema(String value) {
+    this.tableSchema = value;
+  }
+
+  public String getTableName() {
+    return tableName;
+  }
+
+  public void setTableName(String value) {
+    this.tableName = value;
+  }
+
+  public String getViewDefinition() {
+    return viewDefinition;
+  }
+
+  public void setViewDefinition(String value) {
+    this.viewDefinition = value;
+  }
+
+  public View withTableCatalog(String value) {
+    setTableCatalog(value);
+    return this;
+  }
+
+  public View withTableSchema(String value) {
+    setTableSchema(value);
+    return this;
+  }
+
+  public View withTableName(String value) {
+    setTableName(value);
+    return this;
+  }
+
+  public View withViewDefinition(String value) {
+    setViewDefinition(value);
+    return this;
+  }
+
+  @Override
+  public final void appendTo(XMLBuilder builder) {
+    builder.append("table_catalog", tableCatalog);
+    builder.append("table_schema", tableSchema);
+    builder.append("table_name", tableName);
+    builder.append("view_definition", viewDefinition);
+  }
+
+  @Override
+  public String toString() {
+    XMLBuilder builder = XMLBuilder.nonFormatting();
+    appendTo(builder);
+    return builder.toString();
+  }
+
+  @Override
+  public boolean equals(Object that) {
+    if (this == that) {
+      return true;
     }
-
-    public void setTableCatalog(String value) {
-        this.tableCatalog = value;
+    if (that == null) {
+      return false;
     }
-
-    public String getTableSchema() {
-        return tableSchema;
+    if (getClass() != that.getClass()) {
+      return false;
     }
-
-    public void setTableSchema(String value) {
-        this.tableSchema = value;
+    View other = ((View) that);
+    if (tableCatalog == null) {
+      if (other.tableCatalog != null) {
+        return false;
+      }
+    } else {
+      if (!tableCatalog.equals(other.tableCatalog)) {
+        return false;
+      }
     }
-
-    public String getTableName() {
-        return tableName;
+    if (tableSchema == null) {
+      if (other.tableSchema != null) {
+        return false;
+      }
+    } else {
+      if (!tableSchema.equals(other.tableSchema)) {
+        return false;
+      }
     }
-
-    public void setTableName(String value) {
-        this.tableName = value;
+    if (tableName == null) {
+      if (other.tableName != null) {
+        return false;
+      }
+    } else {
+      if (!tableName.equals(other.tableName)) {
+        return false;
+      }
     }
-
-    public String getViewDefinition() {
-        return viewDefinition;
+    if (viewDefinition == null) {
+      if (other.viewDefinition != null) {
+        return false;
+      }
+    } else {
+      if (!viewDefinition.equals(other.viewDefinition)) {
+        return false;
+      }
     }
+    return true;
+  }
 
-    public void setViewDefinition(String value) {
-        this.viewDefinition = value;
-    }
-
-    public View withTableCatalog(String value) {
-        setTableCatalog(value);
-        return this;
-    }
-
-    public View withTableSchema(String value) {
-        setTableSchema(value);
-        return this;
-    }
-
-    public View withTableName(String value) {
-        setTableName(value);
-        return this;
-    }
-
-    public View withViewDefinition(String value) {
-        setViewDefinition(value);
-        return this;
-    }
-
-    @Override
-    public final void appendTo(XMLBuilder builder) {
-        builder.append("table_catalog", tableCatalog);
-        builder.append("table_schema", tableSchema);
-        builder.append("table_name", tableName);
-        builder.append("view_definition", viewDefinition);
-    }
-
-    @Override
-    public String toString() {
-        XMLBuilder builder = XMLBuilder.nonFormatting();
-        appendTo(builder);
-        return builder.toString();
-    }
-
-    @Override
-    public boolean equals(Object that) {
-        if (this == that) {
-            return true;
-        }
-        if (that == null) {
-            return false;
-        }
-        if (getClass()!= that.getClass()) {
-            return false;
-        }
-        View other = ((View) that);
-        if (tableCatalog == null) {
-            if (other.tableCatalog!= null) {
-                return false;
-            }
-        } else {
-            if (!tableCatalog.equals(other.tableCatalog)) {
-                return false;
-            }
-        }
-        if (tableSchema == null) {
-            if (other.tableSchema!= null) {
-                return false;
-            }
-        } else {
-            if (!tableSchema.equals(other.tableSchema)) {
-                return false;
-            }
-        }
-        if (tableName == null) {
-            if (other.tableName!= null) {
-                return false;
-            }
-        } else {
-            if (!tableName.equals(other.tableName)) {
-                return false;
-            }
-        }
-        if (viewDefinition == null) {
-            if (other.viewDefinition!= null) {
-                return false;
-            }
-        } else {
-            if (!viewDefinition.equals(other.viewDefinition)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = ((prime*result)+((tableCatalog == null)? 0 :tableCatalog.hashCode()));
-        result = ((prime*result)+((tableSchema == null)? 0 :tableSchema.hashCode()));
-        result = ((prime*result)+((tableName == null)? 0 :tableName.hashCode()));
-        result = ((prime*result)+((viewDefinition == null)? 0 :viewDefinition.hashCode()));
-        return result;
-    }
-
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = ((prime * result) + ((tableCatalog == null) ? 0 : tableCatalog.hashCode()));
+    result = ((prime * result) + ((tableSchema == null) ? 0 : tableSchema.hashCode()));
+    result = ((prime * result) + ((tableName == null) ? 0 : tableName.hashCode()));
+    result = ((prime * result) + ((viewDefinition == null) ? 0 : viewDefinition.hashCode()));
+    return result;
+  }
 }

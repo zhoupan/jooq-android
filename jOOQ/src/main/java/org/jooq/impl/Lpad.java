@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,7 @@
  */
 package org.jooq.impl;
 
+import static org.jooq.SQLDialect.*;
 import static org.jooq.impl.DSL.*;
 import static org.jooq.impl.Internal.*;
 import static org.jooq.impl.Keywords.*;
@@ -46,134 +47,88 @@ import static org.jooq.impl.Tools.*;
 import static org.jooq.impl.Tools.BooleanDataKey.*;
 import static org.jooq.impl.Tools.DataExtendedKey.*;
 import static org.jooq.impl.Tools.DataKey.*;
-import static org.jooq.SQLDialect.*;
-
-import org.jooq.*;
-import org.jooq.Record;
-import org.jooq.conf.*;
-import org.jooq.impl.*;
-import org.jooq.tools.*;
 
 import java.util.*;
+import org.jooq.*;
+import org.jooq.conf.*;
+import org.jooq.tools.*;
 
+/** The <code>LPAD</code> statement. */
+@SuppressWarnings({"rawtypes", "unchecked", "unused"})
+final class Lpad extends AbstractField<String> {
 
-/**
- * The <code>LPAD</code> statement.
- */
-@SuppressWarnings({ "rawtypes", "unchecked", "unused" })
-final class Lpad
-extends
-    AbstractField<String>
-{
+  private final Field<String> string;
+  private final Field<? extends Number> length;
+  private final Field<String> character;
 
-    private final Field<String>           string;
-    private final Field<? extends Number> length;
-    private final Field<String>           character;
+  Lpad(Field<String> string, Field<? extends Number> length) {
+    super(N_LPAD, allNotNull(VARCHAR, string, length));
 
-    Lpad(
-        Field<String> string,
-        Field<? extends Number> length
-    ) {
-        super(
-            N_LPAD,
-            allNotNull(VARCHAR, string, length)
-        );
+    this.string = nullSafeNotNull(string, VARCHAR);
+    this.length = nullSafeNotNull(length, INTEGER);
+    this.character = null;
+  }
 
-        this.string = nullSafeNotNull(string, VARCHAR);
-        this.length = nullSafeNotNull(length, INTEGER);
-        this.character = null;
+  Lpad(Field<String> string, Field<? extends Number> length, Field<String> character) {
+    super(N_LPAD, allNotNull(VARCHAR, string, length, character));
+
+    this.string = nullSafeNotNull(string, VARCHAR);
+    this.length = nullSafeNotNull(length, INTEGER);
+    this.character = nullSafeNotNull(character, VARCHAR);
+  }
+
+  // -------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // -------------------------------------------------------------------------
+
+  private final Field<String> character() {
+    return character == null ? inline(" ") : character;
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+
+        // This beautiful expression was contributed by "Ludo", here:
+        // http://stackoverflow.com/questions/6576343/how-to-simulate-lpad-rpad-with-sqlite
+      case SQLITE:
+        ctx.visit(N_SUBSTR)
+            .sql('(')
+            .visit(N_REPLACE)
+            .sql('(')
+            .visit(N_HEX)
+            .sql('(')
+            .visit(N_ZEROBLOB)
+            .sql('(')
+            .visit(length)
+            .sql(")), '00', ")
+            .visit(character())
+            .sql("), 1, ")
+            .visit(length)
+            .sql(" - ")
+            .visit(N_LENGTH)
+            .sql('(')
+            .visit(string)
+            .sql(")) || ")
+            .visit(string);
+        break;
+
+      default:
+        ctx.visit(function(N_LPAD, getDataType(), string, length, character()));
+        break;
     }
+  }
 
-    Lpad(
-        Field<String> string,
-        Field<? extends Number> length,
-        Field<String> character
-    ) {
-        super(
-            N_LPAD,
-            allNotNull(VARCHAR, string, length, character)
-        );
+  // -------------------------------------------------------------------------
+  // The Object API
+  // -------------------------------------------------------------------------
 
-        this.string = nullSafeNotNull(string, VARCHAR);
-        this.length = nullSafeNotNull(length, INTEGER);
-        this.character = nullSafeNotNull(character, VARCHAR);
-    }
-
-    // -------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // -------------------------------------------------------------------------
-
-
-
-    private final Field<String> character() {
-        return character == null ? inline(" ") : character;
-    }
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-
-
-
-
-
-
-
-            // This beautiful expression was contributed by "Ludo", here:
-            // http://stackoverflow.com/questions/6576343/how-to-simulate-lpad-rpad-with-sqlite
-            case SQLITE:
-                ctx.visit(N_SUBSTR).sql('(')
-                    .visit(N_REPLACE).sql('(')
-                        .visit(N_HEX).sql('(')
-                            .visit(N_ZEROBLOB).sql('(')
-                                .visit(length)
-                        .sql(")), '00', ").visit(character())
-                    .sql("), 1, ").visit(length).sql(" - ").visit(N_LENGTH).sql('(').visit(string)
-                .sql(")) || ").visit(string);
-                break;
-
-            default:
-                ctx.visit(function(N_LPAD, getDataType(), string, length, character()));
-                break;
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // -------------------------------------------------------------------------
-    // The Object API
-    // -------------------------------------------------------------------------
-
-    @Override
-    public boolean equals(Object that) {
-        if (that instanceof Lpad) {
-            return
-                StringUtils.equals(string, ((Lpad) that).string) &&
-                StringUtils.equals(length, ((Lpad) that).length) &&
-                StringUtils.equals(character, ((Lpad) that).character)
-            ;
-        }
-        else
-            return super.equals(that);
-    }
+  @Override
+  public boolean equals(Object that) {
+    if (that instanceof Lpad) {
+      return StringUtils.equals(string, ((Lpad) that).string)
+          && StringUtils.equals(length, ((Lpad) that).length)
+          && StringUtils.equals(character, ((Lpad) that).character);
+    } else return super.equals(that);
+  }
 }

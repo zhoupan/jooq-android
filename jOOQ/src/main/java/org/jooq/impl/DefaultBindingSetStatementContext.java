@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,50 +39,55 @@ package org.jooq.impl;
 
 import java.sql.PreparedStatement;
 import java.util.Map;
-
 import org.jooq.BindingSetStatementContext;
 import org.jooq.Configuration;
 import org.jooq.Converter;
 
-/**
- * @author Lukas Eder
- */
-class DefaultBindingSetStatementContext<U> extends AbstractResourceManagingScope implements BindingSetStatementContext<U> {
+/** @author Lukas Eder */
+class DefaultBindingSetStatementContext<U> extends AbstractResourceManagingScope
+    implements BindingSetStatementContext<U> {
 
-    private final PreparedStatement statement;
-    private final int               index;
-    private final U                 value;
+  private final PreparedStatement statement;
+  private final int index;
+  private final U value;
 
-    DefaultBindingSetStatementContext(Configuration configuration, Map<Object, Object> data, PreparedStatement statement, int index, U value) {
-        super(configuration, data);
+  DefaultBindingSetStatementContext(
+      Configuration configuration,
+      Map<Object, Object> data,
+      PreparedStatement statement,
+      int index,
+      U value) {
+    super(configuration, data);
 
-        this.statement = statement;
-        this.index = index;
-        this.value = value;
-    }
+    this.statement = statement;
+    this.index = index;
+    this.value = value;
+  }
 
-    @Override
-    public final PreparedStatement statement() {
-        return statement;
-    }
+  @Override
+  public final PreparedStatement statement() {
+    return statement;
+  }
 
-    @Override
-    public final int index() {
-        return index;
-    }
+  @Override
+  public final int index() {
+    return index;
+  }
 
-    @Override
-    public final U value() {
-        return value;
-    }
+  @Override
+  public final U value() {
+    return value;
+  }
 
-    @Override
-    public final <T> BindingSetStatementContext<T> convert(Converter<? extends T, ? super U> converter) {
-        return new DefaultBindingSetStatementContext<>(configuration, data, statement, index, converter.to(value));
-    }
+  @Override
+  public final <T> BindingSetStatementContext<T> convert(
+      Converter<? extends T, ? super U> converter) {
+    return new DefaultBindingSetStatementContext<>(
+        configuration, data, statement, index, converter.to(value));
+  }
 
-    @Override
-    public String toString() {
-        return "DefaultBindingSetStatementContext [index=" + index + ", value=" + value + "]";
-    }
+  @Override
+  public String toString() {
+    return "DefaultBindingSetStatementContext [index=" + index + ", value=" + value + "]";
+  }
 }

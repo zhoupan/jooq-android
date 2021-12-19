@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,14 +35,11 @@
  *
  *
  */
-
 package org.jooq.meta;
 
 import static java.util.Arrays.asList;
 
-import java.util.Arrays;
 import java.util.List;
-
 import org.jooq.tools.StringUtils;
 
 /**
@@ -52,42 +49,41 @@ import org.jooq.tools.StringUtils;
  */
 public class SchemaDefinition extends AbstractDefinition {
 
-    private final CatalogDefinition catalog;
+  private final CatalogDefinition catalog;
 
-    public SchemaDefinition(Database database, String name, String comment) {
-        this(database, name, comment, null);
-    }
+  public SchemaDefinition(Database database, String name, String comment) {
+    this(database, name, comment, null);
+  }
 
-    public SchemaDefinition(Database database, String name, String comment, CatalogDefinition catalog) {
-        super(database, null, name, comment);
+  public SchemaDefinition(
+      Database database, String name, String comment, CatalogDefinition catalog) {
+    super(database, null, name, comment);
 
-        this.catalog = catalog == null ? new CatalogDefinition(database, "", "") : catalog;
-    }
+    this.catalog = catalog == null ? new CatalogDefinition(database, "", "") : catalog;
+  }
 
-	@Override
-    public final CatalogDefinition getCatalog() {
-        return catalog;
-    }
+  @Override
+  public final CatalogDefinition getCatalog() {
+    return catalog;
+  }
 
-    public final List<TableDefinition> getTables() {
-	    return getDatabase().getTables(this);
-	}
+  public final List<TableDefinition> getTables() {
+    return getDatabase().getTables(this);
+  }
 
-	@SuppressWarnings("deprecation")
-    @Override
-    public final String getOutputName() {
-	    return getDatabase().getOutputSchema(getCatalog().getInputName(), getInputName());
-    }
+  @SuppressWarnings("deprecation")
+  @Override
+  public final String getOutputName() {
+    return getDatabase().getOutputSchema(getCatalog().getInputName(), getInputName());
+  }
 
-    @Override
-    public final List<Definition> getDefinitionPath() {
-        if (StringUtils.isEmpty(catalog.getName()))
-            return asList(this);
-        else
-            return asList(catalog, this);
-    }
+  @Override
+  public final List<Definition> getDefinitionPath() {
+    if (StringUtils.isEmpty(catalog.getName())) return asList(this);
+    else return asList(catalog, this);
+  }
 
-    public boolean isDefaultSchema() {
-        return StringUtils.isBlank(getOutputName());
-    }
+  public boolean isDefaultSchema() {
+    return StringUtils.isBlank(getOutputName());
+  }
 }

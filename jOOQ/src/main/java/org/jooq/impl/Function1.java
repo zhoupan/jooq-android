@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,36 +37,27 @@
  */
 package org.jooq.impl;
 
-import static org.jooq.impl.Tools.camelCase;
-
 import org.jooq.Context;
 import org.jooq.DataType;
 import org.jooq.Field;
 import org.jooq.Name;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class Function1<T> extends AbstractField<T> {
-    private final Field<?>    argument;
+  private final Field<?> argument;
 
-    Function1(Name name, DataType<T> type, Field<?> argument) {
-        super(name, type);
+  Function1(Name name, DataType<T> type, Field<?> argument) {
+    super(name, type);
 
-        this.argument = argument;
+    this.argument = argument;
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      default:
+        ctx.visit(getQualifiedName()).sql('(').visit(argument).sql(')');
+        break;
     }
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-            default:
-                ctx.visit(getQualifiedName()).sql('(').visit(argument).sql(')');
-                break;
-        }
-    }
+  }
 }

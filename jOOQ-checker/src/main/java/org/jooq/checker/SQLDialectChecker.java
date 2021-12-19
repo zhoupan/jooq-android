@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,37 +39,34 @@ package org.jooq.checker;
 
 import static com.sun.source.util.TreePath.getPath;
 
+import com.sun.source.tree.MethodInvocationTree;
+import org.checkerframework.framework.source.SourceVisitor;
 import org.jooq.Require;
 import org.jooq.SQLDialect;
 import org.jooq.Support;
 
-import org.checkerframework.framework.source.SourceVisitor;
-
-import com.sun.source.tree.MethodInvocationTree;
-
 /**
- * A checker to compare {@link SQLDialect} from a use-site {@link Require}
- * annotation with a declaration-site {@link Support} annotation.
+ * A checker to compare {@link SQLDialect} from a use-site {@link Require} annotation with a
+ * declaration-site {@link Support} annotation.
  *
  * @author Lukas Eder
  */
 public class SQLDialectChecker extends AbstractChecker {
 
-    @Override
-    protected SourceVisitor<Void, Void> createSourceVisitor() {
-        return new SourceVisitor<Void, Void>(getChecker()) {
+  @Override
+  protected SourceVisitor<Void, Void> createSourceVisitor() {
+    return new SourceVisitor<Void, Void>(getChecker()) {
 
-            @Override
-            public Void visitMethodInvocation(MethodInvocationTree node, Void p) {
-                Tools.checkSQLDialect(
-                    node,
-                    () -> Tools.enclosing(getPath(root, node)),
-                    message -> error(node, message),
-                    printer -> print(printer)
-                );
+      @Override
+      public Void visitMethodInvocation(MethodInvocationTree node, Void p) {
+        Tools.checkSQLDialect(
+            node,
+            () -> Tools.enclosing(getPath(root, node)),
+            message -> error(node, message),
+            printer -> print(printer));
 
-                return super.visitMethodInvocation(node, p);
-            }
-        };
-    }
+        return super.visitMethodInvocation(node, p);
+      }
+    };
+  }
 }

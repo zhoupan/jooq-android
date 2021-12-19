@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,40 +38,13 @@
 package org.jooq;
 
 import org.jetbrains.annotations.*;
-
-
-// ...
-// ...
-
 import org.jooq.impl.DSL;
 
 /**
- * A step in the construction of {@link DSL#jsonValue(Field, Field)} or
- * {@link DSL#jsonbValue(Field, Field)} functions where the
- * <code>ON EMPTY</code> and <code>ON ERROR</code> clauses can be defined for
- * default values.
+ * A step in the construction of {@link DSL#jsonValue(Field, Field)} or {@link DSL#jsonbValue(Field,
+ * Field)} functions where the <code>ON EMPTY</code> and <code>ON ERROR</code> clauses can be
+ * defined for default values.
  *
  * @author Lukas Eder
  */
-public interface JSONValueDefaultStep<J> {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}
+public interface JSONValueDefaultStep<J> {}

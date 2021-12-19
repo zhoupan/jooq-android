@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,46 +39,36 @@ package org.jooq;
 
 import org.jetbrains.annotations.NotNull;
 
-
 /**
  * A common base type for all qualifiable, named objects.
- * <p>
- * Instances of this type cannot be created directly, only of its subtypes.
+ *
+ * <p>Instances of this type cannot be created directly, only of its subtypes.
  *
  * @author Lukas Eder
  */
 public interface Named extends QueryPart {
 
-    /**
-     * The unqualified name of this object.
-     */
-    @NotNull
-    String getName();
+  /** The unqualified name of this object. */
+  @NotNull
+  String getName();
 
-    /**
-     * The qualified name of this object.
-     */
-    @NotNull
-    Name getQualifiedName();
+  /** The qualified name of this object. */
+  @NotNull
+  Name getQualifiedName();
 
-    /**
-     * The unqualified name of this object.
-     */
-    @NotNull
-    Name getUnqualifiedName();
+  /** The unqualified name of this object. */
+  @NotNull
+  Name getUnqualifiedName();
 
-    /**
-     * The comment on this object.
-     * <p>
-     * This is the same as calling {@link #getCommentPart()} and then
-     * {@link Comment#getComment()}.
-     */
-    @NotNull
-    String getComment();
+  /**
+   * The comment on this object.
+   *
+   * <p>This is the same as calling {@link #getCommentPart()} and then {@link Comment#getComment()}.
+   */
+  @NotNull
+  String getComment();
 
-    /**
-     * The comment on this object as a {@link QueryPart}.
-     */
-    @NotNull
-    Comment getCommentPart();
+  /** The comment on this object as a {@link QueryPart}. */
+  @NotNull
+  Comment getCommentPart();
 }

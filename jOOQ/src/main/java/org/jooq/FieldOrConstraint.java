@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,15 +38,13 @@
 package org.jooq;
 
 /**
- * A common base type for {@link Field} and {@link Constraint} where DSL API accepts
- * both types alike.
- * <p>
- * This is useful for DDL statements.
- * <p>
- * Instances of this type cannot be created directly, only of its subtypes.
+ * A common base type for {@link Field} and {@link Constraint} where DSL API accepts both types
+ * alike.
+ *
+ * <p>This is useful for DDL statements.
+ *
+ * <p>Instances of this type cannot be created directly, only of its subtypes.
  *
  * @author Lukas Eder
  */
-public interface FieldOrConstraint extends Named {
-
-}
+public interface FieldOrConstraint extends Named {}

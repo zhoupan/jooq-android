@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,13 +41,14 @@ import org.jooq.Record;
 import org.jooq.SQLDialect;
 import org.jooq.Table;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class TableDataType<R extends Record> extends DefaultDataType<R> {
 
-    @SuppressWarnings("unchecked")
-    TableDataType(Table<R> table) {
-        super(SQLDialect.DEFAULT, (Class<R>) table.getRecordType(), Tools.asString(table.getQualifiedName()));
-    }
+  @SuppressWarnings("unchecked")
+  TableDataType(Table<R> table) {
+    super(
+        SQLDialect.DEFAULT,
+        (Class<R>) table.getRecordType(),
+        Tools.asString(table.getQualifiedName()));
+  }
 }

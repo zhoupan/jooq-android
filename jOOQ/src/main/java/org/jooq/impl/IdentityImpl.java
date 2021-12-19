@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,48 +42,44 @@ import org.jooq.Record;
 import org.jooq.Table;
 import org.jooq.TableField;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class IdentityImpl<R extends Record, T> implements Identity<R, T> {
-    static final IdentityImpl<?, ?> NULL             = new IdentityImpl<>(null, null);
+  static final IdentityImpl<?, ?> NULL = new IdentityImpl<>(null, null);
 
-    private final Table<R>          table;
-    private final TableField<R, T>  field;
+  private final Table<R> table;
+  private final TableField<R, T> field;
 
-    IdentityImpl(Table<R> table, TableField<R, T> field) {
-        this.table = table;
-        this.field = field;
-    }
+  IdentityImpl(Table<R> table, TableField<R, T> field) {
+    this.table = table;
+    this.field = field;
+  }
 
-    @Override
-    public final Table<R> getTable() {
-        return table;
-    }
+  @Override
+  public final Table<R> getTable() {
+    return table;
+  }
 
-    @Override
-    public final TableField<R, T> getField() {
-        return field;
-    }
+  @Override
+  public final TableField<R, T> getField() {
+    return field;
+  }
 
-    @Override
-    public int hashCode() {
-        return toString().hashCode();
-    }
+  @Override
+  public int hashCode() {
+    return toString().hashCode();
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
 
-        if (obj instanceof Identity)
-            return toString().equals(obj.toString());
+    if (obj instanceof Identity) return toString().equals(obj.toString());
 
-        return false;
-    }
+    return false;
+  }
 
-    @Override
-    public String toString() {
-        return field.toString();
-    }
+  @Override
+  public String toString() {
+    return field.toString();
+  }
 }

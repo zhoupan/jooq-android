@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,6 @@
  *
  *
  */
-
 package org.jooq.meta.derby;
 
 import static org.jooq.impl.DSL.inline;
@@ -46,7 +45,6 @@ import static org.jooq.meta.derby.sys.Tables.SYSCOLUMNS;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.jooq.Record;
 import org.jooq.TableOptions.TableType;
 import org.jooq.meta.AbstractTableDefinition;
@@ -56,28 +54,30 @@ import org.jooq.meta.DefaultColumnDefinition;
 import org.jooq.meta.DefaultDataTypeDefinition;
 import org.jooq.meta.SchemaDefinition;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 public class DerbyTableDefinition extends AbstractTableDefinition {
 
-    private final String         tableid;
+  private final String tableid;
 
-    public DerbyTableDefinition(SchemaDefinition schema, String name, String tableid, TableType tableType, String source) {
-		super(schema, name, "", tableType, source);
+  public DerbyTableDefinition(
+      SchemaDefinition schema, String name, String tableid, TableType tableType, String source) {
+    super(schema, name, "", tableType, source);
 
-		this.tableid = tableid;
-	}
+    this.tableid = tableid;
+  }
 
-	@Override
-	public List<ColumnDefinition> getElements0() throws SQLException {
-		List<ColumnDefinition> result = new ArrayList<>();
+  @Override
+  public List<ColumnDefinition> getElements0() throws SQLException {
+    List<ColumnDefinition> result = new ArrayList<>();
 
-        for (Record record : create().select(
+    for (Record record :
+        create()
+            .select(
                 SYSCOLUMNS.COLUMNNAME,
                 SYSCOLUMNS.COLUMNNUMBER,
                 SYSCOLUMNS.COLUMNDATATYPE,
-                when(SYSCOLUMNS.AUTOINCREMENTINC.isNull(), SYSCOLUMNS.COLUMNDEFAULT).as(SYSCOLUMNS.COLUMNDEFAULT),
+                when(SYSCOLUMNS.AUTOINCREMENTINC.isNull(), SYSCOLUMNS.COLUMNDEFAULT)
+                    .as(SYSCOLUMNS.COLUMNDEFAULT),
                 SYSCOLUMNS.AUTOINCREMENTINC)
             .from(SYSCOLUMNS)
             // [#1241] Suddenly, bind values didn't work any longer, here...
@@ -85,34 +85,35 @@ public class DerbyTableDefinition extends AbstractTableDefinition {
             .where(SYSCOLUMNS.REFERENCEID.cast(VARCHAR(32672)).equal(inline(tableid)))
             .orderBy(SYSCOLUMNS.COLUMNNUMBER)) {
 
-            String columnDataType = record.get(SYSCOLUMNS.COLUMNDATATYPE, String.class);
-            String typeName = parseTypeName(columnDataType);
+      String columnDataType = record.get(SYSCOLUMNS.COLUMNDATATYPE, String.class);
+      String typeName = parseTypeName(columnDataType);
 
-            // [#9945] Derby timestamps always have a precision of 9
-            Number precision = "TIMESTAMP".equalsIgnoreCase(typeName) ? 9 : parsePrecision(columnDataType);
-            Number scale = parseScale(columnDataType);
+      // [#9945] Derby timestamps always have a precision of 9
+      Number precision =
+          "TIMESTAMP".equalsIgnoreCase(typeName) ? 9 : parsePrecision(columnDataType);
+      Number scale = parseScale(columnDataType);
 
-            DataTypeDefinition type = new DefaultDataTypeDefinition(
-                getDatabase(),
-                getSchema(),
-                typeName,
-                precision,
-                precision,
-                scale,
-                !parseNotNull(columnDataType),
-                record.get(SYSCOLUMNS.COLUMNDEFAULT)
-            );
+      DataTypeDefinition type =
+          new DefaultDataTypeDefinition(
+              getDatabase(),
+              getSchema(),
+              typeName,
+              precision,
+              precision,
+              scale,
+              !parseNotNull(columnDataType),
+              record.get(SYSCOLUMNS.COLUMNDEFAULT));
 
-			result.add(new DefaultColumnDefinition(
-				getDatabase().getTable(getSchema(), getName()),
-			    record.get(SYSCOLUMNS.COLUMNNAME),
-			    result.size() + 1,
-			    type,
-                null != record.get(SYSCOLUMNS.AUTOINCREMENTINC),
-                null
-            ));
-		}
+      result.add(
+          new DefaultColumnDefinition(
+              getDatabase().getTable(getSchema(), getName()),
+              record.get(SYSCOLUMNS.COLUMNNAME),
+              result.size() + 1,
+              type,
+              null != record.get(SYSCOLUMNS.AUTOINCREMENTINC),
+              null));
+    }
 
-		return result;
-	}
+    return result;
+  }
 }

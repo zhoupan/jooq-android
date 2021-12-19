@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,10 +37,8 @@
  */
 package org.jooq;
 
-import org.jetbrains.annotations.*;
-
-
 import java.util.Map;
+import org.jetbrains.annotations.*;
 
 /**
  * The final step in creating a case statement of the type <code><pre>
@@ -57,115 +55,107 @@ import java.util.Map;
  */
 public interface CaseWhenStep<V, T> extends Field<T> {
 
-    /**
-     * Compare a value to the already constructed case statement, return result
-     * if values are equal.
-     *
-     * @param compareValue The value to compare with the already constructed
-     *            case statement
-     * @param result The result value if values are equal
-     * @return An intermediary step for case statement construction
-     */
-    @NotNull
-    @Support
-    CaseWhenStep<V, T> when(V compareValue, T result);
+  /**
+   * Compare a value to the already constructed case statement, return result if values are equal.
+   *
+   * @param compareValue The value to compare with the already constructed case statement
+   * @param result The result value if values are equal
+   * @return An intermediary step for case statement construction
+   */
+  @NotNull
+  @Support
+  CaseWhenStep<V, T> when(V compareValue, T result);
 
-    /**
-     * Compare a value to the already constructed case statement, return result
-     * if values are equal.
-     *
-     * @param compareValue The value to compare with the already constructed
-     *            case statement
-     * @param result The result value if values are equal
-     * @return An intermediary step for case statement construction
-     */
-    @NotNull
-    @Support
-    CaseWhenStep<V, T> when(V compareValue, Field<T> result);
+  /**
+   * Compare a value to the already constructed case statement, return result if values are equal.
+   *
+   * @param compareValue The value to compare with the already constructed case statement
+   * @param result The result value if values are equal
+   * @return An intermediary step for case statement construction
+   */
+  @NotNull
+  @Support
+  CaseWhenStep<V, T> when(V compareValue, Field<T> result);
 
-    /**
-     * Compare a value to the already constructed case statement, return result
-     * if values are equal.
-     *
-     * @param compareValue The value to compare with the already constructed
-     *            case statement
-     * @param result The result value if values are equal
-     * @return An intermediary step for case statement construction
-     */
-    @NotNull
-    @Support
-    CaseWhenStep<V, T> when(Field<V> compareValue, T result);
+  /**
+   * Compare a value to the already constructed case statement, return result if values are equal.
+   *
+   * @param compareValue The value to compare with the already constructed case statement
+   * @param result The result value if values are equal
+   * @return An intermediary step for case statement construction
+   */
+  @NotNull
+  @Support
+  CaseWhenStep<V, T> when(Field<V> compareValue, T result);
 
-    /**
-     * Compare a value to the already constructed case statement, return result
-     * if values are equal.
-     *
-     * @param compareValue The value to compare with the already constructed
-     *            case statement
-     * @param result The result value if values are equal
-     * @return An intermediary step for case statement construction
-     */
-    @NotNull
-    @Support
-    CaseWhenStep<V, T> when(Field<V> compareValue, Field<T> result);
+  /**
+   * Compare a value to the already constructed case statement, return result if values are equal.
+   *
+   * @param compareValue The value to compare with the already constructed case statement
+   * @param result The result value if values are equal
+   * @return An intermediary step for case statement construction
+   */
+  @NotNull
+  @Support
+  CaseWhenStep<V, T> when(Field<V> compareValue, Field<T> result);
 
-    /**
-     * Create <code>WHEN .. THEN</code> expressions from a {@link Map}.
-     * <p>
-     * This will iterate over the map's entries to create individual
-     * <code>WHEN .. THEN</code> expressions for each map entry.
-     */
-    @NotNull
-    @Support
-    CaseWhenStep<V, T> mapValues(Map<V, T> values);
+  /**
+   * Create <code>WHEN .. THEN</code> expressions from a {@link Map}.
+   *
+   * <p>This will iterate over the map's entries to create individual <code>WHEN .. THEN</code>
+   * expressions for each map entry.
+   */
+  @NotNull
+  @Support
+  CaseWhenStep<V, T> mapValues(Map<V, T> values);
 
-    /**
-     * Create <code>WHEN .. THEN</code> expressions from a {@link Map}.
-     * <p>
-     * This will iterate over the map's entries to create individual
-     * <code>WHEN .. THEN</code> expressions for each map entry.
-     */
-    @NotNull
-    @Support
-    CaseWhenStep<V, T> mapFields(Map<? extends Field<V>, ? extends Field<T>> fields);
+  /**
+   * Create <code>WHEN .. THEN</code> expressions from a {@link Map}.
+   *
+   * <p>This will iterate over the map's entries to create individual <code>WHEN .. THEN</code>
+   * expressions for each map entry.
+   */
+  @NotNull
+  @Support
+  CaseWhenStep<V, T> mapFields(Map<? extends Field<V>, ? extends Field<T>> fields);
 
-    /**
-     * Add an else clause to the already constructed case statement
-     *
-     * @param result The result value if no other value matches the case
-     * @return The resulting field from case statement construction
-     */
-    @NotNull
-    @Support
-    Field<T> otherwise(T result);
+  /**
+   * Add an else clause to the already constructed case statement
+   *
+   * @param result The result value if no other value matches the case
+   * @return The resulting field from case statement construction
+   */
+  @NotNull
+  @Support
+  Field<T> otherwise(T result);
 
-    /**
-     * Add an else clause to the already constructed case statement
-     *
-     * @param result The result value if no other value matches the case
-     * @return The resulting field from case statement construction
-     */
-    @NotNull
-    @Support
-    Field<T> otherwise(Field<T> result);
+  /**
+   * Add an else clause to the already constructed case statement
+   *
+   * @param result The result value if no other value matches the case
+   * @return The resulting field from case statement construction
+   */
+  @NotNull
+  @Support
+  Field<T> otherwise(Field<T> result);
 
-    /**
-     * Add an else clause to the already constructed case statement
-     *
-     * @param result The result value if no other value matches the case
-     * @return The resulting field from case statement construction
-     */
-    @NotNull
-    @Support
-    Field<T> else_(T result);
+  /**
+   * Add an else clause to the already constructed case statement
+   *
+   * @param result The result value if no other value matches the case
+   * @return The resulting field from case statement construction
+   */
+  @NotNull
+  @Support
+  Field<T> else_(T result);
 
-    /**
-     * Add an else clause to the already constructed case statement
-     *
-     * @param result The result value if no other value matches the case
-     * @return The resulting field from case statement construction
-     */
-    @NotNull
-    @Support
-    Field<T> else_(Field<T> result);
+  /**
+   * Add an else clause to the already constructed case statement
+   *
+   * @param result The result value if no other value matches the case
+   * @return The resulting field from case statement construction
+   */
+  @NotNull
+  @Support
+  Field<T> else_(Field<T> result);
 }

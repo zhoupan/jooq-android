@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,22 +46,22 @@ import org.jooq.Migration;
  */
 public class DataMigrationValidationException extends DataMigrationException {
 
-    /**
-     * Constructor for DataMigrationValidationException.
-     *
-     * @param message the detail message
-     */
-    public DataMigrationValidationException(String message) {
-        super(message);
-    }
+  /**
+   * Constructor for DataMigrationValidationException.
+   *
+   * @param message the detail message
+   */
+  public DataMigrationValidationException(String message) {
+    super(message);
+  }
 
-    /**
-     * Constructor for DataMigrationValidationException.
-     *
-     * @param message the detail message
-     * @param cause the cause
-     */
-    public DataMigrationValidationException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  /**
+   * Constructor for DataMigrationValidationException.
+   *
+   * @param message the detail message
+   * @param cause the cause
+   */
+  public DataMigrationValidationException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

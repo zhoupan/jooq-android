@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,6 @@
  *
  *
  */
-
 package org.jooq.meta;
 
 import static org.jooq.meta.AbstractDatabase.fetchedSize;
@@ -46,7 +45,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.jooq.tools.JooqLogger;
 import org.jooq.tools.StringUtils;
 
@@ -56,120 +54,126 @@ import org.jooq.tools.StringUtils;
  * @author Lukas Eder
  */
 public abstract class AbstractElementContainerDefinition<E extends TypedElementDefinition<?>>
-extends AbstractDefinition {
+    extends AbstractDefinition {
 
-    /**
-     * Precision and scale for those dialects that don't formally provide that
-     * information in a separate field
-     */
-    protected static final Pattern  PRECISION_SCALE = Pattern.compile("\\((\\d+)\\s*(?:,\\s*(\\d+))?\\)");
-    private static final JooqLogger log             = JooqLogger.getLogger(AbstractElementContainerDefinition.class);
+  /**
+   * Precision and scale for those dialects that don't formally provide that information in a
+   * separate field
+   */
+  protected static final Pattern PRECISION_SCALE =
+      Pattern.compile("\\((\\d+)\\s*(?:,\\s*(\\d+))?\\)");
 
-    private List<E>                 elements;
+  private static final JooqLogger log =
+      JooqLogger.getLogger(AbstractElementContainerDefinition.class);
 
-    public AbstractElementContainerDefinition(SchemaDefinition schema, String name, String comment) {
-        this(schema, null, name, comment);
-    }
+  private List<E> elements;
 
-    public AbstractElementContainerDefinition(SchemaDefinition schema, PackageDefinition pkg, String name, String comment) {
-        super(schema.getDatabase(), schema, pkg, name, comment, null, null);
-    }
+  public AbstractElementContainerDefinition(SchemaDefinition schema, String name, String comment) {
+    this(schema, null, name, comment);
+  }
 
-    public AbstractElementContainerDefinition(SchemaDefinition schema, PackageDefinition pkg, String name, String comment, String source) {
-        super(schema.getDatabase(), schema, pkg, name, comment, null, source);
-    }
+  public AbstractElementContainerDefinition(
+      SchemaDefinition schema, PackageDefinition pkg, String name, String comment) {
+    super(schema.getDatabase(), schema, pkg, name, comment, null, null);
+  }
 
-    protected final List<E> getElements() {
-        if (elements == null) {
-            elements = new ArrayList<>();
+  public AbstractElementContainerDefinition(
+      SchemaDefinition schema, PackageDefinition pkg, String name, String comment, String source) {
+    super(schema.getDatabase(), schema, pkg, name, comment, null, source);
+  }
 
-            try {
-                Database db = getDatabase();
-                List<E> e = getElements0();
+  protected final List<E> getElements() {
+    if (elements == null) {
+      elements = new ArrayList<>();
 
-                // [#5335] Warn if a table definition contains several identity columns
-                if (this instanceof TableDefinition) {
-                    boolean hasIdentity = false;
+      try {
+        Database db = getDatabase();
+        List<E> e = getElements0();
 
-                    for (E c : e) {
-                        boolean isIdentity = ((ColumnDefinition) c).isIdentity();
+        // [#5335] Warn if a table definition contains several identity columns
+        if (this instanceof TableDefinition) {
+          boolean hasIdentity = false;
 
-                        if (isIdentity) {
-                            if (hasIdentity) {
-                                log.warn("Multiple identities", "Table " + getOutputName() + " has multiple identity columns. Only the first one is considered.");
-                                break;
-                            }
+          for (E c : e) {
+            boolean isIdentity = ((ColumnDefinition) c).isIdentity();
 
-                            hasIdentity = true;
-                        }
-                    }
-                }
+            if (isIdentity) {
+              if (hasIdentity) {
+                log.warn(
+                    "Multiple identities",
+                    "Table "
+                        + getOutputName()
+                        + " has multiple identity columns. Only the first one is considered.");
+                break;
+              }
 
-                // [#2603] Filter exclude / include also for table columns
-                if (this instanceof TableDefinition && db.getIncludeExcludeColumns()) {
-                    elements = db.filterExcludeInclude(e);
-                    log.info("Columns fetched", fetchedSize(e, elements));
-                }
-                else
-                    elements = e;
-
-                db.sort(elements);
+              hasIdentity = true;
             }
-            catch (Exception e) {
-                log.error("Error while initialising type", e);
-            }
+          }
         }
 
-        return elements;
+        // [#2603] Filter exclude / include also for table columns
+        if (this instanceof TableDefinition && db.getIncludeExcludeColumns()) {
+          elements = db.filterExcludeInclude(e);
+          log.info("Columns fetched", fetchedSize(e, elements));
+        } else elements = e;
+
+        db.sort(elements);
+      } catch (Exception e) {
+        log.error("Error while initialising type", e);
+      }
     }
 
-    protected final E getElement(String name) {
-        return getElement(name, false);
-    }
+    return elements;
+  }
 
-    protected final E getElement(String name, boolean ignoreCase) {
-        return getDefinition(getElements(), name, ignoreCase);
-    }
+  protected final E getElement(String name) {
+    return getElement(name, false);
+  }
 
-    protected final E getElement(int index) {
-        return getElements().get(index);
-    }
+  protected final E getElement(String name, boolean ignoreCase) {
+    return getDefinition(getElements(), name, ignoreCase);
+  }
 
-    protected abstract List<E> getElements0() throws SQLException;
+  protected final E getElement(int index) {
+    return getElements().get(index);
+  }
 
-    protected Number parsePrecision(String typeName) {
-        if (typeName.contains("(")) {
-            Matcher m = PRECISION_SCALE.matcher(typeName);
+  protected abstract List<E> getElements0() throws SQLException;
 
-            if (m.find()) {
-                if (!StringUtils.isBlank(m.group(1))) {
-                    return Integer.valueOf(m.group(1));
-                }
-            }
+  protected Number parsePrecision(String typeName) {
+    if (typeName.contains("(")) {
+      Matcher m = PRECISION_SCALE.matcher(typeName);
+
+      if (m.find()) {
+        if (!StringUtils.isBlank(m.group(1))) {
+          return Integer.valueOf(m.group(1));
         }
-
-        return 0;
+      }
     }
 
-    protected Number parseScale(String typeName) {
-        if (typeName.contains("(")) {
-            Matcher m = PRECISION_SCALE.matcher(typeName);
+    return 0;
+  }
 
-            if (m.find()) {
-                if (!StringUtils.isBlank(m.group(2))) {
-                    return Integer.valueOf(m.group(2));
-                }
-            }
+  protected Number parseScale(String typeName) {
+    if (typeName.contains("(")) {
+      Matcher m = PRECISION_SCALE.matcher(typeName);
+
+      if (m.find()) {
+        if (!StringUtils.isBlank(m.group(2))) {
+          return Integer.valueOf(m.group(2));
         }
-
-        return 0;
+      }
     }
 
-    protected String parseTypeName(String typeName) {
-        return typeName.replace(" NOT NULL", "");
-    }
+    return 0;
+  }
 
-    protected boolean parseNotNull(String typeName) {
-        return typeName.toUpperCase().contains("NOT NULL");
-    }
+  protected String parseTypeName(String typeName) {
+    return typeName.replace(" NOT NULL", "");
+  }
+
+  protected boolean parseNotNull(String typeName) {
+    return typeName.toUpperCase().contains("NOT NULL");
+  }
 }

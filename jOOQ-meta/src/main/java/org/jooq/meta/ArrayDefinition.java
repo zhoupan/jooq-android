@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,7 +37,6 @@
  */
 package org.jooq.meta;
 
-
 /**
  * A definition for an ARRAY type
  *
@@ -45,20 +44,13 @@ package org.jooq.meta;
  */
 public interface ArrayDefinition extends Definition {
 
-    /**
-     * The array's package. <code>null</code> if the UDT is not in a package
-     */
-    @Override
-    PackageDefinition getPackage();
+  /** The array's package. <code>null</code> if the UDT is not in a package */
+  @Override
+  PackageDefinition getPackage();
 
-    /**
-     * @return The type of the ARRAY's elements
-     */
-    DataTypeDefinition getElementType();
+  /** @return The type of the ARRAY's elements */
+  DataTypeDefinition getElementType();
 
-    /**
-     * @return The type of the ARRAY's elements
-     */
-    DataTypeDefinition getElementType(JavaTypeResolver resolver);
-
+  /** @return The type of the ARRAY's elements */
+  DataTypeDefinition getElementType(JavaTypeResolver resolver);
 }

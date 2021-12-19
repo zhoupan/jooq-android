@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,34 +38,32 @@
 package org.jooq.exception;
 
 /**
- * The jOOQ <code>IOException</code> is a wrapper for a
- * {@link java.io.IOException}.
+ * The jOOQ <code>IOException</code> is a wrapper for a {@link java.io.IOException}.
  *
  * @author Lukas Eder
  */
 public class IOException extends DataAccessException {
 
-    /**
-     * Constructor for DataAccessException.
-     *
-     * @param message the detail message
-     * @param cause the root cause (usually from using a underlying data access
-     *            API such as JDBC)
-     */
-    public IOException(String message, java.io.IOException cause) {
-        super(message, cause);
-    }
+  /**
+   * Constructor for DataAccessException.
+   *
+   * @param message the detail message
+   * @param cause the root cause (usually from using a underlying data access API such as JDBC)
+   */
+  public IOException(String message, java.io.IOException cause) {
+    super(message, cause);
+  }
 
-    @Override
-    public synchronized java.io.IOException getCause() {
-        return (java.io.IOException) super.getCause();
-    }
+  @Override
+  public synchronized java.io.IOException getCause() {
+    return (java.io.IOException) super.getCause();
+  }
 
-    @Override
-    public synchronized Throwable initCause(Throwable cause) {
-        if (!(cause instanceof java.io.IOException))
-            throw new IllegalArgumentException("Can only wrap java.io.IOException: " + cause);
+  @Override
+  public synchronized Throwable initCause(Throwable cause) {
+    if (!(cause instanceof java.io.IOException))
+      throw new IllegalArgumentException("Can only wrap java.io.IOException: " + cause);
 
-        return super.initCause(cause);
-    }
+    return super.initCause(cause);
+  }
 }

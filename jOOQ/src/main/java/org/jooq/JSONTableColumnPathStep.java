@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,14 +37,10 @@
  */
 package org.jooq;
 
-import org.jetbrains.annotations.*;
-
-
-// ...
-// ...
 import static org.jooq.SQLDialect.MYSQL;
-// ...
 import static org.jooq.SQLDialect.POSTGRES;
+
+import org.jetbrains.annotations.*;
 // ...
 
 /**
@@ -52,14 +48,14 @@ import static org.jooq.SQLDialect.POSTGRES;
  *
  * @author Lukas Eder
  */
-public interface JSONTableColumnPathStep extends JSONTableColumnForOrdinalityStep, JSONTableColumnsStep {
+public interface JSONTableColumnPathStep
+    extends JSONTableColumnForOrdinalityStep, JSONTableColumnsStep {
 
-    /**
-     * Specify the <code>PATH</code> of a column in the <code>COLUMNS</code>
-     * clause of the <code>JSON_TABLE</code> predicate.
-     */
-    @NotNull
-    @Support({ MYSQL, POSTGRES })
-    JSONTableColumnsStep path(String path);
-
+  /**
+   * Specify the <code>PATH</code> of a column in the <code>COLUMNS</code> clause of the <code>
+   * JSON_TABLE</code> predicate.
+   */
+  @NotNull
+  @Support({MYSQL, POSTGRES})
+  JSONTableColumnsStep path(String path);
 }

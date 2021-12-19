@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,25 +40,18 @@ package org.jooq;
 import java.sql.SQLInput;
 
 /**
- * A container type for {@link Binding#get(BindingGetSQLInputContext)}
- * arguments.
+ * A container type for {@link Binding#get(BindingGetSQLInputContext)} arguments.
  *
  * @author Lukas Eder
  */
 public interface BindingGetSQLInputContext<U> extends Scope {
 
-    /**
-     * The {@link SQLInput} from which a value is retrieved.
-     */
-    SQLInput input();
+  /** The {@link SQLInput} from which a value is retrieved. */
+  SQLInput input();
 
-    /**
-     * A callback to which the resulting value is registered.
-     */
-    void value(U value);
+  /** A callback to which the resulting value is registered. */
+  void value(U value);
 
-    /**
-     * Create a new context from this one using a converter.
-     */
-    <T> BindingGetSQLInputContext<T> convert(Converter<? super T, ? extends U> converter);
+  /** Create a new context from this one using a converter. */
+  <T> BindingGetSQLInputContext<T> convert(Converter<? super T, ? extends U> converter);
 }

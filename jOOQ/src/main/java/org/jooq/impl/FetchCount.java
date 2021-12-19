@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,13 +35,10 @@
  *
  *
  */
-
 package org.jooq.impl;
 
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.select;
-
-import java.sql.ResultSetMetaData;
 
 import org.jooq.Configuration;
 import org.jooq.Context;
@@ -49,33 +46,31 @@ import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Select;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class FetchCount extends AbstractResultQuery<Record1<Integer>> {
 
-    private final Field<?>[]  count            = { count().as("c") };
-    private final Select<?>   query;
+  private final Field<?>[] count = {count().as("c")};
+  private final Select<?> query;
 
-    FetchCount(Configuration configuration, Select<?> query) {
-        super(configuration);
+  FetchCount(Configuration configuration, Select<?> query) {
+    super(configuration);
 
-        this.query = query;
-    }
+    this.query = query;
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        ctx.visit(select(count).from(new AliasedSelect<>(query, true, true).as("t")));
-    }
+  @Override
+  public final void accept(Context<?> ctx) {
+    ctx.visit(select(count).from(new AliasedSelect<>(query, true, true).as("t")));
+  }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Override
-    public final Class<? extends Record1<Integer>> getRecordType0() {
-        return (Class) RecordImpl1.class;
-    }
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  @Override
+  public final Class<? extends Record1<Integer>> getRecordType0() {
+    return (Class) RecordImpl1.class;
+  }
 
-    @Override
-    public final Field<?>[] getFields() {
-        return count;
-    }
+  @Override
+  public final Field<?>[] getFields() {
+    return count;
+  }
 }

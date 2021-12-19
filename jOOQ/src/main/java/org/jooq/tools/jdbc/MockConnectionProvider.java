@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,57 +38,52 @@
 package org.jooq.tools.jdbc;
 
 import java.sql.Connection;
-
 import org.jooq.ConnectionProvider;
 
 /**
  * A mock connection provider.
- * <p>
- * This {@link ConnectionProvider} wraps a delegate
- * <code>ConnectionProvider</code> and wraps all acquired {@link Connection}
- * references in {@link MockConnection}.
- * <p>
- * <strong>Disclaimer: The general idea of mocking a JDBC connection with this
- * jOOQ API is to provide quick workarounds, injection points, etc. using a very
- * simple JDBC abstraction. It is NOT RECOMMENDED to emulate an entire database
- * (including complex state transitions, transactions, locking, etc.) using this
- * mock API. Once you have this requirement, please consider using an actual
- * database instead for integration testing (e.g. using
- * <a href="https://www.testcontainers.org">https://www.testcontainers.org</a>),
- * rather than implementing your test database inside of a
- * MockDataProvider.</strong>
+ *
+ * <p>This {@link ConnectionProvider} wraps a delegate <code>ConnectionProvider</code> and wraps all
+ * acquired {@link Connection} references in {@link MockConnection}.
+ *
+ * <p><strong>Disclaimer: The general idea of mocking a JDBC connection with this jOOQ API is to
+ * provide quick workarounds, injection points, etc. using a very simple JDBC abstraction. It is NOT
+ * RECOMMENDED to emulate an entire database (including complex state transitions, transactions,
+ * locking, etc.) using this mock API. Once you have this requirement, please consider using an
+ * actual database instead for integration testing (e.g. using <a
+ * href="https://www.testcontainers.org">https://www.testcontainers.org</a>), rather than
+ * implementing your test database inside of a MockDataProvider.</strong>
  *
  * @author Lukas Eder
  */
 public class MockConnectionProvider implements ConnectionProvider {
 
-    private final ConnectionProvider delegate;
-    private final MockDataProvider   provider;
+  private final ConnectionProvider delegate;
+  private final MockDataProvider provider;
 
-    public MockConnectionProvider(ConnectionProvider delegate, MockDataProvider provider) {
-        this.delegate = delegate;
-        this.provider = provider;
+  public MockConnectionProvider(ConnectionProvider delegate, MockDataProvider provider) {
+    this.delegate = delegate;
+    this.provider = provider;
+  }
+
+  @Override
+  public final Connection acquire() {
+    return new MockConnectionWrapper(delegate.acquire());
+  }
+
+  @Override
+  public final void release(Connection connection) {
+    if (connection instanceof MockConnectionWrapper)
+      delegate.release(((MockConnectionWrapper) connection).connection);
+    else throw new IllegalArgumentException("Argument connection must be a MockConnectionWrapper");
+  }
+
+  private class MockConnectionWrapper extends MockConnection {
+    final Connection connection;
+
+    public MockConnectionWrapper(Connection connection) {
+      super(provider);
+      this.connection = connection;
     }
-
-    @Override
-    public final Connection acquire() {
-        return new MockConnectionWrapper(delegate.acquire());
-    }
-
-    @Override
-    public final void release(Connection connection) {
-        if (connection instanceof MockConnectionWrapper)
-            delegate.release(((MockConnectionWrapper) connection).connection);
-        else
-            throw new IllegalArgumentException("Argument connection must be a MockConnectionWrapper");
-    }
-
-    private class MockConnectionWrapper extends MockConnection {
-        final Connection connection;
-
-        public MockConnectionWrapper(Connection connection) {
-            super(provider);
-            this.connection = connection;
-        }
-    }
+  }
 }

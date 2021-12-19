@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -47,18 +47,18 @@ import org.jooq.TransactionProvider;
  */
 public class NoTransactionProvider implements TransactionProvider {
 
-    @Override
-    public final void begin(TransactionContext ctx) {
-        throw new UnsupportedOperationException("No transaction provider configured");
-    }
+  @Override
+  public final void begin(TransactionContext ctx) {
+    throw new UnsupportedOperationException("No transaction provider configured");
+  }
 
-    @Override
-    public final void commit(TransactionContext ctx) {
-        throw new UnsupportedOperationException("No transaction provider configured");
-    }
+  @Override
+  public final void commit(TransactionContext ctx) {
+    throw new UnsupportedOperationException("No transaction provider configured");
+  }
 
-    @Override
-    public final void rollback(TransactionContext ctx) {
-        throw new UnsupportedOperationException("No transaction provider configured");
-    }
+  @Override
+  public final void rollback(TransactionContext ctx) {
+    throw new UnsupportedOperationException("No transaction provider configured");
+  }
 }

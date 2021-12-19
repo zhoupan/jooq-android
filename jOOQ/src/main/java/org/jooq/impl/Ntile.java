@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,31 +43,24 @@ import static org.jooq.impl.SQLDataType.INTEGER;
 import org.jooq.Context;
 import org.jooq.Field;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class Ntile extends AbstractWindowFunction<Integer> {
-    private final Field<Integer> tiles;
+  private final Field<Integer> tiles;
 
-    Ntile(Field<Integer> tiles) {
-        super(N_NTILE, INTEGER.notNull());
+  Ntile(Field<Integer> tiles) {
+    super(N_NTILE, INTEGER.notNull());
 
-        this.tiles = tiles;
+    this.tiles = tiles;
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      default:
+        ctx.visit(N_NTILE).sql('(').visit(tiles).sql(')');
+        break;
     }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-            default:
-                ctx.visit(N_NTILE).sql('(').visit(tiles).sql(')');
-                break;
-        }
-
-        acceptOverClause(ctx);
-    }
+    acceptOverClause(ctx);
+  }
 }

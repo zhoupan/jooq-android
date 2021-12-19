@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,20 +42,17 @@ import java.sql.Types;
 
 /**
  * A data type corresponding to JDBC's {@link Types#ROWID}.
- * <p>
- * In certain RDBMS, referencing a row by its <code>ROWID</code> may be quicker
- * than looking it up by a primary key. This can be particularly useful when
- * self joining a table in a {@link Merge} statement and comparing the two
- * versions of the table by <code>ROWID</code>.
- * <p>
- * Instances can be created using {@link Table#rowid()}.
+ *
+ * <p>In certain RDBMS, referencing a row by its <code>ROWID</code> may be quicker than looking it
+ * up by a primary key. This can be particularly useful when self joining a table in a {@link Merge}
+ * statement and comparing the two versions of the table by <code>ROWID</code>.
+ *
+ * <p>Instances can be created using {@link Table#rowid()}.
  *
  * @author Lukas Eder
  */
 public interface RowId extends Serializable {
 
-    /**
-     * Get the database implementation specific representation of this row id.
-     */
-    Object value();
+  /** Get the database implementation specific representation of this row id. */
+  Object value();
 }

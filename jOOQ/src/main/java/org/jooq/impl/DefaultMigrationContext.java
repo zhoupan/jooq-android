@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,7 +39,6 @@ package org.jooq.impl;
 
 import java.util.Collections;
 import java.util.Set;
-
 import org.jooq.Commit;
 import org.jooq.Configuration;
 import org.jooq.MigrationContext;
@@ -54,72 +53,71 @@ import org.jooq.Schema;
  */
 final class DefaultMigrationContext extends AbstractScope implements MigrationContext {
 
-    final Set<Schema> migratedSchemas;
-    final Commit      migrationFrom;
-    final Commit      migrationTo;
-    final Queries     migrationQueries;
-    final Queries     revertUntrackedQueries;
+  final Set<Schema> migratedSchemas;
+  final Commit migrationFrom;
+  final Commit migrationTo;
+  final Queries migrationQueries;
+  final Queries revertUntrackedQueries;
 
-    Query             query;
+  Query query;
 
-    DefaultMigrationContext(
-        Configuration configuration,
-        Set<Schema> migratedSchemas,
-        Commit migrationFrom,
-        Commit migrationTo,
-        Queries migrationQueries,
-        Queries revertUntrackedQueries
-    ) {
-        super(configuration);
+  DefaultMigrationContext(
+      Configuration configuration,
+      Set<Schema> migratedSchemas,
+      Commit migrationFrom,
+      Commit migrationTo,
+      Queries migrationQueries,
+      Queries revertUntrackedQueries) {
+    super(configuration);
 
-        this.migratedSchemas = migratedSchemas;
-        this.migrationFrom = migrationFrom;
-        this.migrationTo = migrationTo;
-        this.migrationQueries = migrationQueries;
-        this.revertUntrackedQueries = revertUntrackedQueries;
-    }
+    this.migratedSchemas = migratedSchemas;
+    this.migrationFrom = migrationFrom;
+    this.migrationTo = migrationTo;
+    this.migrationQueries = migrationQueries;
+    this.revertUntrackedQueries = revertUntrackedQueries;
+  }
 
-    @Override
-    public final Set<Schema> migratedSchemas() {
-        return Collections.unmodifiableSet(migratedSchemas);
-    }
+  @Override
+  public final Set<Schema> migratedSchemas() {
+    return Collections.unmodifiableSet(migratedSchemas);
+  }
 
-    @Override
-    public final Commit migrationFrom() {
-        return migrationFrom;
-    }
+  @Override
+  public final Commit migrationFrom() {
+    return migrationFrom;
+  }
 
-    @Override
-    public final Commit migrationTo() {
-        return migrationTo;
-    }
+  @Override
+  public final Commit migrationTo() {
+    return migrationTo;
+  }
 
-    @Override
-    public final Queries migrationQueries() {
-        return migrationQueries;
-    }
+  @Override
+  public final Queries migrationQueries() {
+    return migrationQueries;
+  }
 
-    @Override
-    public final Commit queriesFrom() {
-        return migrationFrom;
-    }
+  @Override
+  public final Commit queriesFrom() {
+    return migrationFrom;
+  }
 
-    @Override
-    public final Commit queriesTo() {
-        return migrationTo;
-    }
+  @Override
+  public final Commit queriesTo() {
+    return migrationTo;
+  }
 
-    @Override
-    public final Queries queries() {
-        return migrationQueries;
-    }
+  @Override
+  public final Queries queries() {
+    return migrationQueries;
+  }
 
-    @Override
-    public final Query query() {
-        return query;
-    }
+  @Override
+  public final Query query() {
+    return query;
+  }
 
-    final void query(Query q) {
-        this.query = q;
-    }
+  final void query(Query q) {
+    this.query = q;
+  }
 }

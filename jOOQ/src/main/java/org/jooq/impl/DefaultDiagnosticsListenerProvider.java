@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,50 +40,48 @@ package org.jooq.impl;
 import static org.jooq.impl.Tools.map;
 
 import java.io.Serializable;
-
 import org.jooq.DiagnosticsListener;
 import org.jooq.DiagnosticsListenerProvider;
 
 /**
  * A default implementation for {@link DiagnosticsListenerProvider}.
- * <p>
- * This implementation just wraps an instance of {@link DiagnosticsListener},
- * always providing the same.
+ *
+ * <p>This implementation just wraps an instance of {@link DiagnosticsListener}, always providing
+ * the same.
  *
  * @author Lukas Eder
  */
-public class DefaultDiagnosticsListenerProvider implements DiagnosticsListenerProvider, Serializable {
+public class DefaultDiagnosticsListenerProvider
+    implements DiagnosticsListenerProvider, Serializable {
 
-    /**
-     * The delegate listener.
-     */
-    private final DiagnosticsListener listener;
+  /** The delegate listener. */
+  private final DiagnosticsListener listener;
 
-    /**
-     * Convenience method to construct an array of
-     * <code>DefaultDiagnosticsListenerProvider</code> from an array of
-     * <code>DiagnosticsListener</code> instances.
-     */
-    public static DiagnosticsListenerProvider[] providers(DiagnosticsListener... listeners) {
-        return map(listeners, DefaultDiagnosticsListenerProvider::new, DiagnosticsListenerProvider[]::new);
-    }
+  /**
+   * Convenience method to construct an array of <code>DefaultDiagnosticsListenerProvider</code>
+   * from an array of <code>DiagnosticsListener</code> instances.
+   */
+  public static DiagnosticsListenerProvider[] providers(DiagnosticsListener... listeners) {
+    return map(
+        listeners, DefaultDiagnosticsListenerProvider::new, DiagnosticsListenerProvider[]::new);
+  }
 
-    /**
-     * Create a new provider instance from an argument listener.
-     *
-     * @param listener The argument listener.
-     */
-    public DefaultDiagnosticsListenerProvider(DiagnosticsListener listener) {
-        this.listener = listener;
-    }
+  /**
+   * Create a new provider instance from an argument listener.
+   *
+   * @param listener The argument listener.
+   */
+  public DefaultDiagnosticsListenerProvider(DiagnosticsListener listener) {
+    this.listener = listener;
+  }
 
-    @Override
-    public final DiagnosticsListener provide() {
-        return listener;
-    }
+  @Override
+  public final DiagnosticsListener provide() {
+    return listener;
+  }
 
-    @Override
-    public String toString() {
-        return listener.toString();
-    }
+  @Override
+  public String toString() {
+    return listener.toString();
+  }
 }

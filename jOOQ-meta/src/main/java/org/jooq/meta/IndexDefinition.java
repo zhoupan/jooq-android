@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,13 +46,9 @@ import java.util.List;
  */
 public interface IndexDefinition extends TableElementDefinition {
 
-    /**
-     * The list of columns making up the index.
-     */
-    List<IndexColumnDefinition> getIndexColumns();
+  /** The list of columns making up the index. */
+  List<IndexColumnDefinition> getIndexColumns();
 
-    /**
-     * Whether this is a unique index.
-     */
-    boolean isUnique();
+  /** Whether this is a unique index. */
+  boolean isUnique();
 }

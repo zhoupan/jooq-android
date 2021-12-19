@@ -1,4 +1,40 @@
-
+/* 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Other licenses:
+ * -----------------------------------------------------------------------------
+ * Commercial licenses for this work are available. These replace the above
+ * ASL 2.0 and offer limited warranties, support, maintenance, and commercial
+ * database integrations.
+ *
+ * For more information, please visit: http://www.jooq.org/licenses
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 package org.jooq.util.xml.jaxb;
 
 import java.io.Serializable;
@@ -14,12 +50,11 @@ import javax.xml.bind.annotation.XmlType;
 import org.jooq.util.jaxb.tools.XMLAppendable;
 import org.jooq.util.jaxb.tools.XMLBuilder;
 
-
 /**
- * <p>Java class for anonymous complex type.
- * 
+ * Java class for anonymous complex type.
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -47,835 +82,849 @@ import org.jooq.util.jaxb.tools.XMLBuilder;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-
-})
+@XmlType(
+    name = "",
+    propOrder = {})
 @XmlRootElement(name = "information_schema")
-@SuppressWarnings({
-    "all"
-})
-public class InformationSchema implements Serializable, XMLAppendable
-{
-
-    private final static long serialVersionUID = 31400L;
-    @XmlElementWrapper(name = "catalogs")
-    @XmlElement(name = "catalog")
-    protected List<Catalog> catalogs;
-    @XmlElementWrapper(name = "schemata")
-    @XmlElement(name = "schema")
-    protected List<Schema> schemata;
-    @XmlElementWrapper(name = "sequences")
-    @XmlElement(name = "sequence")
-    protected List<Sequence> sequences;
-    @XmlElementWrapper(name = "tables")
-    @XmlElement(name = "table")
-    protected List<Table> tables;
-    @XmlElementWrapper(name = "views")
-    @XmlElement(name = "view")
-    protected List<View> views;
-    @XmlElementWrapper(name = "columns")
-    @XmlElement(name = "column")
-    protected List<Column> columns;
-    @XmlElementWrapper(name = "table_constraints")
-    @XmlElement(name = "table_constraint")
-    protected List<TableConstraint> tableConstraints;
-    @XmlElementWrapper(name = "key_column_usages")
-    @XmlElement(name = "key_column_usage")
-    protected List<KeyColumnUsage> keyColumnUsages;
-    @XmlElementWrapper(name = "referential_constraints")
-    @XmlElement(name = "referential_constraint")
-    protected List<ReferentialConstraint> referentialConstraints;
-    @XmlElementWrapper(name = "check_constraints")
-    @XmlElement(name = "check_constraint")
-    protected List<CheckConstraint> checkConstraints;
-    @XmlElementWrapper(name = "domains")
-    @XmlElement(name = "domain")
-    protected List<Domain> domains;
-    @XmlElementWrapper(name = "domain_constraints")
-    @XmlElement(name = "domainConstraint")
-    protected List<DomainConstraint> domainConstraints;
-    @XmlElementWrapper(name = "indexes")
-    @XmlElement(name = "index")
-    protected List<Index> indexes;
-    @XmlElementWrapper(name = "index_column_usages")
-    @XmlElement(name = "index_column_usage")
-    protected List<IndexColumnUsage> indexColumnUsages;
-    @XmlElementWrapper(name = "routines")
-    @XmlElement(name = "routine")
-    protected List<Routine> routines;
-    @XmlElementWrapper(name = "parameters")
-    @XmlElement(name = "parameter")
-    protected List<Parameter> parameters;
-    @XmlElementWrapper(name = "element_types")
-    @XmlElement(name = "element_type")
-    protected List<ElementType> elementTypes;
-
-    public List<Catalog> getCatalogs() {
-        if (catalogs == null) {
-            catalogs = new ArrayList<Catalog>();
-        }
-        return catalogs;
-    }
-
-    public void setCatalogs(List<Catalog> catalogs) {
-        this.catalogs = catalogs;
-    }
-
-    public List<Schema> getSchemata() {
-        if (schemata == null) {
-            schemata = new ArrayList<Schema>();
-        }
-        return schemata;
-    }
+@SuppressWarnings({"all"})
+public class InformationSchema implements Serializable, XMLAppendable {
 
-    public void setSchemata(List<Schema> schemata) {
-        this.schemata = schemata;
-    }
-
-    public List<Sequence> getSequences() {
-        if (sequences == null) {
-            sequences = new ArrayList<Sequence>();
-        }
-        return sequences;
-    }
-
-    public void setSequences(List<Sequence> sequences) {
-        this.sequences = sequences;
-    }
-
-    public List<Table> getTables() {
-        if (tables == null) {
-            tables = new ArrayList<Table>();
-        }
-        return tables;
-    }
+  private static final long serialVersionUID = 31400L;
 
-    public void setTables(List<Table> tables) {
-        this.tables = tables;
-    }
-
-    public List<View> getViews() {
-        if (views == null) {
-            views = new ArrayList<View>();
-        }
-        return views;
-    }
+  @XmlElementWrapper(name = "catalogs")
+  @XmlElement(name = "catalog")
+  protected List<Catalog> catalogs;
 
-    public void setViews(List<View> views) {
-        this.views = views;
-    }
-
-    public List<Column> getColumns() {
-        if (columns == null) {
-            columns = new ArrayList<Column>();
-        }
-        return columns;
-    }
+  @XmlElementWrapper(name = "schemata")
+  @XmlElement(name = "schema")
+  protected List<Schema> schemata;
 
-    public void setColumns(List<Column> columns) {
-        this.columns = columns;
-    }
+  @XmlElementWrapper(name = "sequences")
+  @XmlElement(name = "sequence")
+  protected List<Sequence> sequences;
 
-    public List<TableConstraint> getTableConstraints() {
-        if (tableConstraints == null) {
-            tableConstraints = new ArrayList<TableConstraint>();
-        }
-        return tableConstraints;
-    }
+  @XmlElementWrapper(name = "tables")
+  @XmlElement(name = "table")
+  protected List<Table> tables;
 
-    public void setTableConstraints(List<TableConstraint> tableConstraints) {
-        this.tableConstraints = tableConstraints;
-    }
+  @XmlElementWrapper(name = "views")
+  @XmlElement(name = "view")
+  protected List<View> views;
 
-    public List<KeyColumnUsage> getKeyColumnUsages() {
-        if (keyColumnUsages == null) {
-            keyColumnUsages = new ArrayList<KeyColumnUsage>();
-        }
-        return keyColumnUsages;
-    }
+  @XmlElementWrapper(name = "columns")
+  @XmlElement(name = "column")
+  protected List<Column> columns;
 
-    public void setKeyColumnUsages(List<KeyColumnUsage> keyColumnUsages) {
-        this.keyColumnUsages = keyColumnUsages;
-    }
+  @XmlElementWrapper(name = "table_constraints")
+  @XmlElement(name = "table_constraint")
+  protected List<TableConstraint> tableConstraints;
 
-    public List<ReferentialConstraint> getReferentialConstraints() {
-        if (referentialConstraints == null) {
-            referentialConstraints = new ArrayList<ReferentialConstraint>();
-        }
-        return referentialConstraints;
-    }
+  @XmlElementWrapper(name = "key_column_usages")
+  @XmlElement(name = "key_column_usage")
+  protected List<KeyColumnUsage> keyColumnUsages;
 
-    public void setReferentialConstraints(List<ReferentialConstraint> referentialConstraints) {
-        this.referentialConstraints = referentialConstraints;
-    }
+  @XmlElementWrapper(name = "referential_constraints")
+  @XmlElement(name = "referential_constraint")
+  protected List<ReferentialConstraint> referentialConstraints;
 
-    public List<CheckConstraint> getCheckConstraints() {
-        if (checkConstraints == null) {
-            checkConstraints = new ArrayList<CheckConstraint>();
-        }
-        return checkConstraints;
-    }
+  @XmlElementWrapper(name = "check_constraints")
+  @XmlElement(name = "check_constraint")
+  protected List<CheckConstraint> checkConstraints;
 
-    public void setCheckConstraints(List<CheckConstraint> checkConstraints) {
-        this.checkConstraints = checkConstraints;
-    }
+  @XmlElementWrapper(name = "domains")
+  @XmlElement(name = "domain")
+  protected List<Domain> domains;
 
-    public List<Domain> getDomains() {
-        if (domains == null) {
-            domains = new ArrayList<Domain>();
-        }
-        return domains;
-    }
+  @XmlElementWrapper(name = "domain_constraints")
+  @XmlElement(name = "domainConstraint")
+  protected List<DomainConstraint> domainConstraints;
 
-    public void setDomains(List<Domain> domains) {
-        this.domains = domains;
-    }
+  @XmlElementWrapper(name = "indexes")
+  @XmlElement(name = "index")
+  protected List<Index> indexes;
 
-    public List<DomainConstraint> getDomainConstraints() {
-        if (domainConstraints == null) {
-            domainConstraints = new ArrayList<DomainConstraint>();
-        }
-        return domainConstraints;
-    }
+  @XmlElementWrapper(name = "index_column_usages")
+  @XmlElement(name = "index_column_usage")
+  protected List<IndexColumnUsage> indexColumnUsages;
 
-    public void setDomainConstraints(List<DomainConstraint> domainConstraints) {
-        this.domainConstraints = domainConstraints;
-    }
+  @XmlElementWrapper(name = "routines")
+  @XmlElement(name = "routine")
+  protected List<Routine> routines;
 
-    public List<Index> getIndexes() {
-        if (indexes == null) {
-            indexes = new ArrayList<Index>();
-        }
-        return indexes;
-    }
+  @XmlElementWrapper(name = "parameters")
+  @XmlElement(name = "parameter")
+  protected List<Parameter> parameters;
 
-    public void setIndexes(List<Index> indexes) {
-        this.indexes = indexes;
-    }
+  @XmlElementWrapper(name = "element_types")
+  @XmlElement(name = "element_type")
+  protected List<ElementType> elementTypes;
 
-    public List<IndexColumnUsage> getIndexColumnUsages() {
-        if (indexColumnUsages == null) {
-            indexColumnUsages = new ArrayList<IndexColumnUsage>();
-        }
-        return indexColumnUsages;
+  public List<Catalog> getCatalogs() {
+    if (catalogs == null) {
+      catalogs = new ArrayList<Catalog>();
     }
+    return catalogs;
+  }
 
-    public void setIndexColumnUsages(List<IndexColumnUsage> indexColumnUsages) {
-        this.indexColumnUsages = indexColumnUsages;
-    }
+  public void setCatalogs(List<Catalog> catalogs) {
+    this.catalogs = catalogs;
+  }
 
-    public List<Routine> getRoutines() {
-        if (routines == null) {
-            routines = new ArrayList<Routine>();
-        }
-        return routines;
+  public List<Schema> getSchemata() {
+    if (schemata == null) {
+      schemata = new ArrayList<Schema>();
     }
+    return schemata;
+  }
 
-    public void setRoutines(List<Routine> routines) {
-        this.routines = routines;
-    }
+  public void setSchemata(List<Schema> schemata) {
+    this.schemata = schemata;
+  }
 
-    public List<Parameter> getParameters() {
-        if (parameters == null) {
-            parameters = new ArrayList<Parameter>();
-        }
-        return parameters;
+  public List<Sequence> getSequences() {
+    if (sequences == null) {
+      sequences = new ArrayList<Sequence>();
     }
+    return sequences;
+  }
 
-    public void setParameters(List<Parameter> parameters) {
-        this.parameters = parameters;
-    }
+  public void setSequences(List<Sequence> sequences) {
+    this.sequences = sequences;
+  }
 
-    public List<ElementType> getElementTypes() {
-        if (elementTypes == null) {
-            elementTypes = new ArrayList<ElementType>();
-        }
-        return elementTypes;
+  public List<Table> getTables() {
+    if (tables == null) {
+      tables = new ArrayList<Table>();
     }
+    return tables;
+  }
 
-    public void setElementTypes(List<ElementType> elementTypes) {
-        this.elementTypes = elementTypes;
-    }
+  public void setTables(List<Table> tables) {
+    this.tables = tables;
+  }
 
-    public InformationSchema withCatalogs(Catalog... values) {
-        if (values!= null) {
-            for (Catalog value: values) {
-                getCatalogs().add(value);
-            }
-        }
-        return this;
+  public List<View> getViews() {
+    if (views == null) {
+      views = new ArrayList<View>();
     }
+    return views;
+  }
 
-    public InformationSchema withCatalogs(Collection<Catalog> values) {
-        if (values!= null) {
-            getCatalogs().addAll(values);
-        }
-        return this;
-    }
+  public void setViews(List<View> views) {
+    this.views = views;
+  }
 
-    public InformationSchema withCatalogs(List<Catalog> catalogs) {
-        setCatalogs(catalogs);
-        return this;
+  public List<Column> getColumns() {
+    if (columns == null) {
+      columns = new ArrayList<Column>();
     }
+    return columns;
+  }
 
-    public InformationSchema withSchemata(Schema... values) {
-        if (values!= null) {
-            for (Schema value: values) {
-                getSchemata().add(value);
-            }
-        }
-        return this;
-    }
+  public void setColumns(List<Column> columns) {
+    this.columns = columns;
+  }
 
-    public InformationSchema withSchemata(Collection<Schema> values) {
-        if (values!= null) {
-            getSchemata().addAll(values);
-        }
-        return this;
+  public List<TableConstraint> getTableConstraints() {
+    if (tableConstraints == null) {
+      tableConstraints = new ArrayList<TableConstraint>();
     }
+    return tableConstraints;
+  }
 
-    public InformationSchema withSchemata(List<Schema> schemata) {
-        setSchemata(schemata);
-        return this;
-    }
+  public void setTableConstraints(List<TableConstraint> tableConstraints) {
+    this.tableConstraints = tableConstraints;
+  }
 
-    public InformationSchema withSequences(Sequence... values) {
-        if (values!= null) {
-            for (Sequence value: values) {
-                getSequences().add(value);
-            }
-        }
-        return this;
+  public List<KeyColumnUsage> getKeyColumnUsages() {
+    if (keyColumnUsages == null) {
+      keyColumnUsages = new ArrayList<KeyColumnUsage>();
     }
+    return keyColumnUsages;
+  }
 
-    public InformationSchema withSequences(Collection<Sequence> values) {
-        if (values!= null) {
-            getSequences().addAll(values);
-        }
-        return this;
-    }
+  public void setKeyColumnUsages(List<KeyColumnUsage> keyColumnUsages) {
+    this.keyColumnUsages = keyColumnUsages;
+  }
 
-    public InformationSchema withSequences(List<Sequence> sequences) {
-        setSequences(sequences);
-        return this;
+  public List<ReferentialConstraint> getReferentialConstraints() {
+    if (referentialConstraints == null) {
+      referentialConstraints = new ArrayList<ReferentialConstraint>();
     }
+    return referentialConstraints;
+  }
 
-    public InformationSchema withTables(Table... values) {
-        if (values!= null) {
-            for (Table value: values) {
-                getTables().add(value);
-            }
-        }
-        return this;
-    }
+  public void setReferentialConstraints(List<ReferentialConstraint> referentialConstraints) {
+    this.referentialConstraints = referentialConstraints;
+  }
 
-    public InformationSchema withTables(Collection<Table> values) {
-        if (values!= null) {
-            getTables().addAll(values);
-        }
-        return this;
+  public List<CheckConstraint> getCheckConstraints() {
+    if (checkConstraints == null) {
+      checkConstraints = new ArrayList<CheckConstraint>();
     }
+    return checkConstraints;
+  }
 
-    public InformationSchema withTables(List<Table> tables) {
-        setTables(tables);
-        return this;
-    }
+  public void setCheckConstraints(List<CheckConstraint> checkConstraints) {
+    this.checkConstraints = checkConstraints;
+  }
 
-    public InformationSchema withViews(View... values) {
-        if (values!= null) {
-            for (View value: values) {
-                getViews().add(value);
-            }
-        }
-        return this;
+  public List<Domain> getDomains() {
+    if (domains == null) {
+      domains = new ArrayList<Domain>();
     }
+    return domains;
+  }
 
-    public InformationSchema withViews(Collection<View> values) {
-        if (values!= null) {
-            getViews().addAll(values);
-        }
-        return this;
-    }
+  public void setDomains(List<Domain> domains) {
+    this.domains = domains;
+  }
 
-    public InformationSchema withViews(List<View> views) {
-        setViews(views);
-        return this;
+  public List<DomainConstraint> getDomainConstraints() {
+    if (domainConstraints == null) {
+      domainConstraints = new ArrayList<DomainConstraint>();
     }
+    return domainConstraints;
+  }
 
-    public InformationSchema withColumns(Column... values) {
-        if (values!= null) {
-            for (Column value: values) {
-                getColumns().add(value);
-            }
-        }
-        return this;
-    }
+  public void setDomainConstraints(List<DomainConstraint> domainConstraints) {
+    this.domainConstraints = domainConstraints;
+  }
 
-    public InformationSchema withColumns(Collection<Column> values) {
-        if (values!= null) {
-            getColumns().addAll(values);
-        }
-        return this;
+  public List<Index> getIndexes() {
+    if (indexes == null) {
+      indexes = new ArrayList<Index>();
     }
+    return indexes;
+  }
 
-    public InformationSchema withColumns(List<Column> columns) {
-        setColumns(columns);
-        return this;
-    }
+  public void setIndexes(List<Index> indexes) {
+    this.indexes = indexes;
+  }
 
-    public InformationSchema withTableConstraints(TableConstraint... values) {
-        if (values!= null) {
-            for (TableConstraint value: values) {
-                getTableConstraints().add(value);
-            }
-        }
-        return this;
+  public List<IndexColumnUsage> getIndexColumnUsages() {
+    if (indexColumnUsages == null) {
+      indexColumnUsages = new ArrayList<IndexColumnUsage>();
     }
+    return indexColumnUsages;
+  }
 
-    public InformationSchema withTableConstraints(Collection<TableConstraint> values) {
-        if (values!= null) {
-            getTableConstraints().addAll(values);
-        }
-        return this;
-    }
+  public void setIndexColumnUsages(List<IndexColumnUsage> indexColumnUsages) {
+    this.indexColumnUsages = indexColumnUsages;
+  }
 
-    public InformationSchema withTableConstraints(List<TableConstraint> tableConstraints) {
-        setTableConstraints(tableConstraints);
-        return this;
+  public List<Routine> getRoutines() {
+    if (routines == null) {
+      routines = new ArrayList<Routine>();
     }
+    return routines;
+  }
 
-    public InformationSchema withKeyColumnUsages(KeyColumnUsage... values) {
-        if (values!= null) {
-            for (KeyColumnUsage value: values) {
-                getKeyColumnUsages().add(value);
-            }
-        }
-        return this;
-    }
+  public void setRoutines(List<Routine> routines) {
+    this.routines = routines;
+  }
 
-    public InformationSchema withKeyColumnUsages(Collection<KeyColumnUsage> values) {
-        if (values!= null) {
-            getKeyColumnUsages().addAll(values);
-        }
-        return this;
+  public List<Parameter> getParameters() {
+    if (parameters == null) {
+      parameters = new ArrayList<Parameter>();
     }
+    return parameters;
+  }
 
-    public InformationSchema withKeyColumnUsages(List<KeyColumnUsage> keyColumnUsages) {
-        setKeyColumnUsages(keyColumnUsages);
-        return this;
-    }
+  public void setParameters(List<Parameter> parameters) {
+    this.parameters = parameters;
+  }
 
-    public InformationSchema withReferentialConstraints(ReferentialConstraint... values) {
-        if (values!= null) {
-            for (ReferentialConstraint value: values) {
-                getReferentialConstraints().add(value);
-            }
-        }
-        return this;
+  public List<ElementType> getElementTypes() {
+    if (elementTypes == null) {
+      elementTypes = new ArrayList<ElementType>();
     }
+    return elementTypes;
+  }
 
-    public InformationSchema withReferentialConstraints(Collection<ReferentialConstraint> values) {
-        if (values!= null) {
-            getReferentialConstraints().addAll(values);
-        }
-        return this;
-    }
+  public void setElementTypes(List<ElementType> elementTypes) {
+    this.elementTypes = elementTypes;
+  }
 
-    public InformationSchema withReferentialConstraints(List<ReferentialConstraint> referentialConstraints) {
-        setReferentialConstraints(referentialConstraints);
-        return this;
+  public InformationSchema withCatalogs(Catalog... values) {
+    if (values != null) {
+      for (Catalog value : values) {
+        getCatalogs().add(value);
+      }
     }
+    return this;
+  }
 
-    public InformationSchema withCheckConstraints(CheckConstraint... values) {
-        if (values!= null) {
-            for (CheckConstraint value: values) {
-                getCheckConstraints().add(value);
-            }
-        }
-        return this;
+  public InformationSchema withCatalogs(Collection<Catalog> values) {
+    if (values != null) {
+      getCatalogs().addAll(values);
     }
+    return this;
+  }
 
-    public InformationSchema withCheckConstraints(Collection<CheckConstraint> values) {
-        if (values!= null) {
-            getCheckConstraints().addAll(values);
-        }
-        return this;
-    }
+  public InformationSchema withCatalogs(List<Catalog> catalogs) {
+    setCatalogs(catalogs);
+    return this;
+  }
 
-    public InformationSchema withCheckConstraints(List<CheckConstraint> checkConstraints) {
-        setCheckConstraints(checkConstraints);
-        return this;
+  public InformationSchema withSchemata(Schema... values) {
+    if (values != null) {
+      for (Schema value : values) {
+        getSchemata().add(value);
+      }
     }
+    return this;
+  }
 
-    public InformationSchema withDomains(Domain... values) {
-        if (values!= null) {
-            for (Domain value: values) {
-                getDomains().add(value);
-            }
-        }
-        return this;
+  public InformationSchema withSchemata(Collection<Schema> values) {
+    if (values != null) {
+      getSchemata().addAll(values);
     }
+    return this;
+  }
 
-    public InformationSchema withDomains(Collection<Domain> values) {
-        if (values!= null) {
-            getDomains().addAll(values);
-        }
-        return this;
-    }
+  public InformationSchema withSchemata(List<Schema> schemata) {
+    setSchemata(schemata);
+    return this;
+  }
 
-    public InformationSchema withDomains(List<Domain> domains) {
-        setDomains(domains);
-        return this;
+  public InformationSchema withSequences(Sequence... values) {
+    if (values != null) {
+      for (Sequence value : values) {
+        getSequences().add(value);
+      }
     }
+    return this;
+  }
 
-    public InformationSchema withDomainConstraints(DomainConstraint... values) {
-        if (values!= null) {
-            for (DomainConstraint value: values) {
-                getDomainConstraints().add(value);
-            }
-        }
-        return this;
+  public InformationSchema withSequences(Collection<Sequence> values) {
+    if (values != null) {
+      getSequences().addAll(values);
     }
+    return this;
+  }
 
-    public InformationSchema withDomainConstraints(Collection<DomainConstraint> values) {
-        if (values!= null) {
-            getDomainConstraints().addAll(values);
-        }
-        return this;
-    }
+  public InformationSchema withSequences(List<Sequence> sequences) {
+    setSequences(sequences);
+    return this;
+  }
 
-    public InformationSchema withDomainConstraints(List<DomainConstraint> domainConstraints) {
-        setDomainConstraints(domainConstraints);
-        return this;
+  public InformationSchema withTables(Table... values) {
+    if (values != null) {
+      for (Table value : values) {
+        getTables().add(value);
+      }
     }
+    return this;
+  }
 
-    public InformationSchema withIndexes(Index... values) {
-        if (values!= null) {
-            for (Index value: values) {
-                getIndexes().add(value);
-            }
-        }
-        return this;
+  public InformationSchema withTables(Collection<Table> values) {
+    if (values != null) {
+      getTables().addAll(values);
     }
+    return this;
+  }
 
-    public InformationSchema withIndexes(Collection<Index> values) {
-        if (values!= null) {
-            getIndexes().addAll(values);
-        }
-        return this;
-    }
+  public InformationSchema withTables(List<Table> tables) {
+    setTables(tables);
+    return this;
+  }
 
-    public InformationSchema withIndexes(List<Index> indexes) {
-        setIndexes(indexes);
-        return this;
+  public InformationSchema withViews(View... values) {
+    if (values != null) {
+      for (View value : values) {
+        getViews().add(value);
+      }
     }
+    return this;
+  }
 
-    public InformationSchema withIndexColumnUsages(IndexColumnUsage... values) {
-        if (values!= null) {
-            for (IndexColumnUsage value: values) {
-                getIndexColumnUsages().add(value);
-            }
-        }
-        return this;
+  public InformationSchema withViews(Collection<View> values) {
+    if (values != null) {
+      getViews().addAll(values);
     }
+    return this;
+  }
 
-    public InformationSchema withIndexColumnUsages(Collection<IndexColumnUsage> values) {
-        if (values!= null) {
-            getIndexColumnUsages().addAll(values);
-        }
-        return this;
-    }
+  public InformationSchema withViews(List<View> views) {
+    setViews(views);
+    return this;
+  }
 
-    public InformationSchema withIndexColumnUsages(List<IndexColumnUsage> indexColumnUsages) {
-        setIndexColumnUsages(indexColumnUsages);
-        return this;
+  public InformationSchema withColumns(Column... values) {
+    if (values != null) {
+      for (Column value : values) {
+        getColumns().add(value);
+      }
     }
+    return this;
+  }
 
-    public InformationSchema withRoutines(Routine... values) {
-        if (values!= null) {
-            for (Routine value: values) {
-                getRoutines().add(value);
-            }
-        }
-        return this;
+  public InformationSchema withColumns(Collection<Column> values) {
+    if (values != null) {
+      getColumns().addAll(values);
     }
+    return this;
+  }
 
-    public InformationSchema withRoutines(Collection<Routine> values) {
-        if (values!= null) {
-            getRoutines().addAll(values);
-        }
-        return this;
-    }
+  public InformationSchema withColumns(List<Column> columns) {
+    setColumns(columns);
+    return this;
+  }
 
-    public InformationSchema withRoutines(List<Routine> routines) {
-        setRoutines(routines);
-        return this;
+  public InformationSchema withTableConstraints(TableConstraint... values) {
+    if (values != null) {
+      for (TableConstraint value : values) {
+        getTableConstraints().add(value);
+      }
     }
+    return this;
+  }
 
-    public InformationSchema withParameters(Parameter... values) {
-        if (values!= null) {
-            for (Parameter value: values) {
-                getParameters().add(value);
-            }
-        }
-        return this;
+  public InformationSchema withTableConstraints(Collection<TableConstraint> values) {
+    if (values != null) {
+      getTableConstraints().addAll(values);
     }
+    return this;
+  }
 
-    public InformationSchema withParameters(Collection<Parameter> values) {
-        if (values!= null) {
-            getParameters().addAll(values);
-        }
-        return this;
-    }
+  public InformationSchema withTableConstraints(List<TableConstraint> tableConstraints) {
+    setTableConstraints(tableConstraints);
+    return this;
+  }
 
-    public InformationSchema withParameters(List<Parameter> parameters) {
-        setParameters(parameters);
-        return this;
+  public InformationSchema withKeyColumnUsages(KeyColumnUsage... values) {
+    if (values != null) {
+      for (KeyColumnUsage value : values) {
+        getKeyColumnUsages().add(value);
+      }
     }
+    return this;
+  }
 
-    public InformationSchema withElementTypes(ElementType... values) {
-        if (values!= null) {
-            for (ElementType value: values) {
-                getElementTypes().add(value);
-            }
-        }
-        return this;
+  public InformationSchema withKeyColumnUsages(Collection<KeyColumnUsage> values) {
+    if (values != null) {
+      getKeyColumnUsages().addAll(values);
     }
+    return this;
+  }
 
-    public InformationSchema withElementTypes(Collection<ElementType> values) {
-        if (values!= null) {
-            getElementTypes().addAll(values);
-        }
-        return this;
-    }
+  public InformationSchema withKeyColumnUsages(List<KeyColumnUsage> keyColumnUsages) {
+    setKeyColumnUsages(keyColumnUsages);
+    return this;
+  }
 
-    public InformationSchema withElementTypes(List<ElementType> elementTypes) {
-        setElementTypes(elementTypes);
-        return this;
-    }
+  public InformationSchema withReferentialConstraints(ReferentialConstraint... values) {
+    if (values != null) {
+      for (ReferentialConstraint value : values) {
+        getReferentialConstraints().add(value);
+      }
+    }
+    return this;
+  }
 
-    @Override
-    public final void appendTo(XMLBuilder builder) {
-        builder.append("catalogs", "catalog", catalogs);
-        builder.append("schemata", "schema", schemata);
-        builder.append("sequences", "sequence", sequences);
-        builder.append("tables", "table", tables);
-        builder.append("views", "view", views);
-        builder.append("columns", "column", columns);
-        builder.append("table_constraints", "table_constraint", tableConstraints);
-        builder.append("key_column_usages", "key_column_usage", keyColumnUsages);
-        builder.append("referential_constraints", "referential_constraint", referentialConstraints);
-        builder.append("check_constraints", "check_constraint", checkConstraints);
-        builder.append("domains", "domain", domains);
-        builder.append("domain_constraints", "domainConstraint", domainConstraints);
-        builder.append("indexes", "index", indexes);
-        builder.append("index_column_usages", "index_column_usage", indexColumnUsages);
-        builder.append("routines", "routine", routines);
-        builder.append("parameters", "parameter", parameters);
-        builder.append("element_types", "element_type", elementTypes);
+  public InformationSchema withReferentialConstraints(Collection<ReferentialConstraint> values) {
+    if (values != null) {
+      getReferentialConstraints().addAll(values);
     }
+    return this;
+  }
 
-    @Override
-    public String toString() {
-        XMLBuilder builder = XMLBuilder.nonFormatting();
-        appendTo(builder);
-        return builder.toString();
+  public InformationSchema withReferentialConstraints(
+      List<ReferentialConstraint> referentialConstraints) {
+    setReferentialConstraints(referentialConstraints);
+    return this;
+  }
+
+  public InformationSchema withCheckConstraints(CheckConstraint... values) {
+    if (values != null) {
+      for (CheckConstraint value : values) {
+        getCheckConstraints().add(value);
+      }
     }
-
-    @Override
-    public boolean equals(Object that) {
-        if (this == that) {
-            return true;
-        }
-        if (that == null) {
-            return false;
-        }
-        if (getClass()!= that.getClass()) {
-            return false;
-        }
-        InformationSchema other = ((InformationSchema) that);
-        if (catalogs == null) {
-            if (other.catalogs!= null) {
-                return false;
-            }
-        } else {
-            if (!catalogs.equals(other.catalogs)) {
-                return false;
-            }
-        }
-        if (schemata == null) {
-            if (other.schemata!= null) {
-                return false;
-            }
-        } else {
-            if (!schemata.equals(other.schemata)) {
-                return false;
-            }
-        }
-        if (sequences == null) {
-            if (other.sequences!= null) {
-                return false;
-            }
-        } else {
-            if (!sequences.equals(other.sequences)) {
-                return false;
-            }
-        }
-        if (tables == null) {
-            if (other.tables!= null) {
-                return false;
-            }
-        } else {
-            if (!tables.equals(other.tables)) {
-                return false;
-            }
-        }
-        if (views == null) {
-            if (other.views!= null) {
-                return false;
-            }
-        } else {
-            if (!views.equals(other.views)) {
-                return false;
-            }
-        }
-        if (columns == null) {
-            if (other.columns!= null) {
-                return false;
-            }
-        } else {
-            if (!columns.equals(other.columns)) {
-                return false;
-            }
-        }
-        if (tableConstraints == null) {
-            if (other.tableConstraints!= null) {
-                return false;
-            }
-        } else {
-            if (!tableConstraints.equals(other.tableConstraints)) {
-                return false;
-            }
-        }
-        if (keyColumnUsages == null) {
-            if (other.keyColumnUsages!= null) {
-                return false;
-            }
-        } else {
-            if (!keyColumnUsages.equals(other.keyColumnUsages)) {
-                return false;
-            }
-        }
-        if (referentialConstraints == null) {
-            if (other.referentialConstraints!= null) {
-                return false;
-            }
-        } else {
-            if (!referentialConstraints.equals(other.referentialConstraints)) {
-                return false;
-            }
-        }
-        if (checkConstraints == null) {
-            if (other.checkConstraints!= null) {
-                return false;
-            }
-        } else {
-            if (!checkConstraints.equals(other.checkConstraints)) {
-                return false;
-            }
-        }
-        if (domains == null) {
-            if (other.domains!= null) {
-                return false;
-            }
-        } else {
-            if (!domains.equals(other.domains)) {
-                return false;
-            }
-        }
-        if (domainConstraints == null) {
-            if (other.domainConstraints!= null) {
-                return false;
-            }
-        } else {
-            if (!domainConstraints.equals(other.domainConstraints)) {
-                return false;
-            }
-        }
-        if (indexes == null) {
-            if (other.indexes!= null) {
-                return false;
-            }
-        } else {
-            if (!indexes.equals(other.indexes)) {
-                return false;
-            }
-        }
-        if (indexColumnUsages == null) {
-            if (other.indexColumnUsages!= null) {
-                return false;
-            }
-        } else {
-            if (!indexColumnUsages.equals(other.indexColumnUsages)) {
-                return false;
-            }
-        }
-        if (routines == null) {
-            if (other.routines!= null) {
-                return false;
-            }
-        } else {
-            if (!routines.equals(other.routines)) {
-                return false;
-            }
-        }
-        if (parameters == null) {
-            if (other.parameters!= null) {
-                return false;
-            }
-        } else {
-            if (!parameters.equals(other.parameters)) {
-                return false;
-            }
-        }
-        if (elementTypes == null) {
-            if (other.elementTypes!= null) {
-                return false;
-            }
-        } else {
-            if (!elementTypes.equals(other.elementTypes)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = ((prime*result)+((catalogs == null)? 0 :catalogs.hashCode()));
-        result = ((prime*result)+((schemata == null)? 0 :schemata.hashCode()));
-        result = ((prime*result)+((sequences == null)? 0 :sequences.hashCode()));
-        result = ((prime*result)+((tables == null)? 0 :tables.hashCode()));
-        result = ((prime*result)+((views == null)? 0 :views.hashCode()));
-        result = ((prime*result)+((columns == null)? 0 :columns.hashCode()));
-        result = ((prime*result)+((tableConstraints == null)? 0 :tableConstraints.hashCode()));
-        result = ((prime*result)+((keyColumnUsages == null)? 0 :keyColumnUsages.hashCode()));
-        result = ((prime*result)+((referentialConstraints == null)? 0 :referentialConstraints.hashCode()));
-        result = ((prime*result)+((checkConstraints == null)? 0 :checkConstraints.hashCode()));
-        result = ((prime*result)+((domains == null)? 0 :domains.hashCode()));
-        result = ((prime*result)+((domainConstraints == null)? 0 :domainConstraints.hashCode()));
-        result = ((prime*result)+((indexes == null)? 0 :indexes.hashCode()));
-        result = ((prime*result)+((indexColumnUsages == null)? 0 :indexColumnUsages.hashCode()));
-        result = ((prime*result)+((routines == null)? 0 :routines.hashCode()));
-        result = ((prime*result)+((parameters == null)? 0 :parameters.hashCode()));
-        result = ((prime*result)+((elementTypes == null)? 0 :elementTypes.hashCode()));
-        return result;
+    return this;
+  }
+
+  public InformationSchema withCheckConstraints(Collection<CheckConstraint> values) {
+    if (values != null) {
+      getCheckConstraints().addAll(values);
+    }
+    return this;
+  }
+
+  public InformationSchema withCheckConstraints(List<CheckConstraint> checkConstraints) {
+    setCheckConstraints(checkConstraints);
+    return this;
+  }
+
+  public InformationSchema withDomains(Domain... values) {
+    if (values != null) {
+      for (Domain value : values) {
+        getDomains().add(value);
+      }
     }
-
+    return this;
+  }
+
+  public InformationSchema withDomains(Collection<Domain> values) {
+    if (values != null) {
+      getDomains().addAll(values);
+    }
+    return this;
+  }
+
+  public InformationSchema withDomains(List<Domain> domains) {
+    setDomains(domains);
+    return this;
+  }
+
+  public InformationSchema withDomainConstraints(DomainConstraint... values) {
+    if (values != null) {
+      for (DomainConstraint value : values) {
+        getDomainConstraints().add(value);
+      }
+    }
+    return this;
+  }
+
+  public InformationSchema withDomainConstraints(Collection<DomainConstraint> values) {
+    if (values != null) {
+      getDomainConstraints().addAll(values);
+    }
+    return this;
+  }
+
+  public InformationSchema withDomainConstraints(List<DomainConstraint> domainConstraints) {
+    setDomainConstraints(domainConstraints);
+    return this;
+  }
+
+  public InformationSchema withIndexes(Index... values) {
+    if (values != null) {
+      for (Index value : values) {
+        getIndexes().add(value);
+      }
+    }
+    return this;
+  }
+
+  public InformationSchema withIndexes(Collection<Index> values) {
+    if (values != null) {
+      getIndexes().addAll(values);
+    }
+    return this;
+  }
+
+  public InformationSchema withIndexes(List<Index> indexes) {
+    setIndexes(indexes);
+    return this;
+  }
+
+  public InformationSchema withIndexColumnUsages(IndexColumnUsage... values) {
+    if (values != null) {
+      for (IndexColumnUsage value : values) {
+        getIndexColumnUsages().add(value);
+      }
+    }
+    return this;
+  }
+
+  public InformationSchema withIndexColumnUsages(Collection<IndexColumnUsage> values) {
+    if (values != null) {
+      getIndexColumnUsages().addAll(values);
+    }
+    return this;
+  }
+
+  public InformationSchema withIndexColumnUsages(List<IndexColumnUsage> indexColumnUsages) {
+    setIndexColumnUsages(indexColumnUsages);
+    return this;
+  }
+
+  public InformationSchema withRoutines(Routine... values) {
+    if (values != null) {
+      for (Routine value : values) {
+        getRoutines().add(value);
+      }
+    }
+    return this;
+  }
+
+  public InformationSchema withRoutines(Collection<Routine> values) {
+    if (values != null) {
+      getRoutines().addAll(values);
+    }
+    return this;
+  }
+
+  public InformationSchema withRoutines(List<Routine> routines) {
+    setRoutines(routines);
+    return this;
+  }
+
+  public InformationSchema withParameters(Parameter... values) {
+    if (values != null) {
+      for (Parameter value : values) {
+        getParameters().add(value);
+      }
+    }
+    return this;
+  }
+
+  public InformationSchema withParameters(Collection<Parameter> values) {
+    if (values != null) {
+      getParameters().addAll(values);
+    }
+    return this;
+  }
+
+  public InformationSchema withParameters(List<Parameter> parameters) {
+    setParameters(parameters);
+    return this;
+  }
+
+  public InformationSchema withElementTypes(ElementType... values) {
+    if (values != null) {
+      for (ElementType value : values) {
+        getElementTypes().add(value);
+      }
+    }
+    return this;
+  }
+
+  public InformationSchema withElementTypes(Collection<ElementType> values) {
+    if (values != null) {
+      getElementTypes().addAll(values);
+    }
+    return this;
+  }
+
+  public InformationSchema withElementTypes(List<ElementType> elementTypes) {
+    setElementTypes(elementTypes);
+    return this;
+  }
+
+  @Override
+  public final void appendTo(XMLBuilder builder) {
+    builder.append("catalogs", "catalog", catalogs);
+    builder.append("schemata", "schema", schemata);
+    builder.append("sequences", "sequence", sequences);
+    builder.append("tables", "table", tables);
+    builder.append("views", "view", views);
+    builder.append("columns", "column", columns);
+    builder.append("table_constraints", "table_constraint", tableConstraints);
+    builder.append("key_column_usages", "key_column_usage", keyColumnUsages);
+    builder.append("referential_constraints", "referential_constraint", referentialConstraints);
+    builder.append("check_constraints", "check_constraint", checkConstraints);
+    builder.append("domains", "domain", domains);
+    builder.append("domain_constraints", "domainConstraint", domainConstraints);
+    builder.append("indexes", "index", indexes);
+    builder.append("index_column_usages", "index_column_usage", indexColumnUsages);
+    builder.append("routines", "routine", routines);
+    builder.append("parameters", "parameter", parameters);
+    builder.append("element_types", "element_type", elementTypes);
+  }
+
+  @Override
+  public String toString() {
+    XMLBuilder builder = XMLBuilder.nonFormatting();
+    appendTo(builder);
+    return builder.toString();
+  }
+
+  @Override
+  public boolean equals(Object that) {
+    if (this == that) {
+      return true;
+    }
+    if (that == null) {
+      return false;
+    }
+    if (getClass() != that.getClass()) {
+      return false;
+    }
+    InformationSchema other = ((InformationSchema) that);
+    if (catalogs == null) {
+      if (other.catalogs != null) {
+        return false;
+      }
+    } else {
+      if (!catalogs.equals(other.catalogs)) {
+        return false;
+      }
+    }
+    if (schemata == null) {
+      if (other.schemata != null) {
+        return false;
+      }
+    } else {
+      if (!schemata.equals(other.schemata)) {
+        return false;
+      }
+    }
+    if (sequences == null) {
+      if (other.sequences != null) {
+        return false;
+      }
+    } else {
+      if (!sequences.equals(other.sequences)) {
+        return false;
+      }
+    }
+    if (tables == null) {
+      if (other.tables != null) {
+        return false;
+      }
+    } else {
+      if (!tables.equals(other.tables)) {
+        return false;
+      }
+    }
+    if (views == null) {
+      if (other.views != null) {
+        return false;
+      }
+    } else {
+      if (!views.equals(other.views)) {
+        return false;
+      }
+    }
+    if (columns == null) {
+      if (other.columns != null) {
+        return false;
+      }
+    } else {
+      if (!columns.equals(other.columns)) {
+        return false;
+      }
+    }
+    if (tableConstraints == null) {
+      if (other.tableConstraints != null) {
+        return false;
+      }
+    } else {
+      if (!tableConstraints.equals(other.tableConstraints)) {
+        return false;
+      }
+    }
+    if (keyColumnUsages == null) {
+      if (other.keyColumnUsages != null) {
+        return false;
+      }
+    } else {
+      if (!keyColumnUsages.equals(other.keyColumnUsages)) {
+        return false;
+      }
+    }
+    if (referentialConstraints == null) {
+      if (other.referentialConstraints != null) {
+        return false;
+      }
+    } else {
+      if (!referentialConstraints.equals(other.referentialConstraints)) {
+        return false;
+      }
+    }
+    if (checkConstraints == null) {
+      if (other.checkConstraints != null) {
+        return false;
+      }
+    } else {
+      if (!checkConstraints.equals(other.checkConstraints)) {
+        return false;
+      }
+    }
+    if (domains == null) {
+      if (other.domains != null) {
+        return false;
+      }
+    } else {
+      if (!domains.equals(other.domains)) {
+        return false;
+      }
+    }
+    if (domainConstraints == null) {
+      if (other.domainConstraints != null) {
+        return false;
+      }
+    } else {
+      if (!domainConstraints.equals(other.domainConstraints)) {
+        return false;
+      }
+    }
+    if (indexes == null) {
+      if (other.indexes != null) {
+        return false;
+      }
+    } else {
+      if (!indexes.equals(other.indexes)) {
+        return false;
+      }
+    }
+    if (indexColumnUsages == null) {
+      if (other.indexColumnUsages != null) {
+        return false;
+      }
+    } else {
+      if (!indexColumnUsages.equals(other.indexColumnUsages)) {
+        return false;
+      }
+    }
+    if (routines == null) {
+      if (other.routines != null) {
+        return false;
+      }
+    } else {
+      if (!routines.equals(other.routines)) {
+        return false;
+      }
+    }
+    if (parameters == null) {
+      if (other.parameters != null) {
+        return false;
+      }
+    } else {
+      if (!parameters.equals(other.parameters)) {
+        return false;
+      }
+    }
+    if (elementTypes == null) {
+      if (other.elementTypes != null) {
+        return false;
+      }
+    } else {
+      if (!elementTypes.equals(other.elementTypes)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = ((prime * result) + ((catalogs == null) ? 0 : catalogs.hashCode()));
+    result = ((prime * result) + ((schemata == null) ? 0 : schemata.hashCode()));
+    result = ((prime * result) + ((sequences == null) ? 0 : sequences.hashCode()));
+    result = ((prime * result) + ((tables == null) ? 0 : tables.hashCode()));
+    result = ((prime * result) + ((views == null) ? 0 : views.hashCode()));
+    result = ((prime * result) + ((columns == null) ? 0 : columns.hashCode()));
+    result = ((prime * result) + ((tableConstraints == null) ? 0 : tableConstraints.hashCode()));
+    result = ((prime * result) + ((keyColumnUsages == null) ? 0 : keyColumnUsages.hashCode()));
+    result =
+        ((prime * result)
+            + ((referentialConstraints == null) ? 0 : referentialConstraints.hashCode()));
+    result = ((prime * result) + ((checkConstraints == null) ? 0 : checkConstraints.hashCode()));
+    result = ((prime * result) + ((domains == null) ? 0 : domains.hashCode()));
+    result = ((prime * result) + ((domainConstraints == null) ? 0 : domainConstraints.hashCode()));
+    result = ((prime * result) + ((indexes == null) ? 0 : indexes.hashCode()));
+    result = ((prime * result) + ((indexColumnUsages == null) ? 0 : indexColumnUsages.hashCode()));
+    result = ((prime * result) + ((routines == null) ? 0 : routines.hashCode()));
+    result = ((prime * result) + ((parameters == null) ? 0 : parameters.hashCode()));
+    result = ((prime * result) + ((elementTypes == null) ? 0 : elementTypes.hashCode()));
+    return result;
+  }
 }

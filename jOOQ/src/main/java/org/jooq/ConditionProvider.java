@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,6 @@
  *
  *
  */
-
 package org.jooq;
 
 import java.util.Collection;
@@ -44,65 +43,63 @@ import java.util.Collection;
  * A common interface for all objects holding conditions (e.g. queries).
  *
  * @author Lukas Eder
- * @deprecated - 2.6.0 [#1881] - This type will be removed from the public API,
- *             soon. Its methods will be pushed down into extending interfaces.
- *             Do not reference this type directly.
+ * @deprecated - 2.6.0 [#1881] - This type will be removed from the public API, soon. Its methods
+ *     will be pushed down into extending interfaces. Do not reference this type directly.
  */
 @Deprecated(forRemoval = true, since = "2.6")
 public interface ConditionProvider {
 
-    /**
-     * Adds a new condition to the query, connecting them to existing
-     * conditions with {@link Operator#AND}.
-     *
-     * @param condition The condition
-     */
-    @Support
-    void addConditions(Condition condition);
+  /**
+   * Adds a new condition to the query, connecting them to existing conditions with {@link
+   * Operator#AND}.
+   *
+   * @param condition The condition
+   */
+  @Support
+  void addConditions(Condition condition);
 
-    /**
-     * Adds new conditions to the query, connecting them to existing
-     * conditions with {@link Operator#AND}.
-     *
-     * @param conditions The condition
-     */
-    @Support
-    void addConditions(Condition... conditions);
+  /**
+   * Adds new conditions to the query, connecting them to existing conditions with {@link
+   * Operator#AND}.
+   *
+   * @param conditions The condition
+   */
+  @Support
+  void addConditions(Condition... conditions);
 
-    /**
-     * Adds new conditions to the query, connecting them to existing
-     * conditions with {@link Operator#AND}.
-     *
-     * @param conditions The condition
-     */
-    @Support
-    void addConditions(Collection<? extends Condition> conditions);
+  /**
+   * Adds new conditions to the query, connecting them to existing conditions with {@link
+   * Operator#AND}.
+   *
+   * @param conditions The condition
+   */
+  @Support
+  void addConditions(Collection<? extends Condition> conditions);
 
-    /**
-     * Adds a new condition to the query, connecting them to existing
-     * conditions with the provided operator.
-     *
-     * @param condition The condition
-     */
-    @Support
-    void addConditions(Operator operator, Condition condition);
+  /**
+   * Adds a new condition to the query, connecting them to existing conditions with the provided
+   * operator.
+   *
+   * @param condition The condition
+   */
+  @Support
+  void addConditions(Operator operator, Condition condition);
 
-    /**
-     * Adds new conditions to the query, connecting them to existing
-     * conditions with the provided operator.
-     *
-     * @param conditions The condition
-     */
-    @Support
-    void addConditions(Operator operator, Condition... conditions);
+  /**
+   * Adds new conditions to the query, connecting them to existing conditions with the provided
+   * operator.
+   *
+   * @param conditions The condition
+   */
+  @Support
+  void addConditions(Operator operator, Condition... conditions);
 
-    /**
-     * Adds new conditions to the query, connecting them to existing
-     * conditions with the provided operator.
-     *
-     * @param conditions The condition
-     */
-    @Support
-    void addConditions(Operator operator, Collection<? extends Condition> conditions);
-
+  /**
+   * Adds new conditions to the query, connecting them to existing conditions with the provided
+   * operator.
+   *
+   * @param conditions The condition
+   */
+  @Support
+  void addConditions(Operator operator, Collection<? extends Condition> conditions);
 }

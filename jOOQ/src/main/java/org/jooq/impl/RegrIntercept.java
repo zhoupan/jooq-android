@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,7 @@
  */
 package org.jooq.impl;
 
+import static org.jooq.SQLDialect.*;
 import static org.jooq.impl.DSL.*;
 import static org.jooq.impl.Internal.*;
 import static org.jooq.impl.Keywords.*;
@@ -46,71 +47,41 @@ import static org.jooq.impl.Tools.*;
 import static org.jooq.impl.Tools.BooleanDataKey.*;
 import static org.jooq.impl.Tools.DataExtendedKey.*;
 import static org.jooq.impl.Tools.DataKey.*;
-import static org.jooq.SQLDialect.*;
 
+import java.math.BigDecimal;
+import java.util.*;
 import org.jooq.*;
-import org.jooq.Record;
 import org.jooq.conf.*;
-import org.jooq.impl.*;
 import org.jooq.tools.*;
 
-import java.util.*;
-import java.math.BigDecimal;
+/** The <code>REGR INTERCEPT</code> statement. */
+@SuppressWarnings({"rawtypes", "unused"})
+final class RegrIntercept extends DefaultAggregateFunction<BigDecimal> {
 
+  RegrIntercept(Field<? extends Number> y, Field<? extends Number> x) {
+    super(
+        false, N_REGR_INTERCEPT, NUMERIC, nullSafeNotNull(y, INTEGER), nullSafeNotNull(x, INTEGER));
+  }
 
-/**
- * The <code>REGR INTERCEPT</code> statement.
- */
-@SuppressWarnings({ "rawtypes", "unused" })
-final class RegrIntercept
-extends
-    DefaultAggregateFunction<BigDecimal>
-{
+  // -------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // -------------------------------------------------------------------------
 
-    RegrIntercept(
-        Field<? extends Number> y,
-        Field<? extends Number> x
-    ) {
-        super(
-            false,
-            N_REGR_INTERCEPT,
-            NUMERIC,
-            nullSafeNotNull(y, INTEGER),
-            nullSafeNotNull(x, INTEGER)
-        );
-    }
+  private static final Set<SQLDialect> NO_SUPPORT_NATIVE =
+      SQLDialect.supportedUntil(
+          CUBRID, DERBY, FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, SQLITE);
 
-    // -------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // -------------------------------------------------------------------------
+  @Override
+  public final void accept(Context<?> ctx) {
+    if (NO_SUPPORT_NATIVE.contains(ctx.dialect())) acceptEmulation(ctx);
+    else super.accept(ctx);
+  }
 
+  @SuppressWarnings("unchecked")
+  private final void acceptEmulation(Context<?> ctx) {
+    Field<? extends Number> x = (Field) getArguments().get(0);
+    Field<? extends Number> y = (Field) getArguments().get(1);
 
-
-    private static final Set<SQLDialect> NO_SUPPORT_NATIVE        = SQLDialect.supportedUntil(CUBRID, DERBY, FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, SQLITE);
-
-
-
-
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        if (NO_SUPPORT_NATIVE.contains(ctx.dialect()))
-            acceptEmulation(ctx);
-
-
-
-
-        else
-            super.accept(ctx);
-    }
-
-    @SuppressWarnings("unchecked")
-    private final void acceptEmulation(Context<?> ctx) {
-        Field<? extends Number> x = (Field) getArguments().get(0);
-        Field<? extends Number> y = (Field) getArguments().get(1);
-
-        ctx.visit(fo(regrAvgY(x, y)).minus(fo(regrSlope(x, y)).times(fo(regrAvgX(x, y)))));
-    }
-
-
+    ctx.visit(fo(regrAvgY(x, y)).minus(fo(regrSlope(x, y)).times(fo(regrAvgX(x, y)))));
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,7 +37,6 @@
  */
 package org.jooq.meta.postgres;
 
-
 import static org.jooq.impl.DSL.count;
 import static org.jooq.impl.DSL.inline;
 import static org.jooq.impl.DSL.name;
@@ -48,7 +47,6 @@ import static org.jooq.meta.postgres.information_schema.Tables.ROUTINES;
 
 import java.sql.SQLException;
 import java.util.Arrays;
-
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.meta.AbstractRoutineDefinition;
@@ -70,63 +68,64 @@ import org.jooq.tools.StringUtils;
  */
 public class PostgresRoutineDefinition extends AbstractRoutineDefinition {
 
-    private static final JooqLogger log = JooqLogger.getLogger(PostgresRoutineDefinition.class);
-    private final String            specificName;
+  private static final JooqLogger log = JooqLogger.getLogger(PostgresRoutineDefinition.class);
+  private final String specificName;
 
-    public PostgresRoutineDefinition(Database database, Record record) {
-        super(database.getSchema(record.get(ROUTINES.ROUTINE_SCHEMA)),
-            null,
-            record.get(ROUTINES.ROUTINE_NAME),
-            null,
-            record.get("overload", String.class),
-            record.get("is_agg", boolean.class));
+  public PostgresRoutineDefinition(Database database, Record record) {
+    super(
+        database.getSchema(record.get(ROUTINES.ROUTINE_SCHEMA)),
+        null,
+        record.get(ROUTINES.ROUTINE_NAME),
+        null,
+        record.get("overload", String.class),
+        record.get("is_agg", boolean.class));
 
-        if (!Arrays.asList("void", "record").contains(record.get("data_type"))) {
-            SchemaDefinition typeSchema = null;
+    if (!Arrays.asList("void", "record").contains(record.get("data_type"))) {
+      SchemaDefinition typeSchema = null;
 
-            String schemaName = record.get(ROUTINES.TYPE_UDT_SCHEMA);
-            if (schemaName != null)
-                typeSchema = getDatabase().getSchema(schemaName);
+      String schemaName = record.get(ROUTINES.TYPE_UDT_SCHEMA);
+      if (schemaName != null) typeSchema = getDatabase().getSchema(schemaName);
 
-            DataTypeDefinition type = new DefaultDataTypeDefinition(
-                getDatabase(),
-                typeSchema == null
-                    ? database.getSchema(record.get(ROUTINES.ROUTINE_SCHEMA))
-                    : typeSchema,
-                record.get("data_type", String.class),
-                record.get(ROUTINES.CHARACTER_MAXIMUM_LENGTH),
-                record.get(ROUTINES.NUMERIC_PRECISION),
-                record.get(ROUTINES.NUMERIC_SCALE),
-                null,
-                (String) null,
-                name(
-                    record.get(ROUTINES.TYPE_UDT_SCHEMA),
-                    record.get(ROUTINES.TYPE_UDT_NAME)
-                )
-            );
+      DataTypeDefinition type =
+          new DefaultDataTypeDefinition(
+              getDatabase(),
+              typeSchema == null
+                  ? database.getSchema(record.get(ROUTINES.ROUTINE_SCHEMA))
+                  : typeSchema,
+              record.get("data_type", String.class),
+              record.get(ROUTINES.CHARACTER_MAXIMUM_LENGTH),
+              record.get(ROUTINES.NUMERIC_PRECISION),
+              record.get(ROUTINES.NUMERIC_SCALE),
+              null,
+              (String) null,
+              name(record.get(ROUTINES.TYPE_UDT_SCHEMA), record.get(ROUTINES.TYPE_UDT_NAME)));
 
-            returnValue = new DefaultParameterDefinition(this, "RETURN_VALUE", -1, type);
-        }
-
-        specificName = record.get(ROUTINES.SPECIFIC_NAME);
+      returnValue = new DefaultParameterDefinition(this, "RETURN_VALUE", -1, type);
     }
 
-    // [#3375] This internal constructor is used for table-valued functions. It should not be used otherwise
-    PostgresRoutineDefinition(Database database, String schema, String name, String specificName) {
-        super(database.getSchema(schema), null, name, null, null);
+    specificName = record.get(ROUTINES.SPECIFIC_NAME);
+  }
 
-        this.specificName = specificName;
-    }
+  // [#3375] This internal constructor is used for table-valued functions. It should not be used
+  // otherwise
+  PostgresRoutineDefinition(Database database, String schema, String name, String specificName) {
+    super(database.getSchema(schema), null, name, null, null);
 
-    @Override
-    protected void init0() throws SQLException {
-        Parameters p = PARAMETERS;
-        Field<Integer> count = count()
+    this.specificName = specificName;
+  }
+
+  @Override
+  protected void init0() throws SQLException {
+    Parameters p = PARAMETERS;
+    Field<Integer> count =
+        count()
             .filterWhere(p.PARAMETER_NAME.ne(inline("")))
             .over(partitionBy(p.SPECIFIC_NAME, p.PARAMETER_NAME));
-        Field<Integer> c = count.as("c");
+    Field<Integer> c = count.as("c");
 
-        for (Record record : create().select(
+    for (Record record :
+        create()
+            .select(
                 p.PARAMETER_NAME,
                 p.DATA_TYPE,
                 p.CHARACTER_MAXIMUM_LENGTH,
@@ -139,63 +138,63 @@ public class PostgresRoutineDefinition extends AbstractRoutineDefinition {
                 ((PostgresDatabase) getDatabase()).is94()
                     ? p.PARAMETER_DEFAULT
                     : inline((String) null).as(p.PARAMETER_DEFAULT),
-                c
-            )
+                c)
             .from(p)
             .where(p.SPECIFIC_SCHEMA.equal(getSchema().getName()))
             .and(p.SPECIFIC_NAME.equal(specificName))
             .orderBy(p.ORDINAL_POSITION.asc())) {
 
-            String parameterName = record.get(p.PARAMETER_NAME);
-            String inOut = record.get(p.PARAMETER_MODE);
-            SchemaDefinition typeSchema = null;
+      String parameterName = record.get(p.PARAMETER_NAME);
+      String inOut = record.get(p.PARAMETER_MODE);
+      SchemaDefinition typeSchema = null;
 
-            String schemaName = record.get(p.UDT_SCHEMA);
-            if (schemaName != null)
-                typeSchema = getDatabase().getSchema(schemaName);
+      String schemaName = record.get(p.UDT_SCHEMA);
+      if (schemaName != null) typeSchema = getDatabase().getSchema(schemaName);
 
-            DataTypeDefinition type = new DefaultDataTypeDefinition(
-                getDatabase(),
-                typeSchema,
-                record.get(p.DATA_TYPE),
-                record.get(p.CHARACTER_MAXIMUM_LENGTH),
-                record.get(p.NUMERIC_PRECISION),
-                record.get(p.NUMERIC_SCALE),
-                null,
-                record.get(p.PARAMETER_DEFAULT),
-                name(
-                    record.get(p.UDT_SCHEMA),
-                    record.get(p.UDT_NAME)
-                )
-            );
+      DataTypeDefinition type =
+          new DefaultDataTypeDefinition(
+              getDatabase(),
+              typeSchema,
+              record.get(p.DATA_TYPE),
+              record.get(p.CHARACTER_MAXIMUM_LENGTH),
+              record.get(p.NUMERIC_PRECISION),
+              record.get(p.NUMERIC_SCALE),
+              null,
+              record.get(p.PARAMETER_DEFAULT),
+              name(record.get(p.UDT_SCHEMA), record.get(p.UDT_NAME)));
 
-            ParameterDefinition parameter = new DefaultParameterDefinition(
-                this,
-                parameterName,
-                record.get(p.ORDINAL_POSITION),
-                type,
-                record.get(p.PARAMETER_DEFAULT) != null,
-                StringUtils.isBlank(parameterName),
-                "",
-                record.get(c) > 1 ? record.get(p.ORDINAL_POSITION, String.class) : null
-            );
+      ParameterDefinition parameter =
+          new DefaultParameterDefinition(
+              this,
+              parameterName,
+              record.get(p.ORDINAL_POSITION),
+              type,
+              record.get(p.PARAMETER_DEFAULT) != null,
+              StringUtils.isBlank(parameterName),
+              "",
+              record.get(c) > 1 ? record.get(p.ORDINAL_POSITION, String.class) : null);
 
-            addParameter(InOutDefinition.getFromString(inOut), parameter);
-        }
+      addParameter(InOutDefinition.getFromString(inOut), parameter);
     }
+  }
 
-    static Field<Integer> pNumericPrecision(Parameters p) {
-        // [#12048] [#12612] TODO: Maintain whether we know the precision or not
+  static Field<Integer> pNumericPrecision(Parameters p) {
+    // [#12048] [#12612] TODO: Maintain whether we know the precision or not
 
-        return when(p.NUMERIC_PRECISION.isNull().and(p.DATA_TYPE.in(
-            inline("time"),
-            inline("timetz"),
-            inline("time without time zone"),
-            inline("time with time zone"),
-            inline("timestamp"),
-            inline("timestamptz"),
-            inline("timestamp without time zone"),
-            inline("timestamp with time zone"))), inline(6))
+    return when(
+            p.NUMERIC_PRECISION
+                .isNull()
+                .and(
+                    p.DATA_TYPE.in(
+                        inline("time"),
+                        inline("timetz"),
+                        inline("time without time zone"),
+                        inline("time with time zone"),
+                        inline("timestamp"),
+                        inline("timestamptz"),
+                        inline("timestamp without time zone"),
+                        inline("timestamp with time zone"))),
+            inline(6))
         .else_(p.NUMERIC_PRECISION);
-    }
+  }
 }

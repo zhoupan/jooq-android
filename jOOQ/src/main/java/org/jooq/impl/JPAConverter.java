@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,89 +38,85 @@
 package org.jooq.impl;
 
 import java.lang.reflect.Method;
-
 import javax.persistence.AttributeConverter;
-
 import org.jooq.exception.MappingException;
 import org.jooq.tools.JooqLogger;
 import org.jooq.tools.reflect.Reflect;
 
-
 /**
- * A converter that delegates data type conversions to a JPA
- * {@link AttributeConverter}.
- * <p>
- * This is particularly useful when generating code from a
- * <code>JPADatabase</code>, which reverse engineers JPA annotated entities, in
- * case of which, by default, the {@link AttributeConverter} annotations are
- * discovered automatically and the user-defined type is applied also in the
- * jOOQ meta model.
+ * A converter that delegates data type conversions to a JPA {@link AttributeConverter}.
+ *
+ * <p>This is particularly useful when generating code from a <code>JPADatabase</code>, which
+ * reverse engineers JPA annotated entities, in case of which, by default, the {@link
+ * AttributeConverter} annotations are discovered automatically and the user-defined type is applied
+ * also in the jOOQ meta model.
  *
  * @author Lukas Eder
  */
 public final class JPAConverter<T, U> extends AbstractConverter<T, U> {
-    private static final JooqLogger        log              = JooqLogger.getLogger(JPAConverter.class);
+  private static final JooqLogger log = JooqLogger.getLogger(JPAConverter.class);
 
-    private final AttributeConverter<U, T> delegate;
+  private final AttributeConverter<U, T> delegate;
 
-    public JPAConverter(Class<? extends AttributeConverter<U, T>> klass) {
-        super(fromType(klass), toType(klass));
+  public JPAConverter(Class<? extends AttributeConverter<U, T>> klass) {
+    super(fromType(klass), toType(klass));
 
-        try {
-            this.delegate = Reflect.on(klass).create().get();
-        }
-        catch (Exception e) {
-            throw new MappingException("Cannot instanciate AttributeConverter", e);
-        }
+    try {
+      this.delegate = Reflect.on(klass).create().get();
+    } catch (Exception e) {
+      throw new MappingException("Cannot instanciate AttributeConverter", e);
+    }
+  }
+
+  @SuppressWarnings("unchecked")
+  private static final <T> Class<T> fromType(Class<? extends AttributeConverter<?, T>> klass) {
+    Method candidate = null;
+
+    // [#10951] Try finding the bridge method, skip the inherited method if applicable
+    for (Method method : klass.getDeclaredMethods())
+      if ("convertToDatabaseColumn".equals(method.getName()))
+        if (method.getReturnType() == Object.class) candidate = method;
+        else return (Class<T>) method.getReturnType();
+
+    if (candidate != null) {
+      log.warn(
+          "Couldn't find bridge method to detect generic type bound for "
+              + klass.getName()
+              + "::convertToDatabaseColumn");
+      return (Class<T>) candidate.getReturnType();
     }
 
-    @SuppressWarnings("unchecked")
-    private static final <T> Class<T> fromType(Class<? extends AttributeConverter<?, T>> klass) {
-        Method candidate = null;
+    throw new IllegalArgumentException();
+  }
 
-        // [#10951] Try finding the bridge method, skip the inherited method if applicable
-        for (Method method : klass.getDeclaredMethods())
-            if ("convertToDatabaseColumn".equals(method.getName()))
-                if (method.getReturnType() == Object.class)
-                    candidate = method;
-                else
-                    return (Class<T>) method.getReturnType();
+  @SuppressWarnings("unchecked")
+  private static final <U> Class<U> toType(Class<? extends AttributeConverter<U, ?>> klass) {
+    Method candidate = null;
 
-        if (candidate != null) {
-            log.warn("Couldn't find bridge method to detect generic type bound for " + klass.getName() + "::convertToDatabaseColumn");
-            return (Class<T>) candidate.getReturnType();
-        }
+    // [#10951] Try finding the bridge method, skip the inherited method if applicable
+    for (Method method : klass.getDeclaredMethods())
+      if ("convertToEntityAttribute".equals(method.getName()))
+        if (method.getReturnType() == Object.class) candidate = method;
+        else return (Class<U>) method.getReturnType();
 
-        throw new IllegalArgumentException();
+    if (candidate != null) {
+      log.warn(
+          "Couldn't find bridge method to detect generic type bound for "
+              + klass.getName()
+              + "::convertToEntityAttribute");
+      return (Class<U>) candidate.getReturnType();
     }
 
-    @SuppressWarnings("unchecked")
-    private static final <U> Class<U> toType(Class<? extends AttributeConverter<U, ?>> klass) {
-        Method candidate = null;
+    throw new IllegalArgumentException();
+  }
 
-        // [#10951] Try finding the bridge method, skip the inherited method if applicable
-        for (Method method : klass.getDeclaredMethods())
-            if ("convertToEntityAttribute".equals(method.getName()))
-                if (method.getReturnType() == Object.class)
-                    candidate = method;
-                else
-                    return (Class<U>) method.getReturnType();
+  @Override
+  public final U from(T t) {
+    return delegate.convertToEntityAttribute(t);
+  }
 
-        if (candidate != null) {
-            log.warn("Couldn't find bridge method to detect generic type bound for " + klass.getName() + "::convertToEntityAttribute");
-            return (Class<U>) candidate.getReturnType();
-        }
-
-        throw new IllegalArgumentException();
-    }
-
-    @Override
-    public final U from(T t) {
-        return delegate.convertToEntityAttribute(t);
-    }
-
-    @Override
-    public final T to(U u) {
-        return delegate.convertToDatabaseColumn(u);
-    }
+  @Override
+  public final T to(U u) {
+    return delegate.convertToDatabaseColumn(u);
+  }
 }

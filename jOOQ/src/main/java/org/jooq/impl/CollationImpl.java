@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,43 +40,27 @@ package org.jooq.impl;
 // ...
 // ...
 
-import java.util.Set;
-
 import org.jooq.Collation;
 import org.jooq.Context;
 import org.jooq.Name;
-// ...
-import org.jooq.SQLDialect;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class CollationImpl extends AbstractQueryPart implements Collation {
 
+  private final Name name;
 
+  CollationImpl(Name name) {
+    this.name = name;
+  }
 
+  @Override
+  public final void accept(Context<?> ctx) {
 
+    ctx.visit(name);
+  }
 
-
-    private final Name                       name;
-
-    CollationImpl(Name name) {
-        this.name = name;
-    }
-
-    @Override
-    public final void accept(Context<?> ctx) {
-
-
-
-
-
-
-        ctx.visit(name);
-    }
-
-    @Override
-    public final String getName() {
-        return name.last();
-    }
+  @Override
+  public final String getName() {
+    return name.last();
+  }
 }

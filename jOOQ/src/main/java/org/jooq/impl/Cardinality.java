@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,25 +44,19 @@ import static org.jooq.impl.SQLDataType.INTEGER;
 import org.jooq.Context;
 import org.jooq.Field;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class Cardinality extends AbstractField<Integer> {
-    private final Field<?>    arg;
+  private final Field<?> arg;
 
-    Cardinality(Field<? extends Object[]> arg) {
-        super(N_CARDINALITY, INTEGER);
+  Cardinality(Field<? extends Object[]> arg) {
+    super(N_CARDINALITY, INTEGER);
 
-        this.arg = arg;
-    }
+    this.arg = arg;
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
+  @Override
+  public final void accept(Context<?> ctx) {
 
-
-
-
-
-        ctx.visit(N_CARDINALITY).sql('(').visit(arg).sql(')');
-    }
+    ctx.visit(N_CARDINALITY).sql('(').visit(arg).sql(')');
+  }
 }

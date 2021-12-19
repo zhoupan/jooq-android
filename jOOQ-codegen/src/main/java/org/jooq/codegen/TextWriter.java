@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,19 +42,18 @@ import java.io.PrintWriter;
 
 /**
  * A wrapper for a {@link PrintWriter}
- * <p>
- * This wrapper adds text printing features to the general
- * {@link GeneratorWriter}
+ *
+ * <p>This wrapper adds text printing features to the general {@link GeneratorWriter}
  *
  * @author Lukas Eder
  */
 public class TextWriter extends GeneratorWriter<TextWriter> {
 
-    protected TextWriter(File file) {
-        this(file, null);
-    }
+  protected TextWriter(File file) {
+    this(file, null);
+  }
 
-    protected TextWriter(File file, String encoding) {
-        super(file, encoding);
-    }
+  protected TextWriter(File file, String encoding) {
+    super(file, encoding);
+  }
 }

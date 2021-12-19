@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,45 +43,42 @@ import static org.jooq.impl.Names.N_ROWSFROM;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.jooq.Context;
 import org.jooq.Field;
 import org.jooq.Record;
 import org.jooq.Table;
 import org.jooq.TableOptions;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class RowsFrom extends AbstractTable<Record> {
 
-    private final TableList   tables;
+  private final TableList tables;
 
-    RowsFrom(Table<?>... tables) {
-        super(TableOptions.expression(), N_ROWSFROM);
+  RowsFrom(Table<?>... tables) {
+    super(TableOptions.expression(), N_ROWSFROM);
 
-        this.tables = new TableList(Arrays.asList(tables));
-    }
+    this.tables = new TableList(Arrays.asList(tables));
+  }
 
-    @Override
-    public final Class<? extends Record> getRecordType() {
-        // TODO: [#4695] Calculate the correct Record[B] type
-        return RecordImplN.class;
-    }
+  @Override
+  public final Class<? extends Record> getRecordType() {
+    // TODO: [#4695] Calculate the correct Record[B] type
+    return RecordImplN.class;
+  }
 
-    @Override
-    final FieldsImpl<Record> fields0() {
-        List<Field<?>> fields = new ArrayList<>();
+  @Override
+  final FieldsImpl<Record> fields0() {
+    List<Field<?>> fields = new ArrayList<>();
 
-        for (Table<?> table : tables)
-            for (Field<?> field : table.fields())
-                fields.add(DSL.field(DSL.name(field.getName()), field.getDataType()));
+    for (Table<?> table : tables)
+      for (Field<?> field : table.fields())
+        fields.add(DSL.field(DSL.name(field.getName()), field.getDataType()));
 
-        return new FieldsImpl<>(fields);
-    }
+    return new FieldsImpl<>(fields);
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        ctx.visit(K_ROWS_FROM).sql(" (").declareTables(true, c -> c.visit(tables)).sql(')');
-    }
+  @Override
+  public final void accept(Context<?> ctx) {
+    ctx.visit(K_ROWS_FROM).sql(" (").declareTables(true, c -> c.visit(tables)).sql(')');
+  }
 }

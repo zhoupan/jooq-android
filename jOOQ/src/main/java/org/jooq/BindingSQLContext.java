@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,7 +37,6 @@
  */
 package org.jooq;
 
-
 /**
  * A container type for {@link Binding#sql(BindingSQLContext)} arguments.
  *
@@ -45,24 +44,20 @@ package org.jooq;
  */
 public interface BindingSQLContext<U> extends Scope {
 
-    /**
-     * The {@link RenderContext} that contains the generated SQL and the current
-     * SQL generation state.
-     */
-    RenderContext render();
+  /**
+   * The {@link RenderContext} that contains the generated SQL and the current SQL generation state.
+   */
+  RenderContext render();
 
-    /**
-     * The bind value that is being rendered.
-     */
-    U value();
+  /** The bind value that is being rendered. */
+  U value();
 
-    /**
-     * The variable string - mostly just a <code>?</code>, or a named bind variable, such as <code>:var</code>.
-     */
-    String variable();
+  /**
+   * The variable string - mostly just a <code>?</code>, or a named bind variable, such as <code>
+   * :var</code>.
+   */
+  String variable();
 
-    /**
-     * Create a new context from this one using a converter.
-     */
-    <T> BindingSQLContext<T> convert(Converter<? extends T, ? super U> converter);
+  /** Create a new context from this one using a converter. */
+  <T> BindingSQLContext<T> convert(Converter<? extends T, ? super U> converter);
 }

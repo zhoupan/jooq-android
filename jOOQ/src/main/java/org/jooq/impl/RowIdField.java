@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,42 +43,30 @@ import org.jooq.Context;
 import org.jooq.RowId;
 import org.jooq.Table;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class RowIdField extends AbstractField<RowId> {
-    private final Table<?>    table;
+  private final Table<?> table;
 
-    RowIdField(Table<?> table) {
-        super(table.getQualifiedName().append(unquotedName("rowid")), SQLDataType.ROWID);
+  RowIdField(Table<?> table) {
+    super(table.getQualifiedName().append(unquotedName("rowid")), SQLDataType.ROWID);
 
-        this.table = table;
+    this.table = table;
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case H2:
+        ctx.visit(table.getQualifiedName().append(unquotedName("_rowid_")));
+        break;
+
+      case POSTGRES:
+        ctx.visit(table.getQualifiedName().append(unquotedName("ctid")));
+        break;
+
+      default:
+        ctx.visit(getQualifiedName());
+        break;
     }
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-            case H2:
-                ctx.visit(table.getQualifiedName().append(unquotedName("_rowid_")));
-                break;
-
-            case POSTGRES:
-                ctx.visit(table.getQualifiedName().append(unquotedName("ctid")));
-                break;
-
-
-
-
-
-
-
-
-
-
-
-            default:
-                ctx.visit(getQualifiedName());
-                break;
-        }
-    }
+  }
 }

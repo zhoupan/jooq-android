@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,14 +35,12 @@
  *
  *
  */
-
 package org.jooq.impl;
 
 import static org.jooq.Clause.CONDITION;
 import static org.jooq.Clause.CONDITION_AND;
 import static org.jooq.Clause.CONDITION_OR;
 import static org.jooq.Operator.AND;
-// ...
 import static org.jooq.impl.DSL.falseCondition;
 import static org.jooq.impl.DSL.noCondition;
 import static org.jooq.impl.DSL.trueCondition;
@@ -54,185 +52,137 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
-
 import org.jooq.Clause;
 import org.jooq.Condition;
 import org.jooq.Context;
 import org.jooq.Keyword;
 import org.jooq.Operator;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class CombinedCondition extends AbstractCondition {
 
-    private static final Clause[] CLAUSES_AND      = { CONDITION, CONDITION_AND };
-    private static final Clause[] CLAUSES_OR       = { CONDITION, CONDITION_OR };
+  private static final Clause[] CLAUSES_AND = {CONDITION, CONDITION_AND};
+  private static final Clause[] CLAUSES_OR = {CONDITION, CONDITION_OR};
 
-    final Operator                operator;
-    final List<Condition>         conditions;
+  final Operator operator;
+  final List<Condition> conditions;
 
-    static Condition of(Operator operator, Condition left, Condition right) {
-        if (left instanceof NoCondition)
-            return right;
-        else if (right instanceof NoCondition)
-            return left;
-        else
-            return new CombinedCondition(operator, left, right);
+  static Condition of(Operator operator, Condition left, Condition right) {
+    if (left instanceof NoCondition) return right;
+    else if (right instanceof NoCondition) return left;
+    else return new CombinedCondition(operator, left, right);
+  }
+
+  static Condition of(Operator operator, Collection<? extends Condition> conditions) {
+    CombinedCondition result = null;
+    Condition first = null;
+
+    for (Condition condition : conditions)
+      if (!(condition instanceof NoCondition))
+        if (first == null) first = condition;
+        else if (result == null)
+          (result = new CombinedCondition(operator, conditions.size()))
+              .add(operator, first)
+              .add(operator, condition);
+        else result.add(operator, condition);
+
+    if (result != null) return result;
+    else if (first != null) return first;
+
+    // [#9998] All conditions were NoCondition
+    else if (!conditions.isEmpty()) return noCondition();
+
+    // [#9998] Otherwise, return the identity for the operator
+    else return identity(operator);
+  }
+
+  @Override
+  final boolean isNullable() {
+    return anyMatch(
+        conditions, c -> !(c instanceof AbstractCondition) || ((AbstractCondition) c).isNullable());
+  }
+
+  static final Condition identity(Operator operator) {
+    return operator == AND ? trueCondition() : falseCondition();
+  }
+
+  final Condition transform(Function<? super Condition, ? extends Condition> function) {
+    List<Condition> newList = null;
+
+    for (int i = 0; i < conditions.size(); i++) {
+      Condition oldC = conditions.get(i);
+      Condition newC =
+          oldC instanceof CombinedCondition
+              ? ((CombinedCondition) oldC).transform(function)
+              : function.apply(oldC);
+
+      if (newC != oldC) {
+        if (newList == null) newList = new ArrayList<>(conditions.subList(0, i));
+
+        if (newC != null) newList.add(newC);
+      } else if (newList != null) newList.add(newC);
     }
 
-    static Condition of(Operator operator, Collection<? extends Condition> conditions) {
-        CombinedCondition result = null;
-        Condition first = null;
+    if (newList == null) return this;
+    else if (newList.isEmpty()) return noCondition();
+    else return of(operator, newList);
+  }
 
-        for (Condition condition : conditions)
-            if (!(condition instanceof NoCondition))
-                if (first == null)
-                    first = condition;
-                else if (result == null)
-                    (result = new CombinedCondition(operator, conditions.size()))
-                        .add(operator, first)
-                        .add(operator, condition);
-                else
-                    result.add(operator, condition);
+  private CombinedCondition(Operator operator, int size) {
+    if (operator == null)
+      throw new IllegalArgumentException("The argument 'operator' must not be null");
 
-        if (result != null)
-            return result;
-        else if (first != null)
-            return first;
+    this.operator = operator;
+    this.conditions = new ArrayList<>(size);
+  }
 
-        // [#9998] All conditions were NoCondition
-        else if (!conditions.isEmpty())
-            return noCondition();
+  private CombinedCondition(Operator operator, Condition left, Condition right) {
+    this(operator, 2);
 
-        // [#9998] Otherwise, return the identity for the operator
-        else
-            return identity(operator);
+    add(operator, left);
+    add(operator, right);
+  }
+
+  private final CombinedCondition add(Operator op, Condition condition) {
+    if (condition instanceof CombinedCondition) {
+      CombinedCondition combinedCondition = (CombinedCondition) condition;
+
+      if (combinedCondition.operator == op) this.conditions.addAll(combinedCondition.conditions);
+      else this.conditions.add(condition);
+    } else if (condition == null)
+      throw new IllegalArgumentException("The argument 'conditions' must not contain null");
+    else this.conditions.add(condition);
+
+    return this;
+  }
+
+  @Override
+  public final Clause[] clauses(Context<?> ctx) {
+    return operator == AND ? CLAUSES_AND : CLAUSES_OR;
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    if (conditions.isEmpty()) {
+      if (operator == AND) ctx.visit(trueCondition());
+      else ctx.visit(falseCondition());
+    } else if (conditions.size() == 1) {
+      ctx.visit(conditions.get(0));
+    } else {
+      ctx.sqlIndentStart('(');
+
+      Keyword op = operator == AND ? K_AND : K_OR;
+      Keyword separator = null;
+
+      for (int i = 0; i < conditions.size(); i++) {
+        if (i > 0) ctx.formatSeparator();
+        if (separator != null) ctx.visit(separator).sql(' ');
+
+        ctx.visit(conditions.get(i));
+        separator = op;
+      }
+
+      ctx.sqlIndentEnd(')');
     }
-
-    @Override
-    final boolean isNullable() {
-        return anyMatch(conditions, c -> !(c instanceof AbstractCondition) || ((AbstractCondition) c).isNullable());
-    }
-
-    static final Condition identity(Operator operator) {
-        return operator == AND ? trueCondition() : falseCondition();
-    }
-
-    final Condition transform(Function<? super Condition, ? extends Condition> function) {
-        List<Condition> newList = null;
-
-        for (int i = 0; i < conditions.size(); i++) {
-            Condition oldC = conditions.get(i);
-            Condition newC = oldC instanceof CombinedCondition
-                ? ((CombinedCondition) oldC).transform(function)
-                : function.apply(oldC);
-
-            if (newC != oldC) {
-                if (newList == null)
-                    newList = new ArrayList<>(conditions.subList(0, i));
-
-                if (newC != null)
-                    newList.add(newC);
-            }
-            else if (newList != null)
-                newList.add(newC);
-        }
-
-        if (newList == null)
-            return this;
-        else if (newList.isEmpty())
-            return noCondition();
-        else
-            return of(operator, newList);
-    }
-
-    private CombinedCondition(Operator operator, int size) {
-        if (operator == null)
-            throw new IllegalArgumentException("The argument 'operator' must not be null");
-
-        this.operator = operator;
-        this.conditions = new ArrayList<>(size);
-    }
-
-    private CombinedCondition(Operator operator, Condition left, Condition right) {
-        this(operator, 2);
-
-        add(operator, left);
-        add(operator, right);
-    }
-
-    private final CombinedCondition add(Operator op, Condition condition) {
-        if (condition instanceof CombinedCondition) {
-            CombinedCondition combinedCondition = (CombinedCondition) condition;
-
-            if (combinedCondition.operator == op)
-                this.conditions.addAll(combinedCondition.conditions);
-            else
-                this.conditions.add(condition);
-        }
-        else if (condition == null)
-            throw new IllegalArgumentException("The argument 'conditions' must not contain null");
-        else
-            this.conditions.add(condition);
-
-        return this;
-    }
-
-    @Override
-    public final Clause[] clauses(Context<?> ctx) {
-        return operator == AND ? CLAUSES_AND : CLAUSES_OR;
-    }
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        if (conditions.isEmpty()) {
-            if (operator == AND)
-                ctx.visit(trueCondition());
-            else
-                ctx.visit(falseCondition());
-        }
-        else if (conditions.size() == 1) {
-            ctx.visit(conditions.get(0));
-        }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        else {
-            ctx.sqlIndentStart('(');
-
-            Keyword op = operator == AND ? K_AND : K_OR;
-            Keyword separator = null;
-
-            for (int i = 0; i < conditions.size(); i++) {
-                if (i > 0)
-                    ctx.formatSeparator();
-                if (separator != null)
-                    ctx.visit(separator).sql(' ');
-
-                ctx.visit(conditions.get(i));
-                separator = op;
-            }
-
-            ctx.sqlIndentEnd(')');
-        }
-    }
+  }
 }

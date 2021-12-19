@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,7 +40,6 @@ package org.jooq.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.jooq.ConstraintEnforcementStep;
 import org.jooq.ForeignKey;
 import org.jooq.Name;
@@ -49,38 +48,34 @@ import org.jooq.Table;
 import org.jooq.TableField;
 import org.jooq.UniqueKey;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class UniqueKeyImpl<R extends Record> extends AbstractKey<R> implements UniqueKey<R> {
 
-    final List<ForeignKey<?, R>> references;
+  final List<ForeignKey<?, R>> references;
 
-    UniqueKeyImpl(Table<R> table, TableField<R, ?>[] fields, boolean enforced) {
-        this(table, null, fields, enforced);
-    }
+  UniqueKeyImpl(Table<R> table, TableField<R, ?>[] fields, boolean enforced) {
+    this(table, null, fields, enforced);
+  }
 
-    UniqueKeyImpl(Table<R> table, Name name, TableField<R, ?>[] fields, boolean enforced) {
-        super(table, name, fields, enforced);
+  UniqueKeyImpl(Table<R> table, Name name, TableField<R, ?>[] fields, boolean enforced) {
+    super(table, name, fields, enforced);
 
-        this.references = new ArrayList<>();
-    }
+    this.references = new ArrayList<>();
+  }
 
-    @Override
-    public final boolean isPrimary() {
-        return equals(getTable().getPrimaryKey());
-    }
+  @Override
+  public final boolean isPrimary() {
+    return equals(getTable().getPrimaryKey());
+  }
 
-    @Override
-    public final List<ForeignKey<?, R>> getReferences() {
-        return Collections.unmodifiableList(references);
-    }
+  @Override
+  public final List<ForeignKey<?, R>> getReferences() {
+    return Collections.unmodifiableList(references);
+  }
 
-    @Override
-    final ConstraintEnforcementStep constraint0() {
-        if (isPrimary())
-            return DSL.constraint(getName()).primaryKey(getFieldsArray());
-        else
-            return DSL.constraint(getName()).unique(getFieldsArray());
-    }
+  @Override
+  final ConstraintEnforcementStep constraint0() {
+    if (isPrimary()) return DSL.constraint(getName()).primaryKey(getFieldsArray());
+    else return DSL.constraint(getName()).unique(getFieldsArray());
+  }
 }

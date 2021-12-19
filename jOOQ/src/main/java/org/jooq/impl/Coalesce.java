@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,39 +45,25 @@ import org.jooq.Context;
 import org.jooq.DataType;
 import org.jooq.Field;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class Coalesce<T> extends AbstractField<T> {
-    private final Field<T>[]  fields;
+  private final Field<T>[] fields;
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    Coalesce(Field<?>[] fields) {
-        super(N_COALESCE, anyNotNull((DataType) OTHER, fields));
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  Coalesce(Field<?>[] fields) {
+    super(N_COALESCE, anyNotNull((DataType) OTHER, fields));
 
-        this.fields = (Field[]) fields;
-    }
+    this.fields = (Field[]) fields;
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-
-
-
-
-
-
-
-            default: {
-                ctx.visit(DSL.function(N_COALESCE, getDataType(), fields));
-                break;
-            }
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      default:
+        {
+          ctx.visit(DSL.function(N_COALESCE, getDataType(), fields));
+          break;
         }
     }
+  }
 }

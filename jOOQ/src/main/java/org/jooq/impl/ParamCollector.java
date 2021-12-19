@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,7 +44,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.jooq.BindContext;
 import org.jooq.Configuration;
 import org.jooq.Field;
@@ -54,58 +53,55 @@ import org.jooq.QueryPartInternal;
 import org.jooq.tools.StringUtils;
 
 /**
- * A stub {@link BindContext} that acts as a collector of {@link Param}
- * {@link QueryPart}'s
+ * A stub {@link BindContext} that acts as a collector of {@link Param} {@link QueryPart}'s
  *
  * @author Lukas Eder
  */
 final class ParamCollector extends AbstractBindContext {
 
-    final Map<String, Param<?>>         resultFlat = new LinkedHashMap<>();
-    final Map<String, List<Param<?>>>   result     = new LinkedHashMap<>();
-    final List<Entry<String, Param<?>>> resultList = new ArrayList<>();
+  final Map<String, Param<?>> resultFlat = new LinkedHashMap<>();
+  final Map<String, List<Param<?>>> result = new LinkedHashMap<>();
+  final List<Entry<String, Param<?>>> resultList = new ArrayList<>();
 
-    private final boolean               includeInlinedParams;
+  private final boolean includeInlinedParams;
 
-    ParamCollector(Configuration configuration, boolean includeInlinedParams) {
-        super(configuration, null);
+  ParamCollector(Configuration configuration, boolean includeInlinedParams) {
+    super(configuration, null);
 
-        this.includeInlinedParams = includeInlinedParams;
-    }
+    this.includeInlinedParams = includeInlinedParams;
+  }
 
-    @Override
-    protected final void bindInternal(QueryPartInternal internal) {
-        if (internal instanceof Param) {
-            Param<?> param = (Param<?>) internal;
+  @Override
+  protected final void bindInternal(QueryPartInternal internal) {
+    if (internal instanceof Param) {
+      Param<?> param = (Param<?>) internal;
 
-            // [#3131] Inlined parameters should not be returned in some contexts
-            if (includeInlinedParams || !param.isInline()) {
-                String i = String.valueOf(nextIndex());
-                String paramName = param.getParamName();
+      // [#3131] Inlined parameters should not be returned in some contexts
+      if (includeInlinedParams || !param.isInline()) {
+        String i = String.valueOf(nextIndex());
+        String paramName = param.getParamName();
 
-                if (StringUtils.isBlank(paramName)) {
-                    resultFlat.put(i, param);
-                    resultList.add(new SimpleImmutableEntry<>(i, param));
-                    result(i).add(param);
-                }
-                else {
-                    resultFlat.put(param.getParamName(), param);
-                    resultList.add(new SimpleImmutableEntry<>(param.getParamName(), param));
-                    result(param.getParamName()).add(param);
-                }
-            }
+        if (StringUtils.isBlank(paramName)) {
+          resultFlat.put(i, param);
+          resultList.add(new SimpleImmutableEntry<>(i, param));
+          result(i).add(param);
+        } else {
+          resultFlat.put(param.getParamName(), param);
+          resultList.add(new SimpleImmutableEntry<>(param.getParamName(), param));
+          result(param.getParamName()).add(param);
         }
-        else {
-            super.bindInternal(internal);
-        }
+      }
+    } else {
+      super.bindInternal(internal);
     }
+  }
 
-    private final List<Param<?>> result(String key) {
-        return result.computeIfAbsent(key, k -> new ArrayList<>());
-    }
+  private final List<Param<?>> result(String key) {
+    return result.computeIfAbsent(key, k -> new ArrayList<>());
+  }
 
-    @Override
-    protected final BindContext bindValue0(Object value, Field<?> field) throws SQLException {
-        throw new UnsupportedOperationException();
-    }
+  @Override
+  protected final BindContext bindValue0(Object value, Field<?> field) throws SQLException {
+    throw new UnsupportedOperationException();
+  }
 }

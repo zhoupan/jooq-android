@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,34 +40,32 @@ package org.jooq.impl;
 import static org.jooq.impl.Tools.EMPTY_TABLE;
 
 import java.util.Collection;
-
 import org.jooq.Configuration;
 import org.jooq.Meta;
 import org.jooq.MetaProvider;
 import org.jooq.Table;
 
 /**
- * A {@link MetaProvider} that provides its meta data based on (possibly
- * generated) schemas.
+ * A {@link MetaProvider} that provides its meta data based on (possibly generated) schemas.
  *
  * @author Lukas Eder
  */
 public class TableMetaProvider implements MetaProvider {
 
-    private final Configuration configuration;
-    private final Table<?>[]    tables;
+  private final Configuration configuration;
+  private final Table<?>[] tables;
 
-    public TableMetaProvider(Configuration configuration, Table<?>... tables) {
-        this.configuration = configuration;
-        this.tables = tables;
-    }
+  public TableMetaProvider(Configuration configuration, Table<?>... tables) {
+    this.configuration = configuration;
+    this.tables = tables;
+  }
 
-    public TableMetaProvider(Configuration configuration, Collection<? extends Table<?>> tables) {
-        this(configuration, tables.toArray(EMPTY_TABLE));
-    }
+  public TableMetaProvider(Configuration configuration, Collection<? extends Table<?>> tables) {
+    this(configuration, tables.toArray(EMPTY_TABLE));
+  }
 
-    @Override
-    public Meta provide() {
-        return CatalogMetaImpl.filterTables(configuration, tables);
-    }
+  @Override
+  public Meta provide() {
+    return CatalogMetaImpl.filterTables(configuration, tables);
+  }
 }

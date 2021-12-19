@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,18 +35,15 @@
  *
  *
  */
-
 package org.jooq.codegen;
 
 /**
  * A default implementation for code generation.
- * <p>
- * This generator maintains its name for backwards compatibility. It may be
- * removed in the future.
+ *
+ * <p>This generator maintains its name for backwards compatibility. It may be removed in the
+ * future.
  *
  * @author Lukas Eder
  */
 @Deprecated
-public class DefaultGenerator extends JavaGenerator {
-
-}
+public class DefaultGenerator extends JavaGenerator {}

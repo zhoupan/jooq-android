@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,12 +37,9 @@
  */
 package org.jooq;
 
-
 /**
  * A step in the construction of an <code>XMLTABLE</code> expression.
  *
  * @author Lukas Eder
  */
-public interface XMLTableColumnsStep extends XMLTableColumnsFirstStep, Table<Record> {
-
-}
+public interface XMLTableColumnsStep extends XMLTableColumnsFirstStep, Table<Record> {}

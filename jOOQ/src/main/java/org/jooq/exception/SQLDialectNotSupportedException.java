@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,31 +35,30 @@
  *
  *
  */
-
 package org.jooq.exception;
 
 import org.jooq.Configuration;
 import org.jooq.tools.JooqLogger;
 
 /**
- * An exception thrown if an SQL construct is used, which is not supported by
- * the dialect set in {@link Configuration#dialect()}
+ * An exception thrown if an SQL construct is used, which is not supported by the dialect set in
+ * {@link Configuration#dialect()}
  *
  * @author Lukas Eder
  */
 public class SQLDialectNotSupportedException extends RuntimeException {
 
-    private static final JooqLogger log = JooqLogger.getLogger(SQLDialectNotSupportedException.class);
+  private static final JooqLogger log = JooqLogger.getLogger(SQLDialectNotSupportedException.class);
 
-    public SQLDialectNotSupportedException(String message) {
-        this(message, true);
+  public SQLDialectNotSupportedException(String message) {
+    this(message, true);
+  }
+
+  public SQLDialectNotSupportedException(String message, boolean warn) {
+    super(message);
+
+    if (warn) {
+      log.warn("Not supported by dialect", message);
     }
-
-    public SQLDialectNotSupportedException(String message, boolean warn) {
-        super(message);
-
-        if (warn) {
-            log.warn("Not supported by dialect", message);
-        }
-    }
+  }
 }

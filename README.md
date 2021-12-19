@@ -1,5 +1,4 @@
-jOOQ's reason for being - compared to JPA
-=========================================
+# jOOQ's reason for being - compared to JPA
 
 Java and SQL have come a long way. SQL is an "ancient", yet established and well-understood technology. Java is a legacy too, although its platform JVM allows for many new and contemporary languages built on top of it. Yet, after all these years, libraries dealing with the interface between SQL and Java have come and gone, leaving JPA to be a standard that is accepted only with doubts, short of any surviving options.
 
@@ -7,8 +6,7 @@ So far, there had been only few database abstraction frameworks or libraries, th
 
 jOOQ has come to fill this gap.
 
-jOOQ's reason of being - compared to LINQ
-=========================================
+# jOOQ's reason of being - compared to LINQ
 
 Other platforms incorporate ideas such as LINQ (with LINQ-to-SQL), or Scala's SLICK, or also Java's QueryDSL to better integrate querying as a concept into their respective language. By querying, they understand querying of arbitrary targets, such as SQL, XML, Collections and other heterogeneous data stores. jOOQ claims that this is going the wrong way too.
 
@@ -20,8 +18,8 @@ In essence, the decision of creating an API that looks like SQL or one that look
 
 jOOQ has come to fill this gap.
 
-jOOQ is different
-=================
+# jOOQ is different
+
 SQL was never meant to be abstracted. To be confined in the narrow boundaries of heavy mappers, hiding the beauty and simplicity of relational data. SQL was never meant to be object-oriented. SQL was never meant to be anything other than... SQL!
 
 For more details please visit [jooq.org](https://www.jooq.org).

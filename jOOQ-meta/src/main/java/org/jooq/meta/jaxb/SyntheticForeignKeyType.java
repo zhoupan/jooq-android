@@ -1,4 +1,40 @@
-
+/* 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Other licenses:
+ * -----------------------------------------------------------------------------
+ * Commercial licenses for this work are available. These replace the above
+ * ASL 2.0 and offer limited warranties, support, maintenance, and commercial
+ * database integrations.
+ *
+ * For more information, please visit: http://www.jooq.org/licenses
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 package org.jooq.meta.jaxb;
 
 import java.io.Serializable;
@@ -15,12 +51,11 @@ import org.jooq.util.jaxb.tools.StringAdapter;
 import org.jooq.util.jaxb.tools.XMLAppendable;
 import org.jooq.util.jaxb.tools.XMLBuilder;
 
-
 /**
- * <p>Java class for SyntheticForeignKeyType complex type.
- * 
+ * Java class for SyntheticForeignKeyType complex type.
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="SyntheticForeignKeyType"&gt;
  *   &lt;complexContent&gt;
@@ -37,297 +72,261 @@ import org.jooq.util.jaxb.tools.XMLBuilder;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "SyntheticForeignKeyType", propOrder = {
+@XmlType(
+    name = "SyntheticForeignKeyType",
+    propOrder = {})
+@SuppressWarnings({"all"})
+public class SyntheticForeignKeyType implements Serializable, XMLAppendable {
 
-})
-@SuppressWarnings({
-    "all"
-})
-public class SyntheticForeignKeyType implements Serializable, XMLAppendable
-{
+  private static final long serialVersionUID = 31500L;
 
-    private final static long serialVersionUID = 31500L;
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String name;
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String tables;
-    @XmlElement(required = true)
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String referencedTable;
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String referencedKey;
-    @XmlElementWrapper(name = "fields", required = true)
-    @XmlElement(name = "field")
-    protected List<String> fields;
-    @XmlElementWrapper(name = "referencedFields")
-    @XmlElement(name = "field")
-    protected List<String> referencedFields;
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String name;
 
-    /**
-     * The optional foreign key name.
-     * 
-     */
-    public String getName() {
-        return name;
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String tables;
+
+  @XmlElement(required = true)
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String referencedTable;
+
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String referencedKey;
+
+  @XmlElementWrapper(name = "fields", required = true)
+  @XmlElement(name = "field")
+  protected List<String> fields;
+
+  @XmlElementWrapper(name = "referencedFields")
+  @XmlElement(name = "field")
+  protected List<String> referencedFields;
+
+  /** The optional foreign key name. */
+  public String getName() {
+    return name;
+  }
+
+  /** The optional foreign key name. */
+  public void setName(String value) {
+    this.name = value;
+  }
+
+  /** A regular expression matching all tables on which to apply this synthetic foreign key. */
+  public String getTables() {
+    return tables;
+  }
+
+  /** A regular expression matching all tables on which to apply this synthetic foreign key. */
+  public void setTables(String value) {
+    this.tables = value;
+  }
+
+  /** A regular expression matching a table that is referenced by this synthetic foreign key. */
+  public String getReferencedTable() {
+    return referencedTable;
+  }
+
+  /** A regular expression matching a table that is referenced by this synthetic foreign key. */
+  public void setReferencedTable(String value) {
+    this.referencedTable = value;
+  }
+
+  /** A regular expression matching a key that is referenced by this synthetic foreign key. */
+  public String getReferencedKey() {
+    return referencedKey;
+  }
+
+  /** A regular expression matching a key that is referenced by this synthetic foreign key. */
+  public void setReferencedKey(String value) {
+    this.referencedKey = value;
+  }
+
+  public List<String> getFields() {
+    if (fields == null) {
+      fields = new ArrayList<String>();
     }
+    return fields;
+  }
 
-    /**
-     * The optional foreign key name.
-     * 
-     */
-    public void setName(String value) {
-        this.name = value;
+  public void setFields(List<String> fields) {
+    this.fields = fields;
+  }
+
+  public List<String> getReferencedFields() {
+    if (referencedFields == null) {
+      referencedFields = new ArrayList<String>();
     }
+    return referencedFields;
+  }
 
-    /**
-     * A regular expression matching all tables on which to apply this synthetic foreign key.
-     * 
-     */
-    public String getTables() {
-        return tables;
+  public void setReferencedFields(List<String> referencedFields) {
+    this.referencedFields = referencedFields;
+  }
+
+  /** The optional foreign key name. */
+  public SyntheticForeignKeyType withName(String value) {
+    setName(value);
+    return this;
+  }
+
+  /** A regular expression matching all tables on which to apply this synthetic foreign key. */
+  public SyntheticForeignKeyType withTables(String value) {
+    setTables(value);
+    return this;
+  }
+
+  /** A regular expression matching a table that is referenced by this synthetic foreign key. */
+  public SyntheticForeignKeyType withReferencedTable(String value) {
+    setReferencedTable(value);
+    return this;
+  }
+
+  /** A regular expression matching a key that is referenced by this synthetic foreign key. */
+  public SyntheticForeignKeyType withReferencedKey(String value) {
+    setReferencedKey(value);
+    return this;
+  }
+
+  public SyntheticForeignKeyType withFields(String... values) {
+    if (values != null) {
+      for (String value : values) {
+        getFields().add(value);
+      }
     }
+    return this;
+  }
 
-    /**
-     * A regular expression matching all tables on which to apply this synthetic foreign key.
-     * 
-     */
-    public void setTables(String value) {
-        this.tables = value;
+  public SyntheticForeignKeyType withFields(Collection<String> values) {
+    if (values != null) {
+      getFields().addAll(values);
     }
+    return this;
+  }
 
-    /**
-     * A regular expression matching a table that is referenced by this synthetic foreign key.
-     * 
-     */
-    public String getReferencedTable() {
-        return referencedTable;
+  public SyntheticForeignKeyType withFields(List<String> fields) {
+    setFields(fields);
+    return this;
+  }
+
+  public SyntheticForeignKeyType withReferencedFields(String... values) {
+    if (values != null) {
+      for (String value : values) {
+        getReferencedFields().add(value);
+      }
     }
+    return this;
+  }
 
-    /**
-     * A regular expression matching a table that is referenced by this synthetic foreign key.
-     * 
-     */
-    public void setReferencedTable(String value) {
-        this.referencedTable = value;
+  public SyntheticForeignKeyType withReferencedFields(Collection<String> values) {
+    if (values != null) {
+      getReferencedFields().addAll(values);
     }
+    return this;
+  }
 
-    /**
-     * A regular expression matching a key that is referenced by this synthetic foreign key.
-     * 
-     */
-    public String getReferencedKey() {
-        return referencedKey;
+  public SyntheticForeignKeyType withReferencedFields(List<String> referencedFields) {
+    setReferencedFields(referencedFields);
+    return this;
+  }
+
+  @Override
+  public final void appendTo(XMLBuilder builder) {
+    builder.append("name", name);
+    builder.append("tables", tables);
+    builder.append("referencedTable", referencedTable);
+    builder.append("referencedKey", referencedKey);
+    builder.append("fields", "field", fields);
+    builder.append("referencedFields", "field", referencedFields);
+  }
+
+  @Override
+  public String toString() {
+    XMLBuilder builder = XMLBuilder.nonFormatting();
+    appendTo(builder);
+    return builder.toString();
+  }
+
+  @Override
+  public boolean equals(Object that) {
+    if (this == that) {
+      return true;
     }
-
-    /**
-     * A regular expression matching a key that is referenced by this synthetic foreign key.
-     * 
-     */
-    public void setReferencedKey(String value) {
-        this.referencedKey = value;
+    if (that == null) {
+      return false;
     }
-
-    public List<String> getFields() {
-        if (fields == null) {
-            fields = new ArrayList<String>();
-        }
-        return fields;
+    if (getClass() != that.getClass()) {
+      return false;
     }
-
-    public void setFields(List<String> fields) {
-        this.fields = fields;
+    SyntheticForeignKeyType other = ((SyntheticForeignKeyType) that);
+    if (name == null) {
+      if (other.name != null) {
+        return false;
+      }
+    } else {
+      if (!name.equals(other.name)) {
+        return false;
+      }
     }
-
-    public List<String> getReferencedFields() {
-        if (referencedFields == null) {
-            referencedFields = new ArrayList<String>();
-        }
-        return referencedFields;
+    if (tables == null) {
+      if (other.tables != null) {
+        return false;
+      }
+    } else {
+      if (!tables.equals(other.tables)) {
+        return false;
+      }
     }
-
-    public void setReferencedFields(List<String> referencedFields) {
-        this.referencedFields = referencedFields;
+    if (referencedTable == null) {
+      if (other.referencedTable != null) {
+        return false;
+      }
+    } else {
+      if (!referencedTable.equals(other.referencedTable)) {
+        return false;
+      }
     }
-
-    /**
-     * The optional foreign key name.
-     * 
-     */
-    public SyntheticForeignKeyType withName(String value) {
-        setName(value);
-        return this;
+    if (referencedKey == null) {
+      if (other.referencedKey != null) {
+        return false;
+      }
+    } else {
+      if (!referencedKey.equals(other.referencedKey)) {
+        return false;
+      }
     }
-
-    /**
-     * A regular expression matching all tables on which to apply this synthetic foreign key.
-     * 
-     */
-    public SyntheticForeignKeyType withTables(String value) {
-        setTables(value);
-        return this;
+    if (fields == null) {
+      if (other.fields != null) {
+        return false;
+      }
+    } else {
+      if (!fields.equals(other.fields)) {
+        return false;
+      }
     }
-
-    /**
-     * A regular expression matching a table that is referenced by this synthetic foreign key.
-     * 
-     */
-    public SyntheticForeignKeyType withReferencedTable(String value) {
-        setReferencedTable(value);
-        return this;
+    if (referencedFields == null) {
+      if (other.referencedFields != null) {
+        return false;
+      }
+    } else {
+      if (!referencedFields.equals(other.referencedFields)) {
+        return false;
+      }
     }
+    return true;
+  }
 
-    /**
-     * A regular expression matching a key that is referenced by this synthetic foreign key.
-     * 
-     */
-    public SyntheticForeignKeyType withReferencedKey(String value) {
-        setReferencedKey(value);
-        return this;
-    }
-
-    public SyntheticForeignKeyType withFields(String... values) {
-        if (values!= null) {
-            for (String value: values) {
-                getFields().add(value);
-            }
-        }
-        return this;
-    }
-
-    public SyntheticForeignKeyType withFields(Collection<String> values) {
-        if (values!= null) {
-            getFields().addAll(values);
-        }
-        return this;
-    }
-
-    public SyntheticForeignKeyType withFields(List<String> fields) {
-        setFields(fields);
-        return this;
-    }
-
-    public SyntheticForeignKeyType withReferencedFields(String... values) {
-        if (values!= null) {
-            for (String value: values) {
-                getReferencedFields().add(value);
-            }
-        }
-        return this;
-    }
-
-    public SyntheticForeignKeyType withReferencedFields(Collection<String> values) {
-        if (values!= null) {
-            getReferencedFields().addAll(values);
-        }
-        return this;
-    }
-
-    public SyntheticForeignKeyType withReferencedFields(List<String> referencedFields) {
-        setReferencedFields(referencedFields);
-        return this;
-    }
-
-    @Override
-    public final void appendTo(XMLBuilder builder) {
-        builder.append("name", name);
-        builder.append("tables", tables);
-        builder.append("referencedTable", referencedTable);
-        builder.append("referencedKey", referencedKey);
-        builder.append("fields", "field", fields);
-        builder.append("referencedFields", "field", referencedFields);
-    }
-
-    @Override
-    public String toString() {
-        XMLBuilder builder = XMLBuilder.nonFormatting();
-        appendTo(builder);
-        return builder.toString();
-    }
-
-    @Override
-    public boolean equals(Object that) {
-        if (this == that) {
-            return true;
-        }
-        if (that == null) {
-            return false;
-        }
-        if (getClass()!= that.getClass()) {
-            return false;
-        }
-        SyntheticForeignKeyType other = ((SyntheticForeignKeyType) that);
-        if (name == null) {
-            if (other.name!= null) {
-                return false;
-            }
-        } else {
-            if (!name.equals(other.name)) {
-                return false;
-            }
-        }
-        if (tables == null) {
-            if (other.tables!= null) {
-                return false;
-            }
-        } else {
-            if (!tables.equals(other.tables)) {
-                return false;
-            }
-        }
-        if (referencedTable == null) {
-            if (other.referencedTable!= null) {
-                return false;
-            }
-        } else {
-            if (!referencedTable.equals(other.referencedTable)) {
-                return false;
-            }
-        }
-        if (referencedKey == null) {
-            if (other.referencedKey!= null) {
-                return false;
-            }
-        } else {
-            if (!referencedKey.equals(other.referencedKey)) {
-                return false;
-            }
-        }
-        if (fields == null) {
-            if (other.fields!= null) {
-                return false;
-            }
-        } else {
-            if (!fields.equals(other.fields)) {
-                return false;
-            }
-        }
-        if (referencedFields == null) {
-            if (other.referencedFields!= null) {
-                return false;
-            }
-        } else {
-            if (!referencedFields.equals(other.referencedFields)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = ((prime*result)+((name == null)? 0 :name.hashCode()));
-        result = ((prime*result)+((tables == null)? 0 :tables.hashCode()));
-        result = ((prime*result)+((referencedTable == null)? 0 :referencedTable.hashCode()));
-        result = ((prime*result)+((referencedKey == null)? 0 :referencedKey.hashCode()));
-        result = ((prime*result)+((fields == null)? 0 :fields.hashCode()));
-        result = ((prime*result)+((referencedFields == null)? 0 :referencedFields.hashCode()));
-        return result;
-    }
-
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = ((prime * result) + ((name == null) ? 0 : name.hashCode()));
+    result = ((prime * result) + ((tables == null) ? 0 : tables.hashCode()));
+    result = ((prime * result) + ((referencedTable == null) ? 0 : referencedTable.hashCode()));
+    result = ((prime * result) + ((referencedKey == null) ? 0 : referencedKey.hashCode()));
+    result = ((prime * result) + ((fields == null) ? 0 : fields.hashCode()));
+    result = ((prime * result) + ((referencedFields == null) ? 0 : referencedFields.hashCode()));
+    return result;
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,24 +42,23 @@ import org.jooq.VisitListener;
 
 /**
  * A publicly available default implementation of {@link VisitListener}.
- * <p>
- * Use this to stay compatible with future API changes (i.e. added methods to
- * <code>VisitListener</code>)
+ *
+ * <p>Use this to stay compatible with future API changes (i.e. added methods to <code>VisitListener
+ * </code>)
  *
  * @author Lukas Eder
  */
 public class DefaultVisitListener implements VisitListener {
 
-    @Override
-    public void clauseStart(VisitContext context) {}
+  @Override
+  public void clauseStart(VisitContext context) {}
 
-    @Override
-    public void clauseEnd(VisitContext context) {}
+  @Override
+  public void clauseEnd(VisitContext context) {}
 
-    @Override
-    public void visitStart(VisitContext context) {}
+  @Override
+  public void visitStart(VisitContext context) {}
 
-    @Override
-    public void visitEnd(VisitContext context) {}
-
+  @Override
+  public void visitEnd(VisitContext context) {}
 }

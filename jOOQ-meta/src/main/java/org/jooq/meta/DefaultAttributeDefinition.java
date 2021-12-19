@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,28 +35,27 @@
  *
  *
  */
-
 package org.jooq.meta;
-
-
 
 /**
  * A base implementation for column definitions.
  *
  * @author Lukas Eder
  */
-public class DefaultAttributeDefinition extends AbstractTypedElementDefinition<UDTDefinition> implements AttributeDefinition {
+public class DefaultAttributeDefinition extends AbstractTypedElementDefinition<UDTDefinition>
+    implements AttributeDefinition {
 
-    private final int position;
+  private final int position;
 
-    public DefaultAttributeDefinition(UDTDefinition udt, String name, int position, DataTypeDefinition type) {
-        super(udt, name, position, type, null);
+  public DefaultAttributeDefinition(
+      UDTDefinition udt, String name, int position, DataTypeDefinition type) {
+    super(udt, name, position, type, null);
 
-        this.position = position;
-    }
+    this.position = position;
+  }
 
-    @Override
-    public int getPosition() {
-        return position;
-    }
+  @Override
+  public int getPosition() {
+    return position;
+  }
 }

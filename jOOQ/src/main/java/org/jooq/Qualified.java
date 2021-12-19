@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,21 +39,14 @@ package org.jooq;
 
 import org.jetbrains.annotations.Nullable;
 
-/**
- * A {@link QueryPart} that is {@link Named} and located in a {@link Schema}.
- */
+/** A {@link QueryPart} that is {@link Named} and located in a {@link Schema}. */
 public interface Qualified extends Named {
 
-    /**
-     * Get the object's catalog.
-     */
-    @Nullable
-    Catalog getCatalog();
+  /** Get the object's catalog. */
+  @Nullable
+  Catalog getCatalog();
 
-    /**
-     * Get the object's schema.
-     */
-    @Nullable
-    Schema getSchema();
-
+  /** Get the object's schema. */
+  @Nullable
+  Schema getSchema();
 }

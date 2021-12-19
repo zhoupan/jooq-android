@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,42 +41,38 @@ import org.jooq.Context;
 import org.jooq.Table;
 import org.jooq.UniqueKey;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class CountTable extends DefaultAggregateFunction<Integer> {
 
-    private final Table<?>    table;
+  private final Table<?> table;
 
-    CountTable(Table<?> table, boolean distinct) {
-        super(distinct, "count", SQLDataType.INTEGER, DSL.field(DSL.name(table.getName())));
+  CountTable(Table<?> table, boolean distinct) {
+    super(distinct, "count", SQLDataType.INTEGER, DSL.field(DSL.name(table.getName())));
 
-        this.table = table;
-    }
+    this.table = table;
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case POSTGRES:
+        {
+          super.accept(ctx);
+          break;
+        }
 
+      default:
+        {
+          UniqueKey<?> pk = table.getPrimaryKey();
 
+          if (pk != null)
+            ctx.visit(
+                new DefaultAggregateFunction<>(
+                    distinct, "count", SQLDataType.INTEGER, table.fields(pk.getFieldsArray())));
+          else super.accept(ctx);
 
-
-
-            case POSTGRES: {
-                super.accept(ctx);
-                break;
-            }
-
-            default: {
-                UniqueKey<?> pk = table.getPrimaryKey();
-
-                if (pk != null)
-                    ctx.visit(new DefaultAggregateFunction<>(distinct, "count", SQLDataType.INTEGER, table.fields(pk.getFieldsArray())));
-                else
-                    super.accept(ctx);
-
-                break;
-            }
+          break;
         }
     }
+  }
 }

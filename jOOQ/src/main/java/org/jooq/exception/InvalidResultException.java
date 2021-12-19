@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,34 +43,31 @@ import org.jooq.TableRecord;
 import org.jooq.UpdatableRecord;
 
 /**
- * An unexpected result was encountered after executing a {@link Query}. This
- * exception indicates wrong usage of jOOQ's various fetch methods, or an
- * integrity problem in your data <em>after</em> query execution, meaning that
- * the execution of the query in the database is not affected.
- * <p>
- * This is typically the case in the following situations:
+ * An unexpected result was encountered after executing a {@link Query}. This exception indicates
+ * wrong usage of jOOQ's various fetch methods, or an integrity problem in your data <em>after</em>
+ * query execution, meaning that the execution of the query in the database is not affected.
+ *
+ * <p>This is typically the case in the following situations:
+ *
  * <ul>
- * <li>When you call methods such as {@link ResultQuery#fetchOne()} and the
- * database returns more than one record (you'll get a
- * {@link TooManyRowsException}).</li>
- * <li>When you call methods such as
- * {@link ResultQuery#fetchMap(org.jooq.Field)} and the database returns several
- * records per key.</li>
- * <li>When you refresh a {@link TableRecord} using
- * {@link UpdatableRecord#refresh()}, and the record does not exist anymore in
- * the database (you'll get a {@link NoDataFoundException}).</li>
+ *   <li>When you call methods such as {@link ResultQuery#fetchOne()} and the database returns more
+ *       than one record (you'll get a {@link TooManyRowsException}).
+ *   <li>When you call methods such as {@link ResultQuery#fetchMap(org.jooq.Field)} and the database
+ *       returns several records per key.
+ *   <li>When you refresh a {@link TableRecord} using {@link UpdatableRecord#refresh()}, and the
+ *       record does not exist anymore in the database (you'll get a {@link NoDataFoundException}).
  * </ul>
  *
  * @author Lukas Eder
  */
 public class InvalidResultException extends DataAccessException {
 
-    /**
-     * Constructor for InvalidResultException.
-     *
-     * @param message the detail message
-     */
-    public InvalidResultException(String message) {
-        super(message);
-    }
+  /**
+   * Constructor for InvalidResultException.
+   *
+   * @param message the detail message
+   */
+  public InvalidResultException(String message) {
+    super(message);
+  }
 }

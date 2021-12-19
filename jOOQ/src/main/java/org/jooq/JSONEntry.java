@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,15 +46,11 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface JSONEntry<T> extends QueryPart {
 
-    /**
-     * The JSON entry key.
-     */
-    @NotNull
-    Field<String> key();
+  /** The JSON entry key. */
+  @NotNull
+  Field<String> key();
 
-    /**
-     * The JSON entry value.
-     */
-    @NotNull
-    Field<T> value();
+  /** The JSON entry value. */
+  @NotNull
+  Field<T> value();
 }

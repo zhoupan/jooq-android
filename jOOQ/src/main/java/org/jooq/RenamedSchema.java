@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,7 +38,6 @@
 package org.jooq;
 
 import java.util.List;
-
 import org.jooq.impl.SchemaImpl;
 
 /**
@@ -48,26 +47,26 @@ import org.jooq.impl.SchemaImpl;
  */
 final class RenamedSchema extends SchemaImpl {
 
-    private final Schema delegate;
+  private final Schema delegate;
 
-    RenamedSchema(Catalog catalog, Schema delegate, String rename) {
-        super(rename, catalog);
+  RenamedSchema(Catalog catalog, Schema delegate, String rename) {
+    super(rename, catalog);
 
-        this.delegate = delegate;
-    }
+    this.delegate = delegate;
+  }
 
-    @Override
-    public final List<Table<?>> getTables() {
-        return delegate.getTables();
-    }
+  @Override
+  public final List<Table<?>> getTables() {
+    return delegate.getTables();
+  }
 
-    @Override
-    public final List<UDT<?>> getUDTs() {
-        return delegate.getUDTs();
-    }
+  @Override
+  public final List<UDT<?>> getUDTs() {
+    return delegate.getUDTs();
+  }
 
-    @Override
-    public final List<Sequence<?>> getSequences() {
-        return delegate.getSequences();
-    }
+  @Override
+  public final List<Sequence<?>> getSequences() {
+    return delegate.getSequences();
+  }
 }

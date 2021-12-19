@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,20 +45,19 @@ import org.jooq.Field;
 import org.jooq.OrderField;
 import org.jooq.OrderedAggregateFunctionOfDeferredType;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class ModeDeferred implements OrderedAggregateFunctionOfDeferredType {
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public final <T> AggregateFilterStep<T> withinGroupOrderBy(OrderField<T> field) {
-        DataType<T> type = field instanceof SortFieldImpl
+  @SuppressWarnings("unchecked")
+  @Override
+  public final <T> AggregateFilterStep<T> withinGroupOrderBy(OrderField<T> field) {
+    DataType<T> type =
+        field instanceof SortFieldImpl
             ? ((SortFieldImpl<T>) field).getField().getDataType()
             : field instanceof Field
-            ? ((AbstractField<T>) field).getDataType()
-            : (DataType<T>) SQLDataType.NUMERIC;
+                ? ((AbstractField<T>) field).getDataType()
+                : (DataType<T>) SQLDataType.NUMERIC;
 
-        return new DefaultAggregateFunction<>(N_MODE, type).withinGroupOrderBy(field);
-    }
+    return new DefaultAggregateFunction<>(N_MODE, type).withinGroupOrderBy(field);
+  }
 }

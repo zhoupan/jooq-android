@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,19 +40,17 @@ package org.jooq.codegen;
 import org.jooq.meta.SchemaDefinition;
 import org.jooq.meta.SchemaVersionProvider;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 class ConstantSchemaVersionProvider implements SchemaVersionProvider {
 
-    private String constant;
+  private String constant;
 
-    ConstantSchemaVersionProvider(String constant) {
-        this.constant = constant;
-    }
+  ConstantSchemaVersionProvider(String constant) {
+    this.constant = constant;
+  }
 
-    @Override
-    public String version(SchemaDefinition schema) {
-        return constant;
-    }
+  @Override
+  public String version(SchemaDefinition schema) {
+    return constant;
+  }
 }

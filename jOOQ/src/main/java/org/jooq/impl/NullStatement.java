@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,40 +37,21 @@
  */
 package org.jooq.impl;
 
-
 // ...
-import static org.jooq.impl.DSL.falseCondition;
-import static org.jooq.impl.DSL.one;
-import static org.jooq.impl.DSL.select;
-import static org.jooq.impl.Keywords.K_IF;
 import static org.jooq.impl.Keywords.K_NULL;
 
 import org.jooq.Context;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class NullStatement extends AbstractStatement {
-    static final NullStatement INSTANCE         = new NullStatement();
+  static final NullStatement INSTANCE = new NullStatement();
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-
-
-
-
-
-
-            default:
-                ctx.visit(K_NULL).sql(';');
-                break;
-        }
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      default:
+        ctx.visit(K_NULL).sql(';');
+        break;
     }
+  }
 }

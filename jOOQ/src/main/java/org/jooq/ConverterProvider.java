@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,33 +37,29 @@
  */
 package org.jooq;
 
+import org.jetbrains.annotations.Nullable;
 import org.jooq.impl.DefaultConverterProvider;
 
-import org.jetbrains.annotations.Nullable;
-
 /**
- * A <code>ConverterProvider</code> provides {@link Converter} implementations
- * for any combination of types <code>&lt;T&gt;</code> and
- * <code>&lt;U&gt;</code>.
- * <p>
- * <code>ConverterProvider</code> can be used together with
- * {@link RecordMapper}, e.g. when mapping {@link JSON} or {@link XML} data
- * types onto POJO types using third party libraries like Jackson, Gson, JAXB,
- * or others.
+ * A <code>ConverterProvider</code> provides {@link Converter} implementations for any combination
+ * of types <code>&lt;T&gt;</code> and <code>&lt;U&gt;</code>.
+ *
+ * <p><code>ConverterProvider</code> can be used together with {@link RecordMapper}, e.g. when
+ * mapping {@link JSON} or {@link XML} data types onto POJO types using third party libraries like
+ * Jackson, Gson, JAXB, or others.
  *
  * @author Lukas Eder
  */
 @FunctionalInterface
 public interface ConverterProvider {
 
-    /**
-     * Provide a converter that can convert between <code>&lt;T&gt;</code> and
-     * <code>&lt;U&gt;</code> types.
-     *
-     * @return The converter for <code>&lt;T, U&gt;</code>, or <code>null</code>
-     *         if no such converter could be provided, in case of which jOOQ's
-     *         {@link DefaultConverterProvider} applies.
-     */
-    @Nullable
-    <T, U> Converter<T, U> provide(Class<T> tType, Class<U> uType);
+  /**
+   * Provide a converter that can convert between <code>&lt;T&gt;</code> and <code>&lt;U&gt;</code>
+   * types.
+   *
+   * @return The converter for <code>&lt;T, U&gt;</code>, or <code>null</code> if no such converter
+   *     could be provided, in case of which jOOQ's {@link DefaultConverterProvider} applies.
+   */
+  @Nullable
+  <T, U> Converter<T, U> provide(Class<T> tType, Class<U> uType);
 }

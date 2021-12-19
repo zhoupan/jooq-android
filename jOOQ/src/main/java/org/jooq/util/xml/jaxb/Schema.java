@@ -1,4 +1,40 @@
-
+/* 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Other licenses:
+ * -----------------------------------------------------------------------------
+ * Commercial licenses for this work are available. These replace the above
+ * ASL 2.0 and offer limited warranties, support, maintenance, and commercial
+ * database integrations.
+ *
+ * For more information, please visit: http://www.jooq.org/licenses
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 package org.jooq.util.xml.jaxb;
 
 import java.io.Serializable;
@@ -11,12 +47,11 @@ import org.jooq.util.jaxb.tools.StringAdapter;
 import org.jooq.util.jaxb.tools.XMLAppendable;
 import org.jooq.util.jaxb.tools.XMLBuilder;
 
-
 /**
- * <p>Java class for Schema complex type.
- * 
+ * Java class for Schema complex type.
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="Schema"&gt;
  *   &lt;complexContent&gt;
@@ -30,132 +65,129 @@ import org.jooq.util.jaxb.tools.XMLBuilder;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Schema", propOrder = {
+@XmlType(
+    name = "Schema",
+    propOrder = {})
+@SuppressWarnings({"all"})
+public class Schema implements Serializable, XMLAppendable {
 
-})
-@SuppressWarnings({
-    "all"
-})
-public class Schema implements Serializable, XMLAppendable
-{
+  private static final long serialVersionUID = 31400L;
 
-    private final static long serialVersionUID = 31400L;
-    @XmlElement(name = "catalog_name")
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String catalogName;
-    @XmlElement(name = "schema_name", required = true)
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String schemaName;
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String comment;
+  @XmlElement(name = "catalog_name")
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String catalogName;
 
-    public String getCatalogName() {
-        return catalogName;
+  @XmlElement(name = "schema_name", required = true)
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String schemaName;
+
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String comment;
+
+  public String getCatalogName() {
+    return catalogName;
+  }
+
+  public void setCatalogName(String value) {
+    this.catalogName = value;
+  }
+
+  public String getSchemaName() {
+    return schemaName;
+  }
+
+  public void setSchemaName(String value) {
+    this.schemaName = value;
+  }
+
+  public String getComment() {
+    return comment;
+  }
+
+  public void setComment(String value) {
+    this.comment = value;
+  }
+
+  public Schema withCatalogName(String value) {
+    setCatalogName(value);
+    return this;
+  }
+
+  public Schema withSchemaName(String value) {
+    setSchemaName(value);
+    return this;
+  }
+
+  public Schema withComment(String value) {
+    setComment(value);
+    return this;
+  }
+
+  @Override
+  public final void appendTo(XMLBuilder builder) {
+    builder.append("catalog_name", catalogName);
+    builder.append("schema_name", schemaName);
+    builder.append("comment", comment);
+  }
+
+  @Override
+  public String toString() {
+    XMLBuilder builder = XMLBuilder.nonFormatting();
+    appendTo(builder);
+    return builder.toString();
+  }
+
+  @Override
+  public boolean equals(Object that) {
+    if (this == that) {
+      return true;
     }
-
-    public void setCatalogName(String value) {
-        this.catalogName = value;
+    if (that == null) {
+      return false;
     }
-
-    public String getSchemaName() {
-        return schemaName;
+    if (getClass() != that.getClass()) {
+      return false;
     }
-
-    public void setSchemaName(String value) {
-        this.schemaName = value;
+    Schema other = ((Schema) that);
+    if (catalogName == null) {
+      if (other.catalogName != null) {
+        return false;
+      }
+    } else {
+      if (!catalogName.equals(other.catalogName)) {
+        return false;
+      }
     }
-
-    public String getComment() {
-        return comment;
+    if (schemaName == null) {
+      if (other.schemaName != null) {
+        return false;
+      }
+    } else {
+      if (!schemaName.equals(other.schemaName)) {
+        return false;
+      }
     }
-
-    public void setComment(String value) {
-        this.comment = value;
+    if (comment == null) {
+      if (other.comment != null) {
+        return false;
+      }
+    } else {
+      if (!comment.equals(other.comment)) {
+        return false;
+      }
     }
+    return true;
+  }
 
-    public Schema withCatalogName(String value) {
-        setCatalogName(value);
-        return this;
-    }
-
-    public Schema withSchemaName(String value) {
-        setSchemaName(value);
-        return this;
-    }
-
-    public Schema withComment(String value) {
-        setComment(value);
-        return this;
-    }
-
-    @Override
-    public final void appendTo(XMLBuilder builder) {
-        builder.append("catalog_name", catalogName);
-        builder.append("schema_name", schemaName);
-        builder.append("comment", comment);
-    }
-
-    @Override
-    public String toString() {
-        XMLBuilder builder = XMLBuilder.nonFormatting();
-        appendTo(builder);
-        return builder.toString();
-    }
-
-    @Override
-    public boolean equals(Object that) {
-        if (this == that) {
-            return true;
-        }
-        if (that == null) {
-            return false;
-        }
-        if (getClass()!= that.getClass()) {
-            return false;
-        }
-        Schema other = ((Schema) that);
-        if (catalogName == null) {
-            if (other.catalogName!= null) {
-                return false;
-            }
-        } else {
-            if (!catalogName.equals(other.catalogName)) {
-                return false;
-            }
-        }
-        if (schemaName == null) {
-            if (other.schemaName!= null) {
-                return false;
-            }
-        } else {
-            if (!schemaName.equals(other.schemaName)) {
-                return false;
-            }
-        }
-        if (comment == null) {
-            if (other.comment!= null) {
-                return false;
-            }
-        } else {
-            if (!comment.equals(other.comment)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = ((prime*result)+((catalogName == null)? 0 :catalogName.hashCode()));
-        result = ((prime*result)+((schemaName == null)? 0 :schemaName.hashCode()));
-        result = ((prime*result)+((comment == null)? 0 :comment.hashCode()));
-        return result;
-    }
-
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = ((prime * result) + ((catalogName == null) ? 0 : catalogName.hashCode()));
+    result = ((prime * result) + ((schemaName == null) ? 0 : schemaName.hashCode()));
+    result = ((prime * result) + ((comment == null) ? 0 : comment.hashCode()));
+    return result;
+  }
 }

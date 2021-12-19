@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,41 +37,29 @@
  */
 package org.jooq;
 
-import org.jetbrains.annotations.*;
-
-
-// ...
-// ...
-// ...
 import static org.jooq.SQLDialect.H2;
 import static org.jooq.SQLDialect.MARIADB;
-// ...
 import static org.jooq.SQLDialect.POSTGRES;
 
 import java.util.Collection;
-
+import org.jetbrains.annotations.*;
 import org.jooq.impl.DSL;
 
 /**
- * A step in the construction of {@link DSL#jsonArrayAgg(Field)} or
- * {@link DSL#jsonbArrayAgg(Field)} functions where the <code>ORDER BY</code>
- * clause can be defined.
+ * A step in the construction of {@link DSL#jsonArrayAgg(Field)} or {@link DSL#jsonbArrayAgg(Field)}
+ * functions where the <code>ORDER BY</code> clause can be defined.
  *
  * @author Lukas Eder
  */
 public interface JSONArrayAggOrderByStep<J> extends JSONArrayAggNullStep<J> {
 
-    /**
-     * Add an <code>ORDER BY</code> clause to the function.
-     */
-    @NotNull
-    @Support({ H2, MARIADB, POSTGRES })
-    JSONArrayAggNullStep<J> orderBy(OrderField<?>... fields);
+  /** Add an <code>ORDER BY</code> clause to the function. */
+  @NotNull
+  @Support({H2, MARIADB, POSTGRES})
+  JSONArrayAggNullStep<J> orderBy(OrderField<?>... fields);
 
-    /**
-     * Add an <code>ORDER BY</code> clause to the function.
-     */
-    @NotNull
-    @Support({ H2, MARIADB, POSTGRES })
-    JSONArrayAggNullStep<J> orderBy(Collection<? extends OrderField<?>> fields);
+  /** Add an <code>ORDER BY</code> clause to the function. */
+  @NotNull
+  @Support({H2, MARIADB, POSTGRES})
+  JSONArrayAggNullStep<J> orderBy(Collection<? extends OrderField<?>> fields);
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,16 +40,16 @@ package org.jooq.util.jaxb.tools;
 import org.jooq.Internal;
 
 /**
- * Interface to be implemented by JAXB annotated Java classes which are
- * serialized to XML using {@link XMLBuilder}.
- * <p>
- * The implementing classes are expected to call the various {@code append()}
- * methods on the {@link XMLBuilder} instance.
+ * Interface to be implemented by JAXB annotated Java classes which are serialized to XML using
+ * {@link XMLBuilder}.
+ *
+ * <p>The implementing classes are expected to call the various {@code append()} methods on the
+ * {@link XMLBuilder} instance.
  *
  * @author Knut Wannheden
  */
 @Internal
 public interface XMLAppendable {
 
-    void appendTo(XMLBuilder builder);
+  void appendTo(XMLBuilder builder);
 }

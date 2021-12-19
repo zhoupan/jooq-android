@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,12 +37,10 @@
  */
 package org.jooq;
 
-
-
 /**
  * This type is used for the window function DSL API.
- * <p>
- * Example: <code><pre>
+ *
+ * <p>Example: <code><pre>
  * field.firstValue()
  *      .ignoreNulls()
  *      .over()
@@ -51,15 +49,14 @@ package org.jooq;
  *      .rowsBetweenUnboundedPreceding()
  *      .andUnboundedFollowing()
  * </pre></code>
- * <p>
- * Note, that the functionality provided by this interface is not supported in
- * {@link SQLDialect#SQLSERVER}
  *
- * @deprecated - [#11329] - 3.15.0 - This type will be removed in the future. Do not reference it directly
+ * <p>Note, that the functionality provided by this interface is not supported in {@link
+ * SQLDialect#SQLSERVER}
+ *
+ * @deprecated - [#11329] - 3.15.0 - This type will be removed in the future. Do not reference it
+ *     directly
  * @param <T> The function return type
  * @author Lukas Eder
  */
 @Deprecated(forRemoval = true, since = "3.15")
-public interface WindowFinalStep<T> extends Field<T> {
-
-}
+public interface WindowFinalStep<T> extends Field<T> {}

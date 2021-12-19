@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,35 +41,31 @@ import static org.jooq.conf.StatementType.STATIC_STATEMENT;
 import static org.jooq.impl.DSL.param;
 
 import java.sql.Connection;
-
 import org.jooq.conf.Settings;
 import org.jooq.impl.DefaultConfiguration;
 import org.jooq.meta.CatalogDefinition;
 import org.jooq.meta.CatalogVersionProvider;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 class SQLCatalogVersionProvider implements CatalogVersionProvider {
 
-    private Connection connection;
-    private String     sql;
+  private Connection connection;
+  private String sql;
 
-    SQLCatalogVersionProvider(Connection connection, String sql) {
-        this.connection = connection;
-        this.sql = sql;
-    }
+  SQLCatalogVersionProvider(Connection connection, String sql) {
+    this.connection = connection;
+    this.sql = sql;
+  }
 
-    @Override
-    public String version(CatalogDefinition catalog) {
-        return "" +
-            new DefaultConfiguration()
-                .set(connection)
-                .set(new Settings().withStatementType(STATIC_STATEMENT))
-                .dsl()
-                .fetchValue(
-                    // [#2906] TODO Plain SQL statements do not yet support named parameters
-                    sql.replace(":catalog_name", "?"), param("catalog_name", catalog.getInputName())
-                );
-    }
+  @Override
+  public String version(CatalogDefinition catalog) {
+    return ""
+        + new DefaultConfiguration()
+            .set(connection)
+            .set(new Settings().withStatementType(STATIC_STATEMENT))
+            .dsl()
+            .fetchValue(
+                // [#2906] TODO Plain SQL statements do not yet support named parameters
+                sql.replace(":catalog_name", "?"), param("catalog_name", catalog.getInputName()));
+  }
 }

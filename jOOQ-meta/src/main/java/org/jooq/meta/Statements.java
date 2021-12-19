@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,7 +41,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
-
 import org.jooq.DSLContext;
 import org.jooq.Result;
 
@@ -52,24 +51,24 @@ import org.jooq.Result;
  */
 final class Statements {
 
-    private DSLContext                   ctx;
-    private final Map<String, Result<?>> sqlCache;
-    private final Map<String, Set<?>>    sqlCacheSingleColumnSet;
+  private DSLContext ctx;
+  private final Map<String, Result<?>> sqlCache;
+  private final Map<String, Set<?>> sqlCacheSingleColumnSet;
 
-    Statements() {
-        this.sqlCache = new HashMap<>();
-        this.sqlCacheSingleColumnSet = new HashMap<>();
-    }
+  Statements() {
+    this.sqlCache = new HashMap<>();
+    this.sqlCacheSingleColumnSet = new HashMap<>();
+  }
 
-    final void dslContext(DSLContext c) {
-        this.ctx = c;
-    }
+  final void dslContext(DSLContext c) {
+    this.ctx = c;
+  }
 
-    final Result<?> fetch(String sql) {
-        return sqlCache.computeIfAbsent(sql, ctx::fetch);
-    }
+  final Result<?> fetch(String sql) {
+    return sqlCache.computeIfAbsent(sql, ctx::fetch);
+  }
 
-    final Set<?> fetchSet(String sql) {
-        return sqlCacheSingleColumnSet.computeIfAbsent(sql, s -> fetch(s).intoSet(0));
-    }
+  final Set<?> fetchSet(String sql) {
+    return sqlCacheSingleColumnSet.computeIfAbsent(sql, s -> fetch(s).intoSet(0));
+  }
 }

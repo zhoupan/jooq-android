@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,41 +35,38 @@
  *
  *
  */
-
 package org.jooq.impl;
 
 import org.jooq.Context;
 import org.jooq.SelectFieldOrAsterisk;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class SelectFieldList<F extends SelectFieldOrAsterisk> extends QueryPartList<F> {
 
-    SelectFieldList() {
-        super();
-    }
+  SelectFieldList() {
+    super();
+  }
 
-    SelectFieldList(Iterable<? extends F> wrappedList) {
-        super(wrappedList);
-    }
+  SelectFieldList(Iterable<? extends F> wrappedList) {
+    super(wrappedList);
+  }
 
-    SelectFieldList(F[] wrappedList) {
-        super(wrappedList);
-    }
+  SelectFieldList(F[] wrappedList) {
+    super(wrappedList);
+  }
 
-    @Override
-    public final boolean rendersContent(Context<?> ctx) {
-        return true;
-    }
+  @Override
+  public final boolean rendersContent(Context<?> ctx) {
+    return true;
+  }
 
-    @Override
-    protected final void toSQLEmptyList(Context<?> ctx) {
-        ctx.visit(AsteriskImpl.INSTANCE);
-    }
+  @Override
+  protected final void toSQLEmptyList(Context<?> ctx) {
+    ctx.visit(AsteriskImpl.INSTANCE);
+  }
 
-    @Override
-    public final boolean declaresFields() {
-        return true;
-    }
+  @Override
+  public final boolean declaresFields() {
+    return true;
+  }
 }

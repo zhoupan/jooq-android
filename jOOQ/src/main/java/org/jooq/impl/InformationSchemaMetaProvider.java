@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,40 +45,40 @@ import org.jooq.util.jaxb.tools.MiniJAXB;
 import org.jooq.util.xml.jaxb.InformationSchema;
 
 /**
- * A {@link MetaProvider} that provides its meta data based on JAXB-annotated
- * {@link InformationSchema} meta information.
+ * A {@link MetaProvider} that provides its meta data based on JAXB-annotated {@link
+ * InformationSchema} meta information.
  *
  * @author Lukas Eder
  */
 public class InformationSchemaMetaProvider implements MetaProvider {
 
-    private final Configuration     configuration;
-    private final InformationSchema schema;
-    private final Source[]          sources;
+  private final Configuration configuration;
+  private final InformationSchema schema;
+  private final Source[] sources;
 
-    public InformationSchemaMetaProvider(Configuration configuration, Source... sources) {
-        this.configuration = configuration;
-        this.schema = null;
-        this.sources = sources;
+  public InformationSchemaMetaProvider(Configuration configuration, Source... sources) {
+    this.configuration = configuration;
+    this.schema = null;
+    this.sources = sources;
+  }
+
+  public InformationSchemaMetaProvider(Configuration configuration, InformationSchema schema) {
+    this.configuration = configuration;
+    this.schema = schema;
+    this.sources = null;
+  }
+
+  @Override
+  public Meta provide() {
+    InformationSchema s = schema;
+
+    if (s == null) {
+      s = new InformationSchema();
+
+      for (Source source : sources)
+        MiniJAXB.append(s, MiniJAXB.unmarshal(source.reader(), InformationSchema.class));
     }
 
-    public InformationSchemaMetaProvider(Configuration configuration, InformationSchema schema) {
-        this.configuration = configuration;
-        this.schema = schema;
-        this.sources = null;
-    }
-
-    @Override
-    public Meta provide() {
-        InformationSchema s = schema;
-
-        if (s == null) {
-            s = new InformationSchema();
-
-            for (Source source : sources)
-                MiniJAXB.append(s, MiniJAXB.unmarshal(source.reader(), InformationSchema.class));
-        }
-
-        return new InformationSchemaMetaImpl(configuration, s);
-    }
+    return new InformationSchemaMetaImpl(configuration, s);
+  }
 }

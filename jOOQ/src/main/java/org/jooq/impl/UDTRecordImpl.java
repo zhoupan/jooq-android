@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,25 +42,26 @@ import org.jooq.UDTRecord;
 
 /**
  * A record implementation for a record originating from a single UDT
- * <p>
- * This type is for JOOQ INTERNAL USE only. Do not reference directly
+ *
+ * <p>This type is for JOOQ INTERNAL USE only. Do not reference directly
  *
  * @author Lukas Eder
  */
 @org.jooq.Internal
-public class UDTRecordImpl<R extends UDTRecord<R>> extends AbstractQualifiedRecord<R> implements UDTRecord<R> {
+public class UDTRecordImpl<R extends UDTRecord<R>> extends AbstractQualifiedRecord<R>
+    implements UDTRecord<R> {
 
-    public UDTRecordImpl(UDT<R> udt) {
-        super(udt);
-    }
+  public UDTRecordImpl(UDT<R> udt) {
+    super(udt);
+  }
 
-    @Override
-    public final UDT<R> getUDT() {
-        return (UDT<R>) getQualifier();
-    }
+  @Override
+  public final UDT<R> getUDT() {
+    return (UDT<R>) getQualifier();
+  }
 
-    @Override
-    public String toString() {
-        return DSL.using(configuration()).renderInlined(DSL.inline(this));
-    }
+  @Override
+  public String toString() {
+    return DSL.using(configuration()).renderInlined(DSL.inline(this));
+  }
 }

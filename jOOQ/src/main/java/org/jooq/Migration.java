@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,43 +42,36 @@ import org.jooq.exception.DataMigrationValidationException;
 
 /**
  * An executable migration between two {@link Commit} instances.
- * <p>
- * This is EXPERIMENTAL functionality and subject to change in future jOOQ
- * versions.
+ *
+ * <p>This is EXPERIMENTAL functionality and subject to change in future jOOQ versions.
  *
  * @author Lukas Eder
  */
 @Internal
 public interface Migration extends Scope {
 
-    /**
-     * The version that is being migrated from.
-     */
-    Commit from();
+  /** The version that is being migrated from. */
+  Commit from();
 
-    /**
-     * The version that is being migrated to.
-     */
-    Commit to();
+  /** The version that is being migrated to. */
+  Commit to();
 
-    /**
-     * The queries that are executed by the migration.
-     */
-    Queries queries();
+  /** The queries that are executed by the migration. */
+  Queries queries();
 
-    /**
-     * Validate a migration.
-     *
-     * @throws DataMigrationValidationException When something went wrong during
-     *             the validation of the migration.
-     */
-    void validate() throws DataMigrationValidationException;
+  /**
+   * Validate a migration.
+   *
+   * @throws DataMigrationValidationException When something went wrong during the validation of the
+   *     migration.
+   */
+  void validate() throws DataMigrationValidationException;
 
-    /**
-     * Apply the migration.
-     *
-     * @throws DataMigrationException When something went wrong during the
-     *             application of the migration.
-     */
-    void execute() throws DataMigrationException;
+  /**
+   * Apply the migration.
+   *
+   * @throws DataMigrationException When something went wrong during the application of the
+   *     migration.
+   */
+  void execute() throws DataMigrationException;
 }

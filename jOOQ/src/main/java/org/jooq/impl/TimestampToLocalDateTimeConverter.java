@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,30 +39,30 @@ package org.jooq.impl;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-
 import org.jooq.Converter;
 
 /**
  * @author Lukas Eder
- * @deprecated - 3.15.0 - [#11505] - Use
- *             {@link Converter#ofNullable(Class, Class, java.util.function.Function, java.util.function.Function)}
- *             instead, e.g.
- *             <code>Converter.ofNullable(Timestamp.class, LocalDateTime.class, Timestamp::toLocalDateTime, Timestamp::valueOf)</code>.
+ * @deprecated - 3.15.0 - [#11505] - Use {@link Converter#ofNullable(Class, Class,
+ *     java.util.function.Function, java.util.function.Function)} instead, e.g. <code>
+ *     Converter.ofNullable(Timestamp.class, LocalDateTime.class, Timestamp::toLocalDateTime, Timestamp::valueOf)
+ *     </code>.
  */
 @Deprecated
-public final class TimestampToLocalDateTimeConverter extends AbstractConverter<Timestamp, LocalDateTime> {
+public final class TimestampToLocalDateTimeConverter
+    extends AbstractConverter<Timestamp, LocalDateTime> {
 
-    public TimestampToLocalDateTimeConverter() {
-        super(Timestamp.class, LocalDateTime.class);
-    }
+  public TimestampToLocalDateTimeConverter() {
+    super(Timestamp.class, LocalDateTime.class);
+  }
 
-    @Override
-    public final LocalDateTime from(Timestamp t) {
-        return t == null ? null : t.toLocalDateTime();
-    }
+  @Override
+  public final LocalDateTime from(Timestamp t) {
+    return t == null ? null : t.toLocalDateTime();
+  }
 
-    @Override
-    public final Timestamp to(LocalDateTime u) {
-        return u == null ? null : Timestamp.valueOf(u);
-    }
+  @Override
+  public final Timestamp to(LocalDateTime u) {
+    return u == null ? null : Timestamp.valueOf(u);
+  }
 }

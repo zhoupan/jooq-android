@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,24 +38,16 @@
 package org.jooq;
 
 import java.sql.PreparedStatement;
-import java.util.Collection;
-
-import org.jooq.exception.DataAccessException;
-
-import org.jetbrains.annotations.NotNull;
 
 /**
- * The bind context is used for binding {@link QueryPart}'s and their contained
- * values to a {@link PreparedStatement}'s bind variables. A new bind context is
- * instantiated every time a {@link Query} is bound. <code>QueryPart</code>'s
- * will then pass the same context to their components
- * <p>
- * This interface is for JOOQ INTERNAL USE only. Do not reference directly
+ * The bind context is used for binding {@link QueryPart}'s and their contained values to a {@link
+ * PreparedStatement}'s bind variables. A new bind context is instantiated every time a {@link
+ * Query} is bound. <code>QueryPart</code>'s will then pass the same context to their components
+ *
+ * <p>This interface is for JOOQ INTERNAL USE only. Do not reference directly
  *
  * @author Lukas Eder
  * @see RenderContext
  */
 @Internal
-public interface BindContext extends Context<BindContext> {
-
-}
+public interface BindContext extends Context<BindContext> {}

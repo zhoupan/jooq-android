@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,33 +37,29 @@
  */
 package org.jooq.impl;
 
+import io.r2dbc.spi.ConnectionFactory;
 import org.jooq.Configuration;
 import org.jooq.Record;
 import org.jooq.RowCountQuery;
 import org.jooq.impl.R2DBC.BlockingRowCountSubscription;
 import org.jooq.impl.R2DBC.QuerySubscription;
 import org.jooq.impl.R2DBC.RowCountSubscriber;
-
 import org.reactivestreams.Subscriber;
 
-import io.r2dbc.spi.ConnectionFactory;
-
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 abstract class AbstractRowCountQuery extends AbstractQuery<Record> implements RowCountQuery {
 
-    AbstractRowCountQuery(Configuration configuration) {
-        super(configuration);
-    }
+  AbstractRowCountQuery(Configuration configuration) {
+    super(configuration);
+  }
 
-    @Override
-    public final void subscribe(Subscriber<? super Integer> subscriber) {
-        ConnectionFactory cf = configuration().connectionFactory();
+  @Override
+  public final void subscribe(Subscriber<? super Integer> subscriber) {
+    ConnectionFactory cf = configuration().connectionFactory();
 
-        if (!(cf instanceof NoConnectionFactory))
-            subscriber.onSubscribe(new QuerySubscription<>(this, subscriber, (t, u) -> new RowCountSubscriber(u)));
-        else
-            subscriber.onSubscribe(new BlockingRowCountSubscription(this, subscriber));
-    }
+    if (!(cf instanceof NoConnectionFactory))
+      subscriber.onSubscribe(
+          new QuerySubscription<>(this, subscriber, (t, u) -> new RowCountSubscriber(u)));
+    else subscriber.onSubscribe(new BlockingRowCountSubscription(this, subscriber));
+  }
 }

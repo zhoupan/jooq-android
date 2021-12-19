@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,54 +38,45 @@
 package org.jooq.impl;
 
 import static org.jooq.impl.DSL.unquotedName;
-import static org.jooq.impl.Tools.camelCase;
 
 import org.jooq.Context;
 import org.jooq.DataType;
 import org.jooq.Field;
 import org.jooq.Name;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class Function<T> extends AbstractField<T> {
 
-    private final QueryPartList<Field<?>> arguments;
+  private final QueryPartList<Field<?>> arguments;
 
-    Function(String name, DataType<T> type, Field<?>... arguments) {
-        this(unquotedName(name), type, arguments);
+  Function(String name, DataType<T> type, Field<?>... arguments) {
+    this(unquotedName(name), type, arguments);
+  }
+
+  Function(Name name, DataType<T> type, Field<?>... arguments) {
+    super(name, type);
+
+    this.arguments = new QueryPartList<>(arguments);
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      default:
+        ctx.visit(getQualifiedName()).sql('(').visit(arguments).sql(')');
+        break;
     }
+  }
 
-    Function(Name name, DataType<T> type, Field<?>... arguments) {
-        super(name, type);
+  // -------------------------------------------------------------------------
+  // The Object API
+  // -------------------------------------------------------------------------
 
-        this.arguments = new QueryPartList<>(arguments);
-    }
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-            default:
-                ctx.visit(getQualifiedName()).sql('(').visit(arguments).sql(')');
-                break;
-        }
-    }
-
-    // -------------------------------------------------------------------------
-    // The Object API
-    // -------------------------------------------------------------------------
-
-    @Override
-    public boolean equals(Object that) {
-        if (that instanceof Function)
-            return getQualifiedName().equals(((Function<?>) that).getQualifiedName())
-                && arguments.equals(((Function<?>) that).arguments);
-        else
-            return super.equals(that);
-    }
+  @Override
+  public boolean equals(Object that) {
+    if (that instanceof Function)
+      return getQualifiedName().equals(((Function<?>) that).getQualifiedName())
+          && arguments.equals(((Function<?>) that).arguments);
+    else return super.equals(that);
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,40 +40,39 @@ package org.jooq.codegen;
 import org.jooq.meta.Definition;
 
 /**
- * A strategy for keeping all names exactly as they are reported by the
- * database.
+ * A strategy for keeping all names exactly as they are reported by the database.
  *
  * @author Lukas Eder
  */
 public class KeepNamesGeneratorStrategy extends DefaultGeneratorStrategy {
 
-    @Override
-    public String getJavaIdentifier(Definition definition) {
-        return definition.getOutputName();
-    }
+  @Override
+  public String getJavaIdentifier(Definition definition) {
+    return definition.getOutputName();
+  }
 
-    @Override
-    public String getJavaSetterName(Definition definition, Mode mode) {
-        return definition.getOutputName();
-    }
+  @Override
+  public String getJavaSetterName(Definition definition, Mode mode) {
+    return definition.getOutputName();
+  }
 
-    @Override
-    public String getJavaGetterName(Definition definition, Mode mode) {
-        return definition.getOutputName();
-    }
+  @Override
+  public String getJavaGetterName(Definition definition, Mode mode) {
+    return definition.getOutputName();
+  }
 
-    @Override
-    public String getJavaMethodName(Definition definition, Mode mode) {
-        return definition.getOutputName();
-    }
+  @Override
+  public String getJavaMethodName(Definition definition, Mode mode) {
+    return definition.getOutputName();
+  }
 
-    @Override
-    public String getJavaClassName(Definition definition, Mode mode) {
-        return definition.getOutputName();
-    }
+  @Override
+  public String getJavaClassName(Definition definition, Mode mode) {
+    return definition.getOutputName();
+  }
 
-    @Override
-    public String getJavaMemberName(Definition definition, Mode mode) {
-        return definition.getOutputName();
-    }
+  @Override
+  public String getJavaMemberName(Definition definition, Mode mode) {
+    return definition.getOutputName();
+  }
 }

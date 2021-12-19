@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,22 +38,18 @@
 package org.jooq;
 
 import java.sql.Wrapper;
-
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A provider for the {@link Unwrapper} SPI which is used to override the
- * default behaviour when unwrapping JDBC types through
- * {@link Wrapper#unwrap(Class)}.
+ * A provider for the {@link Unwrapper} SPI which is used to override the default behaviour when
+ * unwrapping JDBC types through {@link Wrapper#unwrap(Class)}.
  *
  * @author Lukas Eder
  */
 @FunctionalInterface
 public interface UnwrapperProvider {
 
-    /**
-     * Provide an unwrapper for JDBC types.
-     */
-    @NotNull
-    Unwrapper provide();
+  /** Provide an unwrapper for JDBC types. */
+  @NotNull
+  Unwrapper provide();
 }

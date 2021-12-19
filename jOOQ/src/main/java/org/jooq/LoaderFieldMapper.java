@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,67 +37,55 @@
  */
 package org.jooq;
 
-
 /**
- * A field mapper that produces {@link Field} references for {@link Loader}
- * target tables.
- * <p>
- * Rather than index-based field mappings as in
- * {@link LoaderRowsStep#fields(Field...)} and other API methods, this mapper
- * can be used to translate source fields from the loader source (CSV, JSON,
- * arrays, records, etc.) to fields from the target table.
+ * A field mapper that produces {@link Field} references for {@link Loader} target tables.
+ *
+ * <p>Rather than index-based field mappings as in {@link LoaderRowsStep#fields(Field...)} and other
+ * API methods, this mapper can be used to translate source fields from the loader source (CSV,
+ * JSON, arrays, records, etc.) to fields from the target table.
  *
  * @author Lukas Eder
  */
 @FunctionalInterface
 public interface LoaderFieldMapper {
 
-    /**
-     * Map a <code>Field</code> from the loader source onto a target table
-     * <code>Field</code>.
-     */
-    Field<?> map(LoaderFieldContext ctx);
+  /** Map a <code>Field</code> from the loader source onto a target table <code>Field</code>. */
+  Field<?> map(LoaderFieldContext ctx);
+
+  /** The argument object for {@link LoaderFieldMapper#map(LoaderFieldContext)} . */
+  interface LoaderFieldContext {
 
     /**
-     * The argument object for {@link LoaderFieldMapper#map(LoaderFieldContext)}
-     * .
+     * The {@link Field} of the source data to be mapped.
+     *
+     * <p>This returns the following, depending on the data source:
+     *
+     * <ul>
+     *   <li>{@link LoaderSourceStep#loadArrays(Object[][])}: A generated, unspecified field.
+     *   <li>{@link LoaderSourceStep#loadCSV(String)}: If the first CSV row specifies headers, those
+     *       headers are used for field names. Otherwise, a generated, unspecified field is
+     *       provided.
+     *   <li>{@link LoaderSourceStep#loadJSON(String)}: The field specified in the JSON content is
+     *       used.
+     *   <li>{@link LoaderSourceStep#loadRecords(Record...)}: The field from the {@link Record} is
+     *       used.
+     * </ul>
      */
-    interface LoaderFieldContext {
+    Field<?> field();
 
-        /**
-         * The {@link Field} of the source data to be mapped.
-         * <p>
-         * This returns the following, depending on the data source:
-         * <ul>
-         * <li>{@link LoaderSourceStep#loadArrays(Object[][])}: A generated,
-         * unspecified field.</li>
-         * <li>{@link LoaderSourceStep#loadCSV(String)}: If the first CSV row
-         * specifies headers, those headers are used for field names. Otherwise,
-         * a generated, unspecified field is provided.</li>
-         * <li>{@link LoaderSourceStep#loadJSON(String)}: The field specified in
-         * the JSON content is used.</li>
-         * <li>{@link LoaderSourceStep#loadRecords(Record...)}: The field from
-         * the {@link Record} is used.</li>
-         * </ul>
-         */
-        Field<?> field();
-
-        /**
-         * The field index in order of specification in the source data.
-         * <p>
-         * This returns the following, depending on the data source:
-         * <ul>
-         * <li>{@link LoaderSourceStep#loadArrays(Object[][])}: The array index.
-         * </li>
-         * <li>{@link LoaderSourceStep#loadCSV(String)}: The CSV column index.
-         * </li>
-         * <li>{@link LoaderSourceStep#loadJSON(String)}: The JSON field
-         * enumeration index (depending on your JSON serialisation, this might
-         * not be reliable!)</li>
-         * <li>{@link LoaderSourceStep#loadRecords(Record...)}: The record field
-         * index.</li>
-         * </ul>
-         */
-        int index();
-    }
+    /**
+     * The field index in order of specification in the source data.
+     *
+     * <p>This returns the following, depending on the data source:
+     *
+     * <ul>
+     *   <li>{@link LoaderSourceStep#loadArrays(Object[][])}: The array index.
+     *   <li>{@link LoaderSourceStep#loadCSV(String)}: The CSV column index.
+     *   <li>{@link LoaderSourceStep#loadJSON(String)}: The JSON field enumeration index (depending
+     *       on your JSON serialisation, this might not be reliable!)
+     *   <li>{@link LoaderSourceStep#loadRecords(Record...)}: The record field index.
+     * </ul>
+     */
+    int index();
+  }
 }

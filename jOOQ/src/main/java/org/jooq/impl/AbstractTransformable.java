@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,44 +37,21 @@
  */
 package org.jooq.impl;
 
-import static org.jooq.conf.SettingsTools.getTransformUnneededArithmeticExpressions;
-
 import org.jooq.Context;
 import org.jooq.DataType;
 import org.jooq.Name;
-import org.jooq.conf.TransformUnneededArithmeticExpressions;
-import org.jooq.impl.Tools.DataExtendedKey;
 
 abstract class AbstractTransformable<T> extends AbstractField<T> implements Transformable<T> {
 
-    AbstractTransformable(Name name, DataType<T> type) {
-        super(name, type);
-    }
+  AbstractTransformable(Name name, DataType<T> type) {
+    super(name, type);
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
+  @Override
+  public final void accept(Context<?> ctx) {
 
+    accept0(ctx);
+  }
 
-
-
-
-
-
-
-
-
-
-
-
-
-        accept0(ctx);
-
-
-
-
-
-    }
-
-    abstract void accept0(Context<?> ctx);
-
+  abstract void accept0(Context<?> ctx);
 }

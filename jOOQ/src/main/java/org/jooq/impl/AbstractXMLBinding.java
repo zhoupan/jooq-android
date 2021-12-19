@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,13 +37,11 @@
  */
 package org.jooq.impl;
 
-import static org.jooq.XML.xml;
 import static org.jooq.XML.xmlOrNull;
 import static org.jooq.tools.Convert.convert;
 
 import java.sql.SQLException;
 import java.sql.Types;
-
 import org.jooq.Binding;
 import org.jooq.BindingGetResultSetContext;
 import org.jooq.BindingGetSQLInputContext;
@@ -54,43 +52,41 @@ import org.jooq.BindingSetSQLOutputContext;
 import org.jooq.BindingSetStatementContext;
 import org.jooq.XML;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 abstract class AbstractXMLBinding<T> implements Binding<XML, T> {
 
-    @Override
-    public final void sql(BindingSQLContext<T> ctx) throws SQLException {
-        ctx.render().visit(DSL.val(ctx.convert(converter()).value()));
-    }
+  @Override
+  public final void sql(BindingSQLContext<T> ctx) throws SQLException {
+    ctx.render().visit(DSL.val(ctx.convert(converter()).value()));
+  }
 
-    @Override
-    public final void register(BindingRegisterContext<T> ctx) throws SQLException {
-        ctx.statement().registerOutParameter(ctx.index(), Types.VARCHAR);
-    }
+  @Override
+  public final void register(BindingRegisterContext<T> ctx) throws SQLException {
+    ctx.statement().registerOutParameter(ctx.index(), Types.VARCHAR);
+  }
 
-    @Override
-    public final void set(BindingSetStatementContext<T> ctx) throws SQLException {
-        ctx.statement().setString(ctx.index(), convert(ctx.convert(converter()).value(), String.class));
-    }
+  @Override
+  public final void set(BindingSetStatementContext<T> ctx) throws SQLException {
+    ctx.statement().setString(ctx.index(), convert(ctx.convert(converter()).value(), String.class));
+  }
 
-    @Override
-    public final void get(BindingGetResultSetContext<T> ctx) throws SQLException {
-        ctx.convert(converter()).value(xmlOrNull(ctx.resultSet().getString(ctx.index())));
-    }
+  @Override
+  public final void get(BindingGetResultSetContext<T> ctx) throws SQLException {
+    ctx.convert(converter()).value(xmlOrNull(ctx.resultSet().getString(ctx.index())));
+  }
 
-    @Override
-    public final void get(BindingGetStatementContext<T> ctx) throws SQLException {
-        ctx.convert(converter()).value(xmlOrNull(ctx.statement().getString(ctx.index())));
-    }
+  @Override
+  public final void get(BindingGetStatementContext<T> ctx) throws SQLException {
+    ctx.convert(converter()).value(xmlOrNull(ctx.statement().getString(ctx.index())));
+  }
 
-    @Override
-    public final void set(BindingSetSQLOutputContext<T> ctx) throws SQLException {
-        ctx.output().writeString(convert(ctx.convert(converter()).value(), String.class));
-    }
+  @Override
+  public final void set(BindingSetSQLOutputContext<T> ctx) throws SQLException {
+    ctx.output().writeString(convert(ctx.convert(converter()).value(), String.class));
+  }
 
-    @Override
-    public final void get(BindingGetSQLInputContext<T> ctx) throws SQLException {
-        ctx.convert(converter()).value(xmlOrNull(ctx.input().readString()));
-    }
+  @Override
+  public final void get(BindingGetSQLInputContext<T> ctx) throws SQLException {
+    ctx.convert(converter()).value(xmlOrNull(ctx.input().readString()));
+  }
 }

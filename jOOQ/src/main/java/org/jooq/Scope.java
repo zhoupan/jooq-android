@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,44 +38,38 @@
 package org.jooq;
 
 import java.util.Map;
-import java.util.function.Consumer;
-
-import org.jooq.conf.Settings;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jooq.conf.Settings;
 
 /**
- * Scope implementations provide access to a variety of objects that are
- * available from a given scope.
- * <p>
- * The scope of the various objects contained in this type (e.g.
- * {@link #configuration()}, {@link #settings()}, etc.) are implementation
- * dependent and will be specified by the concrete subtype of
+ * Scope implementations provide access to a variety of objects that are available from a given
+ * scope.
+ *
+ * <p>The scope of the various objects contained in this type (e.g. {@link #configuration()}, {@link
+ * #settings()}, etc.) are implementation dependent and will be specified by the concrete subtype of
  * <code>Scope</code>. Examples of such scope types are:
+ *
  * <ul>
- * <li>{@link ExecuteContext}: A scope that covers a single execution of a
- * {@link Query}</li>
- * <li>{@link Context}: A scope that covers a single traversal of a
- * {@link QueryPart} expression tree to produce a SQL string and / or a list of
- * bind variables.</li>
- * <li>{@link VisitContext}: A scope that that covers a single traversal of a
- * {@link QueryPart} expression tree (just like {@link Context}), in the
- * presence of at least one {@link VisitListener}.</li>
- * <li>{@link RecordContext}: A scope that covers a single record operation,
- * such as {@link UpdatableRecord#store()}.</li>
- * <li>{@link TransactionContext}: A scope that covers the execution (or
- * nesting) of a single transaction.</li>
+ *   <li>{@link ExecuteContext}: A scope that covers a single execution of a {@link Query}
+ *   <li>{@link Context}: A scope that covers a single traversal of a {@link QueryPart} expression
+ *       tree to produce a SQL string and / or a list of bind variables.
+ *   <li>{@link VisitContext}: A scope that that covers a single traversal of a {@link QueryPart}
+ *       expression tree (just like {@link Context}), in the presence of at least one {@link
+ *       VisitListener}.
+ *   <li>{@link RecordContext}: A scope that covers a single record operation, such as {@link
+ *       UpdatableRecord#store()}.
+ *   <li>{@link TransactionContext}: A scope that covers the execution (or nesting) of a single
+ *       transaction.
  * </ul>
- * <p>
- * One of <code>Scope</code>'s most interesting features for client code
- * implementing any SPI is the {@link #data()} map, which provides access to a
- * {@link Map} where client code can register user-defined values for the entire
- * lifetime of a scope. For instance, in an {@link ExecuteListener}
- * implementation that measures time for fetching data, it is perfectly possible
- * to store timestamps in that map:
- * <p>
- * <code><pre>
+ *
+ * <p>One of <code>Scope</code>'s most interesting features for client code implementing any SPI is
+ * the {@link #data()} map, which provides access to a {@link Map} where client code can register
+ * user-defined values for the entire lifetime of a scope. For instance, in an {@link
+ * ExecuteListener} implementation that measures time for fetching data, it is perfectly possible to
+ * store timestamps in that map:
+ *
+ * <p><code><pre>
  * class FetchTimeMeasuringListener extends DefaultExecuteListener {
  *     &#64;Override
  *     public void fetchStart(ExecuteContext ctx) {
@@ -98,85 +92,79 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface Scope {
 
-    /**
-     * The configuration of the current scope.
-     */
-    @NotNull
-    Configuration configuration();
+  /** The configuration of the current scope. */
+  @NotNull
+  Configuration configuration();
 
-    /**
-     * Wrap the {@link #configuration()} in a {@link DSLContext}, providing
-     * access to the configuration-contextual DSL to construct executable
-     * queries.
-     */
-    @NotNull
-    DSLContext dsl();
+  /**
+   * Wrap the {@link #configuration()} in a {@link DSLContext}, providing access to the
+   * configuration-contextual DSL to construct executable queries.
+   */
+  @NotNull
+  DSLContext dsl();
 
-    /**
-     * The settings wrapped by this context.
-     * <p>
-     * This method is a convenient way of accessing
-     * <code>configuration().settings()</code>.
-     */
-    @NotNull
-    Settings settings();
+  /**
+   * The settings wrapped by this context.
+   *
+   * <p>This method is a convenient way of accessing <code>configuration().settings()</code>.
+   */
+  @NotNull
+  Settings settings();
 
-    /**
-     * The {@link SQLDialect} wrapped by this context.
-     * <p>
-     * This method is a convenient way of accessing
-     * <code>configuration().dialect()</code>.
-     */
-    @NotNull
-    SQLDialect dialect();
+  /**
+   * The {@link SQLDialect} wrapped by this context.
+   *
+   * <p>This method is a convenient way of accessing <code>configuration().dialect()</code>.
+   */
+  @NotNull
+  SQLDialect dialect();
 
-    /**
-     * The {@link SQLDialect#family()} wrapped by this context.
-     * <p>
-     * This method is a convenient way of accessing
-     * <code>configuration().family()</code>.
-     */
-    @NotNull
-    SQLDialect family();
+  /**
+   * The {@link SQLDialect#family()} wrapped by this context.
+   *
+   * <p>This method is a convenient way of accessing <code>configuration().family()</code>.
+   */
+  @NotNull
+  SQLDialect family();
 
-    /**
-     * Get all custom data from this <code>Scope</code>.
-     * <p>
-     * This is custom data that was previously set to the context using
-     * {@link #data(Object, Object)}. Use custom data if you want to pass data
-     * to {@link QueryPart} objects for a given {@link Scope}.
-     *
-     * @return The custom data. This is never <code>null</code>
-     */
-    @NotNull
-    Map<Object, Object> data();
+  /**
+   * Get all custom data from this <code>Scope</code>.
+   *
+   * <p>This is custom data that was previously set to the context using {@link #data(Object,
+   * Object)}. Use custom data if you want to pass data to {@link QueryPart} objects for a given
+   * {@link Scope}.
+   *
+   * @return The custom data. This is never <code>null</code>
+   */
+  @NotNull
+  Map<Object, Object> data();
 
-    /**
-     * Get some custom data from this <code>Scope</code>.
-     * <p>
-     * This is custom data that was previously set to the context using
-     * {@link #data(Object, Object)}. Use custom data if you want to pass data
-     * to {@link QueryPart} objects for a given {@link Scope}
-     *
-     * @param key A key to identify the custom data
-     * @return The custom data or <code>null</code> if no such data is contained
-     *         in this <code>Scope</code>
-     */
-    @Nullable
-    Object data(Object key);
+  /**
+   * Get some custom data from this <code>Scope</code>.
+   *
+   * <p>This is custom data that was previously set to the context using {@link #data(Object,
+   * Object)}. Use custom data if you want to pass data to {@link QueryPart} objects for a given
+   * {@link Scope}
+   *
+   * @param key A key to identify the custom data
+   * @return The custom data or <code>null</code> if no such data is contained in this <code>Scope
+   *     </code>
+   */
+  @Nullable
+  Object data(Object key);
 
-    /**
-     * Set some custom data to this <code>Scope</code>.
-     * <p>
-     * This is custom data that was previously set to the context using
-     * {@link #data(Object, Object)}. Use custom data if you want to pass data
-     * to {@link QueryPart} objects for a given {@link Scope}.
-     *
-     * @param key A key to identify the custom data
-     * @param value The custom data
-     * @return The previously set custom data or <code>null</code> if no data
-     *         was previously set for the given key
-     */
-    @Nullable
-    Object data(Object key, Object value);
+  /**
+   * Set some custom data to this <code>Scope</code>.
+   *
+   * <p>This is custom data that was previously set to the context using {@link #data(Object,
+   * Object)}. Use custom data if you want to pass data to {@link QueryPart} objects for a given
+   * {@link Scope}.
+   *
+   * @param key A key to identify the custom data
+   * @param value The custom data
+   * @return The previously set custom data or <code>null</code> if no data was previously set for
+   *     the given key
+   */
+  @Nullable
+  Object data(Object key, Object value);
 }

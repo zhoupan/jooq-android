@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,11 +40,8 @@ package org.jooq;
 import org.jooq.impl.DSL;
 
 /**
- * A type modelling XML attributes for use in
- * {@link DSL#xmlelement(Name, XMLAttributes, Field...)}.
+ * A type modelling XML attributes for use in {@link DSL#xmlelement(Name, XMLAttributes, Field...)}.
  *
  * @author Lukas Eder
  */
-public interface XMLAttributes extends QueryPart {
-
-}
+public interface XMLAttributes extends QueryPart {}

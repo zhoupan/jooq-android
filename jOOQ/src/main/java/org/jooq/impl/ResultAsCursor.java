@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,50 +39,46 @@ package org.jooq.impl;
 
 import java.sql.ResultSet;
 import java.util.Iterator;
-
 import org.jooq.Record;
 import org.jooq.Result;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class ResultAsCursor<R extends Record> extends AbstractCursor<R> {
-    private final Result<R>   result;
-    private int               index;
+  private final Result<R> result;
+  private int index;
 
-    @SuppressWarnings("unchecked")
-    ResultAsCursor(Result<R> result) {
-        super(result.configuration(), (AbstractRow<R>) result.fieldsRow());
+  @SuppressWarnings("unchecked")
+  ResultAsCursor(Result<R> result) {
+    super(result.configuration(), (AbstractRow<R>) result.fieldsRow());
 
-        this.result = result;
-    }
+    this.result = result;
+  }
 
-    @Override
-    public final Iterator<R> iterator() {
-        return result.iterator();
-    }
+  @Override
+  public final Iterator<R> iterator() {
+    return result.iterator();
+  }
 
-    @Override
-    public final Result<R> fetchNext(int number) {
-        Result<R> r = new ResultImpl<R>(configuration, fields);
+  @Override
+  public final Result<R> fetchNext(int number) {
+    Result<R> r = new ResultImpl<R>(configuration, fields);
 
-        for (int i = 0; i < number && i + index < result.size(); i++)
-            r.add(result.get(i + index));
+    for (int i = 0; i < number && i + index < result.size(); i++) r.add(result.get(i + index));
 
-        index += number;
-        return r;
-    }
+    index += number;
+    return r;
+  }
 
-    @Override
-    public void close() {}
+  @Override
+  public void close() {}
 
-    @Override
-    public boolean isClosed() {
-        return false;
-    }
+  @Override
+  public boolean isClosed() {
+    return false;
+  }
 
-    @Override
-    public final ResultSet resultSet() {
-        return result.intoResultSet();
-    }
+  @Override
+  public final ResultSet resultSet() {
+    return result.intoResultSet();
+  }
 }

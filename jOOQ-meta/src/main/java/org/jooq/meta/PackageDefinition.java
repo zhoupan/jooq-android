@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,18 +46,12 @@ import java.util.List;
  */
 public interface PackageDefinition extends Definition {
 
-    /**
-     * Fetch all routines from the package.
-     */
-    List<RoutineDefinition> getRoutines();
+  /** Fetch all routines from the package. */
+  List<RoutineDefinition> getRoutines();
 
-    /**
-     * Fetch all UDTs from the package.
-     */
-    List<UDTDefinition> getUDTs();
+  /** Fetch all UDTs from the package. */
+  List<UDTDefinition> getUDTs();
 
-    /**
-     * Fetch all constants from the package.
-     */
-    List<AttributeDefinition> getConstants();
+  /** Fetch all constants from the package. */
+  List<AttributeDefinition> getConstants();
 }

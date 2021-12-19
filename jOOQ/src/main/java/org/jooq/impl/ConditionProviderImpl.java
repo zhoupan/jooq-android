@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,14 +35,12 @@
  *
  *
  */
-
 package org.jooq.impl;
 
 import static org.jooq.impl.DSL.noCondition;
 
 import java.util.Arrays;
 import java.util.Collection;
-
 import org.jooq.Condition;
 import org.jooq.ConditionProvider;
 import org.jooq.Context;
@@ -52,187 +50,183 @@ import org.jooq.QueryPart;
 import org.jooq.SQL;
 import org.jooq.Select;
 
-/**
- * @author Lukas Eder
- */
-final class ConditionProviderImpl extends AbstractQueryPart implements ConditionProvider, Condition {
+/** @author Lukas Eder */
+final class ConditionProviderImpl extends AbstractQueryPart
+    implements ConditionProvider, Condition {
 
-    private Condition condition;
+  private Condition condition;
 
-    ConditionProviderImpl() {}
-    ConditionProviderImpl(Condition condition) {
-        this.condition = condition;
+  ConditionProviderImpl() {}
+
+  ConditionProviderImpl(Condition condition) {
+    this.condition = condition;
+  }
+
+  final Condition getWhere() {
+    return hasWhere() ? condition : noCondition();
+  }
+
+  final void setWhere(Condition newCondition) {
+    this.condition = newCondition;
+  }
+
+  final boolean hasWhere() {
+    return condition != null && !(condition instanceof NoCondition);
+  }
+
+  // -------------------------------------------------------------------------
+  // ConditionProvider API
+  // -------------------------------------------------------------------------
+
+  @Override
+  public final void addConditions(Condition conditions) {
+    addConditions(Operator.AND, conditions);
+  }
+
+  @Override
+  public final void addConditions(Condition... conditions) {
+    addConditions(Operator.AND, conditions);
+  }
+
+  @Override
+  public final void addConditions(Collection<? extends Condition> conditions) {
+    addConditions(Operator.AND, conditions);
+  }
+
+  @Override
+  public final void addConditions(Operator operator, Condition conditions) {
+    if (hasWhere()) condition = DSL.condition(operator, getWhere(), conditions);
+    else condition = conditions;
+  }
+
+  @Override
+  public final void addConditions(Operator operator, Condition... conditions) {
+    addConditions(operator, Arrays.asList(conditions));
+  }
+
+  @Override
+  public final void addConditions(Operator operator, Collection<? extends Condition> conditions) {
+    if (!conditions.isEmpty()) {
+      Condition c;
+
+      if (conditions.size() == 1) c = conditions.iterator().next();
+      else c = DSL.condition(operator, conditions);
+
+      addConditions(operator, c);
     }
+  }
 
-    final Condition getWhere() {
-        return hasWhere() ? condition : noCondition();
-    }
+  @Override
+  public final void accept(Context<?> ctx) {
+    ctx.visit(getWhere());
+  }
 
-    final void setWhere(Condition newCondition) {
-        this.condition = newCondition;
-    }
+  // -------------------------------------------------------------------------
+  // Condition API
+  // -------------------------------------------------------------------------
 
-    final boolean hasWhere() {
-        return condition != null && !(condition instanceof NoCondition);
-    }
+  @Override
+  public final Condition and(Condition other) {
+    return getWhere().and(other);
+  }
 
-    // -------------------------------------------------------------------------
-    // ConditionProvider API
-    // -------------------------------------------------------------------------
+  @Override
+  public final Condition and(Field<Boolean> other) {
+    return getWhere().and(other);
+  }
 
-    @Override
-    public final void addConditions(Condition conditions) {
-        addConditions(Operator.AND, conditions);
-    }
+  @Override
+  public final Condition and(SQL sql) {
+    return getWhere().and(sql);
+  }
 
-    @Override
-    public final void addConditions(Condition... conditions) {
-        addConditions(Operator.AND, conditions);
-    }
+  @Override
+  public final Condition and(String sql) {
+    return getWhere().and(sql);
+  }
 
-    @Override
-    public final void addConditions(Collection<? extends Condition> conditions) {
-        addConditions(Operator.AND, conditions);
-    }
+  @Override
+  public final Condition and(String sql, Object... bindings) {
+    return getWhere().and(sql, bindings);
+  }
 
-    @Override
-    public final void addConditions(Operator operator, Condition conditions) {
-        if (hasWhere())
-            condition = DSL.condition(operator, getWhere(), conditions);
-        else
-            condition = conditions;
-    }
+  @Override
+  public final Condition and(String sql, QueryPart... parts) {
+    return getWhere().and(sql, parts);
+  }
 
-    @Override
-    public final void addConditions(Operator operator, Condition... conditions) {
-        addConditions(operator, Arrays.asList(conditions));
-    }
+  @Override
+  public final Condition andNot(Condition other) {
+    return getWhere().andNot(other);
+  }
 
-    @Override
-    public final void addConditions(Operator operator, Collection<? extends Condition> conditions) {
-        if (!conditions.isEmpty()) {
-            Condition c;
+  @Override
+  public final Condition andNot(Field<Boolean> other) {
+    return getWhere().andNot(other);
+  }
 
-            if (conditions.size() == 1)
-                c = conditions.iterator().next();
-            else
-                c = DSL.condition(operator, conditions);
+  @Override
+  public final Condition andExists(Select<?> select) {
+    return getWhere().andExists(select);
+  }
 
-            addConditions(operator, c);
-        }
-    }
+  @Override
+  public final Condition andNotExists(Select<?> select) {
+    return getWhere().andNotExists(select);
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        ctx.visit(getWhere());
-    }
+  @Override
+  public final Condition or(Condition other) {
+    return getWhere().or(other);
+  }
 
-    // -------------------------------------------------------------------------
-    // Condition API
-    // -------------------------------------------------------------------------
+  @Override
+  public final Condition or(Field<Boolean> other) {
+    return getWhere().or(other);
+  }
 
-    @Override
-    public final Condition and(Condition other) {
-        return getWhere().and(other);
-    }
+  @Override
+  public final Condition or(SQL sql) {
+    return getWhere().or(sql);
+  }
 
-    @Override
-    public final Condition and(Field<Boolean> other) {
-        return getWhere().and(other);
-    }
+  @Override
+  public final Condition or(String sql) {
+    return getWhere().or(sql);
+  }
 
-    @Override
-    public final Condition and(SQL sql) {
-        return getWhere().and(sql);
-    }
+  @Override
+  public final Condition or(String sql, Object... bindings) {
+    return getWhere().or(sql, bindings);
+  }
 
-    @Override
-    public final Condition and(String sql) {
-        return getWhere().and(sql);
-    }
+  @Override
+  public final Condition or(String sql, QueryPart... parts) {
+    return getWhere().or(sql, parts);
+  }
 
-    @Override
-    public final Condition and(String sql, Object... bindings) {
-        return getWhere().and(sql, bindings);
-    }
+  @Override
+  public final Condition orNot(Condition other) {
+    return getWhere().orNot(other);
+  }
 
-    @Override
-    public final Condition and(String sql, QueryPart... parts) {
-        return getWhere().and(sql, parts);
-    }
+  @Override
+  public final Condition orNot(Field<Boolean> other) {
+    return getWhere().orNot(other);
+  }
 
-    @Override
-    public final Condition andNot(Condition other) {
-        return getWhere().andNot(other);
-    }
+  @Override
+  public final Condition orExists(Select<?> select) {
+    return getWhere().orExists(select);
+  }
 
-    @Override
-    public final Condition andNot(Field<Boolean> other) {
-        return getWhere().andNot(other);
-    }
+  @Override
+  public final Condition orNotExists(Select<?> select) {
+    return getWhere().orNotExists(select);
+  }
 
-    @Override
-    public final Condition andExists(Select<?> select) {
-        return getWhere().andExists(select);
-    }
-
-    @Override
-    public final Condition andNotExists(Select<?> select) {
-        return getWhere().andNotExists(select);
-    }
-
-    @Override
-    public final Condition or(Condition other) {
-        return getWhere().or(other);
-    }
-
-    @Override
-    public final Condition or(Field<Boolean> other) {
-        return getWhere().or(other);
-    }
-
-    @Override
-    public final Condition or(SQL sql) {
-        return getWhere().or(sql);
-    }
-
-    @Override
-    public final Condition or(String sql) {
-        return getWhere().or(sql);
-    }
-
-    @Override
-    public final Condition or(String sql, Object... bindings) {
-        return getWhere().or(sql, bindings);
-    }
-
-    @Override
-    public final Condition or(String sql, QueryPart... parts) {
-        return getWhere().or(sql, parts);
-    }
-
-    @Override
-    public final Condition orNot(Condition other) {
-        return getWhere().orNot(other);
-    }
-
-    @Override
-    public final Condition orNot(Field<Boolean> other) {
-        return getWhere().orNot(other);
-    }
-
-    @Override
-    public final Condition orExists(Select<?> select) {
-        return getWhere().orExists(select);
-    }
-
-    @Override
-    public final Condition orNotExists(Select<?> select) {
-        return getWhere().orNotExists(select);
-    }
-
-    @Override
-    public final Condition not() {
-        return getWhere().not();
-    }
+  @Override
+  public final Condition not() {
+    return getWhere().not();
+  }
 }

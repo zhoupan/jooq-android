@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,7 +40,6 @@ package org.jooq.impl;
 import static org.jooq.impl.ScopeMarker.TOP_LEVEL_CTE;
 
 import java.util.function.Consumer;
-
 import org.jooq.CommonTableExpression;
 import org.jooq.Context;
 
@@ -51,25 +50,23 @@ import org.jooq.Context;
  */
 final class CommonTableExpressionList extends QueryPartList<CommonTableExpression<?>> {
 
-    @Override
-    public void accept(Context<?> ctx) {
-        markTopLevelCteAndAccept(ctx, c -> super.accept(c));
-    }
+  @Override
+  public void accept(Context<?> ctx) {
+    markTopLevelCteAndAccept(ctx, c -> super.accept(c));
+  }
 
-    static void markTopLevelCteAndAccept(Context<?> ctx, Consumer<? super Context<?>> consumer) {
-        if (ctx.subqueryLevel() == 0)
-            ctx.scopeMarkStart(TOP_LEVEL_CTE.beforeFirst)
-               .scopeMarkEnd(TOP_LEVEL_CTE.beforeFirst);
+  static void markTopLevelCteAndAccept(Context<?> ctx, Consumer<? super Context<?>> consumer) {
+    if (ctx.subqueryLevel() == 0)
+      ctx.scopeMarkStart(TOP_LEVEL_CTE.beforeFirst).scopeMarkEnd(TOP_LEVEL_CTE.beforeFirst);
 
-        consumer.accept(ctx);
+    consumer.accept(ctx);
 
-        if (ctx.subqueryLevel() == 0)
-            ctx.scopeMarkStart(TOP_LEVEL_CTE.afterLast)
-               .scopeMarkEnd(TOP_LEVEL_CTE.afterLast);
-    }
+    if (ctx.subqueryLevel() == 0)
+      ctx.scopeMarkStart(TOP_LEVEL_CTE.afterLast).scopeMarkEnd(TOP_LEVEL_CTE.afterLast);
+  }
 
-    @Override
-    public final boolean declaresCTE() {
-        return true;
-    }
+  @Override
+  public final boolean declaresCTE() {
+    return true;
+  }
 }

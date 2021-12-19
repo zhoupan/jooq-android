@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,48 +41,46 @@ import org.jooq.Configuration;
 import org.jooq.Transaction;
 import org.jooq.TransactionContext;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 class DefaultTransactionContext extends AbstractScope implements TransactionContext {
 
-    Transaction                 transaction;
-    Throwable                   cause;
+  Transaction transaction;
+  Throwable cause;
 
-    DefaultTransactionContext(Configuration configuration) {
-        super(configuration);
-    }
+  DefaultTransactionContext(Configuration configuration) {
+    super(configuration);
+  }
 
-    @Override
-    public final Transaction transaction() {
-        return transaction;
-    }
+  @Override
+  public final Transaction transaction() {
+    return transaction;
+  }
 
-    @Override
-    public final TransactionContext transaction(Transaction t) {
-        transaction = t;
-        return this;
-    }
+  @Override
+  public final TransactionContext transaction(Transaction t) {
+    transaction = t;
+    return this;
+  }
 
-    @Override
-    public final Exception cause() {
-        return cause instanceof Exception ? (Exception) cause : null;
-    }
+  @Override
+  public final Exception cause() {
+    return cause instanceof Exception ? (Exception) cause : null;
+  }
 
-    @Override
-    public final TransactionContext cause(Exception c) {
-        cause = c;
-        return this;
-    }
+  @Override
+  public final TransactionContext cause(Exception c) {
+    cause = c;
+    return this;
+  }
 
-    @Override
-    public final Throwable causeThrowable() {
-        return cause;
-    }
+  @Override
+  public final Throwable causeThrowable() {
+    return cause;
+  }
 
-    @Override
-    public final TransactionContext causeThrowable(Throwable c) {
-        cause = c;
-        return this;
-    }
+  @Override
+  public final TransactionContext causeThrowable(Throwable c) {
+    cause = c;
+    return this;
+  }
 }

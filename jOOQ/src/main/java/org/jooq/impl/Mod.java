@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,45 +44,28 @@ import static org.jooq.impl.Names.N_MOD;
 import org.jooq.Context;
 import org.jooq.Field;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class Mod<T> extends AbstractField<T> {
 
-    private final Field<T>                arg1;
-    private final Field<? extends Number> arg2;
+  private final Field<T> arg1;
+  private final Field<? extends Number> arg2;
 
-    Mod(Field<T> arg1, Field<? extends Number> arg2) {
-        super(N_MOD, arg1.getDataType());
+  Mod(Field<T> arg1, Field<? extends Number> arg2) {
+    super(N_MOD, arg1.getDataType());
 
-        this.arg1 = arg1;
-        this.arg2 = arg2;
+    this.arg1 = arg1;
+    this.arg2 = arg2;
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case SQLITE:
+        ctx.visit(new Expression<>(MODULO, false, arg1, arg2));
+        break;
+      default:
+        ctx.visit(K_MOD).sql('(').visit(arg1).sql(", ").visit(arg2).sql(')');
+        break;
     }
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            case SQLITE:
-                ctx.visit(new Expression<>(MODULO, false, arg1, arg2));
-                break;
-            default:
-                ctx.visit(K_MOD).sql('(').visit(arg1).sql(", ").visit(arg2).sql(')');
-                break;
-        }
-    }
+  }
 }

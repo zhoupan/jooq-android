@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,7 +46,6 @@ import static org.jooq.impl.SQLDataType.VARCHAR;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-
 import org.jooq.Configuration;
 import org.jooq.Context;
 import org.jooq.CreateTypeFinalStep;
@@ -55,60 +54,66 @@ import org.jooq.Field;
 import org.jooq.Name;
 import org.jooq.conf.ParamType;
 
-/**
- * @author Lukas Eder
- */
-final class CreateTypeImpl extends AbstractDDLQuery implements
+/** @author Lukas Eder */
+final class CreateTypeImpl extends AbstractDDLQuery
+    implements
 
-    // Cascading interface implementations for CREATE TYPE behaviour
-    CreateTypeStep,
-    CreateTypeFinalStep {
+        // Cascading interface implementations for CREATE TYPE behaviour
+        CreateTypeStep,
+        CreateTypeFinalStep {
 
-    private final Name        type;
-    private QueryPartList<?>  values;
+  private final Name type;
+  private QueryPartList<?> values;
 
-    CreateTypeImpl(Configuration configuration, Name type) {
-        super(configuration);
+  CreateTypeImpl(Configuration configuration, Name type) {
+    super(configuration);
 
-        this.type = type;
-    }
+    this.type = type;
+  }
 
-    // ------------------------------------------------------------------------
-    // XXX: DSL API
-    // ------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
+  // XXX: DSL API
+  // ------------------------------------------------------------------------
 
-    @Override
-    public final CreateTypeFinalStep asEnum() {
-        return asEnum(Collections.emptyList());
-    }
+  @Override
+  public final CreateTypeFinalStep asEnum() {
+    return asEnum(Collections.emptyList());
+  }
 
-    @Override
-    public final CreateTypeFinalStep asEnum(String... v) {
-        return asEnum(Tools.map(v, s -> DSL.inline(s)));
-    }
+  @Override
+  public final CreateTypeFinalStep asEnum(String... v) {
+    return asEnum(Tools.map(v, s -> DSL.inline(s)));
+  }
 
-    @SafeVarargs
-    @Override
-    public final CreateTypeFinalStep asEnum(Field<String>... v) {
-        return asEnum(Arrays.asList(v));
-    }
+  @SafeVarargs
+  @Override
+  public final CreateTypeFinalStep asEnum(Field<String>... v) {
+    return asEnum(Arrays.asList(v));
+  }
 
-    @Override
-    public final CreateTypeFinalStep asEnum(Collection<?> v) {
-        values = new QueryPartList<>(Tools.fields(v, VARCHAR));
-        return this;
-    }
+  @Override
+  public final CreateTypeFinalStep asEnum(Collection<?> v) {
+    values = new QueryPartList<>(Tools.fields(v, VARCHAR));
+    return this;
+  }
 
-    // ------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // ------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // ------------------------------------------------------------------------
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        ctx.visit(K_CREATE).sql(' ').visit(K_TYPE).sql(' ')
-           .visit(type).sql(' ')
-           .visit(K_AS).sql(' ').visit(K_ENUM).sql(" (")
-           .visit(values, ParamType.INLINED)
-           .sql(')');
-    }
+  @Override
+  public final void accept(Context<?> ctx) {
+    ctx.visit(K_CREATE)
+        .sql(' ')
+        .visit(K_TYPE)
+        .sql(' ')
+        .visit(type)
+        .sql(' ')
+        .visit(K_AS)
+        .sql(' ')
+        .visit(K_ENUM)
+        .sql(" (")
+        .visit(values, ParamType.INLINED)
+        .sql(')');
+  }
 }

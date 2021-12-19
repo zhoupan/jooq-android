@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,31 +39,29 @@ package org.jooq.impl;
 
 import org.jooq.Converter;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 public abstract class AbstractConverter<T, U> implements Converter<T, U> {
 
-    private final Class<T>    fromType;
-    private final Class<U>    toType;
+  private final Class<T> fromType;
+  private final Class<U> toType;
 
-    public AbstractConverter(Class<T> fromType, Class<U> toType) {
-        this.fromType = fromType;
-        this.toType = toType;
-    }
+  public AbstractConverter(Class<T> fromType, Class<U> toType) {
+    this.fromType = fromType;
+    this.toType = toType;
+  }
 
-    @Override
-    public final Class<T> fromType() {
-        return fromType;
-    }
+  @Override
+  public final Class<T> fromType() {
+    return fromType;
+  }
 
-    @Override
-    public final Class<U> toType() {
-        return toType;
-    }
+  @Override
+  public final Class<U> toType() {
+    return toType;
+  }
 
-    @Override
-    public String toString() {
-        return "Converter [ " + fromType().getName() + " -> " + toType().getName() + " ]";
-    }
+  @Override
+  public String toString() {
+    return "Converter [ " + fromType().getName() + " -> " + toType().getName() + " ]";
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,7 +46,6 @@ import static org.jooq.impl.Tools.recordType;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.jooq.CharacterSet;
 import org.jooq.Collation;
 import org.jooq.Field;
@@ -61,100 +60,99 @@ import org.jooq.Row;
  */
 final class RecordDataType<R extends Record> extends DefaultDataType<R> {
 
-    final AbstractRow<R> row;
+  final AbstractRow<R> row;
 
-    @SuppressWarnings("unchecked")
-    public RecordDataType(Row row) {
-        this(row, (Class<R>) recordType(row.size()), "record");
-    }
+  @SuppressWarnings("unchecked")
+  public RecordDataType(Row row) {
+    this(row, (Class<R>) recordType(row.size()), "record");
+  }
 
-    @SuppressWarnings("unchecked")
-    public RecordDataType(Row row, Class<R> recordType, String name) {
-        super(null, recordType, name, name);
+  @SuppressWarnings("unchecked")
+  public RecordDataType(Row row, Class<R> recordType, String name) {
+    super(null, recordType, name, name);
 
-        this.row = (AbstractRow<R>) row;
-    }
+    this.row = (AbstractRow<R>) row;
+  }
 
-    /**
-     * [#3225] Performant constructor for creating derived types.
-     */
-    RecordDataType(
-        DefaultDataType<R> t,
-        AbstractRow<R> row,
-        Integer precision,
-        Integer scale,
-        Integer length,
-        Nullability nullability,
-        Collation collation,
-        CharacterSet characterSet,
-        boolean identity,
-        Field<R> defaultValue
-    ) {
-        super(t, precision, scale, length, nullability, collation, characterSet, identity, defaultValue);
+  /** [#3225] Performant constructor for creating derived types. */
+  RecordDataType(
+      DefaultDataType<R> t,
+      AbstractRow<R> row,
+      Integer precision,
+      Integer scale,
+      Integer length,
+      Nullability nullability,
+      Collation collation,
+      CharacterSet characterSet,
+      boolean identity,
+      Field<R> defaultValue) {
+    super(
+        t, precision, scale, length, nullability, collation, characterSet, identity, defaultValue);
 
-        this.row = row;
-    }
+    this.row = row;
+  }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Override
-    DefaultDataType<R> construct(
-        Integer newPrecision,
-        Integer newScale,
-        Integer newLength,
-        Nullability
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  @Override
+  DefaultDataType<R> construct(
+      Integer newPrecision,
+      Integer newScale,
+      Integer newLength,
+      Nullability newNullability,
+      Collation newCollation,
+      CharacterSet newCharacterSet,
+      boolean newIdentity,
+      Field<R> newDefaultValue) {
+    return new RecordDataType<>(
+        this,
+        row,
+        newPrecision,
+        newScale,
+        newLength,
         newNullability,
-        Collation newCollation,
-        CharacterSet newCharacterSet,
-        boolean newIdentity,
-        Field<R> newDefaultValue
-    ) {
-        return new RecordDataType<>(
-            this,
-            row,
-            newPrecision,
-            newScale,
-            newLength,
-            newNullability,
-            newCollation,
-            newCharacterSet,
-            newIdentity,
-            (Field) newDefaultValue
-        );
-    }
+        newCollation,
+        newCharacterSet,
+        newIdentity,
+        (Field) newDefaultValue);
+  }
 
-    @Override
-    public final Row getRow() {
-        return row;
-    }
+  @Override
+  public final Row getRow() {
+    return row;
+  }
 
-    @Override
-    public final Class<? extends R> getRecordType() {
-        return getType();
-    }
+  @Override
+  public final Class<? extends R> getRecordType() {
+    return getType();
+  }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public R convert(Object object) {
+  @SuppressWarnings("unchecked")
+  @Override
+  public R convert(Object object) {
 
-        // [#12116] TODO: Move this logic into JSONReader to make it more generally useful
-        if (object instanceof Record || object instanceof Map || object instanceof List) {
-            return newRecord(true, getRecordType(), row, CTX.configuration())
-                .operate(r -> {
+    // [#12116] TODO: Move this logic into JSONReader to make it more generally useful
+    if (object instanceof Record || object instanceof Map || object instanceof List) {
+      return newRecord(true, getRecordType(), row, CTX.configuration())
+          .operate(
+              r -> {
 
-                    // [#12014] TODO: Fix this and remove workaround
-                    if (object instanceof Record)
-                        ((AbstractRecord) r).fromArray(((Record) object).intoArray());
+                // [#12014] TODO: Fix this and remove workaround
+                if (object instanceof Record)
+                  ((AbstractRecord) r).fromArray(((Record) object).intoArray());
 
-                    // This sort is required if we use the JSONFormat.RecordFormat.OBJECT encoding (e.g. in SQL Server)
-                    else if (object instanceof Map)
-                        r.from(((Map<String, ?>) object).entrySet().stream().sorted(comparing(Entry::getKey)).map(Entry::getValue).collect(toList()));
-                    else
-                        r.from(object);
+                // This sort is required if we use the JSONFormat.RecordFormat.OBJECT encoding (e.g.
+                // in SQL Server)
+                else if (object instanceof Map)
+                  r.from(
+                      ((Map<String, ?>) object)
+                          .entrySet().stream()
+                              .sorted(comparing(Entry::getKey))
+                              .map(Entry::getValue)
+                              .collect(toList()));
+                else r.from(object);
 
-                    return r;
-                });
-        }
-        else
-            return super.convert(object);
-    }
+                return r;
+              });
+    } else return super.convert(object);
+  }
 }

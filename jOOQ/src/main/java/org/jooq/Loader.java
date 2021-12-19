@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,56 +39,43 @@ package org.jooq;
 
 import java.sql.Statement;
 import java.util.List;
-
 import org.jetbrains.annotations.NotNull;
 
 /**
  * The <code>Loader</code> API is used for configuring data loads.
- * <p>
- * This type is the final type holding information about the outcome of the data
- * load.
+ *
+ * <p>This type is the final type holding information about the outcome of the data load.
  *
  * @author Lukas Eder
  */
 public interface Loader<R extends Record> {
 
-    /**
-     * A list of errors that might have happened during the load.
-     */
-    @NotNull @CheckReturnValue
-    List<LoaderError> errors();
+  /** A list of errors that might have happened during the load. */
+  @NotNull
+  @CheckReturnValue
+  List<LoaderError> errors();
 
-    /**
-     * The number of processed rows.
-     */
-    int processed();
+  /** The number of processed rows. */
+  int processed();
 
-    /**
-     * The number of executed statements, bulk statements, or batch statements.
-     */
-    int executed();
+  /** The number of executed statements, bulk statements, or batch statements. */
+  int executed();
 
-    /**
-     * The number of ignored rows.
-     * <p>
-     * If using {@link LoaderOptionsStep#onDuplicateKeyIgnore()} along with
-     * {@link LoaderOptionsStep#batchAll()} or
-     * {@link LoaderOptionsStep#batchAfter(int)}, it may be possible that some
-     * dialects will not produce the correct ignored count, as the respective
-     * JDBC drivers cannot produce this count over
-     * {@link Statement#executeBatch()} and related methods.
-     */
-    int ignored();
+  /**
+   * The number of ignored rows.
+   *
+   * <p>If using {@link LoaderOptionsStep#onDuplicateKeyIgnore()} along with {@link
+   * LoaderOptionsStep#batchAll()} or {@link LoaderOptionsStep#batchAfter(int)}, it may be possible
+   * that some dialects will not produce the correct ignored count, as the respective JDBC drivers
+   * cannot produce this count over {@link Statement#executeBatch()} and related methods.
+   */
+  int ignored();
 
-    /**
-     * The number of inserted or updated rows.
-     */
-    int stored();
+  /** The number of inserted or updated rows. */
+  int stored();
 
-    /**
-     * The results that are also returned from {@link Loader}.
-     */
-    @NotNull @CheckReturnValue
-    LoaderContext result();
-
+  /** The results that are also returned from {@link Loader}. */
+  @NotNull
+  @CheckReturnValue
+  LoaderContext result();
 }

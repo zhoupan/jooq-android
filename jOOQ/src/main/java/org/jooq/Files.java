@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,21 +41,17 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * A set of files that are in a specific order.
- * <p>
- * This type will help make sure that duplicate occurrences of the same file
- * (e.g. edits) are streamlined.
+ *
+ * <p>This type will help make sure that duplicate occurrences of the same file (e.g. edits) are
+ * streamlined.
  */
 public interface Files extends Iterable<File> {
 
-    /**
-     * The from version from which this migration is done.
-     */
-    @NotNull
-    Version from();
+  /** The from version from which this migration is done. */
+  @NotNull
+  Version from();
 
-    /**
-     * The to version to which this migration is done.
-     */
-    @NotNull
-    Version to();
+  /** The to version to which this migration is done. */
+  @NotNull
+  Version to();
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,24 +44,27 @@ import org.jooq.Parameter;
  *
  * @author Lukas Eder
  */
-public interface ParameterDefinition extends TypedElementDefinition<RoutineDefinition>, PositionedDefinition {
+public interface ParameterDefinition
+    extends TypedElementDefinition<RoutineDefinition>, PositionedDefinition {
 
-    /**
-     * Whether the parameter has a default value.
-     * <p>
-     * @see Parameter#isDefaulted()
-     */
-    boolean isDefaulted();
+  /**
+   * Whether the parameter has a default value.
+   *
+   * <p>
+   *
+   * @see Parameter#isDefaulted()
+   */
+  boolean isDefaulted();
 
-    /**
-     * Whether the parameter has a name.
-     * <p>
-     * @see Parameter#isUnnamed()
-     */
-    boolean isUnnamed();
+  /**
+   * Whether the parameter has a name.
+   *
+   * <p>
+   *
+   * @see Parameter#isUnnamed()
+   */
+  boolean isUnnamed();
 
-    /**
-     * Whether the parameter is synthetic.
-     */
-    boolean isSynthetic();
+  /** Whether the parameter is synthetic. */
+  boolean isSynthetic();
 }

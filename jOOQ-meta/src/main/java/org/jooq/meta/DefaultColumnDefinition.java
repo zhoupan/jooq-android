@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,14 +35,11 @@
  *
  *
  */
-
 package org.jooq.meta;
 
 import static java.util.Collections.singletonList;
 
-import java.util.ArrayList;
 import java.util.List;
-
 import org.jooq.meta.jaxb.SyntheticIdentityType;
 import org.jooq.tools.JooqLogger;
 
@@ -51,89 +48,76 @@ import org.jooq.tools.JooqLogger;
  *
  * @author Lukas Eder
  */
-public class DefaultColumnDefinition
-    extends AbstractTypedElementDefinition<TableDefinition>
+public class DefaultColumnDefinition extends AbstractTypedElementDefinition<TableDefinition>
     implements ColumnDefinition {
 
-    private static final JooqLogger              log = JooqLogger.getLogger(DefaultColumnDefinition.class);
-    private final int                            position;
-    private final boolean                        isIdentity;
-    private transient List<EmbeddableDefinition> replacedByEmbeddables;
+  private static final JooqLogger log = JooqLogger.getLogger(DefaultColumnDefinition.class);
+  private final int position;
+  private final boolean isIdentity;
+  private transient List<EmbeddableDefinition> replacedByEmbeddables;
 
-    public DefaultColumnDefinition(TableDefinition table, String name, int position, DataTypeDefinition type,
-        boolean isIdentity, String comment) {
+  public DefaultColumnDefinition(
+      TableDefinition table,
+      String name,
+      int position,
+      DataTypeDefinition type,
+      boolean isIdentity,
+      String comment) {
 
-        super(table, name, position, type, comment);
+    super(table, name, position, type, comment);
 
-        this.position = position;
-        this.isIdentity = isIdentity || isSyntheticIdentity(this);
+    this.position = position;
+    this.isIdentity = isIdentity || isSyntheticIdentity(this);
 
-        // [#6222] Copy the column's identity flag to the data type definition
-        if (type instanceof DefaultDataTypeDefinition)
-            ((DefaultDataTypeDefinition) type).identity(this.isIdentity);
-    }
+    // [#6222] Copy the column's identity flag to the data type definition
+    if (type instanceof DefaultDataTypeDefinition)
+      ((DefaultDataTypeDefinition) type).identity(this.isIdentity);
+  }
 
-    @SuppressWarnings("unused")
-    private static boolean isSyntheticIdentity(DefaultColumnDefinition column) {
-        AbstractDatabase db = (AbstractDatabase) column.getDatabase();
+  @SuppressWarnings("unused")
+  private static boolean isSyntheticIdentity(DefaultColumnDefinition column) {
+    AbstractDatabase db = (AbstractDatabase) column.getDatabase();
 
-        for (SyntheticIdentityType id : db.getConfiguredSyntheticIdentities()) {
-            for (TableDefinition t : db.filter(singletonList(column.getContainer()), id.getTables())) {
-                for (ColumnDefinition c : db.filter(singletonList(column), id.getFields())) {
-                    log.info("Synthetic identity", column.getQualifiedName());
-                    db.markUsed(id);
-                    return true;
-                }
-            }
+    for (SyntheticIdentityType id : db.getConfiguredSyntheticIdentities()) {
+      for (TableDefinition t : db.filter(singletonList(column.getContainer()), id.getTables())) {
+        for (ColumnDefinition c : db.filter(singletonList(column), id.getFields())) {
+          log.info("Synthetic identity", column.getQualifiedName());
+          db.markUsed(id);
+          return true;
         }
-
-        return false;
+      }
     }
 
-    @Override
-    public final int getPosition() {
-        return position;
-    }
+    return false;
+  }
 
-    @Override
-    public final UniqueKeyDefinition getPrimaryKey() {
-        return getDatabase().getRelations().getPrimaryKey(this);
-    }
+  @Override
+  public final int getPosition() {
+    return position;
+  }
 
-    @Override
-    public final List<UniqueKeyDefinition> getUniqueKeys() {
-        return getDatabase().getRelations().getUniqueKeys(this);
-    }
+  @Override
+  public final UniqueKeyDefinition getPrimaryKey() {
+    return getDatabase().getRelations().getPrimaryKey(this);
+  }
 
-    @Override
-    public final List<UniqueKeyDefinition> getKeys() {
-        return getDatabase().getRelations().getKeys(this);
-    }
+  @Override
+  public final List<UniqueKeyDefinition> getUniqueKeys() {
+    return getDatabase().getRelations().getUniqueKeys(this);
+  }
 
-    @Override
-    public final List<ForeignKeyDefinition> getForeignKeys() {
-        return getDatabase().getRelations().getForeignKeys(this);
-    }
+  @Override
+  public final List<UniqueKeyDefinition> getKeys() {
+    return getDatabase().getRelations().getKeys(this);
+  }
 
-    @Override
-    public final boolean isIdentity() {
-        return isIdentity;
-    }
+  @Override
+  public final List<ForeignKeyDefinition> getForeignKeys() {
+    return getDatabase().getRelations().getForeignKeys(this);
+  }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+  @Override
+  public final boolean isIdentity() {
+    return isIdentity;
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,32 +38,24 @@
 package org.jooq.impl;
 
 import java.util.concurrent.Flow;
-
 import org.jooq.Record;
 import org.jooq.RowCountQuery;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 abstract class AbstractDelegatingDMLQuery<R extends Record, Q extends AbstractDMLQuery<R>>
-    extends AbstractDelegatingQuery<R, Q>
-    implements RowCountQuery {
+    extends AbstractDelegatingQuery<R, Q> implements RowCountQuery {
 
-    AbstractDelegatingDMLQuery(Q delegate) {
-        super(delegate);
-    }
+  AbstractDelegatingDMLQuery(Q delegate) {
+    super(delegate);
+  }
 
+  @Override
+  public final void subscribe(Flow.Subscriber<? super Integer> subscriber) {
+    getDelegate().subscribe(subscriber);
+  }
 
-
-    @Override
-    public final void subscribe(Flow.Subscriber<? super Integer> subscriber) {
-        getDelegate().subscribe(subscriber);
-    }
-
-
-
-    @Override
-    public final void subscribe(org.reactivestreams.Subscriber<? super Integer> subscriber) {
-        getDelegate().subscribe(subscriber);
-    }
+  @Override
+  public final void subscribe(org.reactivestreams.Subscriber<? super Integer> subscriber) {
+    getDelegate().subscribe(subscriber);
+  }
 }

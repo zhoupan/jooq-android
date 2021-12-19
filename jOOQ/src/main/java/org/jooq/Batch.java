@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,27 +41,27 @@ import java.io.Serializable;
 import java.sql.Statement;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
-
-import org.jooq.exception.DataAccessException;
-
 import org.jetbrains.annotations.NotNull;
+import org.jooq.exception.DataAccessException;
 
 /**
  * A wrapper for a JDBC batch operation. It has two modes:
+ *
  * <p>
+ *
  * <ol>
- * <li><b>Execute several queries without bind values</b><code><pre>
+ *   <li><b>Execute several queries without bind values</b><code><pre>
  * create.batch(query1,
  *              query2,
  *              query3)
  *       .execute();
- * </pre></code></li>
- * <li><b>Execute one query several times with bind values</b><code><pre>
+ * </pre></code>
+ *   <li><b>Execute one query several times with bind values</b><code><pre>
  * create.batch(query)
  *       .bind(valueA1, valueA2)
  *       .bind(valueB1, valueB2)
  *       .execute();
- * </pre></code></li>
+ * </pre></code>
  * </ol>
  *
  * @author Lukas Eder
@@ -69,36 +69,33 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface Batch extends Serializable, Publisher<Integer> {
 
-    /**
-     * Execute the batch operation.
-     *
-     * @see Statement#executeBatch()
-     * @throws DataAccessException if something went wrong executing the query
-     */
-    @NotNull
-    int[] execute() throws DataAccessException;
+  /**
+   * Execute the batch operation.
+   *
+   * @see Statement#executeBatch()
+   * @throws DataAccessException if something went wrong executing the query
+   */
+  @NotNull
+  int[] execute() throws DataAccessException;
 
-    /**
-     * Execute the batch operation in a new {@link CompletionStage}.
-     * <p>
-     * The result is asynchronously completed by a task running in an
-     * {@link Executor} provided by the underlying
-     * {@link Configuration#executorProvider()}.
-     *
-     * @see Statement#executeBatch()
-     */
-    @NotNull
-    CompletionStage<int[]> executeAsync();
+  /**
+   * Execute the batch operation in a new {@link CompletionStage}.
+   *
+   * <p>The result is asynchronously completed by a task running in an {@link Executor} provided by
+   * the underlying {@link Configuration#executorProvider()}.
+   *
+   * @see Statement#executeBatch()
+   */
+  @NotNull
+  CompletionStage<int[]> executeAsync();
 
-    /**
-     * Execute the query in a new {@link CompletionStage} that is asynchronously
-     * completed by a task running in the given executor.
-     */
-    @NotNull
-    CompletionStage<int[]> executeAsync(Executor executor);
+  /**
+   * Execute the query in a new {@link CompletionStage} that is asynchronously completed by a task
+   * running in the given executor.
+   */
+  @NotNull
+  CompletionStage<int[]> executeAsync(Executor executor);
 
-    /**
-     * Get the number of executed queries in this batch operation
-     */
-    int size();
+  /** Get the number of executed queries in this batch operation */
+  int size();
 }

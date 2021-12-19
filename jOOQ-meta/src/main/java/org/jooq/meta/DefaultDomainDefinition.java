@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,48 +41,44 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * @author Lukas Eder
- */
-public class DefaultDomainDefinition
-extends AbstractTypedElementDefinition<SchemaDefinition>
-implements DomainDefinition {
+/** @author Lukas Eder */
+public class DefaultDomainDefinition extends AbstractTypedElementDefinition<SchemaDefinition>
+    implements DomainDefinition {
 
-    private final List<String> checkClauses;
+  private final List<String> checkClauses;
 
-    public DefaultDomainDefinition(SchemaDefinition schema, String name, DataTypeDefinition baseType) {
-        super(schema, name, -1, baseType, "");
+  public DefaultDomainDefinition(
+      SchemaDefinition schema, String name, DataTypeDefinition baseType) {
+    super(schema, name, -1, baseType, "");
 
-        this.checkClauses = new ArrayList<>();
-    }
+    this.checkClauses = new ArrayList<>();
+  }
 
-    @Override
-    public List<Definition> getDefinitionPath() {
-        List<Definition> result = new ArrayList<>();
+  @Override
+  public List<Definition> getDefinitionPath() {
+    List<Definition> result = new ArrayList<>();
 
-        result.addAll(getSchema().getDefinitionPath());
-        result.add(this);
+    result.addAll(getSchema().getDefinitionPath());
+    result.add(this);
 
-        return result;
-    }
+    return result;
+  }
 
-    public void addCheckClause(String checkClause) {
-        if (checkClause != null)
-            checkClauses.add(checkClause);
-    }
+  public void addCheckClause(String checkClause) {
+    if (checkClause != null) checkClauses.add(checkClause);
+  }
 
-    public void addCheckClause(String... checkClause) {
-        if (checkClause != null)
-            checkClauses.addAll(Arrays.asList(checkClause));
-    }
+  public void addCheckClause(String... checkClause) {
+    if (checkClause != null) checkClauses.addAll(Arrays.asList(checkClause));
+  }
 
-    @Override
-    public List<String> getCheckClauses() {
-        return checkClauses;
-    }
+  @Override
+  public List<String> getCheckClauses() {
+    return checkClauses;
+  }
 
-    @Override
-    public DataTypeDefinition getBaseType() {
-        return getDefinedType();
-    }
+  @Override
+  public DataTypeDefinition getBaseType() {
+    return getDefinedType();
+  }
 }

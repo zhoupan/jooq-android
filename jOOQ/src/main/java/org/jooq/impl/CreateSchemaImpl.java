@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,7 @@
  */
 package org.jooq.impl;
 
+import static org.jooq.SQLDialect.*;
 import static org.jooq.impl.DSL.*;
 import static org.jooq.impl.Internal.*;
 import static org.jooq.impl.Keywords.*;
@@ -46,128 +47,75 @@ import static org.jooq.impl.Tools.*;
 import static org.jooq.impl.Tools.BooleanDataKey.*;
 import static org.jooq.impl.Tools.DataExtendedKey.*;
 import static org.jooq.impl.Tools.DataKey.*;
-import static org.jooq.SQLDialect.*;
-
-import org.jooq.*;
-import org.jooq.Record;
-import org.jooq.conf.*;
-import org.jooq.impl.*;
-import org.jooq.tools.*;
 
 import java.util.*;
+import org.jooq.*;
+import org.jooq.conf.*;
+import org.jooq.tools.*;
 
+/** The <code>CREATE SCHEMA</code> statement. */
+@SuppressWarnings({"unused"})
+final class CreateSchemaImpl extends AbstractDDLQuery implements CreateSchemaFinalStep {
 
-/**
- * The <code>CREATE SCHEMA</code> statement.
- */
-@SuppressWarnings({ "unused" })
-final class CreateSchemaImpl
-extends
-    AbstractDDLQuery
-implements
-    CreateSchemaFinalStep
-{
+  private final Schema schema;
+  private final boolean createSchemaIfNotExists;
 
-    private final Schema  schema;
-    private final boolean createSchemaIfNotExists;
+  CreateSchemaImpl(Configuration configuration, Schema schema, boolean createSchemaIfNotExists) {
+    super(configuration);
 
-    CreateSchemaImpl(
-        Configuration configuration,
-        Schema schema,
-        boolean createSchemaIfNotExists
-    ) {
-        super(configuration);
+    this.schema = schema;
+    this.createSchemaIfNotExists = createSchemaIfNotExists;
+  }
 
-        this.schema = schema;
-        this.createSchemaIfNotExists = createSchemaIfNotExists;
-    }
+  final Schema $schema() {
+    return schema;
+  }
 
-    final Schema  $schema()                  { return schema; }
-    final boolean $createSchemaIfNotExists() { return createSchemaIfNotExists; }
+  final boolean $createSchemaIfNotExists() {
+    return createSchemaIfNotExists;
+  }
 
-    // -------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // -------------------------------------------------------------------------
 
+  private static final Clause[] CLAUSES = {Clause.CREATE_SCHEMA};
+  private static final Set<SQLDialect> NO_SUPPORT_IF_NOT_EXISTS =
+      SQLDialect.supportedBy(DERBY, FIREBIRD);
 
+  private final boolean supportsIfNotExists(Context<?> ctx) {
+    return !NO_SUPPORT_IF_NOT_EXISTS.contains(ctx.dialect());
+  }
 
-    private static final Clause[]            CLAUSES                    = { Clause.CREATE_SCHEMA };
-    private static final Set<SQLDialect>     NO_SUPPORT_IF_NOT_EXISTS   = SQLDialect.supportedBy(DERBY, FIREBIRD);
+  @Override
+  public final void accept(Context<?> ctx) {
 
+    accept0(ctx);
+  }
 
+  private final void accept0(Context<?> ctx) {
+    if (createSchemaIfNotExists && !supportsIfNotExists(ctx))
+      tryCatch(ctx, DDLStatementType.CREATE_SCHEMA, c -> accept1(c));
+    else accept1(ctx);
+  }
 
+  private final void accept1(Context<?> ctx) {
 
+    accept2(ctx);
+  }
 
+  private final void accept2(Context<?> ctx) {
+    ctx.start(Clause.CREATE_SCHEMA_NAME).visit(K_CREATE);
 
-    private final boolean supportsIfNotExists(Context<?> ctx) {
-        return !NO_SUPPORT_IF_NOT_EXISTS.contains(ctx.dialect());
-    }
+    ctx.sql(' ').visit(K_SCHEMA);
 
-    @Override
-    public final void accept(Context<?> ctx) {
+    if (createSchemaIfNotExists && supportsIfNotExists(ctx)) ctx.sql(' ').visit(K_IF_NOT_EXISTS);
 
+    ctx.sql(' ').visit(schema).end(Clause.CREATE_SCHEMA_NAME);
+  }
 
-
-
-
-
-
-
-
-
-
-
-
-
-        accept0(ctx);
-    }
-
-    private final void accept0(Context<?> ctx) {
-        if (createSchemaIfNotExists && !supportsIfNotExists(ctx))
-            tryCatch(ctx, DDLStatementType.CREATE_SCHEMA, c -> accept1(c));
-        else
-            accept1(ctx);
-    }
-
-    private final void accept1(Context<?> ctx) {
-
-
-
-
-
-
-
-
-
-
-
-
-
-            accept2(ctx);
-    }
-
-    private final void accept2(Context<?> ctx) {
-        ctx.start(Clause.CREATE_SCHEMA_NAME)
-           .visit(K_CREATE);
-
-
-
-
-
-
-            ctx.sql(' ').visit(K_SCHEMA);
-
-        if (createSchemaIfNotExists && supportsIfNotExists(ctx))
-            ctx.sql(' ').visit(K_IF_NOT_EXISTS);
-
-        ctx.sql(' ').visit(schema)
-           .end(Clause.CREATE_SCHEMA_NAME);
-    }
-
-    @Override
-    public final Clause[] clauses(Context<?> ctx) {
-        return CLAUSES;
-    }
-
-
+  @Override
+  public final Clause[] clauses(Context<?> ctx) {
+    return CLAUSES;
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,24 +41,22 @@ import org.jooq.CharacterSet;
 import org.jooq.Context;
 import org.jooq.Name;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class CharacterSetImpl extends AbstractQueryPart implements CharacterSet {
 
-    private final Name name;
+  private final Name name;
 
-    CharacterSetImpl(Name name) {
-        this.name = name;
-    }
+  CharacterSetImpl(Name name) {
+    this.name = name;
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        ctx.visit(name);
-    }
+  @Override
+  public final void accept(Context<?> ctx) {
+    ctx.visit(name);
+  }
 
-    @Override
-    public final String getName() {
-        return name.last();
-    }
+  @Override
+  public final String getName() {
+    return name.last();
+  }
 }

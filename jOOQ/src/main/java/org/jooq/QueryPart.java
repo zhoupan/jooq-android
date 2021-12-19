@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,7 +38,6 @@
 package org.jooq;
 
 import java.io.Serializable;
-
 import org.jooq.conf.Settings;
 
 /**
@@ -48,56 +47,50 @@ import org.jooq.conf.Settings;
  */
 public interface QueryPart extends Serializable {
 
-    /**
-     * Render a SQL string representation of this <code>QueryPart</code>.
-     * <p>
-     * For improved debugging, this renders a SQL string of this
-     * <code>QueryPart</code> with inlined bind variables. If this
-     * <code>QueryPart</code> is {@link Attachable}, then the attached
-     * {@link Configuration} may be used for rendering the SQL string, including
-     * {@link SQLDialect} and {@link Settings}. Do note that most
-     * <code>QueryPart</code> instances are not attached to a
-     * {@link Configuration}, and thus there is no guarantee that the SQL string
-     * will make sense in the context of a specific database.
-     *
-     * @return A SQL string representation of this <code>QueryPart</code>
-     */
-    @Override
-    String toString();
+  /**
+   * Render a SQL string representation of this <code>QueryPart</code>.
+   *
+   * <p>For improved debugging, this renders a SQL string of this <code>QueryPart</code> with
+   * inlined bind variables. If this <code>QueryPart</code> is {@link Attachable}, then the attached
+   * {@link Configuration} may be used for rendering the SQL string, including {@link SQLDialect}
+   * and {@link Settings}. Do note that most <code>QueryPart</code> instances are not attached to a
+   * {@link Configuration}, and thus there is no guarantee that the SQL string will make sense in
+   * the context of a specific database.
+   *
+   * @return A SQL string representation of this <code>QueryPart</code>
+   */
+  @Override
+  String toString();
 
-    /**
-     * Check whether this <code>QueryPart</code> can be considered equal to
-     * another <code>QueryPart</code>.
-     * <p>
-     * In general, <code>QueryPart</code> equality is defined in terms of
-     * {@link #toString()} equality. In other words, two query parts are
-     * considered equal if their rendered SQL (with inlined bind variables) is
-     * equal. This means that the two query parts do not necessarily have to be
-     * of the same type.
-     * <p>
-     * Some <code>QueryPart</code> implementations may choose to override this
-     * behaviour for improved performance, as {@link #toString()} is an
-     * expensive operation, if called many times.
-     *
-     * @param object The other <code>QueryPart</code>
-     * @return Whether the two query parts are equal
-     */
-    @Override
-    boolean equals(Object object);
+  /**
+   * Check whether this <code>QueryPart</code> can be considered equal to another <code>QueryPart
+   * </code>.
+   *
+   * <p>In general, <code>QueryPart</code> equality is defined in terms of {@link #toString()}
+   * equality. In other words, two query parts are considered equal if their rendered SQL (with
+   * inlined bind variables) is equal. This means that the two query parts do not necessarily have
+   * to be of the same type.
+   *
+   * <p>Some <code>QueryPart</code> implementations may choose to override this behaviour for
+   * improved performance, as {@link #toString()} is an expensive operation, if called many times.
+   *
+   * @param object The other <code>QueryPart</code>
+   * @return Whether the two query parts are equal
+   */
+  @Override
+  boolean equals(Object object);
 
-    /**
-     * Generate a hash code from this <code>QueryPart</code>.
-     * <p>
-     * In general, <code>QueryPart</code> hash codes are the same as the hash
-     * codes generated from {@link #toString()}. This guarantees consistent
-     * behaviour with {@link #equals(Object)}
-     * <p>
-     * Some <code>QueryPart</code> implementations may choose to override this
-     * behaviour for improved performance, as {@link #toString()} is an
-     * expensive operation, if called many times.
-     *
-     * @return The <code>QueryPart</code> hash code
-     */
-    @Override
-    int hashCode();
+  /**
+   * Generate a hash code from this <code>QueryPart</code>.
+   *
+   * <p>In general, <code>QueryPart</code> hash codes are the same as the hash codes generated from
+   * {@link #toString()}. This guarantees consistent behaviour with {@link #equals(Object)}
+   *
+   * <p>Some <code>QueryPart</code> implementations may choose to override this behaviour for
+   * improved performance, as {@link #toString()} is an expensive operation, if called many times.
+   *
+   * @return The <code>QueryPart</code> hash code
+   */
+  @Override
+  int hashCode();
 }

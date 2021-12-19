@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,15 +40,12 @@ package org.jooq;
 import org.jooq.impl.CacheType;
 
 /**
- * The parameter object passed to the
- * {@link CacheProvider#provide(CacheContext)} method.
+ * The parameter object passed to the {@link CacheProvider#provide(CacheContext)} method.
  *
  * @author Lukas Eder
  */
 public interface CacheContext extends Scope {
 
-    /**
-     * The cache type for which a cache should be provided.
-     */
-    CacheType cacheType();
+  /** The cache type for which a cache should be provided. */
+  CacheType cacheType();
 }

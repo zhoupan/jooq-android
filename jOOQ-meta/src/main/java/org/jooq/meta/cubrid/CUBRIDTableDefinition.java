@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,6 @@
  *
  *
  */
-
 package org.jooq.meta.cubrid;
 
 import static org.jooq.meta.cubrid.dba.Tables.DB_ATTRIBUTE;
@@ -44,7 +43,6 @@ import static org.jooq.meta.cubrid.dba.Tables.DB_SERIAL;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.jooq.Record;
 import org.jooq.meta.AbstractTableDefinition;
 import org.jooq.meta.ColumnDefinition;
@@ -53,60 +51,62 @@ import org.jooq.meta.DefaultColumnDefinition;
 import org.jooq.meta.DefaultDataTypeDefinition;
 import org.jooq.meta.SchemaDefinition;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 public class CUBRIDTableDefinition extends AbstractTableDefinition {
 
-    public CUBRIDTableDefinition(SchemaDefinition schema, String name, String comment) {
-        super(schema, name, comment);
-	}
+  public CUBRIDTableDefinition(SchemaDefinition schema, String name, String comment) {
+    super(schema, name, comment);
+  }
 
-	@Override
-	public List<ColumnDefinition> getElements0() throws SQLException {
-		List<ColumnDefinition> result = new ArrayList<>();
+  @Override
+  public List<ColumnDefinition> getElements0() throws SQLException {
+    List<ColumnDefinition> result = new ArrayList<>();
 
-		 for (Record record : create()
-		         .select(
-        		     DB_ATTRIBUTE.ATTR_NAME,
-        		     DB_ATTRIBUTE.DEF_ORDER,
-		             DB_ATTRIBUTE.DATA_TYPE,
-		             DB_ATTRIBUTE.PREC,
-		             DB_ATTRIBUTE.SCALE,
-		             DB_ATTRIBUTE.IS_NULLABLE,
-		             DB_ATTRIBUTE.DEFAULT_VALUE,
-		             DB_SERIAL.NAME)
-		        .from(DB_ATTRIBUTE)
-		        .leftOuterJoin(DB_SERIAL).on(
-		            DB_ATTRIBUTE.ATTR_NAME.equal(DB_SERIAL.ATT_NAME).and(
-	                DB_ATTRIBUTE.CLASS_NAME.equal(DB_SERIAL.CLASS_NAME)))
-		        .where(DB_ATTRIBUTE.CLASS_NAME.equal(getName()))
-		        .orderBy(DB_ATTRIBUTE.DEF_ORDER)) {
+    for (Record record :
+        create()
+            .select(
+                DB_ATTRIBUTE.ATTR_NAME,
+                DB_ATTRIBUTE.DEF_ORDER,
+                DB_ATTRIBUTE.DATA_TYPE,
+                DB_ATTRIBUTE.PREC,
+                DB_ATTRIBUTE.SCALE,
+                DB_ATTRIBUTE.IS_NULLABLE,
+                DB_ATTRIBUTE.DEFAULT_VALUE,
+                DB_SERIAL.NAME)
+            .from(DB_ATTRIBUTE)
+            .leftOuterJoin(DB_SERIAL)
+            .on(
+                DB_ATTRIBUTE
+                    .ATTR_NAME
+                    .equal(DB_SERIAL.ATT_NAME)
+                    .and(DB_ATTRIBUTE.CLASS_NAME.equal(DB_SERIAL.CLASS_NAME)))
+            .where(DB_ATTRIBUTE.CLASS_NAME.equal(getName()))
+            .orderBy(DB_ATTRIBUTE.DEF_ORDER)) {
 
-		    String dataType = record.get(DB_ATTRIBUTE.DATA_TYPE);
+      String dataType = record.get(DB_ATTRIBUTE.DATA_TYPE);
 
-            DataTypeDefinition type = new DefaultDataTypeDefinition(
-                getDatabase(),
-                getSchema(),
-                dataType,
-                record.get(DB_ATTRIBUTE.PREC),
-                record.get(DB_ATTRIBUTE.PREC),
-                record.get(DB_ATTRIBUTE.SCALE),
-                record.get(DB_ATTRIBUTE.IS_NULLABLE, boolean.class),
-                record.get(DB_ATTRIBUTE.DEFAULT_VALUE),
-                getName() + "_" + record.get(DB_ATTRIBUTE.ATTR_NAME)
-            );
+      DataTypeDefinition type =
+          new DefaultDataTypeDefinition(
+              getDatabase(),
+              getSchema(),
+              dataType,
+              record.get(DB_ATTRIBUTE.PREC),
+              record.get(DB_ATTRIBUTE.PREC),
+              record.get(DB_ATTRIBUTE.SCALE),
+              record.get(DB_ATTRIBUTE.IS_NULLABLE, boolean.class),
+              record.get(DB_ATTRIBUTE.DEFAULT_VALUE),
+              getName() + "_" + record.get(DB_ATTRIBUTE.ATTR_NAME));
 
-			result.add(new DefaultColumnDefinition(
-				getDatabase().getTable(getSchema(), getName()),
-			    record.get(DB_ATTRIBUTE.ATTR_NAME),
-			    result.size() + 1,
-			    type,
-			    record.get(DB_SERIAL.NAME) != null,
-			    null
-		    ));
-		}
+      result.add(
+          new DefaultColumnDefinition(
+              getDatabase().getTable(getSchema(), getName()),
+              record.get(DB_ATTRIBUTE.ATTR_NAME),
+              result.size() + 1,
+              type,
+              record.get(DB_SERIAL.NAME) != null,
+              null));
+    }
 
-		return result;
-	}
+    return result;
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,13 +37,10 @@
  */
 package org.jooq;
 
-
-
-
 /**
  * This type is used for the window function DSL API.
- * <p>
- * Example: <code><pre>
+ *
+ * <p>Example: <code><pre>
  * field.firstValue()
  *      .ignoreNulls()
  *      .over()
@@ -52,13 +49,10 @@ package org.jooq;
  *      .rowsBetweenUnboundedPreceding()
  *      .andUnboundedFollowing()
  * </pre></code>
- * <p>
- * Unlike in {@link WindowOverStep}, <code>OVER()</code> is an optional clause
- * clause.
+ *
+ * <p>Unlike in {@link WindowOverStep}, <code>OVER()</code> is an optional clause clause.
  *
  * @param <T> The function return type
  * @author Lukas Eder
  */
-public interface WindowBeforeOverStep<T> extends WindowOverStep<T>, Field<T> {
-
-}
+public interface WindowBeforeOverStep<T> extends WindowOverStep<T>, Field<T> {}

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,28 +38,24 @@
 package org.jooq;
 
 import java.sql.SQLData;
-
 import org.jetbrains.annotations.NotNull;
 
 /**
- * A record that has a {@link RecordQualifier} (a {@link UDTRecord} or a
- * {@link TableRecord}).
+ * A record that has a {@link RecordQualifier} (a {@link UDTRecord} or a {@link TableRecord}).
  *
  * @author Lukas Eder
  */
 public interface QualifiedRecord<R extends QualifiedRecord<R>> extends Record, SQLData {
 
-    /**
-     * Get the {@link UDT} or {@link Table} reference.
-     */
-    @NotNull
-    RecordQualifier<R> getQualifier();
+  /** Get the {@link UDT} or {@link Table} reference. */
+  @NotNull
+  RecordQualifier<R> getQualifier();
 
-    @NotNull
-    @Override
-    <T> R with(Field<T> field, T value);
+  @NotNull
+  @Override
+  <T> R with(Field<T> field, T value);
 
-    @NotNull
-    @Override
-    <T, U> R with(Field<T> field, U value, Converter<? extends T, ? super U> converter);
+  @NotNull
+  @Override
+  <T, U> R with(Field<T> field, U value, Converter<? extends T, ? super U> converter);
 }

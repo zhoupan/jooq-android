@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,37 +37,34 @@
  */
 package org.jooq;
 
-
 /**
  * A window definition.
- * <p>
- * Window definitions can be
+ *
+ * <p>Window definitions can be
+ *
  * <ul>
- * <li>declared in the <code>WINDOW</code> clause (see
- * {@link SelectWindowStep#window(WindowDefinition...)}</li>
- * <li>referenced from the <code>OVER</code> clause (see
- * {@link AggregateFunction#over(WindowDefinition)}</li>
+ *   <li>declared in the <code>WINDOW</code> clause (see {@link
+ *       SelectWindowStep#window(WindowDefinition...)}
+ *   <li>referenced from the <code>OVER</code> clause (see {@link
+ *       AggregateFunction#over(WindowDefinition)}
  * </ul>
- * <p>
- * The <code>WINDOW</code> clause is only natively supported by
+ *
+ * <p>The <code>WINDOW</code> clause is only natively supported by
+ *
  * <ul>
- * <li>{@link SQLDialect#AURORA_POSTGRES}</li>
- * <li>{@link SQLDialect#H2}</li>
- * <li>{@link SQLDialect#MYSQL}</li>
- * <li>{@link SQLDialect#POSTGRES}</li>
- * <li>{@link SQLDialect#SQLITE}</li>
- * <li>{@link SQLDialect#SYBASE}</li>
+ *   <li>{@link SQLDialect#AURORA_POSTGRES}
+ *   <li>{@link SQLDialect#H2}
+ *   <li>{@link SQLDialect#MYSQL}
+ *   <li>{@link SQLDialect#POSTGRES}
+ *   <li>{@link SQLDialect#SQLITE}
+ *   <li>{@link SQLDialect#SYBASE}
  * </ul>
- * <p>
- * If your database supports window functions, but not the <code>WINDOW</code>
- * clause, jOOQ will inline window definitions into their respective window
- * functions.
- * <p>
- * Instances can be created using {@link Name#as(WindowSpecification)} and
- * overloads.
+ *
+ * <p>If your database supports window functions, but not the <code>WINDOW</code> clause, jOOQ will
+ * inline window definitions into their respective window functions.
+ *
+ * <p>Instances can be created using {@link Name#as(WindowSpecification)} and overloads.
  *
  * @author Lukas Eder
  */
-public interface WindowDefinition extends WindowSpecificationOrderByStep {
-
-}
+public interface WindowDefinition extends WindowSpecificationOrderByStep {}

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,7 @@
  */
 package org.jooq.impl;
 
+import static org.jooq.SQLDialect.*;
 import static org.jooq.impl.DSL.*;
 import static org.jooq.impl.Internal.*;
 import static org.jooq.impl.Keywords.*;
@@ -46,100 +47,78 @@ import static org.jooq.impl.Tools.*;
 import static org.jooq.impl.Tools.BooleanDataKey.*;
 import static org.jooq.impl.Tools.DataExtendedKey.*;
 import static org.jooq.impl.Tools.DataKey.*;
-import static org.jooq.SQLDialect.*;
-
-import org.jooq.*;
-import org.jooq.Record;
-import org.jooq.conf.*;
-import org.jooq.impl.*;
-import org.jooq.tools.*;
 
 import java.util.*;
+import org.jooq.*;
+import org.jooq.conf.*;
+import org.jooq.tools.*;
 
+/** The <code>DROP SEQUENCE</code> statement. */
+@SuppressWarnings({"rawtypes", "unused"})
+final class DropSequenceImpl extends AbstractDDLQuery implements DropSequenceFinalStep {
 
-/**
- * The <code>DROP SEQUENCE</code> statement.
- */
-@SuppressWarnings({ "rawtypes", "unused" })
-final class DropSequenceImpl
-extends
-    AbstractDDLQuery
-implements
-    DropSequenceFinalStep
-{
+  private final Sequence<?> sequence;
+  private final boolean dropSequenceIfExists;
 
-    private final Sequence<?> sequence;
-    private final boolean     dropSequenceIfExists;
+  DropSequenceImpl(
+      Configuration configuration, Sequence<?> sequence, boolean dropSequenceIfExists) {
+    super(configuration);
 
-    DropSequenceImpl(
-        Configuration configuration,
-        Sequence<?> sequence,
-        boolean dropSequenceIfExists
-    ) {
-        super(configuration);
+    this.sequence = sequence;
+    this.dropSequenceIfExists = dropSequenceIfExists;
+  }
 
-        this.sequence = sequence;
-        this.dropSequenceIfExists = dropSequenceIfExists;
-    }
+  final Sequence<?> $sequence() {
+    return sequence;
+  }
 
-    final Sequence<?> $sequence()             { return sequence; }
-    final boolean     $dropSequenceIfExists() { return dropSequenceIfExists; }
+  final boolean $dropSequenceIfExists() {
+    return dropSequenceIfExists;
+  }
 
-    // -------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // -------------------------------------------------------------------------
 
+  private static final Clause[] CLAUSES = {Clause.DROP_SEQUENCE};
+  private static final Set<SQLDialect> NO_SUPPORT_IF_EXISTS =
+      SQLDialect.supportedBy(DERBY, FIREBIRD);
 
+  private final boolean supportsIfExists(Context<?> ctx) {
+    return !NO_SUPPORT_IF_EXISTS.contains(ctx.dialect());
+  }
 
-    private static final Clause[]        CLAUSES              = { Clause.DROP_SEQUENCE };
-    private static final Set<SQLDialect> NO_SUPPORT_IF_EXISTS = SQLDialect.supportedBy(DERBY, FIREBIRD);
+  @Override
+  public final void accept(Context<?> ctx) {
+    if (dropSequenceIfExists && !supportsIfExists(ctx))
+      tryCatch(ctx, DDLStatementType.DROP_SEQUENCE, c -> accept0(c));
+    else accept0(ctx);
+  }
 
-    private final boolean supportsIfExists(Context<?> ctx) {
-        return !NO_SUPPORT_IF_EXISTS.contains(ctx.dialect());
-    }
+  private void accept0(Context<?> ctx) {
+    ctx.start(Clause.DROP_SEQUENCE_SEQUENCE)
+        .visit(K_DROP)
+        .sql(' ')
+        .visit(ctx.family() == CUBRID ? K_SERIAL : K_SEQUENCE)
+        .sql(' ');
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        if (dropSequenceIfExists && !supportsIfExists(ctx))
-            tryCatch(ctx, DDLStatementType.DROP_SEQUENCE, c -> accept0(c));
-        else
-            accept0(ctx);
-    }
+    if (dropSequenceIfExists && supportsIfExists(ctx)) ctx.visit(K_IF_EXISTS).sql(' ');
 
-    private void accept0(Context<?> ctx) {
-        ctx.start(Clause.DROP_SEQUENCE_SEQUENCE)
-           .visit(K_DROP)
-           .sql(' ')
-           .visit(ctx.family() == CUBRID ? K_SERIAL : K_SEQUENCE)
-           .sql(' ');
-
-        if (dropSequenceIfExists && supportsIfExists(ctx))
-            ctx.visit(K_IF_EXISTS).sql(' ');
-
-        switch (ctx.family()) {
-
-
-
-
-
-
-
-            default: {
-                ctx.visit(sequence);
-                break;
-            }
+    switch (ctx.family()) {
+      default:
+        {
+          ctx.visit(sequence);
+          break;
         }
-
-        if (ctx.family() == DERBY)
-            ctx.sql(' ').visit(K_RESTRICT);
-
-        ctx.end(Clause.DROP_SEQUENCE_SEQUENCE);
     }
 
-    @Override
-    public final Clause[] clauses(Context<?> ctx) {
-        return CLAUSES;
-    }
+    if (ctx.family() == DERBY) ctx.sql(' ').visit(K_RESTRICT);
 
+    ctx.end(Clause.DROP_SEQUENCE_SEQUENCE);
+  }
 
+  @Override
+  public final Clause[] clauses(Context<?> ctx) {
+    return CLAUSES;
+  }
 }

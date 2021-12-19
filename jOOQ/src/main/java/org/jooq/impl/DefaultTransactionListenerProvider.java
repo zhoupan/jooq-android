@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,51 +40,48 @@ package org.jooq.impl;
 import static org.jooq.impl.Tools.map;
 
 import java.io.Serializable;
-
-import org.jooq.RecordListenerProvider;
 import org.jooq.TransactionListener;
 import org.jooq.TransactionListenerProvider;
 
 /**
  * A default implementation for {@link TransactionListenerProvider}.
- * <p>
- * This implementation just wraps an instance of {@link TransactionListener}, always
- * providing the same.
+ *
+ * <p>This implementation just wraps an instance of {@link TransactionListener}, always providing
+ * the same.
  *
  * @author Lukas Eder
  */
-public class DefaultTransactionListenerProvider implements TransactionListenerProvider, Serializable {
+public class DefaultTransactionListenerProvider
+    implements TransactionListenerProvider, Serializable {
 
-    /**
-     * The delegate listener.
-     */
-    private final TransactionListener listener;
+  /** The delegate listener. */
+  private final TransactionListener listener;
 
-    /**
-     * Convenience method to construct an array of
-     * <code>DefaultTransactionListenerProvider</code> from an array of
-     * <code>TransactionListener</code> instances.
-     */
-    public static TransactionListenerProvider[] providers(TransactionListener... listeners) {
-        return map(listeners, DefaultTransactionListenerProvider::new, TransactionListenerProvider[]::new);
-    }
+  /**
+   * Convenience method to construct an array of <code>DefaultTransactionListenerProvider</code>
+   * from an array of <code>TransactionListener</code> instances.
+   */
+  public static TransactionListenerProvider[] providers(TransactionListener... listeners) {
+    return map(
+        listeners, DefaultTransactionListenerProvider::new, TransactionListenerProvider[]::new);
+  }
 
-    /**
-     * Create a new provider instance from an argument listener.
-     *
-     * @param listener The argument listener.
-     */
-    public DefaultTransactionListenerProvider(TransactionListener listener) {
-        this.listener = listener;
-    }
+  /**
+   * Create a new provider instance from an argument listener.
+   *
+   * @param listener The argument listener.
+   */
+  public DefaultTransactionListenerProvider(TransactionListener listener) {
+    this.listener = listener;
+  }
 
-    @Override
-    public final TransactionListener provide() {
-        return listener;
-    }
+  @Override
+  public final TransactionListener provide() {
+    return listener;
+  }
 
-    @Override
-    public String toString() {
-        return listener.toString();
-    }
+  @Override
+  public String toString() {
+    return listener.toString();
+  }
 }

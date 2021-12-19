@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,16 +43,12 @@ import org.jooq.Record;
 import org.jooq.Table;
 
 /**
- * [#11564] A table that produces auto table and column aliases, if no explicit alias is
- * provided.
+ * [#11564] A table that produces auto table and column aliases, if no explicit alias is provided.
  *
  * @author Lukas Eder
  */
 interface AutoAliasTable<R extends Record> extends Table<R>, QueryPartInternal {
 
-    /**
-     * Create the aliased table expression or <code>null</code> if no auto-alias
-     * is required.
-     */
-    Table<R> autoAlias(Context<?> ctx);
+  /** Create the aliased table expression or <code>null</code> if no auto-alias is required. */
+  Table<R> autoAlias(Context<?> ctx);
 }

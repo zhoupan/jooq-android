@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,9 +44,6 @@ package org.jooq.meta;
  */
 public interface PositionedDefinition extends Definition {
 
-    /**
-     * The object's 1-based position in the parent.
-     */
-    int getPosition();
-
+  /** The object's 1-based position in the parent. */
+  int getPosition();
 }

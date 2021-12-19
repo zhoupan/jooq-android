@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,12 +41,6 @@ package org.jooq.impl;
 import static org.jooq.SQLDialect.FIREBIRD;
 import static org.jooq.SQLDialect.H2;
 import static org.jooq.SQLDialect.HSQLDB;
-// ...
-// ...
-// ...
-// ...
-// ...
-// ...
 import static org.jooq.impl.DSL.function;
 import static org.jooq.impl.DSL.one;
 import static org.jooq.impl.DSL.zero;
@@ -56,77 +50,45 @@ import static org.jooq.impl.Names.N_BIN_NOT;
 import static org.jooq.impl.Names.N_BITNOT;
 
 import java.util.Set;
-
 import org.jooq.Context;
 import org.jooq.Field;
-import org.jooq.Param;
 import org.jooq.SQLDialect;
 import org.jooq.conf.TransformUnneededArithmeticExpressions;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class Neg<T> extends AbstractTransformable<T> {
 
-    private static final Set<SQLDialect> EMULATE_BIT_NOT  = SQLDialect.supportedBy(HSQLDB);
-    private static final Set<SQLDialect> SUPPORT_BIT_NOT  = SQLDialect.supportedBy(H2);
+  private static final Set<SQLDialect> EMULATE_BIT_NOT = SQLDialect.supportedBy(HSQLDB);
+  private static final Set<SQLDialect> SUPPORT_BIT_NOT = SQLDialect.supportedBy(H2);
 
-    private final Field<T>               field;
-    private final boolean                internal;
-    private final ExpressionOperator     operator;
+  private final Field<T> field;
+  private final boolean internal;
+  private final ExpressionOperator operator;
 
-    Neg(Field<T> field, boolean internal, ExpressionOperator operator) {
-        super(operator.toName(), field.getDataType());
+  Neg(Field<T> field, boolean internal, ExpressionOperator operator) {
+    super(operator.toName(), field.getDataType());
 
-        this.field = field;
-        this.internal = internal;
-        this.operator = operator;
-    }
+    this.field = field;
+    this.internal = internal;
+    this.operator = operator;
+  }
 
-    @Override
-    public final Field<?> transform(TransformUnneededArithmeticExpressions transform) {
+  @Override
+  public final Field<?> transform(TransformUnneededArithmeticExpressions transform) {
 
+    return this;
+  }
 
+  @Override
+  public final void accept0(Context<?> ctx) {
+    SQLDialect family = ctx.family();
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        return this;
-    }
-
-    @Override
-    public final void accept0(Context<?> ctx) {
-        SQLDialect family = ctx.family();
-
-
-
-
-
-
-        if (operator == BIT_NOT && EMULATE_BIT_NOT.contains(ctx.dialect()))
-            ctx.visit(isub(isub(zero(), field), one()));
-        else if (operator == BIT_NOT && SUPPORT_BIT_NOT.contains(ctx.dialect()))
-            ctx.visit(function(N_BITNOT, getDataType(), field));
-        else if (operator == BIT_NOT && family == FIREBIRD)
-            ctx.visit(function(N_BIN_NOT, getDataType(), field));
-        else
-            ctx.sql(operator.toSQL())
-               .sql('(')
-               .visit(field)
-               .sql(')');
-    }
+    if (operator == BIT_NOT && EMULATE_BIT_NOT.contains(ctx.dialect()))
+      ctx.visit(isub(isub(zero(), field), one()));
+    else if (operator == BIT_NOT && SUPPORT_BIT_NOT.contains(ctx.dialect()))
+      ctx.visit(function(N_BITNOT, getDataType(), field));
+    else if (operator == BIT_NOT && family == FIREBIRD)
+      ctx.visit(function(N_BIN_NOT, getDataType(), field));
+    else ctx.sql(operator.toSQL()).sql('(').visit(field).sql(')');
+  }
 }

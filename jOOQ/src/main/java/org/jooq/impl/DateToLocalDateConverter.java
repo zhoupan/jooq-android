@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,30 +39,28 @@ package org.jooq.impl;
 
 import java.sql.Date;
 import java.time.LocalDate;
-
 import org.jooq.Converter;
 
 /**
  * @author Lukas Eder
- * @deprecated - 3.15.0 - [#11505] - Use
- *             {@link Converter#ofNullable(Class, Class, java.util.function.Function, java.util.function.Function)}
- *             instead, e.g.
- *             <code>Converter.ofNullable(Date.class, LocalDate.class, Date::toLocalDate, Date::valueOf)</code>.
+ * @deprecated - 3.15.0 - [#11505] - Use {@link Converter#ofNullable(Class, Class,
+ *     java.util.function.Function, java.util.function.Function)} instead, e.g. <code>
+ *     Converter.ofNullable(Date.class, LocalDate.class, Date::toLocalDate, Date::valueOf)</code>.
  */
 @Deprecated
 public final class DateToLocalDateConverter extends AbstractConverter<Date, LocalDate> {
 
-    public DateToLocalDateConverter() {
-        super(Date.class, LocalDate.class);
-    }
+  public DateToLocalDateConverter() {
+    super(Date.class, LocalDate.class);
+  }
 
-    @Override
-    public final LocalDate from(Date t) {
-        return t == null ? null : t.toLocalDate();
-    }
+  @Override
+  public final LocalDate from(Date t) {
+    return t == null ? null : t.toLocalDate();
+  }
 
-    @Override
-    public final Date to(LocalDate u) {
-        return u == null ? null : Date.valueOf(u);
-    }
+  @Override
+  public final Date to(LocalDate u) {
+    return u == null ? null : Date.valueOf(u);
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,23 +39,17 @@ package org.jooq;
 
 // ...
 
-import java.util.Collection;
-
 import org.jooq.impl.DSL;
-
-import org.jetbrains.annotations.NotNull;
-
 
 /**
  * An aggregate function.
- * <p>
- * An aggregate function is a special field that is usually used in a
- * <code>GROUP BY</code> context. It is also the base for window function
- * construction.
- * <p>
- * <strong>Example:</strong>
- * <p>
- * <code><pre>
+ *
+ * <p>An aggregate function is a special field that is usually used in a <code>GROUP BY</code>
+ * context. It is also the base for window function construction.
+ *
+ * <p><strong>Example:</strong>
+ *
+ * <p><code><pre>
  * // Assuming import static org.jooq.impl.DSL.*;
  *
  * using(configuration)
@@ -65,62 +59,10 @@ import org.jetbrains.annotations.NotNull;
  *    .orderBy(count().desc())
  *    .fetch();
  * </pre></code>
- * <p>
- * Instances can be created using various {@link DSL} methods and their
- * overloads, such as {@link DSL#count()} or {@link DSL#countDistinct(Field)}.
+ *
+ * <p>Instances can be created using various {@link DSL} methods and their overloads, such as {@link
+ * DSL#count()} or {@link DSL#countDistinct(Field)}.
  *
  * @author Lukas Eder
  */
-public interface AggregateFunction<T> extends AggregateFilterStep<T> {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-}
+public interface AggregateFunction<T> extends AggregateFilterStep<T> {}

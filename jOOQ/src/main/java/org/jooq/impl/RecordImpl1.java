@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,68 +44,68 @@ import org.jooq.Record1;
 
 /**
  * A general purpose record, typically used for ad-hoc types.
- * <p>
- * This type implements both the general-purpose, type-unsafe {@link Record}
- * interface, as well as the more specific, type-safe {@link Record1}
- * interfaces
+ *
+ * <p>This type implements both the general-purpose, type-unsafe {@link Record} interface, as well
+ * as the more specific, type-safe {@link Record1} interfaces
  *
  * @author Lukas Eder
  */
-@SuppressWarnings({ "unchecked" })
+@SuppressWarnings({"unchecked"})
 final class RecordImpl1<T1> extends AbstractRecord implements InternalRecord, Record1<T1> {
 
-    RecordImpl1(AbstractRow<?> row) {
-        super(row);
-    }
+  RecordImpl1(AbstractRow<?> row) {
+    super(row);
+  }
 
-    // ------------------------------------------------------------------------
-    // XXX: Type-safe Record APIs
-    // ------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
+  // XXX: Type-safe Record APIs
+  // ------------------------------------------------------------------------
 
-    @Override
-    public RowImpl1<T1> fieldsRow() {
-        return new RowImpl1<>(field1());
-    }
+  @Override
+  public RowImpl1<T1> fieldsRow() {
+    return new RowImpl1<>(field1());
+  }
 
-    @Override
-    public final RowImpl1<T1> valuesRow() {
-        return new RowImpl1<>(Tools.field(value1(), field1()));
-    }
+  @Override
+  public final RowImpl1<T1> valuesRow() {
+    return new RowImpl1<>(Tools.field(value1(), field1()));
+  }
 
-    @Override
-    public final Field<T1> field1() {
-        return (Field<T1>) fields.field(0);
-    }
+  @Override
+  public final Field<T1> field1() {
+    return (Field<T1>) fields.field(0);
+  }
 
-    @Override
-    public final T1 value1() {
-        return (T1) get(0);
-    }
+  @Override
+  public final T1 value1() {
+    return (T1) get(0);
+  }
 
-    @Override
-    public final Record1<T1> value1(T1 value) {
-        set(0, value);
-        return this;
-    }
+  @Override
+  public final Record1<T1> value1(T1 value) {
+    set(0, value);
+    return this;
+  }
 
-    @Override
-    public final Record1<T1> values(T1 t1) {
-        set(0, t1);
-        return this;
-    }
+  @Override
+  public final Record1<T1> values(T1 t1) {
+    set(0, t1);
+    return this;
+  }
 
-    @Override
-    public <T> Record1<T1> with(Field<T> field, T value) {
-        return (Record1<T1>) super.with(field, value);
-    }
+  @Override
+  public <T> Record1<T1> with(Field<T> field, T value) {
+    return (Record1<T1>) super.with(field, value);
+  }
 
-    @Override
-    public <T, U> Record1<T1> with(Field<T> field, U value, Converter<? extends T, ? super U> converter) {
-        return (Record1<T1>) super.with(field, value, converter);
-    }
+  @Override
+  public <T, U> Record1<T1> with(
+      Field<T> field, U value, Converter<? extends T, ? super U> converter) {
+    return (Record1<T1>) super.with(field, value, converter);
+  }
 
-    @Override
-    public final T1 component1() {
-        return value1();
-    }
+  @Override
+  public final T1 component1() {
+    return value1();
+  }
 }

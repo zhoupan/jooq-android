@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,30 +44,24 @@ package org.jooq.meta;
  */
 public interface TypedElementDefinition<T extends Definition> extends Definition {
 
-    /**
-     * The column / parameter / attribute type after applying forced types.
-     */
-    DataTypeDefinition getType();
+  /** The column / parameter / attribute type after applying forced types. */
+  DataTypeDefinition getType();
 
-    /**
-     * The column / parameter / attribute type after applying forced types and
-     * resolving the {@link DataTypeDefinition#getJavaType()}.
-     */
-    DataTypeDefinition getType(JavaTypeResolver resolver);
+  /**
+   * The column / parameter / attribute type after applying forced types and resolving the {@link
+   * DataTypeDefinition#getJavaType()}.
+   */
+  DataTypeDefinition getType(JavaTypeResolver resolver);
 
-    /**
-     * The column / parameter type as declared in the database (prior to applying forced types).
-     */
-    DataTypeDefinition getDefinedType();
+  /** The column / parameter type as declared in the database (prior to applying forced types). */
+  DataTypeDefinition getDefinedType();
 
-    /**
-     * The container that contains this typed element.
-     */
-    T getContainer();
+  /** The container that contains this typed element. */
+  T getContainer();
 
-    /**
-     * The column / parameter / attribute domain type, or <code>null</code>, if
-     * it does not reference a domain.
-     */
-    DomainDefinition getDomain();
+  /**
+   * The column / parameter / attribute domain type, or <code>null</code>, if it does not reference
+   * a domain.
+   */
+  DomainDefinition getDomain();
 }

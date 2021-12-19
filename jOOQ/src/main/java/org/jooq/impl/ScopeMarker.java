@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,202 +40,121 @@ package org.jooq.impl;
 // ...
 // ...
 // ...
-import static org.jooq.impl.Keywords.K_DECLARE;
-import static org.jooq.impl.Tools.increment;
 import static org.jooq.impl.Tools.DataKey.DATA_TOP_LEVEL_CTE;
 import static org.jooq.impl.WithImpl.acceptWithRecursive;
 
 import org.jooq.Clause;
 import org.jooq.Context;
-// ...
 import org.jooq.QueryPartInternal;
-import org.jooq.Statement;
 import org.jooq.impl.AbstractContext.ScopeStackElement;
-import org.jooq.impl.Tools.DataExtendedKey;
-import org.jooq.impl.Tools.DataKey;
 
-/**
- * A set of markers for use with the {@link ScopeStack}.
- */
+/** A set of markers for use with the {@link ScopeStack}. */
 enum ScopeMarker {
+  TOP_LEVEL_CTE(
+      true,
+      DATA_TOP_LEVEL_CTE,
+      (ctx, beforeFirst, afterLast, object) -> {
+        TopLevelCte cte = (TopLevelCte) object;
+        boolean single = cte.size() == 1;
+        boolean noWith = afterLast != null && beforeFirst.positions[0] == afterLast.positions[0];
 
+        if (noWith) {
+          acceptWithRecursive(ctx, cte.recursive);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    TOP_LEVEL_CTE(
-        true,
-        DATA_TOP_LEVEL_CTE,
-        (ctx, beforeFirst, afterLast, object) -> {
-            TopLevelCte cte = (TopLevelCte) object;
-            boolean single = cte.size() == 1;
-            boolean noWith = afterLast != null && beforeFirst.positions[0] == afterLast.positions[0];
-
-            if (noWith) {
-                acceptWithRecursive(ctx, cte.recursive);
-
-                if (single)
-                    ctx.formatIndentStart()
-                       .formatSeparator();
-                else
-                    ctx.sql(' ');
-            }
-
-            // [#11587] Recurse to allow for deeply nested CTE
-            ctx.scopeStart().data(DATA_TOP_LEVEL_CTE, new TopLevelCte());
-            ctx.declareCTE(true).visit(cte).declareCTE(false);
-            ctx.scopeEnd();
-
-            if (noWith) {
-                if (single)
-                    ctx.formatIndentEnd();
-            }
-
-            // Top level CTE are inserted before all other CTEs
-            else if (!Tools.isRendersSeparator(cte))
-                ctx.sql(',');
-
-            ctx.formatSeparator().sql("");
+          if (single) ctx.formatIndentStart().formatSeparator();
+          else ctx.sql(' ');
         }
-    );
 
-    final ReplacementRenderer renderer;
-    final boolean             topLevelOnly;
-    final Object              key;
-    final Marker              beforeFirst;
-    final Marker              afterLast;
+        // [#11587] Recurse to allow for deeply nested CTE
+        ctx.scopeStart().data(DATA_TOP_LEVEL_CTE, new TopLevelCte());
+        ctx.declareCTE(true).visit(cte).declareCTE(false);
+        ctx.scopeEnd();
 
-    private ScopeMarker(boolean topLevelOnly, Object key, ReplacementRenderer renderer) {
-        this.renderer = renderer;
-        this.topLevelOnly = topLevelOnly;
-        this.key = key;
-        this.beforeFirst = new Marker(name() + "_BEFORE");
-        this.afterLast = new Marker(name() + "_AFTER");
+        if (noWith) {
+          if (single) ctx.formatIndentEnd();
+        }
+
+        // Top level CTE are inserted before all other CTEs
+        else if (!Tools.isRendersSeparator(cte)) ctx.sql(',');
+
+        ctx.formatSeparator().sql("");
+      });
+
+  final ReplacementRenderer renderer;
+  final boolean topLevelOnly;
+  final Object key;
+  final Marker beforeFirst;
+  final Marker afterLast;
+
+  private ScopeMarker(boolean topLevelOnly, Object key, ReplacementRenderer renderer) {
+    this.renderer = renderer;
+    this.topLevelOnly = topLevelOnly;
+    this.key = key;
+    this.beforeFirst = new Marker(name() + "_BEFORE");
+    this.afterLast = new Marker(name() + "_AFTER");
+  }
+
+  @FunctionalInterface
+  interface ReplacementRenderer {
+    void render(
+        DefaultRenderContext ctx,
+        ScopeStackElement beforeFirst,
+        ScopeStackElement afterLast,
+        ScopeContent content);
+  }
+
+  interface ScopeContent {
+    boolean isEmpty();
+  }
+
+  static class Marker implements QueryPartInternal {
+    private final String marker;
+
+    Marker(String marker) {
+      this.marker = marker;
     }
 
-    @FunctionalInterface
-    interface ReplacementRenderer {
-        void render(
-            DefaultRenderContext ctx,
-            ScopeStackElement beforeFirst,
-            ScopeStackElement afterLast,
-            ScopeContent content
-        );
+    @Override
+    public final boolean rendersContent(Context<?> ctx) {
+      return false;
     }
 
-    interface ScopeContent {
-        boolean isEmpty();
+    @Override
+    public final void accept(Context<?> ctx) {}
+
+    @Override
+    public final Clause[] clauses(Context<?> ctx) {
+      return null;
     }
 
-    static class Marker implements QueryPartInternal {
-        private final String marker;
-
-        Marker(String marker) {
-            this.marker = marker;
-        }
-
-        @Override
-        public final boolean rendersContent(Context<?> ctx) {
-            return false;
-        }
-
-        @Override
-        public final void accept(Context<?> ctx) {}
-
-        @Override
-        public final Clause[] clauses(Context<?> ctx) {
-            return null;
-        }
-
-        @Override
-        public final boolean declaresFields() {
-            return false;
-        }
-
-        @Override
-        public final boolean declaresTables() {
-            return false;
-        }
-
-        @Override
-        public final boolean declaresWindows() {
-            return false;
-        }
-
-        @Override
-        public final boolean declaresCTE() {
-            return false;
-        }
-
-
-
-
-
-
-
-
-
-
-
-        @Override
-        public final boolean generatesCast() {
-            return false;
-        }
-
-        @Override
-        public String toString() {
-            return marker;
-        }
+    @Override
+    public final boolean declaresFields() {
+      return false;
     }
+
+    @Override
+    public final boolean declaresTables() {
+      return false;
+    }
+
+    @Override
+    public final boolean declaresWindows() {
+      return false;
+    }
+
+    @Override
+    public final boolean declaresCTE() {
+      return false;
+    }
+
+    @Override
+    public final boolean generatesCast() {
+      return false;
+    }
+
+    @Override
+    public String toString() {
+      return marker;
+    }
+  }
 }

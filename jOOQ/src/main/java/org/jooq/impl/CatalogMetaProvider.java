@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,34 +40,32 @@ package org.jooq.impl;
 import static org.jooq.impl.Tools.EMPTY_CATALOG;
 
 import java.util.Collection;
-
 import org.jooq.Catalog;
 import org.jooq.Configuration;
 import org.jooq.Meta;
 import org.jooq.MetaProvider;
 
 /**
- * A {@link MetaProvider} that provides its meta data based on (possibly
- * generated) catalogs.
+ * A {@link MetaProvider} that provides its meta data based on (possibly generated) catalogs.
  *
  * @author Lukas Eder
  */
 public class CatalogMetaProvider implements MetaProvider {
 
-    private final Configuration configuration;
-    private final Catalog[]     catalogs;
+  private final Configuration configuration;
+  private final Catalog[] catalogs;
 
-    public CatalogMetaProvider(Configuration configuration, Catalog... catalogs) {
-        this.configuration = configuration;
-        this.catalogs = catalogs;
-    }
+  public CatalogMetaProvider(Configuration configuration, Catalog... catalogs) {
+    this.configuration = configuration;
+    this.catalogs = catalogs;
+  }
 
-    public CatalogMetaProvider(Configuration configuration, Collection<? extends Catalog> catalogs) {
-        this(configuration, catalogs.toArray(EMPTY_CATALOG));
-    }
+  public CatalogMetaProvider(Configuration configuration, Collection<? extends Catalog> catalogs) {
+    this(configuration, catalogs.toArray(EMPTY_CATALOG));
+  }
 
-    @Override
-    public Meta provide() {
-        return CatalogMetaImpl.filterCatalogs(configuration, catalogs);
-    }
+  @Override
+  public Meta provide() {
+    return CatalogMetaImpl.filterCatalogs(configuration, catalogs);
+  }
 }

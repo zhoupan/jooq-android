@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,7 +45,6 @@ import static org.jooq.impl.Tools.row0;
 import java.sql.SQLException;
 import java.sql.SQLInput;
 import java.sql.SQLOutput;
-
 import org.jooq.Converter;
 import org.jooq.Field;
 import org.jooq.QualifiedRecord;
@@ -53,89 +52,92 @@ import org.jooq.RecordQualifier;
 import org.jooq.Row;
 import org.jooq.Scope;
 
-/**
- * @author Lukas Eder
- */
-abstract class AbstractQualifiedRecord<R extends QualifiedRecord<R>> extends AbstractRecord implements QualifiedRecord<R> {
+/** @author Lukas Eder */
+abstract class AbstractQualifiedRecord<R extends QualifiedRecord<R>> extends AbstractRecord
+    implements QualifiedRecord<R> {
 
-    private final RecordQualifier<R> qualifier;
+  private final RecordQualifier<R> qualifier;
 
-    public AbstractQualifiedRecord(RecordQualifier<R> qualifier) {
-        super((AbstractRow) qualifier.fieldsRow());
+  public AbstractQualifiedRecord(RecordQualifier<R> qualifier) {
+    super((AbstractRow) qualifier.fieldsRow());
 
-        this.qualifier = qualifier;
+    this.qualifier = qualifier;
+  }
+
+  // -------------------------------------------------------------------------
+  // XXX: QualifiedRecord API
+  // -------------------------------------------------------------------------
+
+  @Override
+  public final RecordQualifier<R> getQualifier() {
+    return qualifier;
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public final <T> R with(Field<T> field, T value) {
+    return (R) super.with(field, value);
+  }
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public final <T, U> R with(Field<T> field, U value, Converter<? extends T, ? super U> converter) {
+    return (R) super.with(field, value, converter);
+  }
+
+  /*
+   * Subclasses may override this method
+   */
+  @Override
+  public Row fieldsRow() {
+    return fields;
+  }
+
+  /*
+   * Subclasses may override this method
+   */
+  @Override
+  public Row valuesRow() {
+    return row0(fieldsArray(intoArray(), fields.fields.fields()));
+  }
+
+  // -------------------------------------------------------------------------
+  // XXX: SQLData API
+  // -------------------------------------------------------------------------
+
+  @Override
+  public final String getSQLTypeName() throws SQLException {
+
+    // [#1693] This needs to return the fully qualified SQL type name, in
+    // case the connected user is not the owner of the UDT
+    return getMappedUDTName(localScope(), this);
+  }
+
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  @Override
+  public final void readSQL(SQLInput stream, String typeName) throws SQLException {
+    Scope scope = localScope();
+    Field<?>[] f = getQualifier().fields();
+
+    for (int i = 0; i < f.length; i++) {
+      Field field = f[i];
+      DefaultBindingGetSQLInputContext out =
+          new DefaultBindingGetSQLInputContext(scope.configuration(), scope.data(), stream);
+      field.getBinding().get(out);
+      set(i, field, out.value());
     }
+  }
 
-    // -------------------------------------------------------------------------
-    // XXX: QualifiedRecord API
-    // -------------------------------------------------------------------------
+  @SuppressWarnings({"rawtypes", "unchecked"})
+  @Override
+  public final void writeSQL(SQLOutput stream) throws SQLException {
+    Scope scope = localScope();
+    Field<?>[] f = getQualifier().fields();
 
-    @Override
-    public final RecordQualifier<R> getQualifier() {
-        return qualifier;
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public final <T> R with(Field<T> field, T value) {
-        return (R) super.with(field, value);
-    }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public final <T, U> R with(Field<T> field, U value, Converter<? extends T, ? super U> converter) {
-        return (R) super.with(field, value, converter);
-    }
-
-    /*
-     * Subclasses may override this method
-     */
-    @Override
-    public Row fieldsRow() {
-        return fields;
-    }
-
-    /*
-     * Subclasses may override this method
-     */
-    @Override
-    public Row valuesRow() {
-        return row0(fieldsArray(intoArray(), fields.fields.fields()));
-    }
-
-    // -------------------------------------------------------------------------
-    // XXX: SQLData API
-    // -------------------------------------------------------------------------
-
-    @Override
-    public final String getSQLTypeName() throws SQLException {
-
-        // [#1693] This needs to return the fully qualified SQL type name, in
-        // case the connected user is not the owner of the UDT
-        return getMappedUDTName(localScope(), this);
-    }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    @Override
-    public final void readSQL(SQLInput stream, String typeName) throws SQLException {
-        Scope scope = localScope();
-        Field<?>[] f = getQualifier().fields();
-
-        for (int i = 0; i < f.length; i++) {
-            Field field = f[i];
-            DefaultBindingGetSQLInputContext out = new DefaultBindingGetSQLInputContext(scope.configuration(), scope.data(), stream);
-            field.getBinding().get(out);
-            set(i, field, out.value());
-        }
-    }
-
-    @SuppressWarnings({ "rawtypes", "unchecked" })
-    @Override
-    public final void writeSQL(SQLOutput stream) throws SQLException {
-        Scope scope = localScope();
-        Field<?>[] f = getQualifier().fields();
-
-        for (int i = 0; i < f.length; i++)
-            f[i].getBinding().set(new DefaultBindingSetSQLOutputContext(scope.configuration(), scope.data(), stream, get(i)));
-    }
+    for (int i = 0; i < f.length; i++)
+      f[i].getBinding()
+          .set(
+              new DefaultBindingSetSQLOutputContext(
+                  scope.configuration(), scope.data(), stream, get(i)));
+  }
 }

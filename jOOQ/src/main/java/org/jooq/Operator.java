@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,11 +35,9 @@
  *
  *
  */
-
 package org.jooq;
 
 import org.jetbrains.annotations.*;
-
 
 /**
  * An operator used for combining conditions
@@ -48,30 +46,24 @@ import org.jetbrains.annotations.*;
  */
 public enum Operator {
 
-    /**
-     * The and operator
-     */
-    @NotNull
-    @Support
-    AND("and"),
+  /** The and operator */
+  @NotNull
+  @Support
+  AND("and"),
 
-    /**
-     * The or operator
-     */
-    @NotNull
-    @Support
-    OR("or");
+  /** The or operator */
+  @NotNull
+  @Support
+  OR("or");
 
-    private final String sql;
+  private final String sql;
 
-    private Operator(String sql) {
-        this.sql = sql;
-    }
+  private Operator(String sql) {
+    this.sql = sql;
+  }
 
-    /**
-     * A SQL rendition of this operator.
-     */
-    public String toSQL() {
-        return sql;
-    }
+  /** A SQL rendition of this operator. */
+  public String toSQL() {
+    return sql;
+  }
 }

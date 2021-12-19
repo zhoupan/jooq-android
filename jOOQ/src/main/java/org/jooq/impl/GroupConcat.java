@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,70 +43,56 @@ import static org.jooq.impl.Names.N_GROUP_CONCAT;
 
 import java.util.Arrays;
 import java.util.Collection;
-
 import org.jooq.AggregateFunction;
 import org.jooq.Context;
 import org.jooq.Field;
 import org.jooq.GroupConcatOrderByStep;
 import org.jooq.OrderField;
 
-/**
- * @author Lukas Eder
- */
-final class GroupConcat
-extends AbstractAggregateFunction<String>
-implements GroupConcatOrderByStep {
+/** @author Lukas Eder */
+final class GroupConcat extends AbstractAggregateFunction<String>
+    implements GroupConcatOrderByStep {
 
-    private final Field<?>      field;
-    private final SortFieldList orderBy;
-    private String              separator;
+  private final Field<?> field;
+  private final SortFieldList orderBy;
+  private String separator;
 
-    GroupConcat(Field<?> field) {
-        this(field, false);
-    }
+  GroupConcat(Field<?> field) {
+    this(field, false);
+  }
 
-    GroupConcat(Field<?> field, boolean distinct) {
-        super(distinct, N_GROUP_CONCAT, SQLDataType.VARCHAR, field);
+  GroupConcat(Field<?> field, boolean distinct) {
+    super(distinct, N_GROUP_CONCAT, SQLDataType.VARCHAR, field);
 
-        this.field = field;
-        this.orderBy = new SortFieldList();
-    }
+    this.field = field;
+    this.orderBy = new SortFieldList();
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        ListAgg result;
+  @Override
+  public final void accept(Context<?> ctx) {
+    ListAgg result;
 
-        if (separator == null)
-            result = new ListAgg(distinct, field, inline(","));
-        else
-            result = new ListAgg(distinct, field, inline(separator));
+    if (separator == null) result = new ListAgg(distinct, field, inline(","));
+    else result = new ListAgg(distinct, field, inline(separator));
 
+    if (orderBy.isEmpty()) ctx.visit(result);
+    else ctx.visit(result.withinGroupOrderBy(orderBy));
+  }
 
+  @Override
+  public final AggregateFunction<String> separator(String s) {
+    this.separator = s;
+    return this;
+  }
 
+  @Override
+  public final GroupConcat orderBy(OrderField<?>... fields) {
+    return orderBy(Arrays.asList(fields));
+  }
 
-
-
-
-        if (orderBy.isEmpty())
-            ctx.visit(result);
-        else
-            ctx.visit(result.withinGroupOrderBy(orderBy));
-    }
-
-    @Override
-    public final AggregateFunction<String> separator(String s) {
-        this.separator = s;
-        return this;
-    }
-
-    @Override
-    public final GroupConcat orderBy(OrderField<?>... fields) {
-        return orderBy(Arrays.asList(fields));
-    }
-
-    @Override
-    public final GroupConcat orderBy(Collection<? extends OrderField<?>> fields) {
-        orderBy.addAll(Tools.sortFields(fields));
-        return this;
-    }
+  @Override
+  public final GroupConcat orderBy(Collection<? extends OrderField<?>> fields) {
+    orderBy.addAll(Tools.sortFields(fields));
+    return this;
+  }
 }

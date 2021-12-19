@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,7 +41,6 @@ import static java.lang.Boolean.TRUE;
 import static org.jooq.impl.CacheType.CACHE_RECORD_MAPPERS;
 
 import java.io.Serializable;
-
 import org.jooq.Configuration;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
@@ -49,33 +48,37 @@ import org.jooq.RecordMapperProvider;
 import org.jooq.RecordType;
 
 /**
- * A default {@link RecordMapperProvider} implementation, providing a
- * {@link DefaultRecordMapper} instance.
+ * A default {@link RecordMapperProvider} implementation, providing a {@link DefaultRecordMapper}
+ * instance.
  *
  * @author Lukas Eder
  */
 public class DefaultRecordMapperProvider implements RecordMapperProvider, Serializable {
 
-    private final Configuration configuration;
+  private final Configuration configuration;
 
-    public DefaultRecordMapperProvider() {
-        this(null);
-    }
+  public DefaultRecordMapperProvider() {
+    this(null);
+  }
 
-    /**
-     * Create a new {@link RecordMapperProvider} with a {@link Configuration}
-     * that can be used by jOOQ for caching reflection information.
-     */
-    protected DefaultRecordMapperProvider(Configuration configuration) {
-        // The configuration parameter may not yet be fully initialised at this point!
-        this.configuration = configuration;
-    }
+  /**
+   * Create a new {@link RecordMapperProvider} with a {@link Configuration} that can be used by jOOQ
+   * for caching reflection information.
+   */
+  protected DefaultRecordMapperProvider(Configuration configuration) {
+    // The configuration parameter may not yet be fully initialised at this point!
+    this.configuration = configuration;
+  }
 
-    @Override
-    public final <R extends Record, E> RecordMapper<R, E> provide(final RecordType<R> rowType, final Class<? extends E> type) {
-        if (configuration != null && TRUE.equals(configuration.settings().isCacheRecordMappers()))
-            return Cache.run(configuration, () -> new DefaultRecordMapper<>(rowType, type, configuration), CACHE_RECORD_MAPPERS, () -> Cache.key(rowType, type));
-        else
-            return new DefaultRecordMapper<>(rowType, type, configuration);
-    }
+  @Override
+  public final <R extends Record, E> RecordMapper<R, E> provide(
+      final RecordType<R> rowType, final Class<? extends E> type) {
+    if (configuration != null && TRUE.equals(configuration.settings().isCacheRecordMappers()))
+      return Cache.run(
+          configuration,
+          () -> new DefaultRecordMapper<>(rowType, type, configuration),
+          CACHE_RECORD_MAPPERS,
+          () -> Cache.key(rowType, type));
+    else return new DefaultRecordMapper<>(rowType, type, configuration);
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,15 +40,13 @@ package org.jooq;
 // ...
 // ...
 import static org.jooq.SQLDialect.H2;
-// ...
-// ...
 
 import org.jetbrains.annotations.NotNull;
 
 /**
  * This type is used for the window function DSL API.
- * <p>
- * Example: <code><pre>
+ *
+ * <p>Example: <code><pre>
  * field.firstValue()
  *      .ignoreNulls()
  *      .over()
@@ -63,19 +61,19 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface WindowFromFirstLastStep<T> extends WindowIgnoreNullsStep<T> {
 
-    /**
-     * Add an <code>FROM FIRST</code> clause to the window function. This
-     * might not be supported by all dialects.
-     */
-    @NotNull
-    @Support({ H2 })
-    WindowIgnoreNullsStep<T> fromFirst();
+  /**
+   * Add an <code>FROM FIRST</code> clause to the window function. This might not be supported by
+   * all dialects.
+   */
+  @NotNull
+  @Support({H2})
+  WindowIgnoreNullsStep<T> fromFirst();
 
-    /**
-     * Add a <code>FROM LAST</code> clause to the window function. This
-     * might not be supported by all dialects.
-     */
-    @NotNull
-    @Support({ H2 })
-    WindowIgnoreNullsStep<T> fromLast();
+  /**
+   * Add a <code>FROM LAST</code> clause to the window function. This might not be supported by all
+   * dialects.
+   */
+  @NotNull
+  @Support({H2})
+  WindowIgnoreNullsStep<T> fromLast();
 }

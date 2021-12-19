@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,19 +44,15 @@ import org.jooq.Configuration;
 import org.jooq.Context;
 import org.jooq.DDLQuery;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 abstract class AbstractDDLQuery extends AbstractRowCountQuery implements DDLQuery {
 
-    AbstractDDLQuery(Configuration configuration) {
-        super(configuration);
-    }
+  AbstractDDLQuery(Configuration configuration) {
+    super(configuration);
+  }
 
-    static final void acceptCascade(Context<?> ctx, Cascade cascade) {
-        if (cascade == Cascade.CASCADE)
-            ctx.sql(' ').visit(K_CASCADE);
-        else if (cascade == Cascade.RESTRICT)
-            ctx.sql(' ').visit(K_RESTRICT);
-    }
+  static final void acceptCascade(Context<?> ctx, Cascade cascade) {
+    if (cascade == Cascade.CASCADE) ctx.sql(' ').visit(K_CASCADE);
+    else if (cascade == Cascade.RESTRICT) ctx.sql(' ').visit(K_RESTRICT);
+  }
 }

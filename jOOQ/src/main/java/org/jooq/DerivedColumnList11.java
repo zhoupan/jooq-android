@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,14 +43,14 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * A derived column list.
- * <p>
- * Thist type models a table name and an optional "derived column list", which
- * can be used to name both tables and columns in one go, e.g. when aliasing a
- * derived table or a {@link CommonTableExpression}.
- * <p>
- * <strong>Example:</strong>
- * <p>
- * <code><pre>
+ *
+ * <p>Thist type models a table name and an optional "derived column list", which can be used to
+ * name both tables and columns in one go, e.g. when aliasing a derived table or a {@link
+ * CommonTableExpression}.
+ *
+ * <p><strong>Example:</strong>
+ *
+ * <p><code><pre>
  * // Assuming import static org.jooq.impl.DSL.*;
  *
  * Table&lt;?&gt; t = name("t").fields("v").as(select(one()));
@@ -61,43 +61,43 @@ import org.jetbrains.annotations.NotNull;
  *    .from(t)
  *    .fetch();
  * </pre></code>
- * <p>
- * Instances can be created using {@link Name#fields(String...)} and overloads.
+ *
+ * <p>Instances can be created using {@link Name#fields(String...)} and overloads.
  *
  * @author Lukas Eder
  */
 public interface DerivedColumnList11 extends QueryPart {
 
-    /**
-     * Specify a subselect to refer to by the <code>DerivedColumnList</code> to
-     * form a common table expression.
-     */
-    @NotNull
-    @Support({ FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, POSTGRES, SQLITE })
-    <R extends Record11<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?>> CommonTableExpression<R> as(ResultQuery<R> query);
+  /**
+   * Specify a subselect to refer to by the <code>DerivedColumnList</code> to form a common table
+   * expression.
+   */
+  @NotNull
+  @Support({FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, POSTGRES, SQLITE})
+  <R extends Record11<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?>> CommonTableExpression<R> as(
+      ResultQuery<R> query);
 
-    /**
-     * Specify a materialized subselect to refer to by the
-     * <code>DerivedColumnList</code> to form a common table expression.
-     * <p>
-     * This adds the PostgreSQL 12 <code>MATERIALIZED</code> hint to the common
-     * table expression definition, or silently ignores it, if the hint is not
-     * supported.
-     */
-    @NotNull
-    @Support({ FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, POSTGRES, SQLITE })
-    <R extends Record11<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?>> CommonTableExpression<R> asMaterialized(ResultQuery<R> query);
+  /**
+   * Specify a materialized subselect to refer to by the <code>DerivedColumnList</code> to form a
+   * common table expression.
+   *
+   * <p>This adds the PostgreSQL 12 <code>MATERIALIZED</code> hint to the common table expression
+   * definition, or silently ignores it, if the hint is not supported.
+   */
+  @NotNull
+  @Support({FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, POSTGRES, SQLITE})
+  <R extends Record11<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?>> CommonTableExpression<R> asMaterialized(
+      ResultQuery<R> query);
 
-    /**
-     * Specify a non-materialized subselect to refer to by the
-     * <code>DerivedColumnList</code> to form a common table expression.
-     * <p>
-     * This adds the PostgreSQL 12 <code>NOT MATERIALIZED</code> hint to the
-     * common table expression definition, or silently ignores it, if the hint
-     * is not supported.
-     */
-    @NotNull
-    @Support({ FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, POSTGRES, SQLITE })
-    <R extends Record11<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?>> CommonTableExpression<R> asNotMaterialized(ResultQuery<R> query);
-
+  /**
+   * Specify a non-materialized subselect to refer to by the <code>DerivedColumnList</code> to form
+   * a common table expression.
+   *
+   * <p>This adds the PostgreSQL 12 <code>NOT MATERIALIZED</code> hint to the common table
+   * expression definition, or silently ignores it, if the hint is not supported.
+   */
+  @NotNull
+  @Support({FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, POSTGRES, SQLITE})
+  <R extends Record11<?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?>> CommonTableExpression<R> asNotMaterialized(
+      ResultQuery<R> query);
 }

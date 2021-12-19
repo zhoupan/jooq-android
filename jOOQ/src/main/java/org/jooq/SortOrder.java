@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,12 +35,10 @@
  *
  *
  */
-
 package org.jooq;
 
-import org.jooq.impl.DSL;
-
 import org.jetbrains.annotations.NotNull;
+import org.jooq.impl.DSL;
 
 /**
  * The sorting order used in <code>ORDER BY</code> clauses.
@@ -49,42 +47,36 @@ import org.jetbrains.annotations.NotNull;
  */
 public enum SortOrder {
 
-    /**
-     * Ascending sort order.
-     */
-    @NotNull
-    @Support
-    ASC("asc"),
+  /** Ascending sort order. */
+  @NotNull
+  @Support
+  ASC("asc"),
 
-    /**
-     * Descending sort order.
-     */
-    @NotNull
-    @Support
-    DESC("desc"),
+  /** Descending sort order. */
+  @NotNull
+  @Support
+  DESC("desc"),
 
-    /**
-     * Default sort order.
-     */
-    @NotNull
-    @Support
-    DEFAULT("");
+  /** Default sort order. */
+  @NotNull
+  @Support
+  DEFAULT("");
 
-    private final String  sql;
-    private final Keyword keyword;
+  private final String sql;
+  private final Keyword keyword;
 
-    private SortOrder(String sql) {
-        this.sql = sql;
-        this.keyword = DSL.keyword(sql);
-    }
+  private SortOrder(String sql) {
+    this.sql = sql;
+    this.keyword = DSL.keyword(sql);
+  }
 
-    @NotNull
-    public final String toSQL() {
-        return sql;
-    }
+  @NotNull
+  public final String toSQL() {
+    return sql;
+  }
 
-    @NotNull
-    public final Keyword toKeyword() {
-        return keyword;
-    }
+  @NotNull
+  public final Keyword toKeyword() {
+    return keyword;
+  }
 }

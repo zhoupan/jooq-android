@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,55 +38,42 @@
 package org.jooq;
 
 import java.util.List;
-
 import org.jetbrains.annotations.NotNull;
 
-
 /**
- * A <code>Key</code> is an object representing a <code>UNIQUE KEY</code>, a
- * <code>PRIMARY KEY</code>, or a <code>FOREIGN KEY</code>.
- * <p>
- * Instances of this type cannot be created directly. They are available from
- * generated code.
+ * A <code>Key</code> is an object representing a <code>UNIQUE KEY</code>, a <code>PRIMARY KEY
+ * </code>, or a <code>FOREIGN KEY</code>.
+ *
+ * <p>Instances of this type cannot be created directly. They are available from generated code.
  *
  * @param <R> The <code>KEY</code>'s owner table record
  * @author Lukas Eder
  */
 public interface Key<R extends Record> extends Named {
 
-    /**
-     * The <code>Key</code>'s owner table
-     */
-    @NotNull
-    Table<R> getTable();
+  /** The <code>Key</code>'s owner table */
+  @NotNull
+  Table<R> getTable();
 
-    /**
-     * The fields that make up the <code>KEY</code>
-     */
-    @NotNull
-    List<TableField<R, ?>> getFields();
+  /** The fields that make up the <code>KEY</code> */
+  @NotNull
+  List<TableField<R, ?>> getFields();
 
-    /**
-     * The fields that make up the <code>KEY</code>
-     *
-     * @see #getFields()
-     */
-    @NotNull
-    TableField<R, ?>[] getFieldsArray();
+  /**
+   * The fields that make up the <code>KEY</code>
+   *
+   * @see #getFields()
+   */
+  @NotNull
+  TableField<R, ?>[] getFieldsArray();
 
-    /**
-     * Get this <code>KEY</code> as a formal {@link Constraint} specification.
-     */
-    @NotNull
-    Constraint constraint();
+  /** Get this <code>KEY</code> as a formal {@link Constraint} specification. */
+  @NotNull
+  Constraint constraint();
 
-    /**
-     * Whether this key is being enforced.
-     */
-    boolean enforced();
+  /** Whether this key is being enforced. */
+  boolean enforced();
 
-    /**
-     * Whether this key is (partially) nullable.
-     */
-    boolean nullable();
+  /** Whether this key is (partially) nullable. */
+  boolean nullable();
 }

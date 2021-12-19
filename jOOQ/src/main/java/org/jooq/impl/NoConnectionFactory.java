@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,28 +37,26 @@
  */
 package org.jooq.impl;
 
-import org.reactivestreams.Publisher;
-
 import io.r2dbc.spi.Connection;
 import io.r2dbc.spi.ConnectionFactory;
 import io.r2dbc.spi.ConnectionFactoryMetadata;
+import org.reactivestreams.Publisher;
 
 /**
- * A no-op implementation of the {@link ConnectionFactory}, in case we don't
- * have one.
+ * A no-op implementation of the {@link ConnectionFactory}, in case we don't have one.
  *
  * @author Lukas Eder
  */
 final class NoConnectionFactory implements ConnectionFactory {
 
-    @Override
-    public Publisher<? extends Connection> create() {
-        // TODO: Can we implement a blocking JDBC backed ConnectionFactory here?
-        throw new UnsupportedOperationException("No ConnectionFactory configured");
-    }
+  @Override
+  public Publisher<? extends Connection> create() {
+    // TODO: Can we implement a blocking JDBC backed ConnectionFactory here?
+    throw new UnsupportedOperationException("No ConnectionFactory configured");
+  }
 
-    @Override
-    public ConnectionFactoryMetadata getMetadata() {
-        return () -> "jOOQ NoConnectionFactory";
-    }
+  @Override
+  public ConnectionFactoryMetadata getMetadata() {
+    return () -> "jOOQ NoConnectionFactory";
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,6 @@
  *
  *
  */
-
 package org.jooq.impl;
 
 import static org.jooq.impl.DSL.selectFrom;
@@ -44,31 +43,29 @@ import org.jooq.Condition;
 import org.jooq.Record;
 import org.jooq.Table;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class InlineDerivedTable<R extends Record> extends DerivedTable<R> {
 
-    private final Table<R>  table;
-    private final Condition where;
+  private final Table<R> table;
+  private final Condition where;
 
-    InlineDerivedTable(Table<R> table, Condition where) {
-        super(selectFrom(table).where(where));
+  InlineDerivedTable(Table<R> table, Condition where) {
+    super(selectFrom(table).where(where));
 
-        this.table = table;
-        this.where = where;
-    }
+    this.table = table;
+    this.where = where;
+  }
 
-    final Table<R> table() {
-        return table;
-    }
+  final Table<R> table() {
+    return table;
+  }
 
-    final Condition condition() {
-        return where;
-    }
+  final Condition condition() {
+    return where;
+  }
 
-    @Override
-    final FieldsImpl<R> fields0() {
-        return new FieldsImpl<>(table.as(table).fields());
-    }
+  @Override
+  final FieldsImpl<R> fields0() {
+    return new FieldsImpl<>(table.as(table).fields());
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,31 +38,30 @@
 package org.jooq.impl;
 
 import java.sql.Connection;
-
 import org.jooq.tools.jdbc.JDBCUtils;
 
 /**
  * An extension of the {@link DefaultConnectionProvider}.
- * <p>
- * This implementation is used by {@link DefaultCloseableDSLContext} to
- * implement the {@link AutoCloseable} semantics, which includes closing
- * underlying connections on {@link Object#finalize()}.
+ *
+ * <p>This implementation is used by {@link DefaultCloseableDSLContext} to implement the {@link
+ * AutoCloseable} semantics, which includes closing underlying connections on {@link
+ * Object#finalize()}.
  *
  * @author Lukas Eder
  */
 class DefaultCloseableConnectionProvider extends DefaultConnectionProvider {
 
-    DefaultCloseableConnectionProvider(Connection connection) {
-        super(connection);
-    }
+  DefaultCloseableConnectionProvider(Connection connection) {
+    super(connection);
+  }
 
-    // -------------------------------------------------------------------------
-    // XXX: ConnectionProvider API
-    // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // XXX: ConnectionProvider API
+  // -------------------------------------------------------------------------
 
-    @Override
-    protected void finalize() throws Throwable {
-        JDBCUtils.safeClose(connection);
-        super.finalize();
-    }
+  @Override
+  protected void finalize() throws Throwable {
+    JDBCUtils.safeClose(connection);
+    super.finalize();
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,9 +39,7 @@ package org.jooq.impl;
 
 import static org.jooq.impl.Tools.map;
 
-import java.util.List;
 import java.util.function.BiFunction;
-
 import org.jooq.CommonTableExpression;
 import org.jooq.Context;
 import org.jooq.DerivedColumnList;
@@ -71,104 +69,93 @@ import org.jooq.Field;
 import org.jooq.Name;
 import org.jooq.ResultQuery;
 
-/**
- * @author Lukas Eder
- */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+/** @author Lukas Eder */
+@SuppressWarnings({"unchecked", "rawtypes"})
 final class DerivedColumnListImpl extends AbstractQueryPart
-implements
+    implements DerivedColumnList1,
+        DerivedColumnList2,
+        DerivedColumnList3,
+        DerivedColumnList4,
+        DerivedColumnList5,
+        DerivedColumnList6,
+        DerivedColumnList7,
+        DerivedColumnList8,
+        DerivedColumnList9,
+        DerivedColumnList10,
+        DerivedColumnList11,
+        DerivedColumnList12,
+        DerivedColumnList13,
+        DerivedColumnList14,
+        DerivedColumnList15,
+        DerivedColumnList16,
+        DerivedColumnList17,
+        DerivedColumnList18,
+        DerivedColumnList19,
+        DerivedColumnList20,
+        DerivedColumnList21,
+        DerivedColumnList22,
+        DerivedColumnList {
 
+  final Name name;
+  final Name[] fieldNames;
+  final BiFunction<? super Field<?>, ? super Integer, ? extends String> fieldNameFunction;
 
-    DerivedColumnList1,
-    DerivedColumnList2,
-    DerivedColumnList3,
-    DerivedColumnList4,
-    DerivedColumnList5,
-    DerivedColumnList6,
-    DerivedColumnList7,
-    DerivedColumnList8,
-    DerivedColumnList9,
-    DerivedColumnList10,
-    DerivedColumnList11,
-    DerivedColumnList12,
-    DerivedColumnList13,
-    DerivedColumnList14,
-    DerivedColumnList15,
-    DerivedColumnList16,
-    DerivedColumnList17,
-    DerivedColumnList18,
-    DerivedColumnList19,
-    DerivedColumnList20,
-    DerivedColumnList21,
-    DerivedColumnList22,
+  DerivedColumnListImpl(Name name, Name[] fieldNames) {
+    this.name = name;
+    this.fieldNames = fieldNames;
+    this.fieldNameFunction = null;
+  }
 
+  DerivedColumnListImpl(
+      String name,
+      BiFunction<? super Field<?>, ? super Integer, ? extends String> fieldNameFunction) {
+    this.name = DSL.name(name);
+    this.fieldNames = null;
+    this.fieldNameFunction = fieldNameFunction;
+  }
 
+  final CommonTableExpression as0(ResultQuery query, Boolean materialized) {
+    ResultQuery<?> q = query;
 
-    DerivedColumnList {
+    if (fieldNameFunction != null)
+      return new CommonTableExpressionImpl(
+          new DerivedColumnListImpl(
+              name,
+              map(q.fields(), (f, i) -> DSL.name(fieldNameFunction.apply(f, i)), Name[]::new)),
+          q,
+          materialized);
+    else return new CommonTableExpressionImpl(this, q, materialized);
+  }
 
-    final Name                                                            name;
-    final Name[]                                                          fieldNames;
-    final BiFunction<? super Field<?>, ? super Integer, ? extends String> fieldNameFunction;
+  @Override
+  public final CommonTableExpression as(ResultQuery query) {
+    return as0(query, null);
+  }
 
-    DerivedColumnListImpl(Name name, Name[] fieldNames) {
-        this.name = name;
-        this.fieldNames = fieldNames;
-        this.fieldNameFunction = null;
+  @Override
+  public final CommonTableExpression asMaterialized(ResultQuery query) {
+    return as0(query, true);
+  }
+
+  @Override
+  public final CommonTableExpression asNotMaterialized(ResultQuery query) {
+    return as0(query, false);
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    ctx.visit(name);
+
+    if (fieldNames != null && fieldNames.length > 0) {
+      ctx.sql('(');
+
+      for (int i = 0; i < fieldNames.length; i++) {
+        if (i > 0) ctx.sql(", ");
+
+        ctx.visit(fieldNames[i]);
+      }
+
+      ctx.sql(')');
     }
-
-    DerivedColumnListImpl(String name, BiFunction<? super Field<?>, ? super Integer, ? extends String> fieldNameFunction) {
-        this.name = DSL.name(name);
-        this.fieldNames = null;
-        this.fieldNameFunction = fieldNameFunction;
-    }
-
-    final CommonTableExpression as0(ResultQuery query, Boolean materialized) {
-        ResultQuery<?> q = query;
-
-        if (fieldNameFunction != null)
-            return new CommonTableExpressionImpl(
-                new DerivedColumnListImpl(name, map(
-                    q.fields(),
-                    (f, i) -> DSL.name(fieldNameFunction.apply(f, i)),
-                    Name[]::new
-                )),
-                q,
-                materialized
-            );
-        else
-            return new CommonTableExpressionImpl(this, q, materialized);
-    }
-
-    @Override
-    public final CommonTableExpression as(ResultQuery query) {
-        return as0(query, null);
-    }
-
-    @Override
-    public final CommonTableExpression asMaterialized(ResultQuery query) {
-        return as0(query, true);
-    }
-
-    @Override
-    public final CommonTableExpression asNotMaterialized(ResultQuery query) {
-        return as0(query, false);
-    }
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        ctx.visit(name);
-
-        if (fieldNames != null && fieldNames.length > 0) {
-            ctx.sql('(');
-
-            for (int i = 0; i < fieldNames.length; i++) {
-                if (i > 0)
-                    ctx.sql(", ");
-
-                ctx.visit(fieldNames[i]);
-            }
-
-            ctx.sql(')');
-        }
-    }
+  }
 }

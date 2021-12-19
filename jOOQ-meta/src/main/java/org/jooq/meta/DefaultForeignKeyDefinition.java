@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,62 +42,68 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class DefaultForeignKeyDefinition extends AbstractConstraintDefinition implements ForeignKeyDefinition {
+public class DefaultForeignKeyDefinition extends AbstractConstraintDefinition
+    implements ForeignKeyDefinition {
 
-    private final List<ColumnDefinition>  fkColumns;
-    private final List<ColumnDefinition>  ukColumns;
-    private final UniqueKeyDefinition     uk;
+  private final List<ColumnDefinition> fkColumns;
+  private final List<ColumnDefinition> ukColumns;
+  private final UniqueKeyDefinition uk;
 
-    public DefaultForeignKeyDefinition(SchemaDefinition schema, String name, TableDefinition table, UniqueKeyDefinition uniqueKey) {
-        this(schema, name, table, uniqueKey, true);
-    }
+  public DefaultForeignKeyDefinition(
+      SchemaDefinition schema, String name, TableDefinition table, UniqueKeyDefinition uniqueKey) {
+    this(schema, name, table, uniqueKey, true);
+  }
 
-    public DefaultForeignKeyDefinition(SchemaDefinition schema, String name, TableDefinition table, UniqueKeyDefinition uk, boolean enforced) {
-        super(schema, table, name, enforced);
+  public DefaultForeignKeyDefinition(
+      SchemaDefinition schema,
+      String name,
+      TableDefinition table,
+      UniqueKeyDefinition uk,
+      boolean enforced) {
+    super(schema, table, name, enforced);
 
-        this.fkColumns = new ArrayList<>();
-        this.ukColumns = new ArrayList<>();
-        this.uk = uk;
-    }
+    this.fkColumns = new ArrayList<>();
+    this.ukColumns = new ArrayList<>();
+    this.uk = uk;
+  }
 
-    @Override
-    public TableDefinition getKeyTable() {
-        return getTable();
-    }
+  @Override
+  public TableDefinition getKeyTable() {
+    return getTable();
+  }
 
-    @Override
-    public List<ColumnDefinition> getKeyColumns() {
-        return fkColumns;
-    }
+  @Override
+  public List<ColumnDefinition> getKeyColumns() {
+    return fkColumns;
+  }
 
-    @Override
-    public UniqueKeyDefinition getReferencedKey() {
-        return uk;
-    }
+  @Override
+  public UniqueKeyDefinition getReferencedKey() {
+    return uk;
+  }
 
-    @Override
-    public UniqueKeyDefinition resolveReferencedKey() {
-        return uk.resolveReferencedKey();
-    }
+  @Override
+  public UniqueKeyDefinition resolveReferencedKey() {
+    return uk.resolveReferencedKey();
+  }
 
-    @Override
-    public TableDefinition getReferencedTable() {
-        return uk.getTable();
-    }
+  @Override
+  public TableDefinition getReferencedTable() {
+    return uk.getTable();
+  }
 
-    @Override
-    public List<ColumnDefinition> getReferencedColumns() {
-        return ukColumns;
-    }
+  @Override
+  public List<ColumnDefinition> getReferencedColumns() {
+    return ukColumns;
+  }
 
-    @Override
-    public int countSimilarReferences() {
-        Set<String> keys = new HashSet<>();
+  @Override
+  public int countSimilarReferences() {
+    Set<String> keys = new HashSet<>();
 
-        for (ForeignKeyDefinition key : getDatabase().getRelations().getForeignKeys(getTable()))
-            if (key.getReferencedTable().equals(getReferencedTable()))
-                keys.add(key.getName());
+    for (ForeignKeyDefinition key : getDatabase().getRelations().getForeignKeys(getTable()))
+      if (key.getReferencedTable().equals(getReferencedTable())) keys.add(key.getName());
 
-        return keys.size();
-    }
+    return keys.size();
+  }
 }

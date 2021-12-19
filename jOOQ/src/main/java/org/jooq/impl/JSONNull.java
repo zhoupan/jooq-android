@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,48 +46,34 @@ import static org.jooq.impl.Keywords.K_NULL;
 import static org.jooq.impl.Keywords.K_ON;
 
 import java.util.Set;
-
 import org.jooq.Context;
 import org.jooq.SQLDialect;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class JSONNull extends AbstractQueryPart implements SimpleQueryPart {
-    static final Set<SQLDialect> NO_SUPPORT_ABSENT_ON_NULL = SQLDialect.supportedBy(MARIADB, MYSQL);
+  static final Set<SQLDialect> NO_SUPPORT_ABSENT_ON_NULL = SQLDialect.supportedBy(MARIADB, MYSQL);
 
-    final JSONOnNull             type;
+  final JSONOnNull type;
 
-    JSONNull(JSONOnNull type) {
-        this.type = type;
+  JSONNull(JSONOnNull type) {
+    this.type = type;
+  }
+
+  @Override
+  public final boolean rendersContent(Context<?> ctx) {
+    return !NO_SUPPORT_ABSENT_ON_NULL.contains(ctx.dialect()) && type != null;
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      default:
+        if (!NO_SUPPORT_ABSENT_ON_NULL.contains(ctx.dialect()))
+          if (type == NULL_ON_NULL) ctx.visit(K_NULL).sql(' ').visit(K_ON).sql(' ').visit(K_NULL);
+          else if (type == ABSENT_ON_NULL)
+            ctx.visit(K_ABSENT).sql(' ').visit(K_ON).sql(' ').visit(K_NULL);
+
+        break;
     }
-
-    @Override
-    public final boolean rendersContent(Context<?> ctx) {
-        return !NO_SUPPORT_ABSENT_ON_NULL.contains(ctx.dialect()) && type != null;
-    }
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-
-
-
-
-            default:
-                if (!NO_SUPPORT_ABSENT_ON_NULL.contains(ctx.dialect()))
-                    if (type == NULL_ON_NULL)
-                        ctx.visit(K_NULL).sql(' ').visit(K_ON).sql(' ').visit(K_NULL);
-                    else if (type == ABSENT_ON_NULL)
-                        ctx.visit(K_ABSENT).sql(' ').visit(K_ON).sql(' ').visit(K_NULL);
-
-                break;
-        }
-    }
+  }
 }

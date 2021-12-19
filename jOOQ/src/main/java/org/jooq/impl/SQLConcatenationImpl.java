@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,25 +45,24 @@ import org.jooq.QueryPart;
 import org.jooq.SQL;
 
 final class SQLConcatenationImpl extends AbstractQueryPart implements SQL {
-    private static final Clause[] CLAUSES          = { TEMPLATE };
-    private final QueryPart[]     input;
+  private static final Clause[] CLAUSES = {TEMPLATE};
+  private final QueryPart[] input;
 
-    SQLConcatenationImpl(QueryPart... input) {
-        this.input = input;
+  SQLConcatenationImpl(QueryPart... input) {
+    this.input = input;
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    for (int i = 0; i < input.length; i++) {
+      if (i > 0) ctx.formatSeparator();
+
+      ctx.visit(input[i]);
     }
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        for (int i = 0; i < input.length; i++) {
-            if (i > 0)
-                ctx.formatSeparator();
-
-            ctx.visit(input[i]);
-        }
-    }
-
-    @Override
-    public final Clause[] clauses(Context<?> ctx) {
-        return CLAUSES;
-    }
+  @Override
+  public final Clause[] clauses(Context<?> ctx) {
+    return CLAUSES;
+  }
 }

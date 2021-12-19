@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -47,53 +47,47 @@ import org.jooq.Context;
 import org.jooq.DataType;
 import org.jooq.Field;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class ArrayGet<T> extends AbstractField<T> {
-    private final Field<T[]>     field;
-    private final Field<Integer> index;
+  private final Field<T[]> field;
+  private final Field<Integer> index;
 
-    @SuppressWarnings("unchecked")
-    ArrayGet(Field<T[]> field, Field<Integer> index) {
-        super(N_ARRAY_GET, (DataType<T>) defaultIfNull(field.getDataType().getArrayComponentDataType(), OTHER));
+  @SuppressWarnings("unchecked")
+  ArrayGet(Field<T[]> field, Field<Integer> index) {
+    super(
+        N_ARRAY_GET,
+        (DataType<T>) defaultIfNull(field.getDataType().getArrayComponentDataType(), OTHER));
 
-        this.field = field;
-        this.index = index;
+    this.field = field;
+    this.index = index;
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case H2:
+        ctx.visit(N_ARRAY_GET).sql('(').visit(field).sql(", ").visit(index).sql(')');
+        break;
+
+      case HSQLDB:
+        ctx.visit(when(cardinality(field).ge(index), new Standard()));
+        break;
+
+      default:
+        ctx.visit(new Standard());
+        break;
+    }
+  }
+
+  private class Standard extends AbstractField<T> {
+
+    Standard() {
+      super(ArrayGet.this.getQualifiedName(), ArrayGet.this.getDataType());
     }
 
     @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-            case H2:
-                ctx.visit(N_ARRAY_GET).sql('(').visit(field).sql(", ").visit(index).sql(')');
-                break;
-
-            case HSQLDB:
-                ctx.visit(when(cardinality(field).ge(index), new Standard()));
-                break;
-
-            default:
-                ctx.visit(new Standard());
-                break;
-        }
+    public void accept(Context<?> ctx) {
+      ctx.sql('(').visit(field).sql(')').sql('[').visit(index).sql(']');
     }
-
-    private class Standard extends AbstractField<T> {
-
-        Standard() {
-            super(ArrayGet.this.getQualifiedName(), ArrayGet.this.getDataType());
-        }
-
-        @Override
-        public void accept(Context<?> ctx) {
-            ctx.sql('(').visit(field).sql(')').sql('[').visit(index).sql(']');
-        }
-    }
+  }
 }

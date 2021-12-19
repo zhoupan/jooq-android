@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,31 +38,25 @@
 package org.jooq.impl;
 
 import java.io.Serializable;
-
 import org.jooq.Field;
 import org.jooq.Name;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class Intern implements Serializable {
 
-    // Some temp variables for String interning
-    int[]      internIndexes;
-    Field<?>[] internFields;
-    String[]   internNameStrings;
-    Name[]     internNames;
+  // Some temp variables for String interning
+  int[] internIndexes;
+  Field<?>[] internFields;
+  String[] internNameStrings;
+  Name[] internNames;
 
-    final int[] internIndexes(Field<?>[] fields) {
-        if (internIndexes != null)
-            return internIndexes;
-        else if (internFields != null)
-            return new FieldsImpl<>(fields).indexesOf(internFields);
-        else if (internNameStrings != null)
-            return new FieldsImpl<>(fields).indexesOf(internNameStrings);
-        else if (internNames != null)
-            return new FieldsImpl<>(fields).indexesOf(internNames);
+  final int[] internIndexes(Field<?>[] fields) {
+    if (internIndexes != null) return internIndexes;
+    else if (internFields != null) return new FieldsImpl<>(fields).indexesOf(internFields);
+    else if (internNameStrings != null)
+      return new FieldsImpl<>(fields).indexesOf(internNameStrings);
+    else if (internNames != null) return new FieldsImpl<>(fields).indexesOf(internNames);
 
-        return null;
-    }
+    return null;
+  }
 }

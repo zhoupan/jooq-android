@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,50 +40,46 @@ package org.jooq.impl;
 import static org.jooq.impl.Tools.map;
 
 import java.io.Serializable;
-
 import org.jooq.ExecuteListener;
 import org.jooq.ExecuteListenerProvider;
 
 /**
  * A default implementation for {@link ExecuteListenerProvider}.
- * <p>
- * This implementation just wraps an instance of {@link ExecuteListener}, always
- * providing the same.
+ *
+ * <p>This implementation just wraps an instance of {@link ExecuteListener}, always providing the
+ * same.
  *
  * @author Lukas Eder
  */
 public class DefaultExecuteListenerProvider implements ExecuteListenerProvider, Serializable {
 
-    /**
-     * The delegate listener.
-     */
-    private final ExecuteListener listener;
+  /** The delegate listener. */
+  private final ExecuteListener listener;
 
-    /**
-     * Convenience method to construct an array of
-     * <code>DefaultExecuteListenerProvider</code> from an array of
-     * <code>ExecuteListener</code> instances.
-     */
-    public static ExecuteListenerProvider[] providers(ExecuteListener... listeners) {
-        return map(listeners, DefaultExecuteListenerProvider::new, ExecuteListenerProvider[]::new);
-    }
+  /**
+   * Convenience method to construct an array of <code>DefaultExecuteListenerProvider</code> from an
+   * array of <code>ExecuteListener</code> instances.
+   */
+  public static ExecuteListenerProvider[] providers(ExecuteListener... listeners) {
+    return map(listeners, DefaultExecuteListenerProvider::new, ExecuteListenerProvider[]::new);
+  }
 
-    /**
-     * Create a new provider instance from an argument listener.
-     *
-     * @param listener The argument listener.
-     */
-    public DefaultExecuteListenerProvider(ExecuteListener listener) {
-        this.listener = listener;
-    }
+  /**
+   * Create a new provider instance from an argument listener.
+   *
+   * @param listener The argument listener.
+   */
+  public DefaultExecuteListenerProvider(ExecuteListener listener) {
+    this.listener = listener;
+  }
 
-    @Override
-    public final ExecuteListener provide() {
-        return listener;
-    }
+  @Override
+  public final ExecuteListener provide() {
+    return listener;
+  }
 
-    @Override
-    public String toString() {
-        return listener.toString();
-    }
+  @Override
+  public String toString() {
+    return listener.toString();
+  }
 }

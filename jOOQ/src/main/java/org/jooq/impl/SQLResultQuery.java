@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,12 +42,10 @@ import static org.jooq.impl.Tools.isEmpty;
 
 import java.sql.ResultSetMetaData;
 import java.util.Collection;
-
 import org.jooq.Clause;
 import org.jooq.Configuration;
 import org.jooq.Context;
 import org.jooq.Field;
-import org.jooq.QueryPart;
 import org.jooq.QueryPartInternal;
 import org.jooq.Record;
 import org.jooq.SQL;
@@ -59,64 +57,54 @@ import org.jooq.SQL;
  */
 final class SQLResultQuery extends AbstractResultQuery<Record> {
 
-    private final SQL delegate;
+  private final SQL delegate;
 
-    SQLResultQuery(Configuration configuration, SQL delegate) {
-        super(configuration);
+  SQLResultQuery(Configuration configuration, SQL delegate) {
+    super(configuration);
 
-        this.delegate = delegate;
+    this.delegate = delegate;
+  }
+
+  // ------------------------------------------------------------------------
+  // ResultQuery API
+  // ------------------------------------------------------------------------
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      default:
+        ctx.visit(delegate);
+        break;
+    }
+  }
+
+  @Override
+  public final Clause[] clauses(Context<?> ctx) {
+    if (delegate instanceof QueryPartInternal) {
+      return ((QueryPartInternal) delegate).clauses(ctx);
     }
 
-    // ------------------------------------------------------------------------
-    // ResultQuery API
-    // ------------------------------------------------------------------------
+    return null;
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
+  @Override
+  public final Class<? extends Record> getRecordType0() {
+    return RecordImplN.class;
+  }
 
+  @Override
+  public final Field<?>[] getFields(ResultSetMetaData meta) {
+    Field<?>[] result = getFields();
 
+    if (!isEmpty(result)) return result;
+    else return new MetaDataFieldProvider(configuration(), meta).getFields();
+  }
 
+  @Override
+  public final Field<?>[] getFields() {
+    Collection<? extends Field<?>> coerce = coerce();
 
-
-
-            default:
-                ctx.visit(delegate);
-                break;
-        }
-    }
-
-    @Override
-    public final Clause[] clauses(Context<?> ctx) {
-        if (delegate instanceof QueryPartInternal) {
-            return ((QueryPartInternal) delegate).clauses(ctx);
-        }
-
-        return null;
-    }
-
-    @Override
-    public final Class<? extends Record> getRecordType0() {
-        return RecordImplN.class;
-    }
-
-    @Override
-    public final Field<?>[] getFields(ResultSetMetaData meta) {
-        Field<?>[] result = getFields();
-
-        if (!isEmpty(result))
-            return result;
-        else
-            return new MetaDataFieldProvider(configuration(), meta).getFields();
-    }
-
-    @Override
-    public final Field<?>[] getFields() {
-        Collection<? extends Field<?>> coerce = coerce();
-
-        if (!isEmpty(coerce))
-            return coerce.toArray(EMPTY_FIELD);
-        else
-            return EMPTY_FIELD;
-    }
+    if (!isEmpty(coerce)) return coerce.toArray(EMPTY_FIELD);
+    else return EMPTY_FIELD;
+  }
 }

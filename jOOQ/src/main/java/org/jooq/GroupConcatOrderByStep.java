@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,30 +37,16 @@
  */
 package org.jooq;
 
-import org.jetbrains.annotations.*;
-
-
-// ...
-// ...
-// ...
-// ...
 import static org.jooq.SQLDialect.CUBRID;
-// ...
-// ...
 import static org.jooq.SQLDialect.H2;
-// ...
 import static org.jooq.SQLDialect.HSQLDB;
 import static org.jooq.SQLDialect.MARIADB;
 import static org.jooq.SQLDialect.MYSQL;
-// ...
 import static org.jooq.SQLDialect.POSTGRES;
-// ...
-// ...
 
 import java.util.Collection;
-
+import org.jetbrains.annotations.*;
 import org.jooq.impl.DSL;
-
 
 /**
  * MySQL's <code>GROUP_CONCAT</code> function.
@@ -70,17 +56,13 @@ import org.jooq.impl.DSL;
  */
 public interface GroupConcatOrderByStep extends GroupConcatSeparatorStep {
 
-    /**
-     * Add an <code>ORDER BY</code> clause to the function.
-     */
-    @NotNull
-    @Support({ CUBRID, H2, HSQLDB, MARIADB, MYSQL, POSTGRES })
-    GroupConcatSeparatorStep orderBy(OrderField<?>... fields);
+  /** Add an <code>ORDER BY</code> clause to the function. */
+  @NotNull
+  @Support({CUBRID, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
+  GroupConcatSeparatorStep orderBy(OrderField<?>... fields);
 
-    /**
-     * Add an <code>ORDER BY</code> clause to the function.
-     */
-    @NotNull
-    @Support({ CUBRID, H2, HSQLDB, MARIADB, MYSQL, POSTGRES })
-    GroupConcatSeparatorStep orderBy(Collection<? extends OrderField<?>> fields);
+  /** Add an <code>ORDER BY</code> clause to the function. */
+  @NotNull
+  @Support({CUBRID, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
+  GroupConcatSeparatorStep orderBy(Collection<? extends OrderField<?>> fields);
 }

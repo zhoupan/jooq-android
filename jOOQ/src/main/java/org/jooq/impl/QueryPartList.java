@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,6 @@
  *
  *
  */
-
 package org.jooq.impl;
 
 import static java.util.Arrays.asList;
@@ -43,41 +42,38 @@ import static java.util.Arrays.asList;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Function;
-
 import org.jooq.QueryPart;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 class QueryPartList<T extends QueryPart> extends QueryPartListView<T> {
 
-    QueryPartList() {
-        this((Collection<T>) null);
-    }
+  QueryPartList() {
+    this((Collection<T>) null);
+  }
 
-    @SafeVarargs
-    QueryPartList(T... wrappedList) {
-        this(asList(wrappedList));
-    }
+  @SafeVarargs
+  QueryPartList(T... wrappedList) {
+    this(asList(wrappedList));
+  }
 
-    QueryPartList(Iterable<? extends T> wrappedList) {
-        super(new ArrayList<>());
+  QueryPartList(Iterable<? extends T> wrappedList) {
+    super(new ArrayList<>());
 
-        addAll(wrappedList);
-    }
+    addAll(wrappedList);
+  }
 
-    @Override
-    QueryPartList<T> qualify(boolean newQualify) {
-        return (QueryPartList<T>) super.qualify(newQualify);
-    }
+  @Override
+  QueryPartList<T> qualify(boolean newQualify) {
+    return (QueryPartList<T>) super.qualify(newQualify);
+  }
 
-    @Override
-    QueryPartList<T> map(Function<? super T, ? extends T> newMapper) {
-        return (QueryPartList<T>) super.map(newMapper);
-    }
+  @Override
+  QueryPartList<T> map(Function<? super T, ? extends T> newMapper) {
+    return (QueryPartList<T>) super.map(newMapper);
+  }
 
-    @Override
-    QueryPartList<T> separator(String newSeparator) {
-        return (QueryPartList<T>) super.separator(newSeparator);
-    }
+  @Override
+  QueryPartList<T> separator(String newSeparator) {
+    return (QueryPartList<T>) super.separator(newSeparator);
+  }
 }

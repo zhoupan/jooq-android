@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -48,60 +48,60 @@ import org.jooq.Table;
 import org.jooq.TableOptions;
 import org.jooq.exception.SQLDialectNotSupportedException;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class FunctionTable<R extends Record> extends AbstractTable<R> {
 
-    private final Field<?>       function;
+  private final Field<?> function;
 
-    FunctionTable(Field<?> function) {
-        super(TableOptions.function(), N_FUNCTION);
+  FunctionTable(Field<?> function) {
+    super(TableOptions.function(), N_FUNCTION);
 
-        this.function = function;
-    }
+    this.function = function;
+  }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public final Class<? extends R> getRecordType() {
-        // TODO: [#4695] Calculate the correct Record[B] type
-        return (Class<? extends R>) RecordImplN.class;
-    }
+  @SuppressWarnings("unchecked")
+  @Override
+  public final Class<? extends R> getRecordType() {
+    // TODO: [#4695] Calculate the correct Record[B] type
+    return (Class<? extends R>) RecordImplN.class;
+  }
 
-    @Override
-    public final Table<R> as(Name as) {
-        return new TableAlias<>(new FunctionTable<>(function), as);
-    }
+  @Override
+  public final Table<R> as(Name as) {
+    return new TableAlias<>(new FunctionTable<>(function), as);
+  }
 
-    @Override
-    public final Table<R> as(Name as, Name... fieldAliases) {
-        return new TableAlias<>(new FunctionTable<>(function), as, fieldAliases);
-    }
+  @Override
+  public final Table<R> as(Name as, Name... fieldAliases) {
+    return new TableAlias<>(new FunctionTable<>(function), as, fieldAliases);
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-            case HSQLDB: {
-                ctx.visit(K_TABLE).sql('(').visit(function).sql(')');
-                break;
-            }
-
-            // [#4254] This is required to enable using PostgreSQL functions
-            // with defaulted parameters.
-
-
-            case POSTGRES: {
-                ctx.visit(function);
-                break;
-            }
-
-            default:
-                throw new SQLDialectNotSupportedException("FUNCTION TABLE is not supported for " + ctx.dialect());
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case HSQLDB:
+        {
+          ctx.visit(K_TABLE).sql('(').visit(function).sql(')');
+          break;
         }
-    }
 
-    @Override
-    final FieldsImpl<R> fields0() {
-        return new FieldsImpl<>();
+        // [#4254] This is required to enable using PostgreSQL functions
+        // with defaulted parameters.
+
+      case POSTGRES:
+        {
+          ctx.visit(function);
+          break;
+        }
+
+      default:
+        throw new SQLDialectNotSupportedException(
+            "FUNCTION TABLE is not supported for " + ctx.dialect());
     }
+  }
+
+  @Override
+  final FieldsImpl<R> fields0() {
+    return new FieldsImpl<>();
+  }
 }

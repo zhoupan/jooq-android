@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,24 +38,21 @@
 package org.jooq.impl;
 
 import org.jooq.CacheContext;
-import org.jooq.impl.CacheType;
 import org.jooq.Configuration;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class DefaultCacheContext extends AbstractScope implements CacheContext {
 
-    private final CacheType cacheType;
+  private final CacheType cacheType;
 
-    DefaultCacheContext(Configuration configuration, CacheType cacheType) {
-        super(configuration);
+  DefaultCacheContext(Configuration configuration, CacheType cacheType) {
+    super(configuration);
 
-        this.cacheType = cacheType;
-    }
+    this.cacheType = cacheType;
+  }
 
-    @Override
-    public final CacheType cacheType() {
-        return cacheType;
-    }
+  @Override
+  public final CacheType cacheType() {
+    return cacheType;
+  }
 }

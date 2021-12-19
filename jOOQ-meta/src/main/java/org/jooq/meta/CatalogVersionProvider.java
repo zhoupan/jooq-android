@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,26 +38,22 @@
 package org.jooq.meta;
 
 /**
- * An SPI that can be used to provide a catalog version to the jOOQ code
- * generator.
- * <p>
- * If between subsequent meta data accesses, at least one
- * {@link SchemaDefinition}'s version changes, that schema's
- * {@link CatalogDefinition}'s version must change as well. In other words, it
- * can be safely assumed that when between two subsequent schema meta data
- * accesses, the {@link CatalogDefinition}'s version stays the same, all
- * {@link SchemaDefinition}'s versions have stayed the same as well.
- * <p>
- * A {@link CatalogDefinition} is said to be unversioned if
- * {@link #version(CatalogDefinition)} returns <code>null</code>.
+ * An SPI that can be used to provide a catalog version to the jOOQ code generator.
+ *
+ * <p>If between subsequent meta data accesses, at least one {@link SchemaDefinition}'s version
+ * changes, that schema's {@link CatalogDefinition}'s version must change as well. In other words,
+ * it can be safely assumed that when between two subsequent schema meta data accesses, the {@link
+ * CatalogDefinition}'s version stays the same, all {@link SchemaDefinition}'s versions have stayed
+ * the same as well.
+ *
+ * <p>A {@link CatalogDefinition} is said to be unversioned if {@link #version(CatalogDefinition)}
+ * returns <code>null</code>.
  *
  * @author Lukas Eder
  * @see SchemaVersionProvider
  */
 public interface CatalogVersionProvider {
 
-    /**
-     * Get a custom schema version.
-     */
-    String version(CatalogDefinition catalog);
+  /** Get a custom schema version. */
+  String version(CatalogDefinition catalog);
 }

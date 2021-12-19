@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,97 +44,91 @@ import org.jooq.ParamMode;
 import org.jooq.conf.ParamType;
 
 /**
- * A {@link Param} wrapper object that allows for lazily initialising the value
- * and its potentially required calls to custom converters.
- * <p>
- * See [#7742] for details.
+ * A {@link Param} wrapper object that allows for lazily initialising the value and its potentially
+ * required calls to custom converters.
+ *
+ * <p>See [#7742] for details.
  *
  * @author Lukas Eder
  */
 final class LazyVal<T> extends AbstractParamX<T> {
 
-    private final Field<T>              field;
-    private transient AbstractParamX<T> delegate;
+  private final Field<T> field;
+  private transient AbstractParamX<T> delegate;
 
-    LazyVal(Field<T> field) {
-        super(Names.N_VALUE, field.getDataType());
+  LazyVal(Field<T> field) {
+    super(Names.N_VALUE, field.getDataType());
 
-        this.field = field;
-    }
+    this.field = field;
+  }
 
-    private final void init() {
-        if (delegate == null)
-            delegate = (AbstractParamX<T>) DSL.val(null, field);
-    }
+  private final void init() {
+    if (delegate == null) delegate = (AbstractParamX<T>) DSL.val(null, field);
+  }
 
-    // ------------------------------------------------------------------------
-    // XXX: Field API
-    // ------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
+  // XXX: Field API
+  // ------------------------------------------------------------------------
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        init();
-        ctx.visit(delegate);
-    }
+  @Override
+  public final void accept(Context<?> ctx) {
+    init();
+    ctx.visit(delegate);
+  }
 
-    // ------------------------------------------------------------------------
-    // XXX: Param API
-    // ------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
+  // XXX: Param API
+  // ------------------------------------------------------------------------
 
-    @Override
-    public final String getParamName() {
-        if (delegate == null)
-            return null;
+  @Override
+  public final String getParamName() {
+    if (delegate == null) return null;
 
-        init();
-        return delegate.getParamName();
-    }
+    init();
+    return delegate.getParamName();
+  }
 
-    @Override
-    public final T getValue() {
-        if (delegate == null)
-            return null;
+  @Override
+  public final T getValue() {
+    if (delegate == null) return null;
 
-        init();
-        return delegate.getValue();
-    }
+    init();
+    return delegate.getValue();
+  }
 
-    @Override
-    public final void setConverted0(Object value) {
-        init();
-        delegate.setConverted0(value);
-    }
+  @Override
+  public final void setConverted0(Object value) {
+    init();
+    delegate.setConverted0(value);
+  }
 
-    @Override
-    public final void setInline0(boolean inline) {
-        init();
-        delegate.setInline0(inline);
-    }
+  @Override
+  public final void setInline0(boolean inline) {
+    init();
+    delegate.setInline0(inline);
+  }
 
-    @Override
-    public final boolean isInline() {
-        if (delegate == null)
-            return false;
+  @Override
+  public final boolean isInline() {
+    if (delegate == null) return false;
 
-        init();
-        return delegate.isInline();
-    }
+    init();
+    return delegate.isInline();
+  }
 
-    @Override
-    public final ParamType getParamType() {
-        if (delegate == null)
-            return ParamType.INDEXED;
+  @Override
+  public final ParamType getParamType() {
+    if (delegate == null) return ParamType.INDEXED;
 
-        init();
-        return delegate.getParamType();
-    }
+    init();
+    return delegate.getParamType();
+  }
 
-    @Override
-    public final ParamMode getParamMode() {
-        if (delegate == null)
-            return ParamMode.IN;
+  @Override
+  public final ParamMode getParamMode() {
+    if (delegate == null) return ParamMode.IN;
 
-        init();
-        return delegate.getParamMode();
-    }
+    init();
+    return delegate.getParamMode();
+  }
 }

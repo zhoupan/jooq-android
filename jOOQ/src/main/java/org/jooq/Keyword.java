@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,16 +42,14 @@ import org.jooq.impl.DSL;
 
 /**
  * A SQL keyword.
- * <p>
- * A <code>Keyword</code> is a {@link QueryPart} that renders a SQL keyword
- * according to the settings specified in
- * {@link Settings#getRenderKeywordCase()}. It is useful mostly in jOOQ's
- * internals and for users who wish to make extensive use of "plain SQL
- * templating".
- * <p>
- * <strong>Example:</strong>
- * <p>
- * <code><pre>
+ *
+ * <p>A <code>Keyword</code> is a {@link QueryPart} that renders a SQL keyword according to the
+ * settings specified in {@link Settings#getRenderKeywordCase()}. It is useful mostly in jOOQ's
+ * internals and for users who wish to make extensive use of "plain SQL templating".
+ *
+ * <p><strong>Example:</strong>
+ *
+ * <p><code><pre>
  * // Assuming import static org.jooq.impl.DSL.*;
  *
  * Field&lt;Integer&gt; field = field(
@@ -60,11 +58,9 @@ import org.jooq.impl.DSL;
  *     keyword("extract"), keyword("year"), keyword("from"), ACTOR.LAST_UPDATE
  * );
  * </pre></code>
- * <p>
- * Instances can be created using {@link DSL#keyword(String)} and overloads.
+ *
+ * <p>Instances can be created using {@link DSL#keyword(String)} and overloads.
  *
  * @author Lukas Eder
  */
-public interface Keyword extends QueryPart {
-
-}
+public interface Keyword extends QueryPart {}

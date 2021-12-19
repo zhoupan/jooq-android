@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,62 +39,42 @@ package org.jooq.impl;
 
 import static org.jooq.impl.DSL.inline;
 import static org.jooq.impl.DSL.not;
-import static org.jooq.impl.DSL.select;
 
 import org.jooq.Condition;
 import org.jooq.Context;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class ConditionAsField extends AbstractField<Boolean> {
-    final Condition           condition;
+  final Condition condition;
 
-    ConditionAsField(Condition condition) {
-        super(DSL.name(condition.toString()), SQLDataType.BOOLEAN);
+  ConditionAsField(Condition condition) {
+    super(DSL.name(condition.toString()), SQLDataType.BOOLEAN);
 
-        this.condition = condition;
+    this.condition = condition;
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case CUBRID:
+      case FIREBIRD:
+        acceptCase(ctx);
+        break;
+
+        // Other dialects can inline predicates in column expression contexts
+      default:
+        ctx.sql('(').visit(condition).sql(')');
+        break;
     }
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
+  private final void acceptCase(Context<?> ctx) {
 
+    // [#10179] Avoid 3VL when not necessary
+    if (condition instanceof AbstractCondition && !((AbstractCondition) condition).isNullable())
+      ctx.visit(DSL.when(condition, inline(true)).else_(inline(false)));
 
-
-
-
-
-
-
-
-
-
-
-
-
-            case CUBRID:
-            case FIREBIRD:
-                acceptCase(ctx);
-                break;
-
-            // Other dialects can inline predicates in column expression contexts
-            default:
-                ctx.sql('(').visit(condition).sql(')');
-                break;
-        }
-    }
-
-    private final void acceptCase(Context<?> ctx) {
-
-        // [#10179] Avoid 3VL when not necessary
-        if (condition instanceof AbstractCondition && !((AbstractCondition) condition).isNullable())
-            ctx.visit(DSL.when(condition, inline(true))
-                         .else_(inline(false)));
-
-        // [#3206] Implement 3VL if necessary or unknown
-        else
-            ctx.visit(DSL.when(condition, inline(true))
-                         .when(not(condition), inline(false)));
-    }
+    // [#3206] Implement 3VL if necessary or unknown
+    else ctx.visit(DSL.when(condition, inline(true)).when(not(condition), inline(false)));
+  }
 }

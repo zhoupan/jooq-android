@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,7 +39,6 @@ package org.jooq.postgres.extensions.bindings;
 
 import java.sql.SQLException;
 import java.sql.Types;
-
 import org.jooq.BindingGetResultSetContext;
 import org.jooq.BindingGetStatementContext;
 import org.jooq.BindingRegisterContext;
@@ -56,42 +55,40 @@ import org.jooq.postgres.extensions.types.Hstore;
  */
 public class HstoreBinding extends AbstractPostgresBinding<Object, Hstore> {
 
-    /**
-     * Generated UID
-     */
-    private static final long                      serialVersionUID = 5809336497608771915L;
-    private static final Converter<Object, Hstore> CONVERTER        = new HstoreConverter();
+  /** Generated UID */
+  private static final long serialVersionUID = 5809336497608771915L;
 
-    @Override
-    public Converter<Object, Hstore> converter() {
-        return CONVERTER;
-    }
+  private static final Converter<Object, Hstore> CONVERTER = new HstoreConverter();
 
-    @Override
-    protected String castType() {
-        return "hstore";
-    }
+  @Override
+  public Converter<Object, Hstore> converter() {
+    return CONVERTER;
+  }
 
-    @Override
-    public void register(final BindingRegisterContext<Hstore> ctx) throws SQLException {
-        ctx.statement().registerOutParameter(ctx.index(), Types.VARCHAR);
-    }
+  @Override
+  protected String castType() {
+    return "hstore";
+  }
 
-    @Override
-    public void set(final BindingSetStatementContext<Hstore> ctx) throws SQLException {
-        Object value = ctx.convert(converter()).value();
+  @Override
+  public void register(final BindingRegisterContext<Hstore> ctx) throws SQLException {
+    ctx.statement().registerOutParameter(ctx.index(), Types.VARCHAR);
+  }
 
-        ctx.statement().setString(ctx.index(), value == null ? null : "" + value);
-    }
+  @Override
+  public void set(final BindingSetStatementContext<Hstore> ctx) throws SQLException {
+    Object value = ctx.convert(converter()).value();
 
+    ctx.statement().setString(ctx.index(), value == null ? null : "" + value);
+  }
 
-    @Override
-    public void get(final BindingGetResultSetContext<Hstore> ctx) throws SQLException {
-        ctx.convert(converter()).value(ctx.resultSet().getString(ctx.index()));
-    }
+  @Override
+  public void get(final BindingGetResultSetContext<Hstore> ctx) throws SQLException {
+    ctx.convert(converter()).value(ctx.resultSet().getString(ctx.index()));
+  }
 
-    @Override
-    public void get(final BindingGetStatementContext<Hstore> ctx) throws SQLException {
-        ctx.convert(converter()).value(ctx.statement().getString(ctx.index()));
-    }
+  @Override
+  public void get(final BindingGetStatementContext<Hstore> ctx) throws SQLException {
+    ctx.convert(converter()).value(ctx.statement().getString(ctx.index()));
+  }
 }

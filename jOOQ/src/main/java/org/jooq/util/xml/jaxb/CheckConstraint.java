@@ -1,4 +1,40 @@
-
+/* 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Other licenses:
+ * -----------------------------------------------------------------------------
+ * Commercial licenses for this work are available. These replace the above
+ * ASL 2.0 and offer limited warranties, support, maintenance, and commercial
+ * database integrations.
+ *
+ * For more information, please visit: http://www.jooq.org/licenses
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 package org.jooq.util.xml.jaxb;
 
 import java.io.Serializable;
@@ -11,12 +47,11 @@ import org.jooq.util.jaxb.tools.StringAdapter;
 import org.jooq.util.jaxb.tools.XMLAppendable;
 import org.jooq.util.jaxb.tools.XMLBuilder;
 
-
 /**
- * <p>Java class for CheckConstraint complex type.
- * 
+ * Java class for CheckConstraint complex type.
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CheckConstraint"&gt;
  *   &lt;complexContent&gt;
@@ -31,160 +66,158 @@ import org.jooq.util.jaxb.tools.XMLBuilder;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "CheckConstraint", propOrder = {
+@XmlType(
+    name = "CheckConstraint",
+    propOrder = {})
+@SuppressWarnings({"all"})
+public class CheckConstraint implements Serializable, XMLAppendable {
 
-})
-@SuppressWarnings({
-    "all"
-})
-public class CheckConstraint implements Serializable, XMLAppendable
-{
+  private static final long serialVersionUID = 31400L;
 
-    private final static long serialVersionUID = 31400L;
-    @XmlElement(name = "constraint_catalog")
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String constraintCatalog;
-    @XmlElement(name = "constraint_schema")
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String constraintSchema;
-    @XmlElement(name = "constraint_name", required = true)
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String constraintName;
-    @XmlElement(name = "check_clause", required = true)
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String checkClause;
+  @XmlElement(name = "constraint_catalog")
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String constraintCatalog;
 
-    public String getConstraintCatalog() {
-        return constraintCatalog;
+  @XmlElement(name = "constraint_schema")
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String constraintSchema;
+
+  @XmlElement(name = "constraint_name", required = true)
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String constraintName;
+
+  @XmlElement(name = "check_clause", required = true)
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String checkClause;
+
+  public String getConstraintCatalog() {
+    return constraintCatalog;
+  }
+
+  public void setConstraintCatalog(String value) {
+    this.constraintCatalog = value;
+  }
+
+  public String getConstraintSchema() {
+    return constraintSchema;
+  }
+
+  public void setConstraintSchema(String value) {
+    this.constraintSchema = value;
+  }
+
+  public String getConstraintName() {
+    return constraintName;
+  }
+
+  public void setConstraintName(String value) {
+    this.constraintName = value;
+  }
+
+  public String getCheckClause() {
+    return checkClause;
+  }
+
+  public void setCheckClause(String value) {
+    this.checkClause = value;
+  }
+
+  public CheckConstraint withConstraintCatalog(String value) {
+    setConstraintCatalog(value);
+    return this;
+  }
+
+  public CheckConstraint withConstraintSchema(String value) {
+    setConstraintSchema(value);
+    return this;
+  }
+
+  public CheckConstraint withConstraintName(String value) {
+    setConstraintName(value);
+    return this;
+  }
+
+  public CheckConstraint withCheckClause(String value) {
+    setCheckClause(value);
+    return this;
+  }
+
+  @Override
+  public final void appendTo(XMLBuilder builder) {
+    builder.append("constraint_catalog", constraintCatalog);
+    builder.append("constraint_schema", constraintSchema);
+    builder.append("constraint_name", constraintName);
+    builder.append("check_clause", checkClause);
+  }
+
+  @Override
+  public String toString() {
+    XMLBuilder builder = XMLBuilder.nonFormatting();
+    appendTo(builder);
+    return builder.toString();
+  }
+
+  @Override
+  public boolean equals(Object that) {
+    if (this == that) {
+      return true;
     }
-
-    public void setConstraintCatalog(String value) {
-        this.constraintCatalog = value;
+    if (that == null) {
+      return false;
     }
-
-    public String getConstraintSchema() {
-        return constraintSchema;
+    if (getClass() != that.getClass()) {
+      return false;
     }
-
-    public void setConstraintSchema(String value) {
-        this.constraintSchema = value;
+    CheckConstraint other = ((CheckConstraint) that);
+    if (constraintCatalog == null) {
+      if (other.constraintCatalog != null) {
+        return false;
+      }
+    } else {
+      if (!constraintCatalog.equals(other.constraintCatalog)) {
+        return false;
+      }
     }
-
-    public String getConstraintName() {
-        return constraintName;
+    if (constraintSchema == null) {
+      if (other.constraintSchema != null) {
+        return false;
+      }
+    } else {
+      if (!constraintSchema.equals(other.constraintSchema)) {
+        return false;
+      }
     }
-
-    public void setConstraintName(String value) {
-        this.constraintName = value;
+    if (constraintName == null) {
+      if (other.constraintName != null) {
+        return false;
+      }
+    } else {
+      if (!constraintName.equals(other.constraintName)) {
+        return false;
+      }
     }
-
-    public String getCheckClause() {
-        return checkClause;
+    if (checkClause == null) {
+      if (other.checkClause != null) {
+        return false;
+      }
+    } else {
+      if (!checkClause.equals(other.checkClause)) {
+        return false;
+      }
     }
+    return true;
+  }
 
-    public void setCheckClause(String value) {
-        this.checkClause = value;
-    }
-
-    public CheckConstraint withConstraintCatalog(String value) {
-        setConstraintCatalog(value);
-        return this;
-    }
-
-    public CheckConstraint withConstraintSchema(String value) {
-        setConstraintSchema(value);
-        return this;
-    }
-
-    public CheckConstraint withConstraintName(String value) {
-        setConstraintName(value);
-        return this;
-    }
-
-    public CheckConstraint withCheckClause(String value) {
-        setCheckClause(value);
-        return this;
-    }
-
-    @Override
-    public final void appendTo(XMLBuilder builder) {
-        builder.append("constraint_catalog", constraintCatalog);
-        builder.append("constraint_schema", constraintSchema);
-        builder.append("constraint_name", constraintName);
-        builder.append("check_clause", checkClause);
-    }
-
-    @Override
-    public String toString() {
-        XMLBuilder builder = XMLBuilder.nonFormatting();
-        appendTo(builder);
-        return builder.toString();
-    }
-
-    @Override
-    public boolean equals(Object that) {
-        if (this == that) {
-            return true;
-        }
-        if (that == null) {
-            return false;
-        }
-        if (getClass()!= that.getClass()) {
-            return false;
-        }
-        CheckConstraint other = ((CheckConstraint) that);
-        if (constraintCatalog == null) {
-            if (other.constraintCatalog!= null) {
-                return false;
-            }
-        } else {
-            if (!constraintCatalog.equals(other.constraintCatalog)) {
-                return false;
-            }
-        }
-        if (constraintSchema == null) {
-            if (other.constraintSchema!= null) {
-                return false;
-            }
-        } else {
-            if (!constraintSchema.equals(other.constraintSchema)) {
-                return false;
-            }
-        }
-        if (constraintName == null) {
-            if (other.constraintName!= null) {
-                return false;
-            }
-        } else {
-            if (!constraintName.equals(other.constraintName)) {
-                return false;
-            }
-        }
-        if (checkClause == null) {
-            if (other.checkClause!= null) {
-                return false;
-            }
-        } else {
-            if (!checkClause.equals(other.checkClause)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = ((prime*result)+((constraintCatalog == null)? 0 :constraintCatalog.hashCode()));
-        result = ((prime*result)+((constraintSchema == null)? 0 :constraintSchema.hashCode()));
-        result = ((prime*result)+((constraintName == null)? 0 :constraintName.hashCode()));
-        result = ((prime*result)+((checkClause == null)? 0 :checkClause.hashCode()));
-        return result;
-    }
-
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = ((prime * result) + ((constraintCatalog == null) ? 0 : constraintCatalog.hashCode()));
+    result = ((prime * result) + ((constraintSchema == null) ? 0 : constraintSchema.hashCode()));
+    result = ((prime * result) + ((constraintName == null) ? 0 : constraintName.hashCode()));
+    result = ((prime * result) + ((checkClause == null) ? 0 : checkClause.hashCode()));
+    return result;
+  }
 }

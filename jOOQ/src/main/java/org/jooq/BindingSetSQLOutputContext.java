@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,25 +40,18 @@ package org.jooq;
 import java.sql.SQLOutput;
 
 /**
- * A container type for {@link Binding#set(BindingSetSQLOutputContext)}
- * arguments.
+ * A container type for {@link Binding#set(BindingSetSQLOutputContext)} arguments.
  *
  * @author Lukas Eder
  */
 public interface BindingSetSQLOutputContext<U> extends ResourceManagingScope {
 
-    /**
-     * The {@link SQLOutput} to which a bind variable should be bound.
-     */
-    SQLOutput output();
+  /** The {@link SQLOutput} to which a bind variable should be bound. */
+  SQLOutput output();
 
-    /**
-     * The bind value that is being bound.
-     */
-    U value();
+  /** The bind value that is being bound. */
+  U value();
 
-    /**
-     * Create a new context from this one using a converter.
-     */
-    <T> BindingSetSQLOutputContext<T> convert(Converter<? extends T, ? super U> converter);
+  /** Create a new context from this one using a converter. */
+  <T> BindingSetSQLOutputContext<T> convert(Converter<? extends T, ? super U> converter);
 }

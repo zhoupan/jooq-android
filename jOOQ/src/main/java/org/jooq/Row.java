@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,27 +37,25 @@
  */
 package org.jooq;
 
-import org.jooq.impl.DSL;
-
 import org.jetbrains.annotations.NotNull;
+import org.jooq.impl.DSL;
 
 /**
  * A row value expression.
- * <p>
- * Row value expressions are mainly useful for use in predicates, when comparing
- * several values in one go, which can be more elegant than expanding the row
- * value expression predicate in other equivalent syntaxes. This is especially
- * true for non-equality predicates. For instance, the following two predicates
- * are equivalent in SQL:
- * <p>
- * <code><pre>
+ *
+ * <p>Row value expressions are mainly useful for use in predicates, when comparing several values
+ * in one go, which can be more elegant than expanding the row value expression predicate in other
+ * equivalent syntaxes. This is especially true for non-equality predicates. For instance, the
+ * following two predicates are equivalent in SQL:
+ *
+ * <p><code><pre>
  * (A, B) &gt; (X, Y)
  * (A &gt; X) OR (A = X AND B &gt; Y)
  * </pre></code>
- * <p>
- * <strong>Example:</strong>
- * <p>
- * <code><pre>
+ *
+ * <p><strong>Example:</strong>
+ *
+ * <p><code><pre>
  * // Assuming import static org.jooq.impl.DSL.*;
  *
  * using(configuration)
@@ -68,55 +66,51 @@ import org.jetbrains.annotations.NotNull;
  *    ))
  *    .fetch();
  * </pre></code>
- * <p>
- * Note: Not all databases support row value expressions, but many row value
- * expression operations can be emulated on all databases. See relevant row
- * value expression method Javadocs for details.
- * <p>
- * Instances can be created using {@link DSL#row(Object...)} and overloads.
+ *
+ * <p>Note: Not all databases support row value expressions, but many row value expression
+ * operations can be emulated on all databases. See relevant row value expression method Javadocs
+ * for details.
+ *
+ * <p>Instances can be created using {@link DSL#row(Object...)} and overloads.
  *
  * @author Lukas Eder
  */
 public interface Row extends Fields, FieldOrRow {
 
-    /**
-     * Get the degree of this row value expression.
-     */
-    int size();
+  /** Get the degree of this row value expression. */
+  int size();
 
-    // ------------------------------------------------------------------------
-    // [NOT] NULL predicates
-    // ------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
+  // [NOT] NULL predicates
+  // ------------------------------------------------------------------------
 
-    /**
-     * Check if this row value expression contains only <code>NULL</code>
-     * values.
-     * <p>
-     * Row NULL predicates can be emulated in those databases that do not
-     * support such predicates natively: <code>(A, B) IS NULL</code> is
-     * equivalent to <code>A IS NULL AND B IS NULL</code>
-     */
-    @NotNull
-    @Support
-    Condition isNull();
+  /**
+   * Check if this row value expression contains only <code>NULL</code> values.
+   *
+   * <p>Row NULL predicates can be emulated in those databases that do not support such predicates
+   * natively: <code>(A, B) IS NULL</code> is equivalent to <code>A IS NULL AND B IS NULL</code>
+   */
+  @NotNull
+  @Support
+  Condition isNull();
 
-    /**
-     * Check if this row value expression contains no <code>NULL</code> values.
-     * <p>
-     * Row NOT NULL predicates can be emulated in those databases that do not
-     * support such predicates natively: <code>(A, B) IS NOT NULL</code> is
-     * equivalent to <code>A IS NOT NULL AND B IS NOT NULL</code>
-     * <p>
-     * Note that the two following predicates are NOT equivalent:
-     * <ul>
-     * <li><code>(A, B) IS NOT NULL</code>, which is the same as
-     * <code>(A IS NOT NULL) AND (B IS NOT NULL)</code></li>
-     * <li><code>NOT((A, B) IS NULL)</code>, which is the same as
-     * <code>(A IS NOT NULL) OR (B IS NOT NULL)</code></li>
-     * </ul>
-     */
-    @NotNull
-    @Support
-    Condition isNotNull();
-
+  /**
+   * Check if this row value expression contains no <code>NULL</code> values.
+   *
+   * <p>Row NOT NULL predicates can be emulated in those databases that do not support such
+   * predicates natively: <code>(A, B) IS NOT NULL</code> is equivalent to <code>
+   * A IS NOT NULL AND B IS NOT NULL</code>
+   *
+   * <p>Note that the two following predicates are NOT equivalent:
+   *
+   * <ul>
+   *   <li><code>(A, B) IS NOT NULL</code>, which is the same as <code>
+   *       (A IS NOT NULL) AND (B IS NOT NULL)</code>
+   *   <li><code>NOT((A, B) IS NULL)</code>, which is the same as <code>
+   *       (A IS NOT NULL) OR (B IS NOT NULL)</code>
+   * </ul>
+   */
+  @NotNull
+  @Support
+  Condition isNotNull();
 }

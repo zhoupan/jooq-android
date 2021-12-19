@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,72 +42,71 @@ import org.jooq.ExecuteListener;
 
 /**
  * A publicly available default implementation of {@link ExecuteListener}.
- * <p>
- * Use this to stay compatible with future API changes (i.e. added methods to
- * <code>ExecuteListener</code>)
+ *
+ * <p>Use this to stay compatible with future API changes (i.e. added methods to <code>
+ * ExecuteListener</code>)
  *
  * @author Lukas Eder
  */
 public class DefaultExecuteListener implements ExecuteListener {
 
-    @Override
-    public void start(ExecuteContext ctx) {}
+  @Override
+  public void start(ExecuteContext ctx) {}
 
-    @Override
-    public void renderStart(ExecuteContext ctx) {}
+  @Override
+  public void renderStart(ExecuteContext ctx) {}
 
-    @Override
-    public void renderEnd(ExecuteContext ctx) {}
+  @Override
+  public void renderEnd(ExecuteContext ctx) {}
 
-    @Override
-    public void prepareStart(ExecuteContext ctx) {}
+  @Override
+  public void prepareStart(ExecuteContext ctx) {}
 
-    @Override
-    public void prepareEnd(ExecuteContext ctx) {}
+  @Override
+  public void prepareEnd(ExecuteContext ctx) {}
 
-    @Override
-    public void bindStart(ExecuteContext ctx) {}
+  @Override
+  public void bindStart(ExecuteContext ctx) {}
 
-    @Override
-    public void bindEnd(ExecuteContext ctx) {}
+  @Override
+  public void bindEnd(ExecuteContext ctx) {}
 
-    @Override
-    public void executeStart(ExecuteContext ctx) {}
+  @Override
+  public void executeStart(ExecuteContext ctx) {}
 
-    @Override
-    public void executeEnd(ExecuteContext ctx) {}
+  @Override
+  public void executeEnd(ExecuteContext ctx) {}
 
-    @Override
-    public void outStart(ExecuteContext ctx) {}
+  @Override
+  public void outStart(ExecuteContext ctx) {}
 
-    @Override
-    public void outEnd(ExecuteContext ctx) {}
+  @Override
+  public void outEnd(ExecuteContext ctx) {}
 
-    @Override
-    public void fetchStart(ExecuteContext ctx) {}
+  @Override
+  public void fetchStart(ExecuteContext ctx) {}
 
-    @Override
-    public void resultStart(ExecuteContext ctx) {}
+  @Override
+  public void resultStart(ExecuteContext ctx) {}
 
-    @Override
-    public void recordStart(ExecuteContext ctx) {}
+  @Override
+  public void recordStart(ExecuteContext ctx) {}
 
-    @Override
-    public void recordEnd(ExecuteContext ctx) {}
+  @Override
+  public void recordEnd(ExecuteContext ctx) {}
 
-    @Override
-    public void resultEnd(ExecuteContext ctx) {}
+  @Override
+  public void resultEnd(ExecuteContext ctx) {}
 
-    @Override
-    public void fetchEnd(ExecuteContext ctx) {}
+  @Override
+  public void fetchEnd(ExecuteContext ctx) {}
 
-    @Override
-    public void end(ExecuteContext ctx) {}
+  @Override
+  public void end(ExecuteContext ctx) {}
 
-    @Override
-    public void exception(ExecuteContext ctx) {}
+  @Override
+  public void exception(ExecuteContext ctx) {}
 
-    @Override
-    public void warning(ExecuteContext ctx) {}
-
+  @Override
+  public void warning(ExecuteContext ctx) {}
 }

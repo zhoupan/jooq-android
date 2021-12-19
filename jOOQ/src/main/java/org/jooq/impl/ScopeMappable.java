@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,8 +42,8 @@ import org.jooq.QueryPart;
 import org.jooq.QueryPartInternal;
 
 /**
- * A marker interface for all query parts that can be mapped via
- * {@link Context#scopeMapping(QueryPart)}
+ * A marker interface for all query parts that can be mapped via {@link
+ * Context#scopeMapping(QueryPart)}
  *
  * @author Lukas Eder
  */

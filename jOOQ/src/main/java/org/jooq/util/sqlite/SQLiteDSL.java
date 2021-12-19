@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,31 +45,28 @@ import org.jooq.impl.DSL;
  * The {@link SQLDialect#SQLITE} specific DSL.
  *
  * @author Lukas Eder
- * @deprecated - 3.15.0 - [#10796] - This class will be removed, soon, no more
- *             vendor specific DSL API will be added.
+ * @deprecated - 3.15.0 - [#10796] - This class will be removed, soon, no more vendor specific DSL
+ *     API will be added.
  */
 @Deprecated(forRemoval = true, since = "3.15")
 public class SQLiteDSL extends DSL {
 
-    /**
-     * No instances
-     */
-    protected SQLiteDSL() {
-    }
+  /** No instances */
+  protected SQLiteDSL() {}
 
-    // -------------------------------------------------------------------------
-    // General pseudo-columns
-    // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // General pseudo-columns
+  // -------------------------------------------------------------------------
 
-    /**
-     * Retrieve the SQLite-specific <code>_rowid_</code> pseudo-field.
-     * <code>_rowid_</code> was chosen over <code>rowid</code> as it is less
-     * likely to be used as an actual table column in client code.
-     *
-     * @see <a
-     *      href="http://www.sqlite.org/lang_createtable.html#rowid">http://www.sqlite.org/lang_createtable.html#rowid</a>
-     */
-    public static Field<Long> rowid() {
-        return field("_rowid_", Long.class);
-    }
+  /**
+   * Retrieve the SQLite-specific <code>_rowid_</code> pseudo-field. <code>_rowid_</code> was chosen
+   * over <code>rowid</code> as it is less likely to be used as an actual table column in client
+   * code.
+   *
+   * @see <a
+   *     href="http://www.sqlite.org/lang_createtable.html#rowid">http://www.sqlite.org/lang_createtable.html#rowid</a>
+   */
+  public static Field<Long> rowid() {
+    return field("_rowid_", Long.class);
+  }
 }

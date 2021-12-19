@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,15 +37,13 @@
  */
 package org.jooq;
 
-import org.jooq.impl.DSL;
-
 import org.jetbrains.annotations.NotNull;
-
+import org.jooq.impl.DSL;
 
 /**
  * The SQL case statement.
- * <p>
- * This construct can be used to create expressions of the type <code><pre>
+ *
+ * <p>This construct can be used to create expressions of the type <code><pre>
  * CASE x WHEN 1 THEN 'one'
  *        WHEN 2 THEN 'two'
  *        ELSE        'three'
@@ -55,144 +53,143 @@ import org.jetbrains.annotations.NotNull;
  *      WHEN x &gt;= 2 THEN 'two'
  *      ELSE            'three'
  * END
- * </pre></code> Instances of Case are created through the
- * {@link DSL#decode()} method
+ * </pre></code> Instances of Case are created through the {@link DSL#decode()} method
  *
  * @author Lukas Eder
  */
 public interface Case {
 
-    /**
-     * This construct can be used to create expressions of the type <code><pre>
-     * CASE value WHEN 1 THEN 'one'
-     *            WHEN 2 THEN 'two'
-     *            ELSE        'three'
-     * END
-     * </pre></code>
-     *
-     * @param <V> The generic value type parameter
-     * @param value The value to do the case statement on
-     * @return An intermediary step for case statement construction
-     */
-    @NotNull
-    @Support
-    <V> CaseValueStep<V> value(V value);
+  /**
+   * This construct can be used to create expressions of the type <code><pre>
+   * CASE value WHEN 1 THEN 'one'
+   *            WHEN 2 THEN 'two'
+   *            ELSE        'three'
+   * END
+   * </pre></code>
+   *
+   * @param <V> The generic value type parameter
+   * @param value The value to do the case statement on
+   * @return An intermediary step for case statement construction
+   */
+  @NotNull
+  @Support
+  <V> CaseValueStep<V> value(V value);
 
-    /**
-     * This construct can be used to create expressions of the type <code><pre>
-     * CASE value WHEN 1 THEN 'one'
-     *            WHEN 2 THEN 'two'
-     *            ELSE        'three'
-     * END
-     * </pre></code>
-     *
-     * @param <V> The generic value type parameter
-     * @param value The value to do the case statement on
-     * @return An intermediary step for case statement construction
-     */
-    @NotNull
-    @Support
-    <V> CaseValueStep<V> value(Field<V> value);
+  /**
+   * This construct can be used to create expressions of the type <code><pre>
+   * CASE value WHEN 1 THEN 'one'
+   *            WHEN 2 THEN 'two'
+   *            ELSE        'three'
+   * END
+   * </pre></code>
+   *
+   * @param <V> The generic value type parameter
+   * @param value The value to do the case statement on
+   * @return An intermediary step for case statement construction
+   */
+  @NotNull
+  @Support
+  <V> CaseValueStep<V> value(Field<V> value);
 
-    /**
-     * This construct can be used to create expressions of the type <code><pre>
-     * CASE WHEN x &lt; 1  THEN 'one'
-     *      WHEN x &gt;= 2 THEN 'two'
-     *      ELSE            'three'
-     * END
-     * </pre></code>
-     *
-     * @param <T> The generic field type parameter
-     * @param condition A condition to check in the case statement
-     * @param result The result if the condition holds true
-     * @return An intermediary step for case statement construction
-     */
-    @NotNull
-    @Support
-    <T> CaseConditionStep<T> when(Condition condition, T result);
+  /**
+   * This construct can be used to create expressions of the type <code><pre>
+   * CASE WHEN x &lt; 1  THEN 'one'
+   *      WHEN x &gt;= 2 THEN 'two'
+   *      ELSE            'three'
+   * END
+   * </pre></code>
+   *
+   * @param <T> The generic field type parameter
+   * @param condition A condition to check in the case statement
+   * @param result The result if the condition holds true
+   * @return An intermediary step for case statement construction
+   */
+  @NotNull
+  @Support
+  <T> CaseConditionStep<T> when(Condition condition, T result);
 
-    /**
-     * This construct can be used to create expressions of the type <code><pre>
-     * CASE WHEN x &lt; 1  THEN 'one'
-     *      WHEN x &gt;= 2 THEN 'two'
-     *      ELSE            'three'
-     * END
-     * </pre></code>
-     *
-     * @param <T> The generic field type parameter
-     * @param condition A condition to check in the case statement
-     * @param result The result if the condition holds true
-     * @return An intermediary step for case statement construction
-     */
-    @NotNull
-    @Support
-    <T> CaseConditionStep<T> when(Condition condition, Field<T> result);
+  /**
+   * This construct can be used to create expressions of the type <code><pre>
+   * CASE WHEN x &lt; 1  THEN 'one'
+   *      WHEN x &gt;= 2 THEN 'two'
+   *      ELSE            'three'
+   * END
+   * </pre></code>
+   *
+   * @param <T> The generic field type parameter
+   * @param condition A condition to check in the case statement
+   * @param result The result if the condition holds true
+   * @return An intermediary step for case statement construction
+   */
+  @NotNull
+  @Support
+  <T> CaseConditionStep<T> when(Condition condition, Field<T> result);
 
-    /**
-     * This construct can be used to create expressions of the type <code><pre>
-     * CASE WHEN x &lt; 1  THEN 'one'
-     *      WHEN x &gt;= 2 THEN 'two'
-     *      ELSE            'three'
-     * END
-     * </pre></code>
-     *
-     * @param <T> The generic field type parameter
-     * @param condition A condition to check in the case statement
-     * @param result The result if the condition holds true
-     * @return An intermediary step for case statement construction
-     */
-    @NotNull
-    @Support
-    <T> CaseConditionStep<T> when(Condition condition, Select<? extends Record1<T>> result);
+  /**
+   * This construct can be used to create expressions of the type <code><pre>
+   * CASE WHEN x &lt; 1  THEN 'one'
+   *      WHEN x &gt;= 2 THEN 'two'
+   *      ELSE            'three'
+   * END
+   * </pre></code>
+   *
+   * @param <T> The generic field type parameter
+   * @param condition A condition to check in the case statement
+   * @param result The result if the condition holds true
+   * @return An intermediary step for case statement construction
+   */
+  @NotNull
+  @Support
+  <T> CaseConditionStep<T> when(Condition condition, Select<? extends Record1<T>> result);
 
-    /**
-     * This construct can be used to create expressions of the type <code><pre>
-     * CASE WHEN x &lt; 1  THEN 'one'
-     *      WHEN x &gt;= 2 THEN 'two'
-     *      ELSE            'three'
-     * END
-     * </pre></code>
-     *
-     * @param <T> The generic field type parameter
-     * @param condition A condition to check in the case statement
-     * @param result The result if the condition holds true
-     * @return An intermediary step for case statement construction
-     */
-    @NotNull
-    @Support
-    <T> CaseConditionStep<T> when(Field<Boolean> condition, T result);
+  /**
+   * This construct can be used to create expressions of the type <code><pre>
+   * CASE WHEN x &lt; 1  THEN 'one'
+   *      WHEN x &gt;= 2 THEN 'two'
+   *      ELSE            'three'
+   * END
+   * </pre></code>
+   *
+   * @param <T> The generic field type parameter
+   * @param condition A condition to check in the case statement
+   * @param result The result if the condition holds true
+   * @return An intermediary step for case statement construction
+   */
+  @NotNull
+  @Support
+  <T> CaseConditionStep<T> when(Field<Boolean> condition, T result);
 
-    /**
-     * This construct can be used to create expressions of the type <code><pre>
-     * CASE WHEN x &lt; 1  THEN 'one'
-     *      WHEN x &gt;= 2 THEN 'two'
-     *      ELSE            'three'
-     * END
-     * </pre></code>
-     *
-     * @param <T> The generic field type parameter
-     * @param condition A condition to check in the case statement
-     * @param result The result if the condition holds true
-     * @return An intermediary step for case statement construction
-     */
-    @NotNull
-    @Support
-    <T> CaseConditionStep<T> when(Field<Boolean> condition, Field<T> result);
+  /**
+   * This construct can be used to create expressions of the type <code><pre>
+   * CASE WHEN x &lt; 1  THEN 'one'
+   *      WHEN x &gt;= 2 THEN 'two'
+   *      ELSE            'three'
+   * END
+   * </pre></code>
+   *
+   * @param <T> The generic field type parameter
+   * @param condition A condition to check in the case statement
+   * @param result The result if the condition holds true
+   * @return An intermediary step for case statement construction
+   */
+  @NotNull
+  @Support
+  <T> CaseConditionStep<T> when(Field<Boolean> condition, Field<T> result);
 
-    /**
-     * This construct can be used to create expressions of the type <code><pre>
-     * CASE WHEN x &lt; 1  THEN 'one'
-     *      WHEN x &gt;= 2 THEN 'two'
-     *      ELSE            'three'
-     * END
-     * </pre></code>
-     *
-     * @param <T> The generic field type parameter
-     * @param condition A condition to check in the case statement
-     * @param result The result if the condition holds true
-     * @return An intermediary step for case statement construction
-     */
-    @NotNull
-    @Support
-    <T> CaseConditionStep<T> when(Field<Boolean> condition, Select<? extends Record1<T>> result);
+  /**
+   * This construct can be used to create expressions of the type <code><pre>
+   * CASE WHEN x &lt; 1  THEN 'one'
+   *      WHEN x &gt;= 2 THEN 'two'
+   *      ELSE            'three'
+   * END
+   * </pre></code>
+   *
+   * @param <T> The generic field type parameter
+   * @param condition A condition to check in the case statement
+   * @param result The result if the condition holds true
+   * @return An intermediary step for case statement construction
+   */
+  @NotNull
+  @Support
+  <T> CaseConditionStep<T> when(Field<Boolean> condition, Select<? extends Record1<T>> result);
 }

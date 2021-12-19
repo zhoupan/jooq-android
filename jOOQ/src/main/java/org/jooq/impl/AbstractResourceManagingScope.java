@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,60 +43,58 @@ import java.sql.Blob;
 import java.sql.Clob;
 import java.sql.SQLXML;
 import java.util.Map;
-
 import org.jooq.Configuration;
 import org.jooq.ResourceManagingScope;
 
-/**
- * @author Lukas Eder
- */
-abstract class AbstractResourceManagingScope extends AbstractScope implements ResourceManagingScope {
+/** @author Lukas Eder */
+abstract class AbstractResourceManagingScope extends AbstractScope
+    implements ResourceManagingScope {
 
-    AbstractResourceManagingScope(Configuration configuration) {
-        super(configuration);
-    }
+  AbstractResourceManagingScope(Configuration configuration) {
+    super(configuration);
+  }
 
-    AbstractResourceManagingScope(Configuration configuration, Map<Object, Object> data) {
-        super(configuration, data);
-    }
+  AbstractResourceManagingScope(Configuration configuration, Map<Object, Object> data) {
+    super(configuration, data);
+  }
 
-    // ------------------------------------------------------------------------
-    // XXX ResourceManagingScope API
-    // ------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
+  // XXX ResourceManagingScope API
+  // ------------------------------------------------------------------------
 
-    @Override
-    public final Array autoFree(Array array) {
-        DefaultExecuteContext.register(array);
-        return array;
-    }
+  @Override
+  public final Array autoFree(Array array) {
+    DefaultExecuteContext.register(array);
+    return array;
+  }
 
-    @Override
-    public final Blob autoFree(Blob blob) {
-        DefaultExecuteContext.register(blob);
-        return blob;
-    }
+  @Override
+  public final Blob autoFree(Blob blob) {
+    DefaultExecuteContext.register(blob);
+    return blob;
+  }
 
-    @Override
-    public final Clob autoFree(Clob clob) {
-        DefaultExecuteContext.register(clob);
-        return clob;
-    }
+  @Override
+  public final Clob autoFree(Clob clob) {
+    DefaultExecuteContext.register(clob);
+    return clob;
+  }
 
-    @Override
-    public final SQLXML autoFree(SQLXML xml) {
-        DefaultExecuteContext.register(xml);
-        return xml;
-    }
+  @Override
+  public final SQLXML autoFree(SQLXML xml) {
+    DefaultExecuteContext.register(xml);
+    return xml;
+  }
 
-    @Override
-    public final <R extends Closeable> R autoClose(R closeable) {
-        DefaultExecuteContext.register(closeable);
-        return closeable;
-    }
+  @Override
+  public final <R extends Closeable> R autoClose(R closeable) {
+    DefaultExecuteContext.register(closeable);
+    return closeable;
+  }
 
-    @Override
-    public final <R extends AutoCloseable> R autoClose(R closeable) {
-        DefaultExecuteContext.register(closeable);
-        return closeable;
-    }
+  @Override
+  public final <R extends AutoCloseable> R autoClose(R closeable) {
+    DefaultExecuteContext.register(closeable);
+    return closeable;
+  }
 }

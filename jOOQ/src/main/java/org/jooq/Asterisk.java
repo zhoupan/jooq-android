@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,23 +38,19 @@
 package org.jooq;
 
 import org.jetbrains.annotations.*;
-
-
 import org.jooq.impl.DSL;
 
 /**
  * An unqualified asterisk.
- * <p>
- * Asterisks (qualified and unqualified) are expressions that can be used
- * exclusively in <code>SELECT</code> clauses and a few other clauses that
- * explicitly allow for asterisks, including <code>RETURNING</code> on DML
- * statements. Asterisks are syntax sugar in SQL, which are expanded to a column
- * list by the parser once all the columns in the <code>FROM</code> clause are
- * known.
- * <p>
- * <strong>Example:</strong>
- * <p>
- * <code><pre>
+ *
+ * <p>Asterisks (qualified and unqualified) are expressions that can be used exclusively in <code>
+ * SELECT</code> clauses and a few other clauses that explicitly allow for asterisks, including
+ * <code>RETURNING</code> on DML statements. Asterisks are syntax sugar in SQL, which are expanded
+ * to a column list by the parser once all the columns in the <code>FROM</code> clause are known.
+ *
+ * <p><strong>Example:</strong>
+ *
+ * <p><code><pre>
  * // Assuming import static org.jooq.impl.DSL.*;
  *
  * using(configuration)
@@ -62,45 +58,45 @@ import org.jooq.impl.DSL;
  *    .from(ACTOR)
  *    .fetch();
  * </pre></code>
- * <p>
- * Instances can be created using {@link DSL#asterisk()}.
+ *
+ * <p>Instances can be created using {@link DSL#asterisk()}.
  *
  * @see Table#asterisk()
  * @author Lukas Eder
  */
 public interface Asterisk extends SelectFieldOrAsterisk {
 
-    /**
-     * The asterisk (<code>* EXCEPT (fields)</code>) expression to be used in
-     * <code>SELECT</code> clauses.
-     * <p>
-     * This expression is a convenient way to select "all but some fields". Some
-     * dialects (e.g. {@link SQLDialect#H2}) implement this feature natively. In
-     * other dialects, jOOQ expands the asterisk if possible.
-     */
-    @NotNull
-    @Support
-    Asterisk except(String... fieldNames);
+  /**
+   * The asterisk (<code>* EXCEPT (fields)</code>) expression to be used in <code>SELECT</code>
+   * clauses.
+   *
+   * <p>This expression is a convenient way to select "all but some fields". Some dialects (e.g.
+   * {@link SQLDialect#H2}) implement this feature natively. In other dialects, jOOQ expands the
+   * asterisk if possible.
+   */
+  @NotNull
+  @Support
+  Asterisk except(String... fieldNames);
 
-    /**
-     * The asterisk (<code>*</code>) to be used in <code>SELECT</code> clauses.
-     * <p>
-     * This expression is a convenient way to select "all but some fields". Some
-     * dialects (e.g. {@link SQLDialect#H2}) implement this feature natively. In
-     * other dialects, jOOQ expands the asterisk if possible.
-     */
-    @NotNull
-    @Support
-    Asterisk except(Name... fieldNames);
+  /**
+   * The asterisk (<code>*</code>) to be used in <code>SELECT</code> clauses.
+   *
+   * <p>This expression is a convenient way to select "all but some fields". Some dialects (e.g.
+   * {@link SQLDialect#H2}) implement this feature natively. In other dialects, jOOQ expands the
+   * asterisk if possible.
+   */
+  @NotNull
+  @Support
+  Asterisk except(Name... fieldNames);
 
-    /**
-     * The asterisk (<code>*</code>) to be used in <code>SELECT</code> clauses.
-     * <p>
-     * This expression is a convenient way to select "all but some fields". Some
-     * dialects (e.g. {@link SQLDialect#H2}) implement this feature natively. In
-     * other dialects, jOOQ expands the asterisk if possible.
-     */
-    @NotNull
-    @Support
-    Asterisk except(Field<?>... fields);
+  /**
+   * The asterisk (<code>*</code>) to be used in <code>SELECT</code> clauses.
+   *
+   * <p>This expression is a convenient way to select "all but some fields". Some dialects (e.g.
+   * {@link SQLDialect#H2}) implement this feature natively. In other dialects, jOOQ expands the
+   * asterisk if possible.
+   */
+  @NotNull
+  @Support
+  Asterisk except(Field<?>... fields);
 }

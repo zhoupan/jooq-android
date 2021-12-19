@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,45 +40,43 @@ package org.jooq.impl;
 import org.jooq.ContentType;
 import org.jooq.File;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 class FileImpl implements File {
 
-    private final String      path;
-    private final String      name;
-    private final String      content;
-    private final ContentType type;
+  private final String path;
+  private final String name;
+  private final String content;
+  private final ContentType type;
 
-    FileImpl(String path, String content, ContentType type) {
-        this.path = path;
-        this.content = content;
-        this.type = type;
-        this.name = path.substring(path.lastIndexOf('/') + 1);
-    }
+  FileImpl(String path, String content, ContentType type) {
+    this.path = path;
+    this.content = content;
+    this.type = type;
+    this.name = path.substring(path.lastIndexOf('/') + 1);
+  }
 
-    @Override
-    public final String path() {
-        return path;
-    }
+  @Override
+  public final String path() {
+    return path;
+  }
 
-    @Override
-    public final String name() {
-        return name;
-    }
+  @Override
+  public final String name() {
+    return name;
+  }
 
-    @Override
-    public final String content() {
-        return content;
-    }
+  @Override
+  public final String content() {
+    return content;
+  }
 
-    @Override
-    public final ContentType type() {
-        return type;
-    }
+  @Override
+  public final ContentType type() {
+    return type;
+  }
 
-    @Override
-    public String toString() {
-        return "-- " + type + ": " + path + "\n" + content;
-    }
+  @Override
+  public String toString() {
+    return "-- " + type + ": " + path + "\n" + content;
+  }
 }

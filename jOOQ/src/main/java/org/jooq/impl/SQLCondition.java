@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,43 +39,36 @@ package org.jooq.impl;
 
 import org.jooq.Clause;
 import org.jooq.Context;
-import org.jooq.QueryPart;
 import org.jooq.SQL;
 
 final class SQLCondition extends AbstractCondition {
 
-    private final SQL delegate;
+  private final SQL delegate;
 
-    SQLCondition(SQL delegate) {
-        this.delegate = delegate;
+  SQLCondition(SQL delegate) {
+    this.delegate = delegate;
+  }
+
+  // ------------------------------------------------------------------------
+  // QueryPart API
+  // ------------------------------------------------------------------------
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      default:
+        // We have no control over the plain SQL content, hence we MUST put it
+        // in parentheses to ensure correct semantics
+
+        ctx.sql('(');
+        ctx.visit(delegate);
+        ctx.sql(')');
+        break;
     }
+  }
 
-    // ------------------------------------------------------------------------
-    // QueryPart API
-    // ------------------------------------------------------------------------
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-            default:
-                // We have no control over the plain SQL content, hence we MUST put it
-                // in parentheses to ensure correct semantics
-
-                ctx.sql('(');
-                ctx.visit(delegate);
-                ctx.sql(')');
-                break;
-        }
-    }
-
-    @Override // Avoid AbstractCondition implementation
-    public final Clause[] clauses(Context<?> ctx) {
-        return null;
-    }
+  @Override // Avoid AbstractCondition implementation
+  public final Clause[] clauses(Context<?> ctx) {
+    return null;
+  }
 }

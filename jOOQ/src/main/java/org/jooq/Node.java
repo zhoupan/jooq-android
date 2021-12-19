@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,40 +38,31 @@
 package org.jooq;
 
 import java.util.List;
-
 import org.jetbrains.annotations.NotNull;
 
 /**
  * An abstraction over directed, acyclic graph models.
- * <p>
- * Examples of such models are {@link Version} / {@link Versions} or
- * {@link Commit} / {@link Commits}.
+ *
+ * <p>Examples of such models are {@link Version} / {@link Versions} or {@link Commit} / {@link
+ * Commits}.
  *
  * @author Lukas Eder
  */
 public interface Node<N extends Node<N>> {
 
-    /**
-     * The ID of the node, unique within the graph.
-     */
-    @NotNull
-    String id();
+  /** The ID of the node, unique within the graph. */
+  @NotNull
+  String id();
 
-    /**
-     * The message associated with the node.
-     */
-    @NotNull
-    String message();
+  /** The message associated with the node. */
+  @NotNull
+  String message();
 
-    /**
-     * The root node of the graph.
-     */
-    @NotNull
-    N root();
+  /** The root node of the graph. */
+  @NotNull
+  N root();
 
-    /**
-     * The parents of this node.
-     */
-    @NotNull
-    List<N> parents();
+  /** The parents of this node. */
+  @NotNull
+  List<N> parents();
 }

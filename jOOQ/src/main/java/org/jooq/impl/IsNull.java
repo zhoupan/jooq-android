@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,13 +35,11 @@
  *
  *
  */
-
 package org.jooq.impl;
 
 import static org.jooq.Clause.CONDITION;
 import static org.jooq.Clause.CONDITION_IS_NOT_NULL;
 import static org.jooq.Clause.CONDITION_IS_NULL;
-// ...
 import static org.jooq.impl.DSL.row;
 import static org.jooq.impl.Keywords.K_IS_NOT_NULL;
 import static org.jooq.impl.Keywords.K_IS_NULL;
@@ -51,44 +49,35 @@ import org.jooq.Clause;
 import org.jooq.Context;
 import org.jooq.Field;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class IsNull extends AbstractCondition {
 
-    private static final Clause[] CLAUSES_NULL     = { CONDITION, CONDITION_IS_NULL };
-    private static final Clause[] CLAUSES_NULL_NOT = { CONDITION, CONDITION_IS_NOT_NULL };
+  private static final Clause[] CLAUSES_NULL = {CONDITION, CONDITION_IS_NULL};
+  private static final Clause[] CLAUSES_NULL_NOT = {CONDITION, CONDITION_IS_NOT_NULL};
 
-    private final Field<?>        field;
-    private final boolean         isNull;
+  private final Field<?> field;
+  private final boolean isNull;
 
-    IsNull(Field<?> field, boolean isNull) {
-        this.field = field;
-        this.isNull = isNull;
-    }
+  IsNull(Field<?> field, boolean isNull) {
+    this.field = field;
+    this.isNull = isNull;
+  }
 
-    @Override
-    final boolean isNullable() {
-        return false;
-    }
+  @Override
+  final boolean isNullable() {
+    return false;
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        if (field.getDataType().isEmbeddable())
-            if (isNull)
-                ctx.visit(row(embeddedFields(field)).isNull());
-            else
-                ctx.visit(row(embeddedFields(field)).isNotNull());
+  @Override
+  public final void accept(Context<?> ctx) {
+    if (field.getDataType().isEmbeddable())
+      if (isNull) ctx.visit(row(embeddedFields(field)).isNull());
+      else ctx.visit(row(embeddedFields(field)).isNotNull());
+    else ctx.visit(field).sql(' ').visit(isNull ? K_IS_NULL : K_IS_NOT_NULL);
+  }
 
-
-
-
-        else
-            ctx.visit(field).sql(' ').visit(isNull ? K_IS_NULL : K_IS_NOT_NULL);
-    }
-
-    @Override
-    public final Clause[] clauses(Context<?> ctx) {
-        return isNull ? CLAUSES_NULL : CLAUSES_NULL_NOT;
-    }
+  @Override
+  public final Clause[] clauses(Context<?> ctx) {
+    return isNull ? CLAUSES_NULL : CLAUSES_NULL_NOT;
+  }
 }

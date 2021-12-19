@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,26 +38,23 @@
 package org.jooq.impl;
 
 import java.util.Map;
-
 import org.jooq.Context;
 import org.jooq.Field;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class MapCondition extends AbstractCondition {
 
-    private final Map<Field<?>, ?> map;
+  private final Map<Field<?>, ?> map;
 
-    MapCondition(Map<Field<?>, ?> map) {
-        this.map = map;
-    }
+  MapCondition(Map<Field<?>, ?> map) {
+    this.map = map;
+  }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Override
-    public void accept(Context<?> ctx) {
-        ConditionProviderImpl condition = new ConditionProviderImpl();
-        map.forEach((k, v) -> condition.addConditions(k.eq((Field) Tools.field(v, k))));
-        ctx.visit(condition);
-    }
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  @Override
+  public void accept(Context<?> ctx) {
+    ConditionProviderImpl condition = new ConditionProviderImpl();
+    map.forEach((k, v) -> condition.addConditions(k.eq((Field) Tools.field(v, k))));
+    ctx.visit(condition);
+  }
 }

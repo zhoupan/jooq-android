@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -60,147 +60,125 @@ import org.jooq.JSONEntry;
 import org.jooq.JSONObjectAggNullStep;
 // ...
 
-
 /**
  * The JSON object constructor.
  *
  * @author Lukas Eder
  */
-final class JSONObjectAgg<J>
-extends AbstractAggregateFunction<J>
-implements JSONObjectAggNullStep<J> {
+final class JSONObjectAgg<J> extends AbstractAggregateFunction<J>
+    implements JSONObjectAggNullStep<J> {
 
-    private final JSONEntry<?> entry;
-    private JSONOnNull         onNull;
-    private DataType<?>        returning;
+  private final JSONEntry<?> entry;
+  private JSONOnNull onNull;
+  private DataType<?> returning;
 
-    JSONObjectAgg(DataType<J> type, JSONEntry<?> entry) {
-        super(false, N_JSON_OBJECTAGG, type, entry.key(), entry.value());
+  JSONObjectAgg(DataType<J> type, JSONEntry<?> entry) {
+    super(false, N_JSON_OBJECTAGG, type, entry.key(), entry.value());
 
-        this.entry = entry;
+    this.entry = entry;
+  }
+
+  @Override
+  public void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case POSTGRES:
+        acceptPostgres(ctx);
+        break;
+
+        // [#10089] These dialects support non-standard JSON_OBJECTAGG without ABSENT ON NULL
+        // support
+      case MARIADB:
+      case MYSQL:
+
+        // [#11238] FILTER cannot be emulated with the standard syntax
+        if (onNull == ABSENT_ON_NULL || filter != null) acceptGroupConcat(ctx);
+        else acceptStandard(ctx);
+
+        break;
+
+      default:
+        acceptStandard(ctx);
+        break;
     }
+  }
 
-    @Override
-    public void accept(Context<?> ctx) {
-        switch (ctx.family()) {
+  private final void acceptPostgres(Context<?> ctx) {
+    ctx.visit(getDataType() == JSON ? N_JSON_OBJECT_AGG : N_JSONB_OBJECT_AGG).sql('(');
+    ctx.visit(entry);
+    ctx.sql(')');
 
+    if (onNull == ABSENT_ON_NULL)
+      acceptFilterClause(
+          ctx, (filter == null ? noCondition() : filter).and(entry.value().isNotNull()));
+    else acceptFilterClause(ctx);
 
+    acceptOverClause(ctx);
+  }
 
+  private final void acceptGroupConcat(Context<?> ctx) {
+    final Field<String> listagg =
+        CustomField.of(
+            Names.N_GROUP_CONCAT,
+            VARCHAR,
+            c1 -> {
+              Field<JSON> o1 = jsonObject(entry.key(), entry.value());
 
-
-
-
-
-
-
-
-
-            case POSTGRES:
-                acceptPostgres(ctx);
-                break;
-
-            // [#10089] These dialects support non-standard JSON_OBJECTAGG without ABSENT ON NULL support
-            case MARIADB:
-            case MYSQL:
-
-                // [#11238] FILTER cannot be emulated with the standard syntax
-                if (onNull == ABSENT_ON_NULL || filter != null)
-                    acceptGroupConcat(ctx);
-
-
-
-
-                else
-                    acceptStandard(ctx);
-
-                break;
-
-            default:
-                acceptStandard(ctx);
-                break;
-        }
-    }
-
-    private final void acceptPostgres(Context<?> ctx) {
-        ctx.visit(getDataType() == JSON ? N_JSON_OBJECT_AGG : N_JSONB_OBJECT_AGG).sql('(');
-        ctx.visit(entry);
-        ctx.sql(')');
-
-        if (onNull == ABSENT_ON_NULL)
-            acceptFilterClause(ctx, (filter == null ? noCondition() : filter).and(entry.value().isNotNull()));
-        else
-            acceptFilterClause(ctx);
-
-        acceptOverClause(ctx);
-    }
-
-    private final void acceptGroupConcat(Context<?> ctx) {
-        final Field<String> listagg = CustomField.of(Names.N_GROUP_CONCAT, VARCHAR, c1 -> {
-            Field<JSON> o1 = jsonObject(entry.key(), entry.value());
-
-            if (onNull == ABSENT_ON_NULL)
+              if (onNull == ABSENT_ON_NULL)
                 o1 = when(entry.value().isNull(), inline((JSON) null)).else_(o1);
 
-            Field<JSON> o2 = o1;
-            c1.visit(groupConcat(DSL.concat(
-                CustomField.of(N_FIELD, VARCHAR, c2 -> acceptArguments2(c2, QueryPartListView.wrap(
-                    DSL.regexpReplaceAll(o2.cast(VARCHAR), inline("^\\{(.*)\\}$"), inline(RegexpReplace.replacement(ctx, 1)))
-                )))
-            )));
+              Field<JSON> o2 = o1;
+              c1.visit(
+                  groupConcat(
+                      DSL.concat(
+                          CustomField.of(
+                              N_FIELD,
+                              VARCHAR,
+                              c2 ->
+                                  acceptArguments2(
+                                      c2,
+                                      QueryPartListView.wrap(
+                                          DSL.regexpReplaceAll(
+                                              o2.cast(VARCHAR),
+                                              inline("^\\{(.*)\\}$"),
+                                              inline(RegexpReplace.replacement(ctx, 1)))))))));
 
-            acceptFilterClause(c1);
-            acceptOverClause(c1);
-        });
+              acceptFilterClause(c1);
+              acceptOverClause(c1);
+            });
 
-        ctx.sql('(').visit(DSL.concat(inline('{'), listagg, inline('}'))).sql(')');
-    }
+    ctx.sql('(').visit(DSL.concat(inline('{'), listagg, inline('}'))).sql(')');
+  }
 
+  private final void acceptStandard(Context<?> ctx) {
+    ctx.visit(N_JSON_OBJECTAGG).sql('(').visit(entry);
 
+    JSONNull jsonNull = new JSONNull(onNull);
+    if (jsonNull.rendersContent(ctx)) ctx.sql(' ').visit(jsonNull);
 
+    JSONReturning jsonReturning = new JSONReturning(returning);
+    if (jsonReturning.rendersContent(ctx)) ctx.sql(' ').visit(jsonReturning);
 
+    ctx.sql(')');
 
+    acceptFilterClause(ctx);
+    acceptOverClause(ctx);
+  }
 
+  @Override
+  public final JSONObjectAgg<J> nullOnNull() {
+    onNull = NULL_ON_NULL;
+    return this;
+  }
 
+  @Override
+  public final JSONObjectAgg<J> absentOnNull() {
+    onNull = ABSENT_ON_NULL;
+    return this;
+  }
 
-
-
-
-
-
-
-
-    private final void acceptStandard(Context<?> ctx) {
-        ctx.visit(N_JSON_OBJECTAGG).sql('(').visit(entry);
-
-        JSONNull jsonNull = new JSONNull(onNull);
-        if (jsonNull.rendersContent(ctx))
-            ctx.sql(' ').visit(jsonNull);
-
-        JSONReturning jsonReturning = new JSONReturning(returning);
-        if (jsonReturning.rendersContent(ctx))
-            ctx.sql(' ').visit(jsonReturning);
-
-        ctx.sql(')');
-
-        acceptFilterClause(ctx);
-        acceptOverClause(ctx);
-    }
-
-    @Override
-    public final JSONObjectAgg<J> nullOnNull() {
-        onNull = NULL_ON_NULL;
-        return this;
-    }
-
-    @Override
-    public final JSONObjectAgg<J> absentOnNull() {
-        onNull = ABSENT_ON_NULL;
-        return this;
-    }
-
-    @Override
-    public final JSONObjectAgg<J> returning(DataType<?> r) {
-        this.returning = r;
-        return this;
-    }
+  @Override
+  public final JSONObjectAgg<J> returning(DataType<?> r) {
+    this.returning = r;
+    return this;
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,7 @@
  */
 package org.jooq.impl;
 
+import static org.jooq.SQLDialect.*;
 import static org.jooq.impl.DSL.*;
 import static org.jooq.impl.Internal.*;
 import static org.jooq.impl.Keywords.*;
@@ -46,53 +47,31 @@ import static org.jooq.impl.Tools.*;
 import static org.jooq.impl.Tools.BooleanDataKey.*;
 import static org.jooq.impl.Tools.DataExtendedKey.*;
 import static org.jooq.impl.Tools.DataKey.*;
-import static org.jooq.SQLDialect.*;
 
+import java.math.BigDecimal;
+import java.util.*;
 import org.jooq.*;
-import org.jooq.Record;
 import org.jooq.conf.*;
-import org.jooq.impl.*;
 import org.jooq.tools.*;
 
-import java.util.*;
-import java.math.BigDecimal;
+/** The <code>MEDIAN</code> statement. */
+@SuppressWarnings({"rawtypes", "unused"})
+final class Median extends DefaultAggregateFunction<BigDecimal> {
 
+  Median(Field<? extends Number> field) {
+    super(false, N_MEDIAN, NUMERIC, nullSafeNotNull(field, INTEGER));
+  }
 
-/**
- * The <code>MEDIAN</code> statement.
- */
-@SuppressWarnings({ "rawtypes", "unused" })
-final class Median
-extends
-    DefaultAggregateFunction<BigDecimal>
-{
+  // -------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // -------------------------------------------------------------------------
 
-    Median(
-        Field<? extends Number> field
-    ) {
-        super(
-            false,
-            N_MEDIAN,
-            NUMERIC,
-            nullSafeNotNull(field, INTEGER)
-        );
-    }
+  private static final Set<SQLDialect> EMULATE_WITH_PERCENTILES = SQLDialect.supportedBy(POSTGRES);
 
-    // -------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // -------------------------------------------------------------------------
-
-
-
-    private static final Set<SQLDialect> EMULATE_WITH_PERCENTILES = SQLDialect.supportedBy(POSTGRES);
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        if (EMULATE_WITH_PERCENTILES.contains(ctx.dialect()))
-            ctx.visit(percentileCont(inline(new BigDecimal("0.5"))).withinGroupOrderBy(arguments));
-        else
-            super.accept(ctx);
-    }
-
-
+  @Override
+  public final void accept(Context<?> ctx) {
+    if (EMULATE_WITH_PERCENTILES.contains(ctx.dialect()))
+      ctx.visit(percentileCont(inline(new BigDecimal("0.5"))).withinGroupOrderBy(arguments));
+    else super.accept(ctx);
+  }
 }

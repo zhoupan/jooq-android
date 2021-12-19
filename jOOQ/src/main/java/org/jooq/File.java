@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -47,27 +47,19 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface File {
 
-    /**
-     * The path of the file within the repository.
-     */
-    @NotNull
-    String path();
+  /** The path of the file within the repository. */
+  @NotNull
+  String path();
 
-    /**
-     * The name of the file.
-     */
-    @NotNull
-    String name();
+  /** The name of the file. */
+  @NotNull
+  String name();
 
-    /**
-     * The file content.
-     */
-    @Nullable
-    String content();
+  /** The file content. */
+  @Nullable
+  String content();
 
-    /**
-     * The file type.
-     */
-    @NotNull
-    ContentType type();
+  /** The file type. */
+  @NotNull
+  ContentType type();
 }

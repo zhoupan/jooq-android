@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,6 @@
  *
  *
  */
-
 package org.jooq.meta;
 
 /**
@@ -45,43 +44,31 @@ package org.jooq.meta;
  */
 public enum InOutDefinition {
 
-	/**
-	 * An in parameter. Default if the in/out keyword is absent.
-	 */
-	IN,
+  /** An in parameter. Default if the in/out keyword is absent. */
+  IN,
 
-	/**
-	 * An out parameter
-	 */
-	OUT,
+  /** An out parameter */
+  OUT,
 
-	/**
-	 * An in/out parameter
-	 */
-	INOUT,
+  /** An in/out parameter */
+  INOUT,
 
-	/**
-	 * A return value for a function
-	 */
-	RETURN;
+  /** A return value for a function */
+  RETURN;
 
-	/**
-	 * Convert a string into the corresponding {@link InOutDefinition} value.
-	 *
-	 * @param string IN, OUT, INOUT or <code>null</code>
-	 * @return The in/out value
-	 */
-	public static final InOutDefinition getFromString(String string) {
-		if (string == null) {
-			return IN;
-		}
-
-		else if ("IN/OUT".equalsIgnoreCase(string)) {
-		    return INOUT;
-		}
-
-		else {
-			return InOutDefinition.valueOf(string.toUpperCase());
-		}
-	}
+  /**
+   * Convert a string into the corresponding {@link InOutDefinition} value.
+   *
+   * @param string IN, OUT, INOUT or <code>null</code>
+   * @return The in/out value
+   */
+  public static final InOutDefinition getFromString(String string) {
+    if (string == null) {
+      return IN;
+    } else if ("IN/OUT".equalsIgnoreCase(string)) {
+      return INOUT;
+    } else {
+      return InOutDefinition.valueOf(string.toUpperCase());
+    }
+  }
 }

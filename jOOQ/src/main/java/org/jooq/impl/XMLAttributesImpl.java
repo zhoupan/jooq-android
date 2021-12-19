@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,45 +43,38 @@ import static org.jooq.impl.Tools.BooleanDataKey.DATA_AS_REQUIRED;
 import static org.jooq.impl.XMLElement.xmlCastMapper;
 
 import java.util.Collection;
-
 import org.jooq.Context;
 import org.jooq.Field;
 import org.jooq.XMLAttributes;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class XMLAttributesImpl extends AbstractQueryPart implements XMLAttributes {
 
-    final SelectFieldList<Field<?>> attributes;
+  final SelectFieldList<Field<?>> attributes;
 
-    XMLAttributesImpl(Collection<? extends Field<?>> attributes) {
-        this.attributes = new SelectFieldList<>(attributes);
-    }
+  XMLAttributesImpl(Collection<? extends Field<?>> attributes) {
+    this.attributes = new SelectFieldList<>(attributes);
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
+  @Override
+  public final void accept(Context<?> ctx) {
 
+    boolean format = attributes.size() > 1;
 
+    ctx.data(
+        DATA_AS_REQUIRED,
+        true,
+        c -> {
+          c.visit(N_XMLATTRIBUTES).sql('(');
 
+          if (format) c.formatIndentStart().formatNewLine();
 
+          c.declareFields(
+              true, x -> x.visit(new SelectFieldList<>(attributes).map(xmlCastMapper(ctx))));
 
+          if (format) c.formatIndentEnd().formatNewLine();
 
-
-        boolean format = attributes.size() > 1;
-
-        ctx.data(DATA_AS_REQUIRED, true, c -> {
-            c.visit(N_XMLATTRIBUTES).sql('(');
-
-            if (format)
-                c.formatIndentStart().formatNewLine();
-
-            c.declareFields(true, x -> x.visit(new SelectFieldList<>(attributes).map(xmlCastMapper(ctx))));
-
-            if (format)
-                c.formatIndentEnd().formatNewLine();
-
-            c.sql(')');
+          c.sql(')');
         });
-    }
+  }
 }

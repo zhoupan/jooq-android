@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,6 +42,4 @@ package org.jooq;
  *
  * @author Lukas Eder
  */
-public interface ParamOrVariable<T> extends Field<T> {
-
-}
+public interface ParamOrVariable<T> extends Field<T> {}

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,7 +40,6 @@ package org.jooq.tools.jdbc;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
-
 import org.jooq.DSLContext;
 import org.jooq.Query;
 import org.jooq.Record;
@@ -48,21 +47,19 @@ import org.jooq.ResultQuery;
 
 /**
  * A data provider for mock query executions.
- * <p>
- * Supply this data provider to your {@link MockConnection} in order to globally
- * provide data for SQL statements.
- * <p>
- * <strong>Disclaimer: The general idea of mocking a JDBC connection with this
- * jOOQ API is to provide quick workarounds, injection points, etc. using a very
- * simple JDBC abstraction. It is NOT RECOMMENDED to emulate an entire database
- * (including complex state transitions, transactions, locking, etc.) using this
- * mock API. Once you have this requirement, please consider using an actual
- * database instead for integration testing (e.g. using
- * <a href="https://www.testcontainers.org">https://www.testcontainers.org</a>),
- * rather than implementing your test database inside of a
- * MockDataProvider.</strong>
- * <p>
- * See {@link #execute(MockExecuteContext)} for more details.
+ *
+ * <p>Supply this data provider to your {@link MockConnection} in order to globally provide data for
+ * SQL statements.
+ *
+ * <p><strong>Disclaimer: The general idea of mocking a JDBC connection with this jOOQ API is to
+ * provide quick workarounds, injection points, etc. using a very simple JDBC abstraction. It is NOT
+ * RECOMMENDED to emulate an entire database (including complex state transitions, transactions,
+ * locking, etc.) using this mock API. Once you have this requirement, please consider using an
+ * actual database instead for integration testing (e.g. using <a
+ * href="https://www.testcontainers.org">https://www.testcontainers.org</a>), rather than
+ * implementing your test database inside of a MockDataProvider.</strong>
+ *
+ * <p>See {@link #execute(MockExecuteContext)} for more details.
  *
  * @author Lukas Eder
  * @see MockConnection
@@ -70,91 +67,85 @@ import org.jooq.ResultQuery;
 @FunctionalInterface
 public interface MockDataProvider {
 
-    /**
-     * Execution callback for a JDBC query execution.
-     * <p>
-     * This callback will be called by {@link MockStatement} upon the various
-     * statement execution methods. These include:
-     * <p>
-     * <ul>
-     * <li>{@link Statement#execute(String)}</li>
-     * <li>{@link Statement#execute(String, int)}</li>
-     * <li>{@link Statement#execute(String, int[])}</li>
-     * <li>{@link Statement#execute(String, String[])}</li>
-     * <li>{@link Statement#executeBatch()}</li>
-     * <li>{@link Statement#executeQuery(String)}</li>
-     * <li>{@link Statement#executeUpdate(String)}</li>
-     * <li>{@link Statement#executeUpdate(String, int)}</li>
-     * <li>{@link Statement#executeUpdate(String, int[])}</li>
-     * <li>{@link Statement#executeUpdate(String, String[])}</li>
-     * <li>{@link PreparedStatement#execute()}</li>
-     * <li>{@link PreparedStatement#executeQuery()}</li>
-     * <li>{@link PreparedStatement#executeUpdate()}</li>
-     * </ul>
-     * <p>
-     * The various execution modes are unified into this simple method.
-     * Implementations should adhere to this contract:
-     * <p>
-     * <ul>
-     * <li><code>MockStatement</code> does not distinguish between "static" and
-     * "prepared" statements. However, a non-empty
-     * {@link MockExecuteContext#bindings()} is a strong indicator for a
-     * {@link PreparedStatement}.</li>
-     * <li><code>MockStatement</code> does not distinguish between "batch" and
-     * "single" statements. However...
-     * <ul>
-     * <li>A {@link MockExecuteContext#batchSQL()} with more than one SQL string
-     * is a strong indicator for a "multi-batch statement", as understood by
-     * jOOQ's {@link DSLContext#batch(Query...)}.</li>
-     * <li>A {@link MockExecuteContext#batchBindings()} with more than one bind
-     * variable array is a strong indicator for a "single-batch statement", as
-     * understood by jOOQ's {@link DSLContext#batch(Query)}.</li>
-     * </ul>
-     * </li>
-     * <li>It is recommended to return as many <code>MockResult</code> objects
-     * as batch executions. In other words, you should guarantee that:
-     * <p>
-     * <code><pre>
-     * int multiSize = context.getBatchSQL().length;
-     * int singleSize = context.getBatchBindings().length;
-     * assertEquals(result.length, Math.max(multiSize, singleSize))
-     * </pre></code>
-     * <p>
-     * This holds true also for non-batch executions (where both sizes are equal
-     * to <code>1</code>)</li>
-     * <li>You may also return more than one result for non-batch executions.
-     * This is useful for procedure calls with several result sets.
-     * <ul>
-     * <li>In JDBC, such additional result sets can be obtained with
-     * {@link Statement#getMoreResults()}.</li>
-     * <li>In jOOQ, such additional result sets can be obtained with
-     * {@link ResultQuery#fetchMany()}</li>
-     * </ul>
-     * </li>
-     * <li>If generated keys ({@link Statement#RETURN_GENERATED_KEYS}) are
-     * requested from this execution, you can also add {@link MockResult#data}
-     * to your first result, in addition to the affected
-     * {@link MockResult#rows}. The relevant flag is passed from
-     * <code>MockStatement</code> to any of these properties:
-     * <ul>
-     * <li>{@link MockExecuteContext#autoGeneratedKeys()}</li>
-     * <li>{@link MockExecuteContext#columnIndexes()}</li>
-     * <li>{@link MockExecuteContext#columnNames()}</li>
-     * </ul>
-     * </li>
-     * <li>OUT parameters from stored procedures are generated from the first
-     * {@link MockResult}'s first {@link Record}. If OUT parameters are
-     * requested, implementors must ensure the presence of such a
-     * <code>Record</code>.</li>
-     * </ul>
-     *
-     * @param ctx The execution context.
-     * @return The execution results. If a <code>null</code> or an empty
-     *         <code>MockResult[]</code> is returned, this has the same effect
-     *         as returning
-     *         <code>new MockResult[] { new MockResult(-1, null) }</code>
-     * @throws SQLException A <code>SQLException</code> that is passed through
-     *             to jOOQ.
-     */
-    MockResult[] execute(MockExecuteContext ctx) throws SQLException;
+  /**
+   * Execution callback for a JDBC query execution.
+   *
+   * <p>This callback will be called by {@link MockStatement} upon the various statement execution
+   * methods. These include:
+   *
+   * <p>
+   *
+   * <ul>
+   *   <li>{@link Statement#execute(String)}
+   *   <li>{@link Statement#execute(String, int)}
+   *   <li>{@link Statement#execute(String, int[])}
+   *   <li>{@link Statement#execute(String, String[])}
+   *   <li>{@link Statement#executeBatch()}
+   *   <li>{@link Statement#executeQuery(String)}
+   *   <li>{@link Statement#executeUpdate(String)}
+   *   <li>{@link Statement#executeUpdate(String, int)}
+   *   <li>{@link Statement#executeUpdate(String, int[])}
+   *   <li>{@link Statement#executeUpdate(String, String[])}
+   *   <li>{@link PreparedStatement#execute()}
+   *   <li>{@link PreparedStatement#executeQuery()}
+   *   <li>{@link PreparedStatement#executeUpdate()}
+   * </ul>
+   *
+   * <p>The various execution modes are unified into this simple method. Implementations should
+   * adhere to this contract:
+   *
+   * <p>
+   *
+   * <ul>
+   *   <li><code>MockStatement</code> does not distinguish between "static" and "prepared"
+   *       statements. However, a non-empty {@link MockExecuteContext#bindings()} is a strong
+   *       indicator for a {@link PreparedStatement}.
+   *   <li><code>MockStatement</code> does not distinguish between "batch" and "single" statements.
+   *       However...
+   *       <ul>
+   *         <li>A {@link MockExecuteContext#batchSQL()} with more than one SQL string is a strong
+   *             indicator for a "multi-batch statement", as understood by jOOQ's {@link
+   *             DSLContext#batch(Query...)}.
+   *         <li>A {@link MockExecuteContext#batchBindings()} with more than one bind variable array
+   *             is a strong indicator for a "single-batch statement", as understood by jOOQ's
+   *             {@link DSLContext#batch(Query)}.
+   *       </ul>
+   *   <li>It is recommended to return as many <code>MockResult</code> objects as batch executions.
+   *       In other words, you should guarantee that:
+   *       <p><code><pre>
+   * int multiSize = context.getBatchSQL().length;
+   * int singleSize = context.getBatchBindings().length;
+   * assertEquals(result.length, Math.max(multiSize, singleSize))
+   * </pre></code>
+   *       <p>This holds true also for non-batch executions (where both sizes are equal to <code>1
+   *       </code>)
+   *   <li>You may also return more than one result for non-batch executions. This is useful for
+   *       procedure calls with several result sets.
+   *       <ul>
+   *         <li>In JDBC, such additional result sets can be obtained with {@link
+   *             Statement#getMoreResults()}.
+   *         <li>In jOOQ, such additional result sets can be obtained with {@link
+   *             ResultQuery#fetchMany()}
+   *       </ul>
+   *   <li>If generated keys ({@link Statement#RETURN_GENERATED_KEYS}) are requested from this
+   *       execution, you can also add {@link MockResult#data} to your first result, in addition to
+   *       the affected {@link MockResult#rows}. The relevant flag is passed from <code>
+   *       MockStatement</code> to any of these properties:
+   *       <ul>
+   *         <li>{@link MockExecuteContext#autoGeneratedKeys()}
+   *         <li>{@link MockExecuteContext#columnIndexes()}
+   *         <li>{@link MockExecuteContext#columnNames()}
+   *       </ul>
+   *   <li>OUT parameters from stored procedures are generated from the first {@link MockResult}'s
+   *       first {@link Record}. If OUT parameters are requested, implementors must ensure the
+   *       presence of such a <code>Record</code>.
+   * </ul>
+   *
+   * @param ctx The execution context.
+   * @return The execution results. If a <code>null</code> or an empty <code>MockResult[]</code> is
+   *     returned, this has the same effect as returning <code>
+   *     new MockResult[] { new MockResult(-1, null) }</code>
+   * @throws SQLException A <code>SQLException</code> that is passed through to jOOQ.
+   */
+  MockResult[] execute(MockExecuteContext ctx) throws SQLException;
 }

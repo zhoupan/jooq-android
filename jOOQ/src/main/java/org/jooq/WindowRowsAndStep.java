@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,27 +43,17 @@ package org.jooq;
 // ...
 // ...
 import static org.jooq.SQLDialect.H2;
-// ...
 import static org.jooq.SQLDialect.MARIADB;
-// ...
 import static org.jooq.SQLDialect.MYSQL;
-// ...
 import static org.jooq.SQLDialect.POSTGRES;
-// ...
-// ...
-// ...
 import static org.jooq.SQLDialect.SQLITE;
-// ...
-// ...
-// ...
-// ...
 
 import org.jetbrains.annotations.NotNull;
 
 /**
  * This type is used for the window function DSL API.
- * <p>
- * Example: <code><pre>
+ *
+ * <p>Example: <code><pre>
  * field.firstValue()
  *      .ignoreNulls()
  *      .over()
@@ -78,43 +68,28 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface WindowRowsAndStep<T> {
 
-    /**
-     * Add a <code>... AND UNBOUNDED PRECEDING</code> frame clause to the window
-     * function.
-     */
-    @NotNull
-    @Support({ H2, MARIADB, MYSQL, POSTGRES, SQLITE })
-    WindowExcludeStep<T> andUnboundedPreceding();
+  /** Add a <code>... AND UNBOUNDED PRECEDING</code> frame clause to the window function. */
+  @NotNull
+  @Support({H2, MARIADB, MYSQL, POSTGRES, SQLITE})
+  WindowExcludeStep<T> andUnboundedPreceding();
 
-    /**
-     * Add a <code>... AND [number] PRECEDING</code> frame clause to the window
-     * function.
-     */
-    @NotNull
-    @Support({ H2, MARIADB, MYSQL, POSTGRES, SQLITE })
-    WindowExcludeStep<T> andPreceding(int number);
+  /** Add a <code>... AND [number] PRECEDING</code> frame clause to the window function. */
+  @NotNull
+  @Support({H2, MARIADB, MYSQL, POSTGRES, SQLITE})
+  WindowExcludeStep<T> andPreceding(int number);
 
-    /**
-     * Add a <code>... AND CURRENT ROW</code> frame clause to the window
-     * function.
-     */
-    @NotNull
-    @Support({ H2, MARIADB, MYSQL, POSTGRES, SQLITE })
-    WindowExcludeStep<T> andCurrentRow();
+  /** Add a <code>... AND CURRENT ROW</code> frame clause to the window function. */
+  @NotNull
+  @Support({H2, MARIADB, MYSQL, POSTGRES, SQLITE})
+  WindowExcludeStep<T> andCurrentRow();
 
-    /**
-     * Add a <code>... AND UNBOUNDED FOLLOWING</code> frame clause to the window
-     * function.
-     */
-    @NotNull
-    @Support({ H2, MARIADB, MYSQL, POSTGRES, SQLITE })
-    WindowExcludeStep<T> andUnboundedFollowing();
+  /** Add a <code>... AND UNBOUNDED FOLLOWING</code> frame clause to the window function. */
+  @NotNull
+  @Support({H2, MARIADB, MYSQL, POSTGRES, SQLITE})
+  WindowExcludeStep<T> andUnboundedFollowing();
 
-    /**
-     * Add a <code>... AND [number] FOLLOWING</code> frame clause to the window
-     * function.
-     */
-    @NotNull
-    @Support({ H2, MARIADB, MYSQL, POSTGRES, SQLITE })
-    WindowExcludeStep<T> andFollowing(int number);
+  /** Add a <code>... AND [number] FOLLOWING</code> frame clause to the window function. */
+  @NotNull
+  @Support({H2, MARIADB, MYSQL, POSTGRES, SQLITE})
+  WindowExcludeStep<T> andFollowing(int number);
 }

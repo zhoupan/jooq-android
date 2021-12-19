@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,7 +42,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
-
 import org.jooq.meta.jaxb.RegexFlag;
 
 /**
@@ -52,61 +51,78 @@ import org.jooq.meta.jaxb.RegexFlag;
  */
 public final class Patterns {
 
-    private final Map<String, Pattern> patterns;
-    private List<RegexFlag>            regexFlags;
+  private final Map<String, Pattern> patterns;
+  private List<RegexFlag> regexFlags;
 
-    public Patterns() {
-        patterns = new HashMap<>();
-    }
+  public Patterns() {
+    patterns = new HashMap<>();
+  }
 
-    public final Pattern pattern(String regex) {
-        if (regex == null)
-            return null;
+  public final Pattern pattern(String regex) {
+    if (regex == null) return null;
 
-        Pattern pattern = patterns.get(regex);
+    Pattern pattern = patterns.get(regex);
 
-        if (pattern == null) {
-            int flags = 0;
+    if (pattern == null) {
+      int flags = 0;
 
-            List<RegexFlag> list = new ArrayList<>(getRegexFlags());
+      List<RegexFlag> list = new ArrayList<>(getRegexFlags());
 
-            // [#3860] This should really be handled by JAXB, but apparently, @XmlList and @XmlElement(defaultValue=...)
-            // cannot be combined: http://stackoverflow.com/q/27528698/521799
-            if (list.isEmpty()) {
-                list.add(RegexFlag.COMMENTS);
-                list.add(RegexFlag.CASE_INSENSITIVE);
-            }
+      // [#3860] This should really be handled by JAXB, but apparently, @XmlList and
+      // @XmlElement(defaultValue=...)
+      // cannot be combined: http://stackoverflow.com/q/27528698/521799
+      if (list.isEmpty()) {
+        list.add(RegexFlag.COMMENTS);
+        list.add(RegexFlag.CASE_INSENSITIVE);
+      }
 
-            for (RegexFlag flag : list) {
-                switch (flag) {
-                    case CANON_EQ:                flags |= Pattern.CANON_EQ;                break;
-                    case CASE_INSENSITIVE:        flags |= Pattern.CASE_INSENSITIVE;        break;
-                    case COMMENTS:                flags |= Pattern.COMMENTS;                break;
-                    case DOTALL:                  flags |= Pattern.DOTALL;                  break;
-                    case LITERAL:                 flags |= Pattern.LITERAL;                 break;
-                    case MULTILINE:               flags |= Pattern.MULTILINE;               break;
-                    case UNICODE_CASE:            flags |= Pattern.UNICODE_CASE;            break;
-                    case UNICODE_CHARACTER_CLASS: flags |= 0x100;                           break; // Pattern.UNICODE_CHARACTER_CLASS: Java 1.7 only
-                    case UNIX_LINES:              flags |= Pattern.UNIX_LINES;              break;
-                }
-            }
-
-            pattern = Pattern.compile(regex, flags);
-            patterns.put(regex, pattern);
+      for (RegexFlag flag : list) {
+        switch (flag) {
+          case CANON_EQ:
+            flags |= Pattern.CANON_EQ;
+            break;
+          case CASE_INSENSITIVE:
+            flags |= Pattern.CASE_INSENSITIVE;
+            break;
+          case COMMENTS:
+            flags |= Pattern.COMMENTS;
+            break;
+          case DOTALL:
+            flags |= Pattern.DOTALL;
+            break;
+          case LITERAL:
+            flags |= Pattern.LITERAL;
+            break;
+          case MULTILINE:
+            flags |= Pattern.MULTILINE;
+            break;
+          case UNICODE_CASE:
+            flags |= Pattern.UNICODE_CASE;
+            break;
+          case UNICODE_CHARACTER_CLASS:
+            flags |= 0x100;
+            break; // Pattern.UNICODE_CHARACTER_CLASS: Java 1.7 only
+          case UNIX_LINES:
+            flags |= Pattern.UNIX_LINES;
+            break;
         }
+      }
 
-        return pattern;
+      pattern = Pattern.compile(regex, flags);
+      patterns.put(regex, pattern);
     }
 
-    public void setRegexFlags(List<RegexFlag> regexFlags) {
-        this.regexFlags = regexFlags;
-        this.patterns.clear();
-    }
+    return pattern;
+  }
 
-    public List<RegexFlag> getRegexFlags() {
-        if (regexFlags == null)
-            regexFlags = new ArrayList<>();
+  public void setRegexFlags(List<RegexFlag> regexFlags) {
+    this.regexFlags = regexFlags;
+    this.patterns.clear();
+  }
 
-        return regexFlags;
-    }
+  public List<RegexFlag> getRegexFlags() {
+    if (regexFlags == null) regexFlags = new ArrayList<>();
+
+    return regexFlags;
+  }
 }

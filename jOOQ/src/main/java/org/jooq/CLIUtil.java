@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -48,22 +48,21 @@ import org.jooq.tools.JooqLogger;
  */
 final class CLIUtil {
 
-    static void main(String url, Runnable runnable) {
-        JooqLogger.initSimpleFormatter();
+  static void main(String url, Runnable runnable) {
+    JooqLogger.initSimpleFormatter();
 
-        try {
-            runnable.run();
-        }
-        catch (NoClassDefFoundError e) {
-            throw new RuntimeException(
-                ("" +
-                "A class definition could not be found when running the CLI utility.\n" +
-                "\n" +
-                "This is mostly due to a missing dependency. Make sure you have added the right dependencies\n" +
-                "as according to the manual for {url}\n" +
-                "").replace("{url}", url.replace("/latest/", "/" + MINOR_VERSION + "/")),
-                e
-            );
-        }
+    try {
+      runnable.run();
+    } catch (NoClassDefFoundError e) {
+      throw new RuntimeException(
+          (""
+                  + "A class definition could not be found when running the CLI utility.\n"
+                  + "\n"
+                  + "This is mostly due to a missing dependency. Make sure you have added the right dependencies\n"
+                  + "as according to the manual for {url}\n"
+                  + "")
+              .replace("{url}", url.replace("/latest/", "/" + MINOR_VERSION + "/")),
+          e);
     }
+  }
 }

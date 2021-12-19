@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,50 +38,45 @@
 package org.jooq.impl;
 
 import static org.jooq.impl.Names.N_IF;
-import static org.jooq.impl.Names.N_IIF;
 
 import org.jooq.Condition;
 import org.jooq.Context;
 import org.jooq.Field;
 import org.jooq.Name;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class Iif<T> extends AbstractField<T> {
 
-    private final Condition   condition;
-    private final Field<T>    ifTrue;
-    private final Field<T>    ifFalse;
+  private final Condition condition;
+  private final Field<T> ifTrue;
+  private final Field<T> ifFalse;
 
-    Iif(Name name, Condition condition, Field<T> ifTrue, Field<T> ifFalse) {
-        super(name, ifTrue.getDataType());
+  Iif(Name name, Condition condition, Field<T> ifTrue, Field<T> ifFalse) {
+    super(name, ifTrue.getDataType());
 
-        this.condition = condition;
-        this.ifTrue = ifTrue;
-        this.ifFalse = ifFalse;
+    this.condition = condition;
+    this.ifTrue = ifTrue;
+    this.ifFalse = ifFalse;
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case MARIADB:
+      case MYSQL:
+        ctx.visit(N_IF)
+            .sql('(')
+            .visit(condition)
+            .sql(", ")
+            .visit(ifTrue)
+            .sql(", ")
+            .visit(ifFalse)
+            .sql(')');
+        break;
+
+      default:
+        ctx.visit(DSL.when(condition, ifTrue).otherwise(ifFalse));
+        break;
     }
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-            case MARIADB:
-            case MYSQL:
-                ctx.visit(N_IF).sql('(').visit(condition).sql(", ").visit(ifTrue).sql(", ").visit(ifFalse).sql(')');
-                break;
-
-
-
-
-
-
-
-
-            default:
-                ctx.visit(DSL.when(condition, ifTrue).otherwise(ifFalse));
-                break;
-        }
-    }
+  }
 }

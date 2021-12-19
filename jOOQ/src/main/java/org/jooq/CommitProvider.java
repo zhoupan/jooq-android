@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,9 +41,8 @@ import org.jetbrains.annotations.NotNull;
 
 /**
  * An SPI that allows for providing a graph of versions.
- * <p>
- * This is EXPERIMENTAL functionality and subject to change in future jOOQ
- * versions.
+ *
+ * <p>This is EXPERIMENTAL functionality and subject to change in future jOOQ versions.
  *
  * @author Lukas Eder
  */
@@ -51,14 +50,13 @@ import org.jetbrains.annotations.NotNull;
 @FunctionalInterface
 public interface CommitProvider {
 
-    /**
-     * Provide a set of commits relevant to a migration.
-     * <p>
-     * This can include the entire set of known versions, or a subset thereof.
-     * There is no requirement to provide a fully connected graph, although
-     * {@link Version#migrateTo(Version)} and other operations are undefined
-     * if two versions do not have a common ancestor.
-     */
-    @NotNull
-    Commits provide();
+  /**
+   * Provide a set of commits relevant to a migration.
+   *
+   * <p>This can include the entire set of known versions, or a subset thereof. There is no
+   * requirement to provide a fully connected graph, although {@link Version#migrateTo(Version)} and
+   * other operations are undefined if two versions do not have a common ancestor.
+   */
+  @NotNull
+  Commits provide();
 }

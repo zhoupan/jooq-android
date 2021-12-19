@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,13 +40,12 @@ package org.jooq;
 import static org.jooq.SQLDialect.*;
 
 import java.util.Collection;
-
 import org.jetbrains.annotations.NotNull;
 
 /**
  * This type is used for the H2-specific variant of the {@link Merge}'s DSL API.
- * <p>
- * Example: <code><pre>
+ *
+ * <p>Example: <code><pre>
  * DSLContext create = DSL.using(configuration);
  *
  * create.mergeInto(table, field1, field2, field3, .., field15, field16)
@@ -56,34 +55,42 @@ import org.jetbrains.annotations.NotNull;
  * </pre></code>
  *
  * @author Lukas Eder
- * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link DSLContext#mergeInto(Table)}
+ * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
+ *     DSLContext#mergeInto(Table)}
  */
 @Deprecated(forRemoval = true, since = "3.14")
-public interface MergeKeyStep16<R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> extends MergeValuesStep16<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
+public interface MergeKeyStep16<
+        R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>
+    extends MergeValuesStep16<
+        R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> {
 
-    /**
-     * Specify an optional <code>KEY</code> clause.
-     * <p>
-     * Use this optional clause in order to override using the underlying
-     * <code>PRIMARY KEY</code>.
-     *
-     * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link DSLContext#mergeInto(Table)}
-     */
-    @Deprecated(forRemoval = true, since = "3.14")
-    @NotNull @CheckReturnValue
-    @Support({ CUBRID, DERBY, FIREBIRD, H2, HSQLDB, POSTGRES })
-    MergeValuesStep16<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> key(Field<?>... keys);
+  /**
+   * Specify an optional <code>KEY</code> clause.
+   *
+   * <p>Use this optional clause in order to override using the underlying <code>PRIMARY KEY</code>.
+   *
+   * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
+   *     DSLContext#mergeInto(Table)}
+   */
+  @Deprecated(forRemoval = true, since = "3.14")
+  @NotNull
+  @CheckReturnValue
+  @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, POSTGRES})
+  MergeValuesStep16<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> key(
+      Field<?>... keys);
 
-    /**
-     * Specify an optional <code>KEY</code> clause.
-     * <p>
-     * Use this optional clause in order to override using the underlying
-     * <code>PRIMARY KEY</code>.
-     *
-     * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link DSLContext#mergeInto(Table)}
-     */
-    @Deprecated(forRemoval = true, since = "3.14")
-    @NotNull @CheckReturnValue
-    @Support({ CUBRID, DERBY, FIREBIRD, H2, HSQLDB, POSTGRES })
-    MergeValuesStep16<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> key(Collection<? extends Field<?>> keys);
+  /**
+   * Specify an optional <code>KEY</code> clause.
+   *
+   * <p>Use this optional clause in order to override using the underlying <code>PRIMARY KEY</code>.
+   *
+   * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
+   *     DSLContext#mergeInto(Table)}
+   */
+  @Deprecated(forRemoval = true, since = "3.14")
+  @NotNull
+  @CheckReturnValue
+  @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, POSTGRES})
+  MergeValuesStep16<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> key(
+      Collection<? extends Field<?>> keys);
 }

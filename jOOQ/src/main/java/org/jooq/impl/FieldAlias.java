@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,6 @@
  *
  *
  */
-
 package org.jooq.impl;
 
 import org.jooq.Clause;
@@ -43,51 +42,46 @@ import org.jooq.Context;
 import org.jooq.Field;
 import org.jooq.Name;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class FieldAlias<T> extends AbstractField<T> {
 
-    private final Alias<Field<T>> alias;
+  private final Alias<Field<T>> alias;
 
-    FieldAlias(Field<T> field, Name alias) {
-        super(alias, field.getDataType());
+  FieldAlias(Field<T> field, Name alias) {
+    super(alias, field.getDataType());
 
-        this.alias = new Alias<>(field, this, alias);
-    }
+    this.alias = new Alias<>(field, this, alias);
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        ctx.visit(alias);
-    }
+  @Override
+  public final void accept(Context<?> ctx) {
+    ctx.visit(alias);
+  }
 
-    @Override // Avoid AbstractField implementation
-    public final Clause[] clauses(Context<?> ctx) {
-        return null;
-    }
+  @Override // Avoid AbstractField implementation
+  public final Clause[] clauses(Context<?> ctx) {
+    return null;
+  }
 
-    @Override
-    public final Field<T> as(Name as) {
-        return alias.wrapped().as(as);
-    }
+  @Override
+  public final Field<T> as(Name as) {
+    return alias.wrapped().as(as);
+  }
 
-    @Override
-    public final boolean declaresFields() {
-        return true;
-    }
+  @Override
+  public final boolean declaresFields() {
+    return true;
+  }
 
-    @Override
-    public Name getQualifiedName() {
-        return getUnqualifiedName();
-    }
+  @Override
+  public Name getQualifiedName() {
+    return getUnqualifiedName();
+  }
 
-    /**
-     * Get the aliased field wrapped by this field.
-     */
-    Field<T> getAliasedField() {
-        if (alias != null)
-            return alias.wrapped();
+  /** Get the aliased field wrapped by this field. */
+  Field<T> getAliasedField() {
+    if (alias != null) return alias.wrapped();
 
-        return null;
-    }
+    return null;
+  }
 }

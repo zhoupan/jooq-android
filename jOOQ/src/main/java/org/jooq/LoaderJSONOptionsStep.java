@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,23 +39,21 @@ package org.jooq;
 
 import org.jetbrains.annotations.*;
 
-
 /**
  * The <code>Loader</code> API is used for configuring data loads.
- * <p>
- * The step in constructing the {@link org.jooq.Loader} object where you can set the
- * optional CSV loader options.
+ *
+ * <p>The step in constructing the {@link org.jooq.Loader} object where you can set the optional CSV
+ * loader options.
  *
  * @author Lukas Eder
  * @author Johannes Bühler
  */
 public interface LoaderJSONOptionsStep<R extends Record> extends LoaderListenerStep<R> {
 
-    /**
-     * @deprecated - [#4859] - This is not supported for JSON loading.
-     */
-    @Deprecated
-    @NotNull @CheckReturnValue
-    @Support
-    LoaderJSONOptionsStep<R> ignoreRows(int number);
+  /** @deprecated - [#4859] - This is not supported for JSON loading. */
+  @Deprecated
+  @NotNull
+  @CheckReturnValue
+  @Support
+  LoaderJSONOptionsStep<R> ignoreRows(int number);
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,7 +40,6 @@ package org.jooq.tools.jdbc;
 import java.io.Serializable;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-
 import org.jooq.Configuration;
 import org.jooq.Field;
 import org.jooq.Schema;
@@ -57,216 +56,207 @@ import org.jooq.types.UNumber;
  */
 public class MockResultSetMetaData implements ResultSetMetaData, Serializable {
 
-    /**
-     * The result set reference.
-     */
-    private final MockResultSet rs;
+  /** The result set reference. */
+  private final MockResultSet rs;
 
-    /**
-     * Create a new mock result set meta data object
-     */
-    public MockResultSetMetaData(MockResultSet rs) {
-        this.rs = rs;
-    }
+  /** Create a new mock result set meta data object */
+  public MockResultSetMetaData(MockResultSet rs) {
+    this.rs = rs;
+  }
 
-    // -------------------------------------------------------------------------
-    // XXX: Unwrapping
-    // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // XXX: Unwrapping
+  // -------------------------------------------------------------------------
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T unwrap(Class<T> iface) throws SQLException {
-        if (isWrapperFor(iface))
-            return (T) this;
-        else
-            throw new SQLException("MockResultSetMetaData does not implement " + iface);
-    }
+  @SuppressWarnings("unchecked")
+  @Override
+  public <T> T unwrap(Class<T> iface) throws SQLException {
+    if (isWrapperFor(iface)) return (T) this;
+    else throw new SQLException("MockResultSetMetaData does not implement " + iface);
+  }
 
-    @Override
-    public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        return iface.isInstance(this);
-    }
+  @Override
+  public boolean isWrapperFor(Class<?> iface) throws SQLException {
+    return iface.isInstance(this);
+  }
 
-    @Override
-    public int getColumnCount() throws SQLException {
-        rs.checkNotClosed();
+  @Override
+  public int getColumnCount() throws SQLException {
+    rs.checkNotClosed();
 
-        return rs.result.fieldsRow().size();
-    }
+    return rs.result.fieldsRow().size();
+  }
 
-    @Override
-    public boolean isAutoIncrement(int column) throws SQLException {
-        rs.checkNotClosed();
+  @Override
+  public boolean isAutoIncrement(int column) throws SQLException {
+    rs.checkNotClosed();
 
-        return false;
-    }
+    return false;
+  }
 
-    @Override
-    public boolean isCaseSensitive(int column) throws SQLException {
-        rs.checkNotClosed();
+  @Override
+  public boolean isCaseSensitive(int column) throws SQLException {
+    rs.checkNotClosed();
 
-        return true;
-    }
+    return true;
+  }
 
-    @Override
-    public boolean isSearchable(int column) throws SQLException {
-        rs.checkNotClosed();
+  @Override
+  public boolean isSearchable(int column) throws SQLException {
+    rs.checkNotClosed();
 
-        return true;
-    }
+    return true;
+  }
 
-    @Override
-    public boolean isCurrency(int column) throws SQLException {
-        rs.checkNotClosed();
+  @Override
+  public boolean isCurrency(int column) throws SQLException {
+    rs.checkNotClosed();
 
-        return false;
-    }
+    return false;
+  }
 
-    @Override
-    public int isNullable(int column) throws SQLException {
-        rs.checkNotClosed();
+  @Override
+  public int isNullable(int column) throws SQLException {
+    rs.checkNotClosed();
 
-        // TODO: Check generated JSR-303 or JPA annotations for nullability
-        return ResultSetMetaData.columnNullableUnknown;
-    }
+    // TODO: Check generated JSR-303 or JPA annotations for nullability
+    return ResultSetMetaData.columnNullableUnknown;
+  }
 
-    @Override
-    public boolean isSigned(int column) throws SQLException {
-        rs.checkNotClosed();
+  @Override
+  public boolean isSigned(int column) throws SQLException {
+    rs.checkNotClosed();
 
-        Field<?> field = rs.result.field(column - 1);
-        Class<?> type = field.getType();
+    Field<?> field = rs.result.field(column - 1);
+    Class<?> type = field.getType();
 
-        return Number.class.isAssignableFrom(type) && !UNumber.class.isAssignableFrom(type);
-    }
+    return Number.class.isAssignableFrom(type) && !UNumber.class.isAssignableFrom(type);
+  }
 
-    @Override
-    public int getColumnDisplaySize(int column) throws SQLException {
-        return 0;
-    }
+  @Override
+  public int getColumnDisplaySize(int column) throws SQLException {
+    return 0;
+  }
 
-    @Override
-    public String getColumnLabel(int column) throws SQLException {
-        return getColumnName(column);
-    }
+  @Override
+  public String getColumnLabel(int column) throws SQLException {
+    return getColumnName(column);
+  }
 
-    @Override
-    public String getColumnName(int column) throws SQLException {
-        rs.checkNotClosed();
+  @Override
+  public String getColumnName(int column) throws SQLException {
+    rs.checkNotClosed();
 
-        return rs.result.field(column - 1).getName();
-    }
+    return rs.result.field(column - 1).getName();
+  }
 
-    @Override
-    public String getSchemaName(int column) throws SQLException {
-        rs.checkNotClosed();
+  @Override
+  public String getSchemaName(int column) throws SQLException {
+    rs.checkNotClosed();
 
-        Field<?> field = rs.result.field(column - 1);
-        if (field instanceof TableField) {
-            Table<?> table = ((TableField<?, ?>) field).getTable();
+    Field<?> field = rs.result.field(column - 1);
+    if (field instanceof TableField) {
+      Table<?> table = ((TableField<?, ?>) field).getTable();
 
-            if (table != null) {
-                Schema schema = table.getSchema();
+      if (table != null) {
+        Schema schema = table.getSchema();
 
-                if (schema != null) {
-                    Configuration configuration = rs.result.configuration();
-                    Schema mapped = null;
+        if (schema != null) {
+          Configuration configuration = rs.result.configuration();
+          Schema mapped = null;
 
-                    if (configuration != null)
-                        mapped = DSL.using(configuration).map(schema);
+          if (configuration != null) mapped = DSL.using(configuration).map(schema);
 
-                    if (mapped != null)
-                        return mapped.getName();
-                    else
-                        return schema.getName();
-                }
-            }
+          if (mapped != null) return mapped.getName();
+          else return schema.getName();
         }
-
-        // By default, no schema is available
-        return "";
+      }
     }
 
-    @Override
-    public int getPrecision(int column) throws SQLException {
-        rs.checkNotClosed();
+    // By default, no schema is available
+    return "";
+  }
 
-        // TODO: Check generated JSR-303 or JPA annotations for precision
-        return 0;
+  @Override
+  public int getPrecision(int column) throws SQLException {
+    rs.checkNotClosed();
+
+    // TODO: Check generated JSR-303 or JPA annotations for precision
+    return 0;
+  }
+
+  @Override
+  public int getScale(int column) throws SQLException {
+    rs.checkNotClosed();
+
+    // TODO: Check generated JSR-303 or JPA annotations for scale
+    return 0;
+  }
+
+  @Override
+  public String getTableName(int column) throws SQLException {
+    rs.checkNotClosed();
+
+    Field<?> field = rs.result.field(column - 1);
+    if (field instanceof TableField) {
+      Table<?> table = ((TableField<?, ?>) field).getTable();
+
+      if (table != null) {
+        return table.getName();
+      }
     }
 
-    @Override
-    public int getScale(int column) throws SQLException {
-        rs.checkNotClosed();
+    // By default, no table is available
+    return "";
+  }
 
-        // TODO: Check generated JSR-303 or JPA annotations for scale
-        return 0;
-    }
+  @Override
+  public String getCatalogName(int column) throws SQLException {
+    rs.checkNotClosed();
 
-    @Override
-    public String getTableName(int column) throws SQLException {
-        rs.checkNotClosed();
+    // jOOQ doesn't support catalogs yet
+    return "";
+  }
 
-        Field<?> field = rs.result.field(column - 1);
-        if (field instanceof TableField) {
-            Table<?> table = ((TableField<?, ?>) field).getTable();
+  @Override
+  public int getColumnType(int column) throws SQLException {
+    rs.checkNotClosed();
 
-            if (table != null) {
-                return table.getName();
-            }
-        }
+    return rs.result.field(column - 1).getDataType().getSQLType();
+  }
 
-        // By default, no table is available
-        return "";
-    }
+  @Override
+  public String getColumnTypeName(int column) throws SQLException {
+    rs.checkNotClosed();
 
-    @Override
-    public String getCatalogName(int column) throws SQLException {
-        rs.checkNotClosed();
+    return rs.result.field(column - 1).getDataType().getTypeName();
+  }
 
-        // jOOQ doesn't support catalogs yet
-        return "";
-    }
+  @Override
+  public boolean isReadOnly(int column) throws SQLException {
+    rs.checkNotClosed();
 
-    @Override
-    public int getColumnType(int column) throws SQLException {
-        rs.checkNotClosed();
+    return true;
+  }
 
-        return rs.result.field(column - 1).getDataType().getSQLType();
-    }
+  @Override
+  public boolean isWritable(int column) throws SQLException {
+    rs.checkNotClosed();
 
-    @Override
-    public String getColumnTypeName(int column) throws SQLException {
-        rs.checkNotClosed();
+    return false;
+  }
 
-        return rs.result.field(column - 1).getDataType().getTypeName();
-    }
+  @Override
+  public boolean isDefinitelyWritable(int column) throws SQLException {
+    rs.checkNotClosed();
 
-    @Override
-    public boolean isReadOnly(int column) throws SQLException {
-        rs.checkNotClosed();
+    return false;
+  }
 
-        return true;
-    }
+  @Override
+  public String getColumnClassName(int column) throws SQLException {
+    rs.checkNotClosed();
 
-    @Override
-    public boolean isWritable(int column) throws SQLException {
-        rs.checkNotClosed();
-
-        return false;
-    }
-
-    @Override
-    public boolean isDefinitelyWritable(int column) throws SQLException {
-        rs.checkNotClosed();
-
-        return false;
-    }
-
-    @Override
-    public String getColumnClassName(int column) throws SQLException {
-        rs.checkNotClosed();
-
-        return rs.result.field(column - 1).getType().getName();
-    }
+    return rs.result.field(column - 1).getType().getName();
+  }
 }

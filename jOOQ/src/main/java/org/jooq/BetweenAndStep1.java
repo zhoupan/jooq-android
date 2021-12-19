@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,39 +40,29 @@ package org.jooq;
 import org.jetbrains.annotations.NotNull;
 
 /**
- * An intermediate DSL type for the construction of a <code>BETWEEN</code>
- * predicate.
+ * An intermediate DSL type for the construction of a <code>BETWEEN</code> predicate.
  *
  * @author Lukas Eder
  */
 public interface BetweenAndStep1<T1> {
 
-    /**
-     * Create a condition to check this field against some bounds
-     */
-    @NotNull
-    @Support
-    Condition and(Field<T1> maxValue1);
+  /** Create a condition to check this field against some bounds */
+  @NotNull
+  @Support
+  Condition and(Field<T1> maxValue1);
 
-    /**
-     * Create a condition to check this field against some bounds
-     */
-    @NotNull
-    @Support
-    Condition and(T1 maxValue1);
+  /** Create a condition to check this field against some bounds */
+  @NotNull
+  @Support
+  Condition and(T1 maxValue1);
 
-    /**
-     * Create a condition to check this field against some bounds
-     */
-    @NotNull
-    @Support
-    Condition and(Row1<T1> maxValue);
+  /** Create a condition to check this field against some bounds */
+  @NotNull
+  @Support
+  Condition and(Row1<T1> maxValue);
 
-    /**
-     * Create a condition to check this field against some bounds
-     */
-    @NotNull
-    @Support
-    Condition and(Record1<T1> maxValue);
-
+  /** Create a condition to check this field against some bounds */
+  @NotNull
+  @Support
+  Condition and(Record1<T1> maxValue);
 }

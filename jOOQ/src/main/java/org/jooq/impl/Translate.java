@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,7 @@
  */
 package org.jooq.impl;
 
+import static org.jooq.SQLDialect.*;
 import static org.jooq.impl.DSL.*;
 import static org.jooq.impl.Internal.*;
 import static org.jooq.impl.Keywords.*;
@@ -46,102 +47,51 @@ import static org.jooq.impl.Tools.*;
 import static org.jooq.impl.Tools.BooleanDataKey.*;
 import static org.jooq.impl.Tools.DataExtendedKey.*;
 import static org.jooq.impl.Tools.DataKey.*;
-import static org.jooq.SQLDialect.*;
-
-import org.jooq.*;
-import org.jooq.Record;
-import org.jooq.conf.*;
-import org.jooq.impl.*;
-import org.jooq.tools.*;
 
 import java.util.*;
+import org.jooq.*;
+import org.jooq.conf.*;
+import org.jooq.tools.*;
 
+/** The <code>TRANSLATE</code> statement. */
+@SuppressWarnings({"rawtypes", "unchecked", "unused"})
+final class Translate extends AbstractField<String> {
 
-/**
- * The <code>TRANSLATE</code> statement.
- */
-@SuppressWarnings({ "rawtypes", "unchecked", "unused" })
-final class Translate
-extends
-    AbstractField<String>
-{
+  private final Field<String> string;
+  private final Field<String> from;
+  private final Field<String> to;
 
-    private final Field<String> string;
-    private final Field<String> from;
-    private final Field<String> to;
+  Translate(Field<String> string, Field<String> from, Field<String> to) {
+    super(N_TRANSLATE, allNotNull(VARCHAR, string, from, to));
 
-    Translate(
-        Field<String> string,
-        Field<String> from,
-        Field<String> to
-    ) {
-        super(
-            N_TRANSLATE,
-            allNotNull(VARCHAR, string, from, to)
-        );
+    this.string = nullSafeNotNull(string, VARCHAR);
+    this.from = nullSafeNotNull(from, VARCHAR);
+    this.to = nullSafeNotNull(to, VARCHAR);
+  }
 
-        this.string = nullSafeNotNull(string, VARCHAR);
-        this.from = nullSafeNotNull(from, VARCHAR);
-        this.to = nullSafeNotNull(to, VARCHAR);
+  // -------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // -------------------------------------------------------------------------
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      default:
+        ctx.visit(function(N_TRANSLATE, getDataType(), string, from, to));
+        break;
     }
+  }
 
-    // -------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // The Object API
+  // -------------------------------------------------------------------------
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            default:
-                ctx.visit(function(N_TRANSLATE, getDataType(), string, from, to));
-                break;
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // -------------------------------------------------------------------------
-    // The Object API
-    // -------------------------------------------------------------------------
-
-    @Override
-    public boolean equals(Object that) {
-        if (that instanceof Translate) {
-            return
-                StringUtils.equals(string, ((Translate) that).string) &&
-                StringUtils.equals(from, ((Translate) that).from) &&
-                StringUtils.equals(to, ((Translate) that).to)
-            ;
-        }
-        else
-            return super.equals(that);
-    }
+  @Override
+  public boolean equals(Object that) {
+    if (that instanceof Translate) {
+      return StringUtils.equals(string, ((Translate) that).string)
+          && StringUtils.equals(from, ((Translate) that).from)
+          && StringUtils.equals(to, ((Translate) that).to);
+    } else return super.equals(that);
+  }
 }

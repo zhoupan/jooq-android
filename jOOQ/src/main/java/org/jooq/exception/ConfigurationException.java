@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,29 +40,28 @@ package org.jooq.exception;
 import org.jooq.Configuration;
 
 /**
- * The {@link Configuration} was set up in a way that does not allow for a
- * particular operation.
+ * The {@link Configuration} was set up in a way that does not allow for a particular operation.
  *
  * @author Lukas Eder
  */
 public class ConfigurationException extends DataAccessException {
 
-    /**
-     * Constructor for ConfigurationException.
-     *
-     * @param message the detail message
-     */
-    public ConfigurationException(String message) {
-        super(message);
-    }
+  /**
+   * Constructor for ConfigurationException.
+   *
+   * @param message the detail message
+   */
+  public ConfigurationException(String message) {
+    super(message);
+  }
 
-    /**
-     * Constructor for ConfigurationException.
-     *
-     * @param message the detail message
-     * @param cause the cause
-     */
-    public ConfigurationException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  /**
+   * Constructor for ConfigurationException.
+   *
+   * @param message the detail message
+   * @param cause the cause
+   */
+  public ConfigurationException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

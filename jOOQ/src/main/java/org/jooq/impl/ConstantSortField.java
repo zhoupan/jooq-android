@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,50 +39,29 @@ package org.jooq.impl;
 
 import static org.jooq.impl.DSL.one;
 import static org.jooq.impl.DSL.select;
-import static org.jooq.impl.Keywords.K_NULL;
-import static org.jooq.impl.Keywords.K_SELECT;
 
 import org.jooq.Context;
 import org.jooq.Field;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class ConstantSortField<T> extends CustomField<T> {
 
-    ConstantSortField(Field<T> field) {
-        super(field.getUnqualifiedName(), field.getDataType());
+  ConstantSortField(Field<T> field) {
+    super(field.getUnqualifiedName(), field.getDataType());
+  }
+
+  @Override
+  public void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case DERBY:
+      case HSQLDB:
+      case POSTGRES:
+        ctx.sql('(').visit(select(one())).sql(')');
+        break;
+
+      default:
+        ctx.visit(DSL.NULL().sortDefault());
+        break;
     }
-
-    @Override
-    public void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            case DERBY:
-            case HSQLDB:
-            case POSTGRES:
-                ctx.sql('(').visit(select(one())).sql(')');
-                break;
-
-            default:
-                ctx.visit(DSL.NULL().sortDefault());
-                break;
-        }
-    }
+  }
 }

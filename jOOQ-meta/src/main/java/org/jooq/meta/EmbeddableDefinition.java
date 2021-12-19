@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,6 @@
  *
  *
  */
-
 package org.jooq.meta;
 
 import java.util.List;
@@ -47,73 +46,54 @@ import java.util.List;
  */
 public interface EmbeddableDefinition extends TableElementDefinition {
 
-    /**
-     * The table defining the embeddable (same as {@link #getTable()}).
-     */
-    TableDefinition getDefiningTable();
+  /** The table defining the embeddable (same as {@link #getTable()}). */
+  TableDefinition getDefiningTable();
 
-    /**
-     * The referencing comment of this embeddable, if it differs from the
-     * defining name ({@link #getComment()}).
-     */
-    String getReferencingComment();
+  /**
+   * The referencing comment of this embeddable, if it differs from the defining name ({@link
+   * #getComment()}).
+   */
+  String getReferencingComment();
 
-    /**
-     * The referencing name of this embeddable, if it differs from the defining
-     * name ({@link #getName()}).
-     */
-    String getReferencingName();
+  /**
+   * The referencing name of this embeddable, if it differs from the defining name ({@link
+   * #getName()}).
+   */
+  String getReferencingName();
 
-    /**
-     * The referencing input name of this embeddable, if it differs from the
-     * defining name ({@link #getInputName()}).
-     */
-    String getReferencingInputName();
+  /**
+   * The referencing input name of this embeddable, if it differs from the defining name ({@link
+   * #getInputName()}).
+   */
+  String getReferencingInputName();
 
-    /**
-     * The referencing output name of this embeddable, if it differs from the
-     * defining name ({@link #getOutputName()}).
-     */
-    String getReferencingOutputName();
+  /**
+   * The referencing output name of this embeddable, if it differs from the defining name ({@link
+   * #getOutputName()}).
+   */
+  String getReferencingOutputName();
 
-    /**
-     * The table referencing the embeddable.
-     */
-    TableDefinition getReferencingTable();
+  /** The table referencing the embeddable. */
+  TableDefinition getReferencingTable();
 
-    /**
-     * All defining columns in the type, table or view.
-     */
-    List<EmbeddableColumnDefinition> getColumns();
+  /** All defining columns in the type, table or view. */
+  List<EmbeddableColumnDefinition> getColumns();
 
-    /**
-     * Get a defining column in this type by its name.
-     */
-    EmbeddableColumnDefinition getColumn(String columnName);
+  /** Get a defining column in this type by its name. */
+  EmbeddableColumnDefinition getColumn(String columnName);
 
-    /**
-     * Get a defining column in this type by its name.
-     */
-    EmbeddableColumnDefinition getColumn(String columnName, boolean ignoreCase);
+  /** Get a defining column in this type by its name. */
+  EmbeddableColumnDefinition getColumn(String columnName, boolean ignoreCase);
 
-    /**
-     * Get a defining column in this type by its index (starting at 0).
-     */
-    EmbeddableColumnDefinition getColumn(int columnIndex);
+  /** Get a defining column in this type by its index (starting at 0). */
+  EmbeddableColumnDefinition getColumn(int columnIndex);
 
-    /**
-     * Get a referencing column in this type by its referencing name.
-     */
-    EmbeddableColumnDefinition getReferencingColumn(String columnName);
+  /** Get a referencing column in this type by its referencing name. */
+  EmbeddableColumnDefinition getReferencingColumn(String columnName);
 
-    /**
-     * Get a referencing column in this type by its referencing name.
-     */
-    EmbeddableColumnDefinition getReferencingColumn(String columnName, boolean ignoreCase);
+  /** Get a referencing column in this type by its referencing name. */
+  EmbeddableColumnDefinition getReferencingColumn(String columnName, boolean ignoreCase);
 
-    /**
-     * Whether this embeddable replaces the fields it represents.
-     */
-    boolean replacesFields();
-
+  /** Whether this embeddable replaces the fields it represents. */
+  boolean replacesFields();
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,8 +41,6 @@ package org.jooq;
 // ...
 // ...
 import static org.jooq.SQLDialect.POSTGRES;
-// ...
-// ...
 
 import org.jetbrains.annotations.NotNull;
 
@@ -53,52 +51,33 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface XMLTablePassingStep extends XMLTableColumnsFirstStep {
 
-    /**
-     * Add the <code>PASSING</code> clause to the <code>XMLEXISTS</code>
-     * predicate.
-     */
-    @NotNull
-    @Support({ POSTGRES })
-    XMLTableColumnsFirstStep passing(XML xml);
+  /** Add the <code>PASSING</code> clause to the <code>XMLEXISTS</code> predicate. */
+  @NotNull
+  @Support({POSTGRES})
+  XMLTableColumnsFirstStep passing(XML xml);
 
-    /**
-     * Add the <code>PASSING</code> clause to the <code>XMLEXISTS</code>
-     * predicate.
-     */
-    @NotNull
-    @Support({ POSTGRES })
-    XMLTableColumnsFirstStep passing(Field<XML> xml);
+  /** Add the <code>PASSING</code> clause to the <code>XMLEXISTS</code> predicate. */
+  @NotNull
+  @Support({POSTGRES})
+  XMLTableColumnsFirstStep passing(Field<XML> xml);
 
-    /**
-     * Add the <code>PASSING BY REF</code> clause to the <code>XMLEXISTS</code>
-     * predicate.
-     */
-    @NotNull
-    @Support({ POSTGRES })
-    XMLTableColumnsFirstStep passingByRef(XML xml);
+  /** Add the <code>PASSING BY REF</code> clause to the <code>XMLEXISTS</code> predicate. */
+  @NotNull
+  @Support({POSTGRES})
+  XMLTableColumnsFirstStep passingByRef(XML xml);
 
-    /**
-     * Add the <code>PASSING BY REF</code> clause to the <code>XMLEXISTS</code>
-     * predicate.
-     */
-    @NotNull
-    @Support({ POSTGRES })
-    XMLTableColumnsFirstStep passingByRef(Field<XML> xml);
+  /** Add the <code>PASSING BY REF</code> clause to the <code>XMLEXISTS</code> predicate. */
+  @NotNull
+  @Support({POSTGRES})
+  XMLTableColumnsFirstStep passingByRef(Field<XML> xml);
 
-    /**
-     * Add the <code>PASSING BY VALUE</code> clause to the <code>XMLEXISTS</code>
-     * predicate.
-     */
-    @NotNull
-    @Support({ POSTGRES })
-    XMLTableColumnsFirstStep passingByValue(XML xml);
+  /** Add the <code>PASSING BY VALUE</code> clause to the <code>XMLEXISTS</code> predicate. */
+  @NotNull
+  @Support({POSTGRES})
+  XMLTableColumnsFirstStep passingByValue(XML xml);
 
-    /**
-     * Add the <code>PASSING BY VALUE</code> clause to the <code>XMLEXISTS</code>
-     * predicate.
-     */
-    @NotNull
-    @Support({ POSTGRES })
-    XMLTableColumnsFirstStep passingByValue(Field<XML> xml);
-
+  /** Add the <code>PASSING BY VALUE</code> clause to the <code>XMLEXISTS</code> predicate. */
+  @NotNull
+  @Support({POSTGRES})
+  XMLTableColumnsFirstStep passingByValue(Field<XML> xml);
 }

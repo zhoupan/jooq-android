@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,7 @@
  */
 package org.jooq.impl;
 
+import static org.jooq.SQLDialect.*;
 import static org.jooq.impl.DSL.*;
 import static org.jooq.impl.Internal.*;
 import static org.jooq.impl.Keywords.*;
@@ -46,154 +47,140 @@ import static org.jooq.impl.Tools.*;
 import static org.jooq.impl.Tools.BooleanDataKey.*;
 import static org.jooq.impl.Tools.DataExtendedKey.*;
 import static org.jooq.impl.Tools.DataKey.*;
-import static org.jooq.SQLDialect.*;
-
-import org.jooq.*;
-import org.jooq.Record;
-import org.jooq.conf.*;
-import org.jooq.impl.*;
-import org.jooq.tools.*;
 
 import java.util.*;
+import org.jooq.*;
+import org.jooq.conf.*;
+import org.jooq.tools.*;
 
+/** The <code>GRANT</code> statement. */
+@SuppressWarnings({"hiding", "rawtypes", "unused"})
+final class GrantImpl extends AbstractDDLQuery
+    implements GrantOnStep, GrantToStep, GrantWithGrantOptionStep, GrantFinalStep {
 
-/**
- * The <code>GRANT</code> statement.
- */
-@SuppressWarnings({ "hiding", "rawtypes", "unused" })
-final class GrantImpl
-extends
-    AbstractDDLQuery
-implements
-    GrantOnStep,
-    GrantToStep,
-    GrantWithGrantOptionStep,
-    GrantFinalStep
-{
+  private final Collection<? extends Privilege> privileges;
+  private Table<?> on;
+  private Role to;
+  private Boolean toPublic;
+  private Boolean withGrantOption;
 
-    private final Collection<? extends Privilege> privileges;
-    private       Table<?>                        on;
-    private       Role                            to;
-    private       Boolean                         toPublic;
-    private       Boolean                         withGrantOption;
+  GrantImpl(Configuration configuration, Collection<? extends Privilege> privileges) {
+    this(configuration, privileges, null, null, null, null);
+  }
 
-    GrantImpl(
-        Configuration configuration,
-        Collection<? extends Privilege> privileges
-    ) {
-        this(
-            configuration,
-            privileges,
-            null,
-            null,
-            null,
-            null
-        );
-    }
+  GrantImpl(
+      Configuration configuration,
+      Collection<? extends Privilege> privileges,
+      Table<?> on,
+      Role to,
+      Boolean toPublic,
+      Boolean withGrantOption) {
+    super(configuration);
 
-    GrantImpl(
-        Configuration configuration,
-        Collection<? extends Privilege> privileges,
-        Table<?> on,
-        Role to,
-        Boolean toPublic,
-        Boolean withGrantOption
-    ) {
-        super(configuration);
+    this.privileges = privileges;
+    this.on = on;
+    this.to = to;
+    this.toPublic = toPublic;
+    this.withGrantOption = withGrantOption;
+  }
 
-        this.privileges = privileges;
-        this.on = on;
-        this.to = to;
-        this.toPublic = toPublic;
-        this.withGrantOption = withGrantOption;
-    }
+  final Collection<? extends Privilege> $privileges() {
+    return privileges;
+  }
 
-    final Collection<? extends Privilege> $privileges()      { return privileges; }
-    final Table<?>                        $on()              { return on; }
-    final Role                            $to()              { return to; }
-    final Boolean                         $toPublic()        { return toPublic; }
-    final Boolean                         $withGrantOption() { return withGrantOption; }
+  final Table<?> $on() {
+    return on;
+  }
 
-    // -------------------------------------------------------------------------
-    // XXX: DSL API
-    // -------------------------------------------------------------------------
+  final Role $to() {
+    return to;
+  }
 
-    @Override
-    public final GrantImpl on(String on) {
-        return on(DSL.table(DSL.name(on)));
-    }
+  final Boolean $toPublic() {
+    return toPublic;
+  }
 
-    @Override
-    public final GrantImpl on(Name on) {
-        return on(DSL.table(on));
-    }
+  final Boolean $withGrantOption() {
+    return withGrantOption;
+  }
 
-    @Override
-    public final GrantImpl on(Table<?> on) {
-        this.on = on;
-        return this;
-    }
+  // -------------------------------------------------------------------------
+  // XXX: DSL API
+  // -------------------------------------------------------------------------
 
-    @Override
-    public final GrantImpl to(User to) {
-        return to(DSL.role(to.getQualifiedName()));
-    }
+  @Override
+  public final GrantImpl on(String on) {
+    return on(DSL.table(DSL.name(on)));
+  }
 
-    @Override
-    public final GrantImpl to(Role to) {
-        this.to = to;
-        return this;
-    }
+  @Override
+  public final GrantImpl on(Name on) {
+    return on(DSL.table(on));
+  }
 
-    @Override
-    public final GrantImpl toPublic() {
-        this.toPublic = true;
-        return this;
-    }
+  @Override
+  public final GrantImpl on(Table<?> on) {
+    this.on = on;
+    return this;
+  }
 
-    @Override
-    public final GrantImpl withGrantOption() {
-        this.withGrantOption = true;
-        return this;
-    }
+  @Override
+  public final GrantImpl to(User to) {
+    return to(DSL.role(to.getQualifiedName()));
+  }
 
-    // -------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // -------------------------------------------------------------------------
+  @Override
+  public final GrantImpl to(Role to) {
+    this.to = to;
+    return this;
+  }
 
+  @Override
+  public final GrantImpl toPublic() {
+    this.toPublic = true;
+    return this;
+  }
 
+  @Override
+  public final GrantImpl withGrantOption() {
+    this.withGrantOption = true;
+    return this;
+  }
 
-    private static final Clause[] CLAUSE = { Clause.GRANT };
+  // -------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // -------------------------------------------------------------------------
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        ctx.start(Clause.GRANT_PRIVILEGE)
-           .visit(K_GRANT).sql(' ')
-           .visit(QueryPartCollectionView.wrap(privileges))
-           .end(Clause.GRANT_PRIVILEGE).sql(' ')
-           .start(Clause.GRANT_ON)
-           .visit(K_ON).sql(' ')
-           .visit(on)
-           .end(Clause.GRANT_ON).sql(' ')
-           .start(Clause.GRANT_TO)
-           .visit(K_TO).sql(' ');
+  private static final Clause[] CLAUSE = {Clause.GRANT};
 
-        if (to != null)
-            ctx.visit(to);
-        else if (Boolean.TRUE.equals(toPublic))
-            ctx.visit(K_PUBLIC);
+  @Override
+  public final void accept(Context<?> ctx) {
+    ctx.start(Clause.GRANT_PRIVILEGE)
+        .visit(K_GRANT)
+        .sql(' ')
+        .visit(QueryPartCollectionView.wrap(privileges))
+        .end(Clause.GRANT_PRIVILEGE)
+        .sql(' ')
+        .start(Clause.GRANT_ON)
+        .visit(K_ON)
+        .sql(' ')
+        .visit(on)
+        .end(Clause.GRANT_ON)
+        .sql(' ')
+        .start(Clause.GRANT_TO)
+        .visit(K_TO)
+        .sql(' ');
 
-        if (Boolean.TRUE.equals(withGrantOption))
-            ctx.sql(' ')
-               .visit(K_WITH_GRANT_OPTION);
+    if (to != null) ctx.visit(to);
+    else if (Boolean.TRUE.equals(toPublic)) ctx.visit(K_PUBLIC);
 
-        ctx.end(Clause.GRANT_TO);
-    }
+    if (Boolean.TRUE.equals(withGrantOption)) ctx.sql(' ').visit(K_WITH_GRANT_OPTION);
 
-    @Override
-    public final Clause[] clauses(Context<?> ctx) {
-        return CLAUSE;
-    }
+    ctx.end(Clause.GRANT_TO);
+  }
 
-
+  @Override
+  public final Clause[] clauses(Context<?> ctx) {
+    return CLAUSE;
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,61 +44,60 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.UUID;
-
+import org.jetbrains.annotations.NotNull;
 import org.jooq.Configuration;
 import org.jooq.ConnectionProvider;
 import org.jooq.SQLDialect;
 import org.jooq.exception.DataAccessException;
 import org.jooq.tools.jdbc.JDBCUtils;
 
-import org.jetbrains.annotations.NotNull;
-
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class DefaultInterpreterConnectionProvider implements ConnectionProvider {
 
-    private final Configuration configuration;
+  private final Configuration configuration;
 
-    DefaultInterpreterConnectionProvider(Configuration configuration) {
-        this.configuration = configuration;
+  DefaultInterpreterConnectionProvider(Configuration configuration) {
+    this.configuration = configuration;
+  }
+
+  @NotNull
+  @Override
+  public Connection acquire() throws DataAccessException {
+    SQLDialect family =
+        defaultIfNull(configuration.settings().getInterpreterDialect(), DEFAULT).family();
+
+    try {
+      switch (family) {
+        case DERBY:
+          return DriverManager.getConnection("jdbc:derby:memory:db;create=true");
+
+        case H2:
+        case DEFAULT:
+          return DriverManager.getConnection(
+              "jdbc:h2:mem:jooq-ddl-interpretation-" + UUID.randomUUID(), "sa", "");
+
+        case HSQLDB:
+          // The newer form jdbc:hsqldb:mem:. is not necessarily supported by the driver version yet
+          return DriverManager.getConnection("jdbc:hsqldb:.");
+
+        case SQLITE:
+          return DriverManager.getConnection("jdbc:sqlite::memory:");
+
+        default:
+          throw new DataAccessException("Unsupported interpretation dialect family: " + family);
+      }
+    } catch (SQLException e) {
+      if ("08001".equals(e.getSQLState()))
+        throw new DataAccessException(
+            "The JDBC driver's JAR file was not found on the classpath, which is required for this feature",
+            e);
+
+      throw new DataAccessException("Error while exporting schema", e);
     }
+  }
 
-    @NotNull
-    @Override
-    public Connection acquire() throws DataAccessException {
-        SQLDialect family = defaultIfNull(configuration.settings().getInterpreterDialect(), DEFAULT).family();
-
-        try {
-            switch (family) {
-                case DERBY:
-                    return DriverManager.getConnection("jdbc:derby:memory:db;create=true");
-
-                case H2:
-                case DEFAULT:
-                    return DriverManager.getConnection("jdbc:h2:mem:jooq-ddl-interpretation-" + UUID.randomUUID(), "sa", "");
-
-                case HSQLDB:
-                    // The newer form jdbc:hsqldb:mem:. is not necessarily supported by the driver version yet
-                    return DriverManager.getConnection("jdbc:hsqldb:.");
-
-                case SQLITE:
-                    return DriverManager.getConnection("jdbc:sqlite::memory:");
-
-                default:
-                    throw new DataAccessException("Unsupported interpretation dialect family: " + family);
-            }
-        }
-        catch (SQLException e) {
-            if ("08001".equals(e.getSQLState()))
-                throw new DataAccessException("The JDBC driver's JAR file was not found on the classpath, which is required for this feature", e);
-
-            throw new DataAccessException("Error while exporting schema", e);
-        }
-    }
-
-    @Override
-    public void release(Connection connection) throws DataAccessException {
-        JDBCUtils.safeClose(connection);
-    }
+  @Override
+  public void release(Connection connection) throws DataAccessException {
+    JDBCUtils.safeClose(connection);
+  }
 }

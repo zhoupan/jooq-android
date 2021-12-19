@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,69 +41,65 @@ import static org.jooq.conf.InvocationOrder.REVERSE;
 import static org.jooq.impl.Tools.map;
 
 import java.util.Arrays;
-
 import org.jooq.Configuration;
 import org.jooq.MigrationContext;
 import org.jooq.MigrationListener;
-import org.jooq.MigrationListenerProvider;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 class MigrationListeners implements MigrationListener {
 
-    private final MigrationListener[] listeners;
+  private final MigrationListener[] listeners;
 
-    MigrationListeners(Configuration configuration) {
-        listeners = map(configuration.migrationListenerProviders(), p -> p.provide(), MigrationListener[]::new);
-    }
+  MigrationListeners(Configuration configuration) {
+    listeners =
+        map(configuration.migrationListenerProviders(), p -> p.provide(), MigrationListener[]::new);
+  }
 
-    @Override
-    public final void migrationStart(MigrationContext ctx) {
-        for (MigrationListener listener : ctx.settings().getMigrationListenerStartInvocationOrder() != REVERSE
+  @Override
+  public final void migrationStart(MigrationContext ctx) {
+    for (MigrationListener listener :
+        ctx.settings().getMigrationListenerStartInvocationOrder() != REVERSE
             ? Arrays.asList(listeners)
-            : Tools.reverseIterable(listeners))
-            listener.migrationStart(ctx);
-    }
+            : Tools.reverseIterable(listeners)) listener.migrationStart(ctx);
+  }
 
-    @Override
-    public final void migrationEnd(MigrationContext ctx) {
-        for (MigrationListener listener : ctx.settings().getMigrationListenerEndInvocationOrder() != REVERSE
+  @Override
+  public final void migrationEnd(MigrationContext ctx) {
+    for (MigrationListener listener :
+        ctx.settings().getMigrationListenerEndInvocationOrder() != REVERSE
             ? Arrays.asList(listeners)
-            : Tools.reverseIterable(listeners))
-            listener.migrationEnd(ctx);
-    }
+            : Tools.reverseIterable(listeners)) listener.migrationEnd(ctx);
+  }
 
-    @Override
-    public final void queriesStart(MigrationContext ctx) {
-        for (MigrationListener listener : ctx.settings().getMigrationListenerStartInvocationOrder() != REVERSE
+  @Override
+  public final void queriesStart(MigrationContext ctx) {
+    for (MigrationListener listener :
+        ctx.settings().getMigrationListenerStartInvocationOrder() != REVERSE
             ? Arrays.asList(listeners)
-            : Tools.reverseIterable(listeners))
-            listener.queriesStart(ctx);
-    }
+            : Tools.reverseIterable(listeners)) listener.queriesStart(ctx);
+  }
 
-    @Override
-    public final void queriesEnd(MigrationContext ctx) {
-        for (MigrationListener listener : ctx.settings().getMigrationListenerEndInvocationOrder() != REVERSE
+  @Override
+  public final void queriesEnd(MigrationContext ctx) {
+    for (MigrationListener listener :
+        ctx.settings().getMigrationListenerEndInvocationOrder() != REVERSE
             ? Arrays.asList(listeners)
-            : Tools.reverseIterable(listeners))
-            listener.queriesEnd(ctx);
-    }
+            : Tools.reverseIterable(listeners)) listener.queriesEnd(ctx);
+  }
 
-    @Override
-    public final void queryStart(MigrationContext ctx) {
-        for (MigrationListener listener : ctx.settings().getMigrationListenerStartInvocationOrder() != REVERSE
+  @Override
+  public final void queryStart(MigrationContext ctx) {
+    for (MigrationListener listener :
+        ctx.settings().getMigrationListenerStartInvocationOrder() != REVERSE
             ? Arrays.asList(listeners)
-            : Tools.reverseIterable(listeners))
-            listener.queryStart(ctx);
-    }
+            : Tools.reverseIterable(listeners)) listener.queryStart(ctx);
+  }
 
-    @Override
-    public final void queryEnd(MigrationContext ctx) {
-        for (MigrationListener listener : ctx.settings().getMigrationListenerEndInvocationOrder() != REVERSE
+  @Override
+  public final void queryEnd(MigrationContext ctx) {
+    for (MigrationListener listener :
+        ctx.settings().getMigrationListenerEndInvocationOrder() != REVERSE
             ? Arrays.asList(listeners)
-            : Tools.reverseIterable(listeners))
-            listener.queryEnd(ctx);
-    }
-
+            : Tools.reverseIterable(listeners)) listener.queryEnd(ctx);
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -63,12 +63,11 @@ import java.util.Properties;
 
 /**
  * A mock connection.
- * <p>
- * Mock connections can be used to supply jOOQ with unit test data, avoiding the
- * round-trip of using an actual in-memory test database, such as Derby, H2 or
- * HSQLDB. A usage example:
- * <p>
- * <code><pre>
+ *
+ * <p>Mock connections can be used to supply jOOQ with unit test data, avoiding the round-trip of
+ * using an actual in-memory test database, such as Derby, H2 or HSQLDB. A usage example:
+ *
+ * <p><code><pre>
  * MockDataProvider provider = new MockDataProvider() {
  *     public MockResult[] execute(MockExecuteContext context) throws SQLException {
  *         Result&lt;MyTableRecord&gt; result = executor.newResult(MY_TABLE);
@@ -83,367 +82,370 @@ import java.util.Properties;
  * DSLContext create = DSL.using(connection, dialect);
  * assertEquals(1, create.selectOne().fetch().size());
  * </pre></code>
- * <p>
- * While this <code>MockConnection</code> can be used independently of jOOQ, it
- * has been optimised for usage with jOOQ. JDBC features that are not used by
- * jOOQ (e.g. procedure bind value access by parameter name) are not supported
- * in this mock framework
- * <p>
- * <strong>Disclaimer: The general idea of mocking a JDBC connection with this
- * jOOQ API is to provide quick workarounds, injection points, etc. using a very
- * simple JDBC abstraction. It is NOT RECOMMENDED to emulate an entire database
- * (including complex state transitions, transactions, locking, etc.) using this
- * mock API. Once you have this requirement, please consider using an actual
- * database instead for integration testing (e.g. using
- * <a href="https://www.testcontainers.org">https://www.testcontainers.org</a>),
- * rather than implementing your test database inside of a
- * MockDataProvider.</strong>
+ *
+ * <p>While this <code>MockConnection</code> can be used independently of jOOQ, it has been
+ * optimised for usage with jOOQ. JDBC features that are not used by jOOQ (e.g. procedure bind value
+ * access by parameter name) are not supported in this mock framework
+ *
+ * <p><strong>Disclaimer: The general idea of mocking a JDBC connection with this jOOQ API is to
+ * provide quick workarounds, injection points, etc. using a very simple JDBC abstraction. It is NOT
+ * RECOMMENDED to emulate an entire database (including complex state transitions, transactions,
+ * locking, etc.) using this mock API. Once you have this requirement, please consider using an
+ * actual database instead for integration testing (e.g. using <a
+ * href="https://www.testcontainers.org">https://www.testcontainers.org</a>), rather than
+ * implementing your test database inside of a MockDataProvider.</strong>
  *
  * @author Lukas Eder
  */
 public class MockConnection extends JDBC41Connection implements Connection {
 
-    private final MockDataProvider data;
-    private boolean                isClosed;
+  private final MockDataProvider data;
+  private boolean isClosed;
 
-    public MockConnection(MockDataProvider data) {
-        this.data = data;
+  public MockConnection(MockDataProvider data) {
+    this.data = data;
+  }
+
+  // -------------------------------------------------------------------------
+  // XXX: Utilities
+  // -------------------------------------------------------------------------
+
+  private void checkNotClosed() throws SQLException {
+    if (isClosed) {
+      throw new SQLException("Connection is already closed");
     }
-
-    // -------------------------------------------------------------------------
-    // XXX: Utilities
-    // -------------------------------------------------------------------------
-
-    private void checkNotClosed() throws SQLException {
-        if (isClosed) {
-            throw new SQLException("Connection is already closed");
-        }
-    }
-
-    // -------------------------------------------------------------------------
-    // XXX: Creating statements
-    // -------------------------------------------------------------------------
-
-    @Override
-    public Statement createStatement() throws SQLException {
-        return createStatement(ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY, ResultSet.CLOSE_CURSORS_AT_COMMIT);
-    }
-
-    @Override
-    public Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
-        return createStatement(resultSetType, resultSetConcurrency, ResultSet.CLOSE_CURSORS_AT_COMMIT);
-    }
-
-    @Override
-    public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability)
-        throws SQLException {
-        checkNotClosed();
-
-        MockStatement result = new MockStatement(this, data);
-        result.resultSetType = resultSetType;
-        result.resultSetConcurrency = resultSetConcurrency;
-        result.resultSetHoldability = resultSetHoldability;
-        return result;
-    }
-
-    @Override
-    public PreparedStatement prepareStatement(String sql) throws SQLException {
-        return prepareStatement(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY, ResultSet.CLOSE_CURSORS_AT_COMMIT);
-    }
-
-    @Override
-    public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
-        return prepareStatement(sql, resultSetType, resultSetConcurrency, ResultSet.CLOSE_CURSORS_AT_COMMIT);
-    }
-
-    @Override
-    public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency,
-        int resultSetHoldability) throws SQLException {
-        checkNotClosed();
-
-        MockStatement result = new MockStatement(this, data, sql);
-        result.resultSetType = resultSetType;
-        result.resultSetConcurrency = resultSetConcurrency;
-        result.resultSetHoldability = resultSetHoldability;
-        return result;
-    }
-
-    @Override
-    public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys) throws SQLException {
-        checkNotClosed();
-
-        MockStatement result = new MockStatement(this, data, sql);
-        result.autoGeneratedKeys = autoGeneratedKeys;
-        return result;
-    }
-
-    @Override
-    public PreparedStatement prepareStatement(String sql, int[] columnIndexes) throws SQLException {
-        checkNotClosed();
-
-        MockStatement result = new MockStatement(this, data, sql);
-        result.autoGeneratedKeys = Statement.RETURN_GENERATED_KEYS;
-        result.columnIndexes = columnIndexes;
-        return result;
-    }
-
-    @Override
-    public PreparedStatement prepareStatement(String sql, String[] columnNames) throws SQLException {
-        checkNotClosed();
-
-        MockStatement result = new MockStatement(this, data, sql);
-        result.autoGeneratedKeys = Statement.RETURN_GENERATED_KEYS;
-        result.columnNames = columnNames;
-        return result;
-    }
-
-    @Override
-    public CallableStatement prepareCall(String sql) throws SQLException {
-        return prepareCall(sql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY, ResultSet.CLOSE_CURSORS_AT_COMMIT);
-    }
-
-    @Override
-    public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
-        return prepareCall(sql, resultSetType, resultSetConcurrency, ResultSet.CLOSE_CURSORS_AT_COMMIT);
-    }
-
-    @Override
-    public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency,
-        int resultSetHoldability) throws SQLException {
-        checkNotClosed();
-
-        MockStatement result = new MockStatement(this, data, sql);
-        result.resultSetType = resultSetType;
-        result.resultSetConcurrency = resultSetConcurrency;
-        result.resultSetHoldability = resultSetHoldability;
-        return result;
-    }
-
-    // -------------------------------------------------------------------------
-    // XXX: Ignored operations
-    // -------------------------------------------------------------------------
-
-    @Override
-    public void commit() throws SQLException {
-        checkNotClosed();
-    }
-
-    @Override
-    public void rollback() throws SQLException {
-        checkNotClosed();
-    }
-
-    @Override
-    public void rollback(Savepoint savepoint) throws SQLException {
-        checkNotClosed();
-    }
-
-    @Override
-    public void close() throws SQLException {
-        isClosed = true;
-    }
-
-    @Override
-    public Savepoint setSavepoint() throws SQLException {
-        checkNotClosed();
-        return new MockSavepoint();
-    }
-
-    @Override
-    public Savepoint setSavepoint(String name) throws SQLException {
-        checkNotClosed();
-        return new MockSavepoint(name);
-    }
-
-    @Override
-    public void releaseSavepoint(Savepoint savepoint) throws SQLException {
-        checkNotClosed();
-    }
-
-    @Override
-    public boolean isClosed() throws SQLException {
-        return isClosed;
-    }
-
-    @Override
-    public void setAutoCommit(boolean autoCommit) throws SQLException {
-        checkNotClosed();
-    }
-
-    @Override
-    public boolean getAutoCommit() throws SQLException {
-        checkNotClosed();
-        return false;
-    }
-
-    @Override
-    public void setReadOnly(boolean readOnly) throws SQLException {
-        checkNotClosed();
-    }
-
-    @Override
-    public boolean isReadOnly() throws SQLException {
-        checkNotClosed();
-        return false;
-    }
-
-    @Override
-    public void setCatalog(String catalog) throws SQLException {
-        checkNotClosed();}
-
-    @Override
-    public String getCatalog() throws SQLException {
-        checkNotClosed();
-        return null;
-    }
-
-    @Override
-    public SQLWarning getWarnings() throws SQLException {
-        checkNotClosed();
-        return null;
-    }
-
-    @Override
-    public void clearWarnings() throws SQLException {
-        checkNotClosed();
-    }
-
-    @Override
-    public void setTransactionIsolation(int level) throws SQLException {
-        checkNotClosed();
-    }
-
-    @Override
-    public int getTransactionIsolation() throws SQLException {
-        checkNotClosed();
-        return 0;
-    }
-
-    @Override
-    public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
-        checkNotClosed();
-    }
-
-    @Override
-    public Map<String, Class<?>> getTypeMap() throws SQLException {
-        checkNotClosed();
-        return null;
-    }
-
-    @Override
-    public void setHoldability(int holdability) throws SQLException {
-        checkNotClosed();
-    }
-
-    @Override
-    public int getHoldability() throws SQLException {
-        checkNotClosed();
-        return 0;
-    }
-
-    @Override
-    public boolean isValid(int timeout) throws SQLException {
-        checkNotClosed();
-        return false;
-    }
-
-    @Override
-    public void setClientInfo(String name, String value) throws SQLClientInfoException {
-    }
-
-    @Override
-    public void setClientInfo(Properties properties) throws SQLClientInfoException {
-    }
-
-    @Override
-    public String getClientInfo(String name) throws SQLException {
-        checkNotClosed();
-        return null;
-    }
-
-    @Override
-    public Properties getClientInfo() throws SQLException {
-        checkNotClosed();
-        return null;
-    }
-
-    // -------------------------------------------------------------------------
-    // XXX: Object creation
-    // -------------------------------------------------------------------------
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public Array createArrayOf(String typeName, Object[] elements) throws SQLException {
-        return new MockArray<>(DEFAULT, elements, (Class<? extends Object[]>) (elements == null ? Object[].class : elements.getClass()));
-    }
-
-    // -------------------------------------------------------------------------
-    // XXX: Unwrapping
-    // -------------------------------------------------------------------------
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public <T> T unwrap(Class<T> iface) throws SQLException {
-        if (isWrapperFor(iface))
-            return (T) this;
-        else
-            throw new SQLException("MockConnection does not implement " + iface);
-    }
-
-    @Override
-    public boolean isWrapperFor(Class<?> iface) throws SQLException {
-        return iface.isInstance(this);
-    }
-
-    // -------------------------------------------------------------------------
-    // XXX: Vendor specific driver compatibility operations
-    // -------------------------------------------------------------------------
-
-
-
-
-
-
-
-
-
-
-    // -------------------------------------------------------------------------
-    // XXX: Unsupported operations
-    // -------------------------------------------------------------------------
-
-    @Override
-    public DatabaseMetaData getMetaData() throws SQLException {
-        throw new SQLFeatureNotSupportedException("Unsupported Operation");
-    }
-
-    @Override
-    public String nativeSQL(String sql) throws SQLException {
-        throw new SQLFeatureNotSupportedException("Unsupported Operation");
-    }
-
-    @Override
-    public Clob createClob() throws SQLException {
-        throw new SQLFeatureNotSupportedException("Unsupported Operation");
-    }
-
-    @Override
-    public Blob createBlob() throws SQLException {
-        throw new SQLFeatureNotSupportedException("Unsupported Operation");
-    }
-
-    @Override
-    public NClob createNClob() throws SQLException {
-        throw new SQLFeatureNotSupportedException("Unsupported Operation");
-    }
-
-    @Override
-    public SQLXML createSQLXML() throws SQLException {
-        throw new SQLFeatureNotSupportedException("Unsupported Operation");
-    }
-
-    @Override
-    public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
-        throw new SQLFeatureNotSupportedException("Unsupported Operation");
-    }
+  }
+
+  // -------------------------------------------------------------------------
+  // XXX: Creating statements
+  // -------------------------------------------------------------------------
+
+  @Override
+  public Statement createStatement() throws SQLException {
+    return createStatement(
+        ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY, ResultSet.CLOSE_CURSORS_AT_COMMIT);
+  }
+
+  @Override
+  public Statement createStatement(int resultSetType, int resultSetConcurrency)
+      throws SQLException {
+    return createStatement(resultSetType, resultSetConcurrency, ResultSet.CLOSE_CURSORS_AT_COMMIT);
+  }
+
+  @Override
+  public Statement createStatement(
+      int resultSetType, int resultSetConcurrency, int resultSetHoldability) throws SQLException {
+    checkNotClosed();
+
+    MockStatement result = new MockStatement(this, data);
+    result.resultSetType = resultSetType;
+    result.resultSetConcurrency = resultSetConcurrency;
+    result.resultSetHoldability = resultSetHoldability;
+    return result;
+  }
+
+  @Override
+  public PreparedStatement prepareStatement(String sql) throws SQLException {
+    return prepareStatement(
+        sql,
+        ResultSet.TYPE_FORWARD_ONLY,
+        ResultSet.CONCUR_READ_ONLY,
+        ResultSet.CLOSE_CURSORS_AT_COMMIT);
+  }
+
+  @Override
+  public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency)
+      throws SQLException {
+    return prepareStatement(
+        sql, resultSetType, resultSetConcurrency, ResultSet.CLOSE_CURSORS_AT_COMMIT);
+  }
+
+  @Override
+  public PreparedStatement prepareStatement(
+      String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability)
+      throws SQLException {
+    checkNotClosed();
+
+    MockStatement result = new MockStatement(this, data, sql);
+    result.resultSetType = resultSetType;
+    result.resultSetConcurrency = resultSetConcurrency;
+    result.resultSetHoldability = resultSetHoldability;
+    return result;
+  }
+
+  @Override
+  public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys) throws SQLException {
+    checkNotClosed();
+
+    MockStatement result = new MockStatement(this, data, sql);
+    result.autoGeneratedKeys = autoGeneratedKeys;
+    return result;
+  }
+
+  @Override
+  public PreparedStatement prepareStatement(String sql, int[] columnIndexes) throws SQLException {
+    checkNotClosed();
+
+    MockStatement result = new MockStatement(this, data, sql);
+    result.autoGeneratedKeys = Statement.RETURN_GENERATED_KEYS;
+    result.columnIndexes = columnIndexes;
+    return result;
+  }
+
+  @Override
+  public PreparedStatement prepareStatement(String sql, String[] columnNames) throws SQLException {
+    checkNotClosed();
+
+    MockStatement result = new MockStatement(this, data, sql);
+    result.autoGeneratedKeys = Statement.RETURN_GENERATED_KEYS;
+    result.columnNames = columnNames;
+    return result;
+  }
+
+  @Override
+  public CallableStatement prepareCall(String sql) throws SQLException {
+    return prepareCall(
+        sql,
+        ResultSet.TYPE_FORWARD_ONLY,
+        ResultSet.CONCUR_READ_ONLY,
+        ResultSet.CLOSE_CURSORS_AT_COMMIT);
+  }
+
+  @Override
+  public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency)
+      throws SQLException {
+    return prepareCall(sql, resultSetType, resultSetConcurrency, ResultSet.CLOSE_CURSORS_AT_COMMIT);
+  }
+
+  @Override
+  public CallableStatement prepareCall(
+      String sql, int resultSetType, int resultSetConcurrency, int resultSetHoldability)
+      throws SQLException {
+    checkNotClosed();
+
+    MockStatement result = new MockStatement(this, data, sql);
+    result.resultSetType = resultSetType;
+    result.resultSetConcurrency = resultSetConcurrency;
+    result.resultSetHoldability = resultSetHoldability;
+    return result;
+  }
+
+  // -------------------------------------------------------------------------
+  // XXX: Ignored operations
+  // -------------------------------------------------------------------------
+
+  @Override
+  public void commit() throws SQLException {
+    checkNotClosed();
+  }
+
+  @Override
+  public void rollback() throws SQLException {
+    checkNotClosed();
+  }
+
+  @Override
+  public void rollback(Savepoint savepoint) throws SQLException {
+    checkNotClosed();
+  }
+
+  @Override
+  public void close() throws SQLException {
+    isClosed = true;
+  }
+
+  @Override
+  public Savepoint setSavepoint() throws SQLException {
+    checkNotClosed();
+    return new MockSavepoint();
+  }
+
+  @Override
+  public Savepoint setSavepoint(String name) throws SQLException {
+    checkNotClosed();
+    return new MockSavepoint(name);
+  }
+
+  @Override
+  public void releaseSavepoint(Savepoint savepoint) throws SQLException {
+    checkNotClosed();
+  }
+
+  @Override
+  public boolean isClosed() throws SQLException {
+    return isClosed;
+  }
+
+  @Override
+  public void setAutoCommit(boolean autoCommit) throws SQLException {
+    checkNotClosed();
+  }
+
+  @Override
+  public boolean getAutoCommit() throws SQLException {
+    checkNotClosed();
+    return false;
+  }
+
+  @Override
+  public void setReadOnly(boolean readOnly) throws SQLException {
+    checkNotClosed();
+  }
+
+  @Override
+  public boolean isReadOnly() throws SQLException {
+    checkNotClosed();
+    return false;
+  }
+
+  @Override
+  public void setCatalog(String catalog) throws SQLException {
+    checkNotClosed();
+  }
+
+  @Override
+  public String getCatalog() throws SQLException {
+    checkNotClosed();
+    return null;
+  }
+
+  @Override
+  public SQLWarning getWarnings() throws SQLException {
+    checkNotClosed();
+    return null;
+  }
+
+  @Override
+  public void clearWarnings() throws SQLException {
+    checkNotClosed();
+  }
+
+  @Override
+  public void setTransactionIsolation(int level) throws SQLException {
+    checkNotClosed();
+  }
+
+  @Override
+  public int getTransactionIsolation() throws SQLException {
+    checkNotClosed();
+    return 0;
+  }
+
+  @Override
+  public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
+    checkNotClosed();
+  }
+
+  @Override
+  public Map<String, Class<?>> getTypeMap() throws SQLException {
+    checkNotClosed();
+    return null;
+  }
+
+  @Override
+  public void setHoldability(int holdability) throws SQLException {
+    checkNotClosed();
+  }
+
+  @Override
+  public int getHoldability() throws SQLException {
+    checkNotClosed();
+    return 0;
+  }
+
+  @Override
+  public boolean isValid(int timeout) throws SQLException {
+    checkNotClosed();
+    return false;
+  }
+
+  @Override
+  public void setClientInfo(String name, String value) throws SQLClientInfoException {}
+
+  @Override
+  public void setClientInfo(Properties properties) throws SQLClientInfoException {}
+
+  @Override
+  public String getClientInfo(String name) throws SQLException {
+    checkNotClosed();
+    return null;
+  }
+
+  @Override
+  public Properties getClientInfo() throws SQLException {
+    checkNotClosed();
+    return null;
+  }
+
+  // -------------------------------------------------------------------------
+  // XXX: Object creation
+  // -------------------------------------------------------------------------
+
+  @Override
+  @SuppressWarnings("unchecked")
+  public Array createArrayOf(String typeName, Object[] elements) throws SQLException {
+    return new MockArray<>(
+        DEFAULT,
+        elements,
+        (Class<? extends Object[]>) (elements == null ? Object[].class : elements.getClass()));
+  }
+
+  // -------------------------------------------------------------------------
+  // XXX: Unwrapping
+  // -------------------------------------------------------------------------
+
+  @SuppressWarnings("unchecked")
+  @Override
+  public <T> T unwrap(Class<T> iface) throws SQLException {
+    if (isWrapperFor(iface)) return (T) this;
+    else throw new SQLException("MockConnection does not implement " + iface);
+  }
+
+  @Override
+  public boolean isWrapperFor(Class<?> iface) throws SQLException {
+    return iface.isInstance(this);
+  }
+
+  // -------------------------------------------------------------------------
+  // XXX: Vendor specific driver compatibility operations
+  // -------------------------------------------------------------------------
+
+  // -------------------------------------------------------------------------
+  // XXX: Unsupported operations
+  // -------------------------------------------------------------------------
+
+  @Override
+  public DatabaseMetaData getMetaData() throws SQLException {
+    throw new SQLFeatureNotSupportedException("Unsupported Operation");
+  }
+
+  @Override
+  public String nativeSQL(String sql) throws SQLException {
+    throw new SQLFeatureNotSupportedException("Unsupported Operation");
+  }
+
+  @Override
+  public Clob createClob() throws SQLException {
+    throw new SQLFeatureNotSupportedException("Unsupported Operation");
+  }
+
+  @Override
+  public Blob createBlob() throws SQLException {
+    throw new SQLFeatureNotSupportedException("Unsupported Operation");
+  }
+
+  @Override
+  public NClob createNClob() throws SQLException {
+    throw new SQLFeatureNotSupportedException("Unsupported Operation");
+  }
+
+  @Override
+  public SQLXML createSQLXML() throws SQLException {
+    throw new SQLFeatureNotSupportedException("Unsupported Operation");
+  }
+
+  @Override
+  public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
+    throw new SQLFeatureNotSupportedException("Unsupported Operation");
+  }
 }

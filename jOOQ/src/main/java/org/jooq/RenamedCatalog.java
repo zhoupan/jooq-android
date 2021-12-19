@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,7 +38,6 @@
 package org.jooq;
 
 import java.util.List;
-
 import org.jooq.impl.CatalogImpl;
 
 /**
@@ -48,16 +47,16 @@ import org.jooq.impl.CatalogImpl;
  */
 final class RenamedCatalog extends CatalogImpl {
 
-    private final Catalog delegate;
+  private final Catalog delegate;
 
-    RenamedCatalog(Catalog delegate, String rename) {
-        super(rename, delegate.getComment());
+  RenamedCatalog(Catalog delegate, String rename) {
+    super(rename, delegate.getComment());
 
-        this.delegate = delegate;
-    }
+    this.delegate = delegate;
+  }
 
-    @Override
-    public final List<Schema> getSchemas() {
-        return delegate.getSchemas();
-    }
+  @Override
+  public final List<Schema> getSchemas() {
+    return delegate.getSchemas();
+  }
 }

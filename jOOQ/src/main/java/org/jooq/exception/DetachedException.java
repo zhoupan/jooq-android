@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,19 +42,19 @@ import org.jooq.QueryPart;
 import org.jooq.UpdatableRecord;
 
 /**
- * An operation was invoked on a detached object ({@link Query},
- * {@link QueryPart}, or {@link UpdatableRecord}).
+ * An operation was invoked on a detached object ({@link Query}, {@link QueryPart}, or {@link
+ * UpdatableRecord}).
  *
  * @author Lukas Eder
  */
 public class DetachedException extends DataAccessException {
 
-    /**
-     * Constructor for DetachedException.
-     *
-     * @param message the detail message
-     */
-    public DetachedException(String message) {
-        super(message);
-    }
+  /**
+   * Constructor for DetachedException.
+   *
+   * @param message the detail message
+   */
+  public DetachedException(String message) {
+    super(message);
+  }
 }

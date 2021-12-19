@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,18 +39,16 @@ package org.jooq;
 
 import org.jetbrains.annotations.NotNull;
 
-
-
 /**
  * A sort specification.
- * <p>
- * The SQL <code>ORDER BY</code> clause accepts expressions based on
- * {@link Field}, which may be enhanced by <code>ASC</code> or <code>DESC</code>
- * as well as <code>NULLS FIRST</code> or <code>NULLS LAST</code>.
- * <p>
- * <strong>Example:</strong>
- * <p>
- * <code><pre>
+ *
+ * <p>The SQL <code>ORDER BY</code> clause accepts expressions based on {@link Field}, which may be
+ * enhanced by <code>ASC</code> or <code>DESC</code> as well as <code>NULLS FIRST</code> or <code>
+ * NULLS LAST</code>.
+ *
+ * <p><strong>Example:</strong>
+ *
+ * <p><code><pre>
  * // Assuming import static org.jooq.impl.DSL.*;
  *
  * using(configuration)
@@ -59,9 +57,8 @@ import org.jetbrains.annotations.NotNull;
  *    .orderBy(ACTOR.LAST_UPDATE.desc().nullsLast())
  *    .fetch();
  * </pre></code>
- * <p>
- * Instances can be created using {@link Field#asc()}, {@link Field#desc()} and
- * related methods.
+ *
+ * <p>Instances can be created using {@link Field#asc()}, {@link Field#desc()} and related methods.
  *
  * @param <T> The field type
  * @author Lukas Eder
@@ -70,30 +67,21 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface SortField<T> extends OrderField<T> {
 
-    /**
-     * The name of this sort field
-     */
-    @NotNull
-    String getName();
+  /** The name of this sort field */
+  @NotNull
+  String getName();
 
-    /**
-     * Get the underlying sort order of this sort field
-     */
-    @NotNull
-    SortOrder getOrder();
+  /** Get the underlying sort order of this sort field */
+  @NotNull
+  SortOrder getOrder();
 
-    /**
-     * Add a <code>NULLS FIRST</code> clause to this sort field
-     */
-    @NotNull
-    @Support
-    SortField<T> nullsFirst();
+  /** Add a <code>NULLS FIRST</code> clause to this sort field */
+  @NotNull
+  @Support
+  SortField<T> nullsFirst();
 
-    /**
-     * Add a <code>NULLS LAST</code> clause to this sort field
-     */
-    @NotNull
-    @Support
-    SortField<T> nullsLast();
-
+  /** Add a <code>NULLS LAST</code> clause to this sort field */
+  @NotNull
+  @Support
+  SortField<T> nullsLast();
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,19 +39,17 @@ package org.jooq.impl;
 
 import java.io.Serializable;
 import java.util.concurrent.Executor;
-
 import org.jooq.ExecutorProvider;
 
 /**
- * A default {@link ExecutorProvider} implementation, providing a
- * {@link DefaultExecutor} instance.
+ * A default {@link ExecutorProvider} implementation, providing a {@link DefaultExecutor} instance.
  *
  * @author Lukas Eder
  */
 public class DefaultExecutorProvider implements ExecutorProvider, Serializable {
 
-    @Override
-    public final Executor provide() {
-        return new DefaultExecutor();
-    }
+  @Override
+  public final Executor provide() {
+    return new DefaultExecutor();
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,58 +37,59 @@
  */
 package org.jooq.impl;
 
+import io.r2dbc.spi.ConnectionFactory;
 import org.jooq.CloseableDSLContext;
 import org.jooq.ConnectionProvider;
 import org.jooq.SQLDialect;
 import org.jooq.conf.Settings;
 import org.jooq.tools.jdbc.JDBCUtils;
 
-import io.r2dbc.spi.ConnectionFactory;
-
 /**
- * An extension of {@link DefaultDSLContext} that implements also the
- * {@link CloseableDSLContext} contract.
+ * An extension of {@link DefaultDSLContext} that implements also the {@link CloseableDSLContext}
+ * contract.
  */
 public class DefaultCloseableDSLContext extends DefaultDSLContext implements CloseableDSLContext {
 
-    public DefaultCloseableDSLContext(ConnectionProvider connectionProvider, SQLDialect dialect, Settings settings) {
-        super(connectionProvider, dialect, settings);
+  public DefaultCloseableDSLContext(
+      ConnectionProvider connectionProvider, SQLDialect dialect, Settings settings) {
+    super(connectionProvider, dialect, settings);
+  }
+
+  public DefaultCloseableDSLContext(ConnectionProvider connectionProvider, SQLDialect dialect) {
+    super(connectionProvider, dialect);
+  }
+
+  public DefaultCloseableDSLContext(
+      ConnectionFactory connectionFactory, SQLDialect dialect, Settings settings) {
+    super(connectionFactory, dialect, settings);
+  }
+
+  public DefaultCloseableDSLContext(ConnectionFactory connectionFactory, SQLDialect dialect) {
+    super(connectionFactory, dialect);
+  }
+
+  // -------------------------------------------------------------------------
+  // XXX AutoCloseable
+  // -------------------------------------------------------------------------
+
+  @Override
+  public void close() {
+    ConnectionProvider cp = configuration().connectionProvider();
+    ConnectionFactory cf = configuration().connectionFactory();
+
+    if (cp instanceof DefaultCloseableConnectionProvider) {
+      DefaultConnectionProvider dcp = (DefaultCloseableConnectionProvider) cp;
+      JDBCUtils.safeClose(dcp.connection);
+      dcp.connection = null;
     }
 
-    public DefaultCloseableDSLContext(ConnectionProvider connectionProvider, SQLDialect dialect) {
-        super(connectionProvider, dialect);
+    if (cf instanceof DefaultConnectionFactory) {
+      DefaultConnectionFactory dcf = (DefaultConnectionFactory) cf;
+
+      if (dcf.finalize) {
+        R2DBC.block(dcf.connection.close());
+        dcf.connection = null;
+      }
     }
-
-    public DefaultCloseableDSLContext(ConnectionFactory connectionFactory, SQLDialect dialect, Settings settings) {
-        super(connectionFactory, dialect, settings);
-    }
-
-    public DefaultCloseableDSLContext(ConnectionFactory connectionFactory, SQLDialect dialect) {
-        super(connectionFactory, dialect);
-    }
-
-    // -------------------------------------------------------------------------
-    // XXX AutoCloseable
-    // -------------------------------------------------------------------------
-
-    @Override
-    public void close() {
-        ConnectionProvider cp = configuration().connectionProvider();
-        ConnectionFactory cf = configuration().connectionFactory();
-
-        if (cp instanceof DefaultCloseableConnectionProvider) {
-            DefaultConnectionProvider dcp = (DefaultCloseableConnectionProvider) cp;
-            JDBCUtils.safeClose(dcp.connection);
-            dcp.connection = null;
-        }
-
-        if (cf instanceof DefaultConnectionFactory) {
-            DefaultConnectionFactory dcf = (DefaultConnectionFactory) cf;
-
-            if (dcf.finalize) {
-                R2DBC.block(dcf.connection.close());
-                dcf.connection = null;
-            }
-        }
-    }
+  }
 }

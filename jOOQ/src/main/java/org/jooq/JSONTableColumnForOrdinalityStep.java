@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,14 +37,10 @@
  */
 package org.jooq;
 
-import org.jetbrains.annotations.*;
-
-
-// ...
-// ...
 import static org.jooq.SQLDialect.MYSQL;
-// ...
 import static org.jooq.SQLDialect.POSTGRES;
+
+import org.jetbrains.annotations.*;
 // ...
 
 /**
@@ -54,12 +50,11 @@ import static org.jooq.SQLDialect.POSTGRES;
  */
 public interface JSONTableColumnForOrdinalityStep {
 
-    /**
-     * Specify the <code>FOR ORDINALITY</code> clause on a column in the
-     * <code>COLUMNS</code> clause of the <code>JSON_TABLE</code> predicate.
-     */
-    @NotNull
-    @Support({ MYSQL, POSTGRES })
-    JSONTableColumnsStep forOrdinality();
-
+  /**
+   * Specify the <code>FOR ORDINALITY</code> clause on a column in the <code>COLUMNS</code> clause
+   * of the <code>JSON_TABLE</code> predicate.
+   */
+  @NotNull
+  @Support({MYSQL, POSTGRES})
+  JSONTableColumnsStep forOrdinality();
 }

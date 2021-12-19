@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,13 +40,11 @@ package org.jooq.util.jaxb.tools;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 /**
- * [#2401] A string-trimming {@link XmlAdapter} that takes out whitespace from
- * JAXB-bound XML content.
+ * [#2401] A string-trimming {@link XmlAdapter} that takes out whitespace from JAXB-bound XML
+ * content.
  *
  * @author Lukas Eder
  * @deprecated - 3.8.0 - [#4550] Do not reference this type directly.
  */
 @Deprecated
-public class TrimAdapter extends StringAdapter {
-
-}
+public class TrimAdapter extends StringAdapter {}

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,48 +38,41 @@
 package org.jooq.exception;
 
 import java.sql.ResultSet;
-
 import org.jooq.InsertResultStep;
 import org.jooq.ResultQuery;
 
 /**
  * Too many rows (more than 1) were returned from a {@link ResultQuery}.
- * <p>
- * Like any other {@link InvalidResultException}, this exception indicates to
- * clients that the result was not what they expected, but this does not have
- * any effect on the outcome of the statement producing that result. For
- * instance, if calling {@link ResultQuery#fetchOne()} on a
- * <code>SELECT .. FOR UPDATE</code> query, or
- * {@link InsertResultStep#fetchOne()} on an <code>INSERT</code> statement, the
- * database change will still be executed: the rows will still be locked or
- * inserted.
- * <p>
- * <strong>Performance</strong>
- * <p>
- * Methods throwing {@link TooManyRowsException} need to retrieve at most two
- * records from the underlying JDBC {@link ResultSet}, which, depending on the
- * {@link java.sql.Statement#getFetchSize()} /
- * {@link ResultQuery#fetchSize(int)}, might incur additional database
- * roundtrips. If this causes problems, {@link ResultQuery#fetchAny()} may be
- * preferred.
+ *
+ * <p>Like any other {@link InvalidResultException}, this exception indicates to clients that the
+ * result was not what they expected, but this does not have any effect on the outcome of the
+ * statement producing that result. For instance, if calling {@link ResultQuery#fetchOne()} on a
+ * <code>SELECT .. FOR UPDATE</code> query, or {@link InsertResultStep#fetchOne()} on an <code>
+ * INSERT</code> statement, the database change will still be executed: the rows will still be
+ * locked or inserted.
+ *
+ * <p><strong>Performance</strong>
+ *
+ * <p>Methods throwing {@link TooManyRowsException} need to retrieve at most two records from the
+ * underlying JDBC {@link ResultSet}, which, depending on the {@link
+ * java.sql.Statement#getFetchSize()} / {@link ResultQuery#fetchSize(int)}, might incur additional
+ * database roundtrips. If this causes problems, {@link ResultQuery#fetchAny()} may be preferred.
  *
  * @author Lukas Eder
  */
 public class TooManyRowsException extends InvalidResultException {
 
-    /**
-     * Constructor for TooManyRowsException.
-     */
-    public TooManyRowsException() {
-        super(null);
-    }
+  /** Constructor for TooManyRowsException. */
+  public TooManyRowsException() {
+    super(null);
+  }
 
-    /**
-     * Constructor for TooManyRowsException.
-     *
-     * @param message the detail message
-     */
-    public TooManyRowsException(String message) {
-        super(message);
-    }
+  /**
+   * Constructor for TooManyRowsException.
+   *
+   * @param message the detail message
+   */
+  public TooManyRowsException(String message) {
+    super(message);
+  }
 }

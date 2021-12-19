@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,7 +40,6 @@ package org.jooq;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-
 /**
  * A {@link UDT} or {@link Table}.
  *
@@ -48,32 +47,26 @@ import org.jetbrains.annotations.Nullable;
  */
 public interface RecordQualifier<R extends Record> extends Qualified, Fields {
 
-    /**
-     * Get the UDT package if this is a {@link UDT}, or <code>null</code> if it
-     * is not a UDT, or if it is a schema level UDT defined outside of a
-     * package.
-     */
-    @Nullable
-    Package getPackage();
+  /**
+   * Get the UDT package if this is a {@link UDT}, or <code>null</code> if it is not a UDT, or if it
+   * is a schema level UDT defined outside of a package.
+   */
+  @Nullable
+  Package getPackage();
 
-    /**
-     * The record type produced by this {@link UDT} or {@link Table}.
-     */
-    @NotNull
-    Class<? extends R> getRecordType();
+  /** The record type produced by this {@link UDT} or {@link Table}. */
+  @NotNull
+  Class<? extends R> getRecordType();
 
-    /**
-     * The {@link UDT}'s or {@link Table}'s data type as known to the database.
-     */
-    @NotNull
-    DataType<R> getDataType();
+  /** The {@link UDT}'s or {@link Table}'s data type as known to the database. */
+  @NotNull
+  DataType<R> getDataType();
 
-    /**
-     * Create a new {@link Record} of this {@link UDT}'s or {@link Table}'s type.
-     *
-     * @see DSLContext#newRecord(Table)
-     */
-    @NotNull
-    R newRecord();
-
+  /**
+   * Create a new {@link Record} of this {@link UDT}'s or {@link Table}'s type.
+   *
+   * @see DSLContext#newRecord(Table)
+   */
+  @NotNull
+  R newRecord();
 }

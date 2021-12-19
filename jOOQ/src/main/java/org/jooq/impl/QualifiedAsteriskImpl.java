@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,77 +40,63 @@ package org.jooq.impl;
 import static org.jooq.impl.Keywords.K_EXCEPT;
 
 import java.util.Arrays;
-
 import org.jooq.Context;
 import org.jooq.Field;
 import org.jooq.Name;
 import org.jooq.QualifiedAsterisk;
 import org.jooq.Table;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class QualifiedAsteriskImpl extends AbstractQueryPart implements QualifiedAsterisk {
 
-    private final Table<?>        table;
-    final QueryPartList<Field<?>> fields;
+  private final Table<?> table;
+  final QueryPartList<Field<?>> fields;
 
-    QualifiedAsteriskImpl(Table<?> table) {
-        this(table, null);
+  QualifiedAsteriskImpl(Table<?> table) {
+    this(table, null);
+  }
+
+  QualifiedAsteriskImpl(Table<?> table, QueryPartList<Field<?>> fields) {
+    this.table = table;
+    this.fields = fields == null ? new QueryPartList<>() : fields;
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      default:
+        ctx.visit(table).sql('.').visit(AsteriskImpl.INSTANCE);
+
+        // [#7921] H2 has native support for EXCEPT. Emulations are implemented
+        //         in SelectQueryImpl
+        if (!fields.isEmpty()) ctx.sql(' ').visit(K_EXCEPT).sql(" (").visit(fields).sql(')');
+
+        break;
     }
+  }
 
-    QualifiedAsteriskImpl(Table<?> table, QueryPartList<Field<?>> fields) {
-        this.table = table;
-        this.fields = fields == null ? new QueryPartList<>() : fields;
-    }
+  @Override
+  public final Table<?> qualifier() {
+    return table;
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
+  @Override
+  public final QualifiedAsterisk except(String... fieldNames) {
+    return except(Tools.fieldsByName(fieldNames));
+  }
 
+  @Override
+  public final QualifiedAsterisk except(Name... fieldNames) {
+    return except(Tools.fieldsByName(fieldNames));
+  }
 
+  @Override
+  public final QualifiedAsterisk except(Field<?>... f) {
+    QueryPartList<Field<?>> list = new QueryPartList<>();
 
+    list.addAll(fields);
+    list.addAll(Arrays.asList(f));
 
-
-
-
-
-
-
-            default:
-                ctx.visit(table).sql('.').visit(AsteriskImpl.INSTANCE);
-
-                // [#7921] H2 has native support for EXCEPT. Emulations are implemented
-                //         in SelectQueryImpl
-                if (!fields.isEmpty())
-                    ctx.sql(' ').visit(K_EXCEPT).sql(" (").visit(fields).sql(')');
-
-                break;
-        }
-    }
-
-    @Override
-    public final Table<?> qualifier() {
-        return table;
-    }
-
-    @Override
-    public final QualifiedAsterisk except(String... fieldNames) {
-        return except(Tools.fieldsByName(fieldNames));
-    }
-
-    @Override
-    public final QualifiedAsterisk except(Name... fieldNames) {
-        return except(Tools.fieldsByName(fieldNames));
-    }
-
-    @Override
-    public final QualifiedAsterisk except(Field<?>... f) {
-        QueryPartList<Field<?>> list = new QueryPartList<>();
-
-        list.addAll(fields);
-        list.addAll(Arrays.asList(f));
-
-        return new QualifiedAsteriskImpl(table, list);
-    }
+    return new QualifiedAsteriskImpl(table, list);
+  }
 }

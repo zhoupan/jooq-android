@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,40 +44,31 @@ package org.jooq.meta;
  */
 public interface SequenceDefinition extends TypedElementDefinition<SchemaDefinition> {
 
-    /**
-     * Get the start value for this sequence or <code>null</code>, if no such
-     * value is specified.
-     */
-    Number getStartWith();
+  /** Get the start value for this sequence or <code>null</code>, if no such value is specified. */
+  Number getStartWith();
 
-    /**
-     * Get the increment for this sequence or <code>null</code>, if no such
-     * value is specified.
-     */
-    Number getIncrementBy();
+  /** Get the increment for this sequence or <code>null</code>, if no such value is specified. */
+  Number getIncrementBy();
 
-    /**
-     * Get the minimum value for this sequence or <code>null</code>, if no such
-     * value is specified.
-     */
-    Number getMinvalue();
+  /**
+   * Get the minimum value for this sequence or <code>null</code>, if no such value is specified.
+   */
+  Number getMinvalue();
 
-    /**
-     * Get the maximum value for this sequence or <code>null</code>, if no such
-     * value is specified.
-     */
-    Number getMaxvalue();
+  /**
+   * Get the maximum value for this sequence or <code>null</code>, if no such value is specified.
+   */
+  Number getMaxvalue();
 
-    /**
-     * Returns {@code true} if this sequence cycles to {@link #getMinvalue()}
-     * when it reaches {@link #getMaxvalue()}.
-     */
-    boolean getCycle();
+  /**
+   * Returns {@code true} if this sequence cycles to {@link #getMinvalue()} when it reaches {@link
+   * #getMaxvalue()}.
+   */
+  boolean getCycle();
 
-    /**
-     * Get the number of sequence values to cache for this sequence or
-     * <code>null</code>, if no such value is specified.
-     */
-    Number getCache();
-
+  /**
+   * Get the number of sequence values to cache for this sequence or <code>null</code>, if no such
+   * value is specified.
+   */
+  Number getCache();
 }

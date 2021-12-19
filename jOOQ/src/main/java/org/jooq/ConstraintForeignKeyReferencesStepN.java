@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,65 +40,64 @@ package org.jooq;
 import java.util.Collection;
 
 /**
- * The step in the {@link Constraint} construction DSL API that allows for
- * matching a <code>FOREIGN KEY</code> clause with a <code>REFERENCES</code>
- * clause.
+ * The step in the {@link Constraint} construction DSL API that allows for matching a <code>
+ * FOREIGN KEY</code> clause with a <code>REFERENCES</code> clause.
  *
  * @author Lukas Eder
  */
 public interface ConstraintForeignKeyReferencesStepN {
 
-    /**
-     * Add a <code>REFERENCES</code> clause to the <code>CONSTRAINT</code>,
-     * implicitly referencing the primary key.
-     */
-    ConstraintForeignKeyOnStep references(String table);
+  /**
+   * Add a <code>REFERENCES</code> clause to the <code>CONSTRAINT</code>, implicitly referencing the
+   * primary key.
+   */
+  ConstraintForeignKeyOnStep references(String table);
 
-    /**
-     * Add a <code>REFERENCES</code> clause to the <code>CONSTRAINT</code>,
-     * referencing a key by column names.
-     */
-    ConstraintForeignKeyOnStep references(String table, String... fields);
+  /**
+   * Add a <code>REFERENCES</code> clause to the <code>CONSTRAINT</code>, referencing a key by
+   * column names.
+   */
+  ConstraintForeignKeyOnStep references(String table, String... fields);
 
-    /**
-     * Add a <code>REFERENCES</code> clause to the <code>CONSTRAINT</code>,
-     * referencing a key by column names.
-     */
-    ConstraintForeignKeyOnStep references(String table, Collection<? extends String> fields);
+  /**
+   * Add a <code>REFERENCES</code> clause to the <code>CONSTRAINT</code>, referencing a key by
+   * column names.
+   */
+  ConstraintForeignKeyOnStep references(String table, Collection<? extends String> fields);
 
-    /**
-     * Add a <code>REFERENCES</code> clause to the <code>CONSTRAINT</code>,
-     * implicitly referencing the primary key.
-     */
-    ConstraintForeignKeyOnStep references(Name table);
+  /**
+   * Add a <code>REFERENCES</code> clause to the <code>CONSTRAINT</code>, implicitly referencing the
+   * primary key.
+   */
+  ConstraintForeignKeyOnStep references(Name table);
 
-    /**
-     * Add a <code>REFERENCES</code> clause to the <code>CONSTRAINT</code>,
-     * referencing a key by column names.
-     */
-    ConstraintForeignKeyOnStep references(Name table, Name... fields);
+  /**
+   * Add a <code>REFERENCES</code> clause to the <code>CONSTRAINT</code>, referencing a key by
+   * column names.
+   */
+  ConstraintForeignKeyOnStep references(Name table, Name... fields);
 
-    /**
-     * Add a <code>REFERENCES</code> clause to the <code>CONSTRAINT</code>,
-     * referencing a key by column names.
-     */
-    ConstraintForeignKeyOnStep references(Name table, Collection<? extends Name> fields);
+  /**
+   * Add a <code>REFERENCES</code> clause to the <code>CONSTRAINT</code>, referencing a key by
+   * column names.
+   */
+  ConstraintForeignKeyOnStep references(Name table, Collection<? extends Name> fields);
 
-    /**
-     * Add a <code>REFERENCES</code> clause to the <code>CONSTRAINT</code>,
-     * implicitly referencing the primary key.
-     */
-    ConstraintForeignKeyOnStep references(Table<?> table);
+  /**
+   * Add a <code>REFERENCES</code> clause to the <code>CONSTRAINT</code>, implicitly referencing the
+   * primary key.
+   */
+  ConstraintForeignKeyOnStep references(Table<?> table);
 
-    /**
-     * Add a <code>REFERENCES</code> clause to the <code>CONSTRAINT</code>,
-     * referencing a key by column names.
-     */
-    ConstraintForeignKeyOnStep references(Table<?> table, Field<?>... fields);
+  /**
+   * Add a <code>REFERENCES</code> clause to the <code>CONSTRAINT</code>, referencing a key by
+   * column names.
+   */
+  ConstraintForeignKeyOnStep references(Table<?> table, Field<?>... fields);
 
-    /**
-     * Add a <code>REFERENCES</code> clause to the <code>CONSTRAINT</code>,
-     * referencing a key by column names.
-     */
-    ConstraintForeignKeyOnStep references(Table<?> table, Collection<? extends Field<?>> fields);
+  /**
+   * Add a <code>REFERENCES</code> clause to the <code>CONSTRAINT</code>, referencing a key by
+   * column names.
+   */
+  ConstraintForeignKeyOnStep references(Table<?> table, Collection<? extends Field<?>> fields);
 }

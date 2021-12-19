@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,7 @@
  */
 package org.jooq.impl;
 
+import static org.jooq.SQLDialect.*;
 import static org.jooq.impl.DSL.*;
 import static org.jooq.impl.Internal.*;
 import static org.jooq.impl.Keywords.*;
@@ -46,104 +47,59 @@ import static org.jooq.impl.Tools.*;
 import static org.jooq.impl.Tools.BooleanDataKey.*;
 import static org.jooq.impl.Tools.DataExtendedKey.*;
 import static org.jooq.impl.Tools.DataKey.*;
-import static org.jooq.SQLDialect.*;
-
-import org.jooq.*;
-import org.jooq.Record;
-import org.jooq.conf.*;
-import org.jooq.impl.*;
-import org.jooq.tools.*;
 
 import java.util.*;
+import org.jooq.*;
+import org.jooq.conf.*;
+import org.jooq.tools.*;
 
+/** The <code>SPACE</code> statement. */
+@SuppressWarnings({"rawtypes", "unused"})
+final class Space extends AbstractField<String> {
 
-/**
- * The <code>SPACE</code> statement.
- */
-@SuppressWarnings({ "rawtypes", "unused" })
-final class Space
-extends
-    AbstractField<String>
-{
+  private final Field<? extends Number> count;
 
-    private final Field<? extends Number> count;
+  Space(Field<? extends Number> count) {
+    super(N_SPACE, allNotNull(VARCHAR, count));
 
-    Space(
-        Field<? extends Number> count
-    ) {
-        super(
-            N_SPACE,
-            allNotNull(VARCHAR, count)
-        );
+    this.count = nullSafeNotNull(count, INTEGER);
+  }
 
-        this.count = nullSafeNotNull(count, INTEGER);
-    }
+  // -------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // -------------------------------------------------------------------------
 
-    // -------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // -------------------------------------------------------------------------
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-
-
-
-
-
-
-            case FIREBIRD:
-            case SQLITE: {
-                // [#10135] Avoid REPEAT() emulation that is too complicated for SPACE(N)
-                ctx.visit(DSL.rpad(DSL.inline(' '), count));
-                break;
-            }
-
-
-
-
-
-            case DERBY:
-            case HSQLDB:
-            case POSTGRES:
-                ctx.visit(DSL.repeat(DSL.inline(" "), count));
-                break;
-
-            default:
-                ctx.visit(function(N_SPACE, getDataType(), count));
-                break;
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case FIREBIRD:
+      case SQLITE:
+        {
+          // [#10135] Avoid REPEAT() emulation that is too complicated for SPACE(N)
+          ctx.visit(DSL.rpad(DSL.inline(' '), count));
+          break;
         }
+
+      case DERBY:
+      case HSQLDB:
+      case POSTGRES:
+        ctx.visit(DSL.repeat(DSL.inline(" "), count));
+        break;
+
+      default:
+        ctx.visit(function(N_SPACE, getDataType(), count));
+        break;
     }
+  }
 
+  // -------------------------------------------------------------------------
+  // The Object API
+  // -------------------------------------------------------------------------
 
-
-
-
-
-
-
-
-
-
-
-    // -------------------------------------------------------------------------
-    // The Object API
-    // -------------------------------------------------------------------------
-
-    @Override
-    public boolean equals(Object that) {
-        if (that instanceof Space) {
-            return
-                StringUtils.equals(count, ((Space) that).count)
-            ;
-        }
-        else
-            return super.equals(that);
-    }
+  @Override
+  public boolean equals(Object that) {
+    if (that instanceof Space) {
+      return StringUtils.equals(count, ((Space) that).count);
+    } else return super.equals(that);
+  }
 }

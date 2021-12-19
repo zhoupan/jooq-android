@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,43 +39,41 @@ package org.jooq;
 
 /**
  * This type is used for the {@link Delete}'s DSL API.
- * <p>
- * Example: <code><pre>
+ *
+ * <p>Example: <code><pre>
  * DSLContext create = DSL.using(configuration);
  *
  * create.delete(table)
  *       .where(field1.greaterThan(100))
  *       .execute();
  * </pre></code>
- * <p>
- * This implemented differently for every dialect:
+ *
+ * <p>This implemented differently for every dialect:
+ *
  * <ul>
- * <li>Firebird and Postgres have native support for
- * <code>UPDATE .. RETURNING</code> clauses</li>
- * <li>DB2 allows to execute
- * <code>SELECT .. FROM FINAL TABLE (DELETE ...)</code></li>
+ *   <li>Firebird and Postgres have native support for <code>UPDATE .. RETURNING</code> clauses
+ *   <li>DB2 allows to execute <code>SELECT .. FROM FINAL TABLE (DELETE ...)</code>
  * </ul>
+ *
  * <p>
+ *
  * <h3>Referencing <code>XYZ*Step</code> types directly from client code</h3>
- * <p>
- * It is usually not recommended to reference any <code>XYZ*Step</code> types
- * directly from client code, or assign them to local variables. When writing
- * dynamic SQL, creating a statement's components dynamically, and passing them
- * to the DSL API statically is usually a better choice. See the manual's
- * section about dynamic SQL for details: <a href=
+ *
+ * <p>It is usually not recommended to reference any <code>XYZ*Step</code> types directly from
+ * client code, or assign them to local variables. When writing dynamic SQL, creating a statement's
+ * components dynamically, and passing them to the DSL API statically is usually a better choice.
+ * See the manual's section about dynamic SQL for details: <a href=
  * "https://www.jooq.org/doc/latest/manual/sql-building/dynamic-sql">https://www.jooq.org/doc/latest/manual/sql-building/dynamic-sql</a>.
- * <p>
- * Drawbacks of referencing the <code>XYZ*Step</code> types directly:
+ *
+ * <p>Drawbacks of referencing the <code>XYZ*Step</code> types directly:
+ *
  * <ul>
- * <li>They're operating on mutable implementations (as of jOOQ 3.x)</li>
- * <li>They're less composable and not easy to get right when dynamic SQL gets
- * complex</li>
- * <li>They're less readable</li>
- * <li>They might have binary incompatible changes between minor releases</li>
+ *   <li>They're operating on mutable implementations (as of jOOQ 3.x)
+ *   <li>They're less composable and not easy to get right when dynamic SQL gets complex
+ *   <li>They're less readable
+ *   <li>They might have binary incompatible changes between minor releases
  * </ul>
  *
  * @author Lukas Eder
  */
-public interface DeleteResultStep<R extends Record> extends ResultQuery<R> {
-
-}
+public interface DeleteResultStep<R extends Record> extends ResultQuery<R> {}

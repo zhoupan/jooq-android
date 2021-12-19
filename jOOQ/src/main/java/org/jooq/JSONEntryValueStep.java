@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,21 +46,15 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface JSONEntryValueStep {
 
-    /**
-     * The JSON entry value.
-     */
-    @NotNull
-    <T> JSONEntry<T> value(T value);
+  /** The JSON entry value. */
+  @NotNull
+  <T> JSONEntry<T> value(T value);
 
-    /**
-     * The JSON entry value.
-     */
-    @NotNull
-    <T> JSONEntry<T> value(Field<T> value);
+  /** The JSON entry value. */
+  @NotNull
+  <T> JSONEntry<T> value(Field<T> value);
 
-    /**
-     * The JSON entry value.
-     */
-    @NotNull
-    <T> JSONEntry<T> value(Select<? extends Record1<T>> value);
+  /** The JSON entry value. */
+  @NotNull
+  <T> JSONEntry<T> value(Select<? extends Record1<T>> value);
 }

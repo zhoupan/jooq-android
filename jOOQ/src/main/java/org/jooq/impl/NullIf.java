@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,40 +38,30 @@
 package org.jooq.impl;
 
 import static org.jooq.impl.DSL.function;
-import static org.jooq.impl.Keywords.K_NULL;
-import static org.jooq.impl.Names.N_IIF;
 import static org.jooq.impl.Names.N_NULLIF;
 
 import org.jooq.Context;
 import org.jooq.Field;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class NullIf<T> extends AbstractField<T> {
 
-    private final Field<T>    arg1;
-    private final Field<T>    arg2;
+  private final Field<T> arg1;
+  private final Field<T> arg2;
 
-    NullIf(Field<T> arg1, Field<T> arg2) {
-        super(N_NULLIF, arg1.getDataType().null_());
+  NullIf(Field<T> arg1, Field<T> arg2) {
+    super(N_NULLIF, arg1.getDataType().null_());
 
-        this.arg1 = arg1;
-        this.arg2 = arg2;
+    this.arg1 = arg1;
+    this.arg2 = arg2;
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      default:
+        ctx.visit(function(N_NULLIF, getDataType(), arg1, arg2));
+        break;
     }
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-            default:
-                ctx.visit(function(N_NULLIF, getDataType(), arg1, arg2));
-                break;
-        }
-    }
+  }
 }

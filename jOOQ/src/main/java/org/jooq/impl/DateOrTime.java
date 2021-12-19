@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -48,62 +48,48 @@ import org.jooq.DataType;
 import org.jooq.Field;
 import org.jooq.Keyword;
 
-
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class DateOrTime<T> extends AbstractField<T> {
 
-    private final Field<?>    field;
+  private final Field<?> field;
 
-    DateOrTime(Field<?> field, DataType<T> dataType) {
-        super(DSL.name(name(dataType)), dataType);
+  DateOrTime(Field<?> field, DataType<T> dataType) {
+    super(DSL.name(name(dataType)), dataType);
 
-        this.field = field;
-    }
+    this.field = field;
+  }
 
-    private static String name(DataType<?> dataType) {
-        return dataType.isDate()
-             ? "date"
-             : dataType.isTime()
-             ? "time"
-             : "timestamp";
-    }
+  private static String name(DataType<?> dataType) {
+    return dataType.isDate() ? "date" : dataType.isTime() ? "time" : "timestamp";
+  }
 
-    private static Keyword keyword(DataType<?> dataType) {
-        return dataType.isDate()
-             ? K_DATE
-             : dataType.isTime()
-             ? K_TIME
-             : K_TIMESTAMP;
-    }
+  private static Keyword keyword(DataType<?> dataType) {
+    return dataType.isDate() ? K_DATE : dataType.isTime() ? K_TIME : K_TIMESTAMP;
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case DERBY:
+      case MARIADB:
+      case MYSQL:
+        ctx.visit(keyword(getDataType())).sql('(').visit(field).sql(')');
+        break;
 
+      case SQLITE:
+        {
+          if (getDataType().isDate()) ctx.visit(K_DATE).sql('(').visit(field).sql(')');
+          else if (getDataType().isTime())
+            // [#8733] No fractional seconds for time literals
+            ctx.visit(K_TIME).sql('(').visit(field).sql(')');
+          else ctx.visit(N_STRFTIME).sql("('%Y-%m-%d %H:%M:%f', ").visit(field).sql(')');
 
-            case DERBY:
-            case MARIADB:
-            case MYSQL:
-                ctx.visit(keyword(getDataType())).sql('(').visit(field).sql(')');
-                break;
-
-            case SQLITE: {
-                if (getDataType().isDate())
-                    ctx.visit(K_DATE).sql('(').visit(field).sql(')');
-                else if (getDataType().isTime())
-                    // [#8733] No fractional seconds for time literals
-                    ctx.visit(K_TIME).sql('(').visit(field).sql(')');
-                else
-                    ctx.visit(N_STRFTIME).sql("('%Y-%m-%d %H:%M:%f', ").visit(field).sql(')');
-
-                break;
-            }
-
-            default:
-                ctx.visit(castIfNeeded(field, getDataType()));
-                break;
+          break;
         }
+
+      default:
+        ctx.visit(castIfNeeded(field, getDataType()));
+        break;
     }
+  }
 }

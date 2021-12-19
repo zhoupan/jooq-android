@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,7 @@
  */
 package org.jooq.impl;
 
+import static org.jooq.SQLDialect.*;
 import static org.jooq.impl.DSL.*;
 import static org.jooq.impl.Internal.*;
 import static org.jooq.impl.Keywords.*;
@@ -46,88 +47,46 @@ import static org.jooq.impl.Tools.*;
 import static org.jooq.impl.Tools.BooleanDataKey.*;
 import static org.jooq.impl.Tools.DataExtendedKey.*;
 import static org.jooq.impl.Tools.DataKey.*;
-import static org.jooq.SQLDialect.*;
 
+import java.math.BigDecimal;
+import java.util.*;
 import org.jooq.*;
-import org.jooq.Record;
 import org.jooq.conf.*;
-import org.jooq.impl.*;
 import org.jooq.tools.*;
 
-import java.util.*;
-import java.math.BigDecimal;
+/** The <code>ATAN</code> statement. */
+@SuppressWarnings({"rawtypes", "unused"})
+final class Atan extends AbstractField<BigDecimal> {
 
+  private final Field<? extends Number> number;
 
-/**
- * The <code>ATAN</code> statement.
- */
-@SuppressWarnings({ "rawtypes", "unused" })
-final class Atan
-extends
-    AbstractField<BigDecimal>
-{
+  Atan(Field<? extends Number> number) {
+    super(N_ATAN, allNotNull(NUMERIC, number));
 
-    private final Field<? extends Number> number;
+    this.number = nullSafeNotNull(number, INTEGER);
+  }
 
-    Atan(
-        Field<? extends Number> number
-    ) {
-        super(
-            N_ATAN,
-            allNotNull(NUMERIC, number)
-        );
+  // -------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // -------------------------------------------------------------------------
 
-        this.number = nullSafeNotNull(number, INTEGER);
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      default:
+        ctx.visit(function(N_ATAN, getDataType(), number));
+        break;
     }
+  }
 
-    // -------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // The Object API
+  // -------------------------------------------------------------------------
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-
-
-
-
-
-
-            default:
-                ctx.visit(function(N_ATAN, getDataType(), number));
-                break;
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-    // -------------------------------------------------------------------------
-    // The Object API
-    // -------------------------------------------------------------------------
-
-    @Override
-    public boolean equals(Object that) {
-        if (that instanceof Atan) {
-            return
-                StringUtils.equals(number, ((Atan) that).number)
-            ;
-        }
-        else
-            return super.equals(that);
-    }
+  @Override
+  public boolean equals(Object that) {
+    if (that instanceof Atan) {
+      return StringUtils.equals(number, ((Atan) that).number);
+    } else return super.equals(that);
+  }
 }

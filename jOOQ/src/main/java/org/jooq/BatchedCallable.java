@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,9 +43,8 @@ import org.jooq.tools.jdbc.BatchedConnection;
 import org.jooq.tools.jdbc.BatchedPreparedStatement;
 
 /**
- * An operation that can run code and statements, buffering all consecutive and
- * identical SQL strings in a {@link BatchedPreparedStatement}, delaying their
- * execution.
+ * An operation that can run code and statements, buffering all consecutive and identical SQL
+ * strings in a {@link BatchedPreparedStatement}, delaying their execution.
  *
  * @author Lukas Eder
  * @see BatchedConnection BatchedConnection for details.
@@ -53,20 +52,17 @@ import org.jooq.tools.jdbc.BatchedPreparedStatement;
 @FunctionalInterface
 public interface BatchedCallable<T> {
 
-    /**
-     * Run statements.
-     * <p>
-     * Implementations may freely use the argument {@link Configuration} to run
-     * statements against the database. All statements are executed on a
-     * {@link BatchedConnection}.
-     *
-     * @param configuration The configuration configured with a
-     *            {@link BatchedConnection}.
-     * @return The outcome of the callable.
-     * @throws Throwable Any exception, including {@link SQLException}, that
-     *             will be propagated as an unchecked
-     *             {@link DataAccessException}.
-     * @see BatchedConnection BatchedConnection for details.
-     */
-    T run(Configuration configuration) throws Throwable;
+  /**
+   * Run statements.
+   *
+   * <p>Implementations may freely use the argument {@link Configuration} to run statements against
+   * the database. All statements are executed on a {@link BatchedConnection}.
+   *
+   * @param configuration The configuration configured with a {@link BatchedConnection}.
+   * @return The outcome of the callable.
+   * @throws Throwable Any exception, including {@link SQLException}, that will be propagated as an
+   *     unchecked {@link DataAccessException}.
+   * @see BatchedConnection BatchedConnection for details.
+   */
+  T run(Configuration configuration) throws Throwable;
 }

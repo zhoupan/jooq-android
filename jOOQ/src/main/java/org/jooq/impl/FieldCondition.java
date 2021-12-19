@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,49 +43,34 @@ import org.jooq.Clause;
 import org.jooq.Context;
 import org.jooq.Field;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class FieldCondition extends AbstractCondition {
-    final Field<Boolean>      field;
+  final Field<Boolean> field;
 
-    FieldCondition(Field<Boolean> field) {
-        this.field = field;
+  FieldCondition(Field<Boolean> field) {
+    this.field = field;
+  }
+
+  @Override
+  public void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+
+        // [#2485] Some of these don't work nicely, yet
+
+      case CUBRID:
+      case FIREBIRD:
+        ctx.visit(field.eq(inline(true, field.getDataType())));
+        break;
+
+      default:
+        ctx.visit(
+            Tools.hasDefaultConverter(field) ? field : field.eq(inline(true, field.getDataType())));
+        break;
     }
+  }
 
-    @Override
-    public void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-            // [#2485] Some of these don't work nicely, yet
-
-
-
-
-
-
-
-
-
-            case CUBRID:
-            case FIREBIRD:
-                ctx.visit(field.eq(inline(true, field.getDataType())));
-                break;
-
-            default:
-                ctx.visit(Tools.hasDefaultConverter(field) ? field : field.eq(inline(true, field.getDataType())));
-                break;
-        }
-    }
-
-    @Override // Avoid AbstractCondition implementation
-    public final Clause[] clauses(Context<?> ctx) {
-        return null;
-    }
-
+  @Override // Avoid AbstractCondition implementation
+  public final Clause[] clauses(Context<?> ctx) {
+    return null;
+  }
 }

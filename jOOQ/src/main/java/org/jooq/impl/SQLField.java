@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,30 +44,24 @@ import org.jooq.SQL;
 
 final class SQLField<T> extends AbstractField<T> {
 
-    private final QueryPart delegate;
+  private final QueryPart delegate;
 
-    SQLField(DataType<T> type, SQL delegate) {
-        super(DSL.unquotedName(delegate.toString()), type);
+  SQLField(DataType<T> type, SQL delegate) {
+    super(DSL.unquotedName(delegate.toString()), type);
 
-        this.delegate = delegate;
+    this.delegate = delegate;
+  }
+
+  // ------------------------------------------------------------------------
+  // Field API
+  // ------------------------------------------------------------------------
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      default:
+        ctx.visit(delegate);
+        break;
     }
-
-    // ------------------------------------------------------------------------
-    // Field API
-    // ------------------------------------------------------------------------
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-            default:
-                ctx.visit(delegate);
-                break;
-        }
-    }
+  }
 }

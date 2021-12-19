@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,24 +40,21 @@ package org.jooq;
 import java.util.function.Consumer;
 
 /**
- * A <code>RecordHandler</code> is a handler that can receive {@link Record}
- * objects, when fetching data from the database.
+ * A <code>RecordHandler</code> is a handler that can receive {@link Record} objects, when fetching
+ * data from the database.
  *
  * @author Lukas Eder
- * @deprecated - 3.15.0 - [#11902] - Use {@link Iterable#forEach(Consumer)}
- *             based methods, instead.
+ * @deprecated - 3.15.0 - [#11902] - Use {@link Iterable#forEach(Consumer)} based methods, instead.
  */
 @Deprecated(forRemoval = true, since = "3.15")
 @FunctionalInterface
 public interface RecordHandler<R extends Record> extends Consumer<R> {
 
-    /**
-     * A callback method indicating that the next record has been fetched.
-     */
-    void next(R record);
+  /** A callback method indicating that the next record has been fetched. */
+  void next(R record);
 
-    @Override
-    default void accept(R record) {
-        next(record);
-    }
+  @Override
+  default void accept(R record) {
+    next(record);
+  }
 }

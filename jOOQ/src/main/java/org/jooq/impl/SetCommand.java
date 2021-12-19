@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,7 @@
  */
 package org.jooq.impl;
 
+import static org.jooq.SQLDialect.*;
 import static org.jooq.impl.DSL.*;
 import static org.jooq.impl.Internal.*;
 import static org.jooq.impl.Keywords.*;
@@ -46,64 +47,56 @@ import static org.jooq.impl.Tools.*;
 import static org.jooq.impl.Tools.BooleanDataKey.*;
 import static org.jooq.impl.Tools.DataExtendedKey.*;
 import static org.jooq.impl.Tools.DataKey.*;
-import static org.jooq.SQLDialect.*;
-
-import org.jooq.*;
-import org.jooq.Record;
-import org.jooq.conf.*;
-import org.jooq.impl.*;
-import org.jooq.tools.*;
 
 import java.util.*;
+import org.jooq.*;
+import org.jooq.conf.*;
+import org.jooq.tools.*;
 
+/** The <code>SET</code> statement. */
+@SuppressWarnings({"rawtypes", "unused"})
+final class SetCommand extends AbstractDDLQuery {
 
-/**
- * The <code>SET</code> statement.
- */
-@SuppressWarnings({ "rawtypes", "unused" })
-final class SetCommand
-extends
-    AbstractDDLQuery
-{
+  private final Name name;
+  private final Param<?> value;
+  private final boolean setLocal;
 
-    private final Name     name;
-    private final Param<?> value;
-    private final boolean  setLocal;
+  SetCommand(Configuration configuration, Name name, Param<?> value, boolean setLocal) {
+    super(configuration);
 
-    SetCommand(
-        Configuration configuration,
-        Name name,
-        Param<?> value,
-        boolean setLocal
-    ) {
-        super(configuration);
+    this.name = name;
+    this.value = value;
+    this.setLocal = setLocal;
+  }
 
-        this.name = name;
-        this.value = value;
-        this.setLocal = setLocal;
-    }
+  final Name $name() {
+    return name;
+  }
 
-    final Name     $name()     { return name; }
-    final Param<?> $value()    { return value; }
-    final boolean  $setLocal() { return setLocal; }
+  final Param<?> $value() {
+    return value;
+  }
 
-    // -------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // -------------------------------------------------------------------------
+  final boolean $setLocal() {
+    return setLocal;
+  }
 
+  // -------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // -------------------------------------------------------------------------
 
+  private static final Set<SQLDialect> NO_SUPPORT_BIND_VALUES = SQLDialect.supportedBy(POSTGRES);
 
-    private static final Set<SQLDialect> NO_SUPPORT_BIND_VALUES = SQLDialect.supportedBy(POSTGRES);
+  @Override
+  public final void accept(Context<?> ctx) {
+    ctx.visit(K_SET);
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        ctx.visit(K_SET);
+    if (setLocal) ctx.sql(' ').visit(K_LOCAL);
 
-        if (setLocal)
-            ctx.sql(' ').visit(K_LOCAL);
-
-        ctx.sql(' ').visit(name).sql(" = ").paramTypeIf(ParamType.INLINED, NO_SUPPORT_BIND_VALUES.contains(ctx.dialect()), c -> c.visit(value));
-    }
-
-
+    ctx.sql(' ')
+        .visit(name)
+        .sql(" = ")
+        .paramTypeIf(
+            ParamType.INLINED, NO_SUPPORT_BIND_VALUES.contains(ctx.dialect()), c -> c.visit(value));
+  }
 }

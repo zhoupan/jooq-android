@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,14 +35,11 @@
  *
  *
  */
-
 package org.jooq.meta;
 
 import static java.util.Arrays.asList;
 
-import java.util.Arrays;
 import java.util.List;
-
 import org.jooq.tools.StringUtils;
 
 /**
@@ -52,39 +49,38 @@ import org.jooq.tools.StringUtils;
  */
 public class CatalogDefinition extends AbstractDefinition {
 
-	public CatalogDefinition(Database database, String name, String comment) {
-		super(database, null, name, comment);
-	}
+  public CatalogDefinition(Database database, String name, String comment) {
+    super(database, null, name, comment);
+  }
 
-	@Override
-    public final CatalogDefinition getCatalog() {
-        return this;
-    }
+  @Override
+  public final CatalogDefinition getCatalog() {
+    return this;
+  }
 
-    public final List<SchemaDefinition> getSchemata() {
-	    return getDatabase().getSchemata(this);
-	}
+  public final List<SchemaDefinition> getSchemata() {
+    return getDatabase().getSchemata(this);
+  }
 
-	public final SchemaDefinition getSchema(String name) {
-	    for (SchemaDefinition schema : getSchemata())
-	        if (schema.getInputName().equals(name))
-	            return schema;
+  public final SchemaDefinition getSchema(String name) {
+    for (SchemaDefinition schema : getSchemata())
+      if (schema.getInputName().equals(name)) return schema;
 
-	    return null;
-	}
+    return null;
+  }
 
-    @SuppressWarnings("deprecation")
-    @Override
-    public final String getOutputName() {
-        return getDatabase().getOutputCatalog(getInputName());
-    }
+  @SuppressWarnings("deprecation")
+  @Override
+  public final String getOutputName() {
+    return getDatabase().getOutputCatalog(getInputName());
+  }
 
-    @Override
-    public final List<Definition> getDefinitionPath() {
-        return asList(this);
-    }
+  @Override
+  public final List<Definition> getDefinitionPath() {
+    return asList(this);
+  }
 
-    public boolean isDefaultCatalog() {
-        return StringUtils.isBlank(getOutputName());
-    }
+  public boolean isDefaultCatalog() {
+    return StringUtils.isBlank(getOutputName());
+  }
 }

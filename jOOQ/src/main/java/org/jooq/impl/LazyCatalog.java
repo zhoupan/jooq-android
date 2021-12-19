@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,7 +39,6 @@ package org.jooq.impl;
 
 import java.util.List;
 import java.util.stream.Stream;
-
 import org.jooq.Catalog;
 import org.jooq.Context;
 import org.jooq.Internal;
@@ -47,66 +46,65 @@ import org.jooq.Name;
 import org.jooq.Schema;
 
 /**
- * A schema that references a lazy initialisable {@link Catalog} singleton, for
- * use in generated code.
+ * A schema that references a lazy initialisable {@link Catalog} singleton, for use in generated
+ * code.
  *
  * @author Lukas Eder
  */
 @Internal
 public final class LazyCatalog extends AbstractNamed implements Catalog {
 
-    final LazySupplier<Catalog> supplier;
-    transient Catalog           catalog;
+  final LazySupplier<Catalog> supplier;
+  transient Catalog catalog;
 
-    public LazyCatalog(Name name, LazySupplier<Catalog> supplier) {
-        super(name, CommentImpl.NO_COMMENT);
+  public LazyCatalog(Name name, LazySupplier<Catalog> supplier) {
+    super(name, CommentImpl.NO_COMMENT);
 
-        this.supplier = supplier;
+    this.supplier = supplier;
+  }
+
+  private final Catalog catalog() {
+    if (catalog == null) {
+      try {
+        catalog = supplier.get();
+      } catch (Exception e) {
+        throw new RuntimeException(e);
+      }
     }
 
-    private final Catalog catalog() {
-        if (catalog == null) {
-            try {
-                catalog = supplier.get();
-            }
-            catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-        }
+    return catalog;
+  }
 
-        return catalog;
-    }
+  // -------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // -------------------------------------------------------------------------
 
-    // -------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // -------------------------------------------------------------------------
+  @Override
+  public final void accept(Context<?> ctx) {
+    ctx.visit(catalog());
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        ctx.visit(catalog());
-    }
+  // -------------------------------------------------------------------------
+  // XXX: Schema API
+  // -------------------------------------------------------------------------
 
-    // -------------------------------------------------------------------------
-    // XXX: Schema API
-    // -------------------------------------------------------------------------
+  @Override
+  public final List<Schema> getSchemas() {
+    return catalog().getSchemas();
+  }
 
-    @Override
-    public final List<Schema> getSchemas() {
-        return catalog().getSchemas();
-    }
+  @Override
+  public final Schema getSchema(String name) {
+    return catalog().getSchema(name);
+  }
 
-    @Override
-    public final Schema getSchema(String name) {
-        return catalog().getSchema(name);
-    }
+  @Override
+  public final Schema getSchema(Name name) {
+    return catalog().getSchema(name);
+  }
 
-    @Override
-    public final Schema getSchema(Name name) {
-        return catalog().getSchema(name);
-    }
-
-    @Override
-    public final Stream<Schema> schemaStream() {
-        return catalog().schemaStream();
-    }
+  @Override
+  public final Stream<Schema> schemaStream() {
+    return catalog().schemaStream();
+  }
 }

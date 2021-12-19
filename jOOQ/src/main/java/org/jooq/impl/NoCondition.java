@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,6 @@
  *
  *
  */
-
 package org.jooq.impl;
 
 import static org.jooq.Clause.CONDITION;
@@ -44,28 +43,26 @@ import static org.jooq.Clause.CONDITION_COMPARISON;
 import org.jooq.Clause;
 import org.jooq.Context;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class NoCondition extends AbstractCondition {
 
-    private static final Clause[] CLAUSES  = { CONDITION, CONDITION_COMPARISON };
-    static final NoCondition      INSTANCE = new NoCondition();
+  private static final Clause[] CLAUSES = {CONDITION, CONDITION_COMPARISON};
+  static final NoCondition INSTANCE = new NoCondition();
 
-    @Override
-    final boolean isNullable() {
-        return false;
-    }
+  @Override
+  final boolean isNullable() {
+    return false;
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        ctx.visit(TrueCondition.INSTANCE);
-    }
+  @Override
+  public final void accept(Context<?> ctx) {
+    ctx.visit(TrueCondition.INSTANCE);
+  }
 
-    @Override
-    public final Clause[] clauses(Context<?> ctx) {
-        return CLAUSES;
-    }
+  @Override
+  public final Clause[] clauses(Context<?> ctx) {
+    return CLAUSES;
+  }
 
-    private NoCondition() {}
+  private NoCondition() {}
 }

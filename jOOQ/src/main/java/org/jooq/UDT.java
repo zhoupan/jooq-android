@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,28 +39,26 @@ package org.jooq;
 
 /**
  * UDT definition.
- * <p>
- * Instances of this type cannot be created directly. They are available from
- * generated code.
+ *
+ * <p>Instances of this type cannot be created directly. They are available from generated code.
  *
  * @param <R> The record type
  * @author Lukas Eder
  */
 public interface UDT<R extends UDTRecord<R>> extends RecordQualifier<R> {
 
-    /**
-     * Whether this data type can be used from SQL statements.
-     */
-    boolean isSQLUsable();
+  /** Whether this data type can be used from SQL statements. */
+  boolean isSQLUsable();
 
-    /**
-     * Whether this data type is a synthetic, structural UDT type.
-     * <p>
-     * This is <code>true</code> for example:
-     * <ul>
-     * <li>For Oracle <code>TAB%ROWTYPE</code> references, which are synthetic
-     * PL/SQL RECORD types in PL/SQL.</li>
-     * </ul>
-     */
-    boolean isSynthetic();
+  /**
+   * Whether this data type is a synthetic, structural UDT type.
+   *
+   * <p>This is <code>true</code> for example:
+   *
+   * <ul>
+   *   <li>For Oracle <code>TAB%ROWTYPE</code> references, which are synthetic PL/SQL RECORD types
+   *       in PL/SQL.
+   * </ul>
+   */
+  boolean isSynthetic();
 }

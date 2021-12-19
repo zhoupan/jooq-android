@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,47 +40,37 @@ package org.jooq.impl;
 import org.jooq.Clause;
 import org.jooq.Configuration;
 import org.jooq.Context;
-import org.jooq.QueryPart;
 import org.jooq.QueryPartInternal;
 import org.jooq.SQL;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class SQLQuery extends AbstractRowCountQuery {
 
-    private final SQL delegate;
+  private final SQL delegate;
 
-    SQLQuery(Configuration configuration, SQL delegate) {
-        super(configuration);
+  SQLQuery(Configuration configuration, SQL delegate) {
+    super(configuration);
 
-        this.delegate = delegate;
+    this.delegate = delegate;
+  }
+
+  // ------------------------------------------------------------------------
+  // Query API
+  // ------------------------------------------------------------------------
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      default:
+        ctx.visit(delegate);
+        break;
     }
+  }
 
-    // ------------------------------------------------------------------------
-    // Query API
-    // ------------------------------------------------------------------------
+  @Override
+  public final Clause[] clauses(Context<?> ctx) {
+    if (delegate instanceof QueryPartInternal) return ((QueryPartInternal) delegate).clauses(ctx);
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-            default:
-                ctx.visit(delegate);
-                break;
-        }
-    }
-
-    @Override
-    public final Clause[] clauses(Context<?> ctx) {
-        if (delegate instanceof QueryPartInternal)
-            return ((QueryPartInternal) delegate).clauses(ctx);
-
-        return null;
-    }
+    return null;
+  }
 }

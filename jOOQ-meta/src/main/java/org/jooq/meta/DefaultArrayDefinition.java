@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,35 +39,37 @@ package org.jooq.meta;
 
 public class DefaultArrayDefinition extends AbstractDefinition implements ArrayDefinition {
 
-    private final DataTypeDefinition     definedType;
-    private transient DataTypeDefinition type;
-    private transient DataTypeDefinition resolvedType;
+  private final DataTypeDefinition definedType;
+  private transient DataTypeDefinition type;
+  private transient DataTypeDefinition resolvedType;
 
-    public DefaultArrayDefinition(SchemaDefinition schema, String name, DataTypeDefinition type) {
-        this(schema, null, name, type);
+  public DefaultArrayDefinition(SchemaDefinition schema, String name, DataTypeDefinition type) {
+    this(schema, null, name, type);
+  }
+
+  public DefaultArrayDefinition(
+      SchemaDefinition schema, PackageDefinition pkg, String name, DataTypeDefinition type) {
+    super(schema.getDatabase(), schema, pkg, name, "", null);
+
+    this.definedType = type;
+  }
+
+  @Override
+  public DataTypeDefinition getElementType() {
+    if (type == null) {
+      type = AbstractTypedElementDefinition.mapDefinedType(this, this, definedType, null);
     }
 
-    public DefaultArrayDefinition(SchemaDefinition schema, PackageDefinition pkg, String name, DataTypeDefinition type) {
-        super(schema.getDatabase(), schema, pkg, name, "", null);
+    return type;
+  }
 
-        this.definedType = type;
+  @Override
+  public DataTypeDefinition getElementType(JavaTypeResolver resolver) {
+    if (resolvedType == null) {
+      resolvedType =
+          AbstractTypedElementDefinition.mapDefinedType(this, this, definedType, resolver);
     }
 
-    @Override
-    public DataTypeDefinition getElementType() {
-        if (type == null) {
-            type = AbstractTypedElementDefinition.mapDefinedType(this, this, definedType, null);
-        }
-
-        return type;
-    }
-
-    @Override
-    public DataTypeDefinition getElementType(JavaTypeResolver resolver) {
-        if (resolvedType == null) {
-            resolvedType = AbstractTypedElementDefinition.mapDefinedType(this, this, definedType, resolver);
-        }
-
-        return resolvedType;
-    }
+    return resolvedType;
+  }
 }

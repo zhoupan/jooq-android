@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,51 +40,46 @@ package org.jooq.impl;
 import static org.jooq.impl.Tools.map;
 
 import java.io.Serializable;
-
-// ...
 import org.jooq.RecordListener;
 import org.jooq.RecordListenerProvider;
 
 /**
  * A default implementation for {@link RecordListenerProvider}.
- * <p>
- * This implementation just wraps an instance of {@link RecordListener}, always
- * providing the same.
+ *
+ * <p>This implementation just wraps an instance of {@link RecordListener}, always providing the
+ * same.
  *
  * @author Lukas Eder
  */
 public class DefaultRecordListenerProvider implements RecordListenerProvider, Serializable {
 
-    /**
-     * The delegate list.
-     */
-    private final RecordListener listener;
+  /** The delegate list. */
+  private final RecordListener listener;
 
-    /**
-     * Convenience method to construct an array of
-     * <code>DefaultRecordListenerProvider</code> from an array of
-     * <code>RecordListener</code> instances.
-     */
-    public static RecordListenerProvider[] providers(RecordListener... listeners) {
-        return map(listeners, DefaultRecordListenerProvider::new, RecordListenerProvider[]::new);
-    }
+  /**
+   * Convenience method to construct an array of <code>DefaultRecordListenerProvider</code> from an
+   * array of <code>RecordListener</code> instances.
+   */
+  public static RecordListenerProvider[] providers(RecordListener... listeners) {
+    return map(listeners, DefaultRecordListenerProvider::new, RecordListenerProvider[]::new);
+  }
 
-    /**
-     * Create a new provider instance from an argument listener.
-     *
-     * @param listener The argument listener.
-     */
-    public DefaultRecordListenerProvider(RecordListener listener) {
-        this.listener = listener;
-    }
+  /**
+   * Create a new provider instance from an argument listener.
+   *
+   * @param listener The argument listener.
+   */
+  public DefaultRecordListenerProvider(RecordListener listener) {
+    this.listener = listener;
+  }
 
-    @Override
-    public final RecordListener provide() {
-        return listener;
-    }
+  @Override
+  public final RecordListener provide() {
+    return listener;
+  }
 
-    @Override
-    public String toString() {
-        return listener.toString();
-    }
+  @Override
+  public String toString() {
+    return listener.toString();
+  }
 }

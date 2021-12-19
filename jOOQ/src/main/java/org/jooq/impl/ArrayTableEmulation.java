@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -54,98 +54,99 @@ import org.jooq.Table;
 import org.jooq.TableOptions;
 
 /**
- * Essentially, this is the same as <code>ArrayTable</code>, except that it
- * emulates unnested arrays using <code>UNION ALL</code>
+ * Essentially, this is the same as <code>ArrayTable</code>, except that it emulates unnested arrays
+ * using <code>UNION ALL</code>
  *
  * @author Lukas Eder
  */
 final class ArrayTableEmulation extends AbstractTable<Record> {
 
-    private final Object[]           array;
-    private final FieldsImpl<Record> field;
-    private final Name               alias;
-    private final Name               fieldAlias;
+  private final Object[] array;
+  private final FieldsImpl<Record> field;
+  private final Name alias;
+  private final Name fieldAlias;
 
-    private transient Table<Record>  table;
+  private transient Table<Record> table;
 
-    ArrayTableEmulation(Object[] array) {
-        this(array, N_ARRAY_TABLE, null);
+  ArrayTableEmulation(Object[] array) {
+    this(array, N_ARRAY_TABLE, null);
+  }
+
+  ArrayTableEmulation(Object[] array, Name alias) {
+    this(array, alias, null);
+  }
+
+  ArrayTableEmulation(Object[] array, Name alias, Name fieldAlias) {
+    super(TableOptions.expression(), alias);
+
+    this.array = array;
+    this.alias = alias;
+    this.fieldAlias = fieldAlias == null ? N_COLUMN_VALUE : fieldAlias;
+    this.field =
+        new FieldsImpl<>(
+            DSL.field(
+                name(alias.last(), this.fieldAlias.last()),
+                DSL.getDataType(array.getClass().getComponentType())));
+  }
+
+  @Override
+  public final Class<? extends Record> getRecordType() {
+    return RecordImplN.class;
+  }
+
+  @Override
+  public final Table<Record> as(Name as) {
+    return new ArrayTableEmulation(array, as);
+  }
+
+  @Override
+  public final Table<Record> as(Name as, Name... fieldAliases) {
+    if (fieldAliases == null) return new ArrayTableEmulation(array, as);
+    else if (fieldAliases.length == 1) return new ArrayTableEmulation(array, as, fieldAliases[0]);
+
+    throw new IllegalArgumentException(
+        "Array table simulations can only have a single field alias");
+  }
+
+  @Override
+  public final boolean declaresTables() {
+
+    // [#1055] Always true, because unnested tables are always aliased.
+    // This is particularly important for simulated unnested arrays
+    return true;
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    ctx.visit(table(ctx.configuration()));
+  }
+
+  @Override
+  final FieldsImpl<Record> fields0() {
+    return field;
+  }
+
+  private final Table<Record> table(Configuration configuration) {
+    if (table == null) {
+      Select<Record> select = null;
+
+      for (Object element : array) {
+
+        // [#1081] Be sure to get the correct cast type also for null
+        Field<?> val = DSL.val(element, field.fields[0].getDataType());
+        Select<Record> subselect = using(configuration).select(val.as(fieldAlias)).select();
+
+        if (select == null) select = subselect;
+        else select = select.unionAll(subselect);
+      }
+
+      // Empty arrays should result in empty tables
+      if (select == null)
+        select = using(configuration).select(one().as(fieldAlias)).select().where(falseCondition());
+
+      table = select.asTable(alias);
     }
 
-    ArrayTableEmulation(Object[] array, Name alias) {
-        this(array, alias, null);
-    }
-
-    ArrayTableEmulation(Object[] array, Name alias, Name fieldAlias) {
-        super(TableOptions.expression(), alias);
-
-        this.array = array;
-        this.alias = alias;
-        this.fieldAlias = fieldAlias == null ? N_COLUMN_VALUE : fieldAlias;
-        this.field = new FieldsImpl<>(DSL.field(name(alias.last(), this.fieldAlias.last()), DSL.getDataType(array.getClass().getComponentType())));
-    }
-
-    @Override
-    public final Class<? extends Record> getRecordType() {
-        return RecordImplN.class;
-    }
-
-    @Override
-    public final Table<Record> as(Name as) {
-        return new ArrayTableEmulation(array, as);
-    }
-
-    @Override
-    public final Table<Record> as(Name as, Name... fieldAliases) {
-        if (fieldAliases == null)
-            return new ArrayTableEmulation(array, as);
-        else if (fieldAliases.length == 1)
-            return new ArrayTableEmulation(array, as, fieldAliases[0]);
-
-        throw new IllegalArgumentException("Array table simulations can only have a single field alias");
-    }
-
-    @Override
-    public final boolean declaresTables() {
-
-        // [#1055] Always true, because unnested tables are always aliased.
-        // This is particularly important for simulated unnested arrays
-        return true;
-    }
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        ctx.visit(table(ctx.configuration()));
-    }
-
-    @Override
-    final FieldsImpl<Record> fields0() {
-        return field;
-    }
-
-    private final Table<Record> table(Configuration configuration) {
-        if (table == null) {
-            Select<Record> select = null;
-
-            for (Object element : array) {
-
-                // [#1081] Be sure to get the correct cast type also for null
-                Field<?> val = DSL.val(element, field.fields[0].getDataType());
-                Select<Record> subselect = using(configuration).select(val.as(fieldAlias)).select();
-
-                if (select == null)
-                    select = subselect;
-                else
-                    select = select.unionAll(subselect);
-            }
-
-            // Empty arrays should result in empty tables
-            if (select == null)
-                select = using(configuration).select(one().as(fieldAlias)).select().where(falseCondition());
-
-            table = select.asTable(alias);
-        }
-
-        return table;
-    }
+    return table;
+  }
 }

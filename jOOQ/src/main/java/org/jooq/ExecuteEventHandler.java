@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,7 +37,6 @@
  */
 package org.jooq;
 
-
 /**
  * An event handler implementing {@link ExecuteListener} events.
  *
@@ -46,8 +45,6 @@ package org.jooq;
 @FunctionalInterface
 public interface ExecuteEventHandler {
 
-    /**
-     * An event has been triggered.
-     */
-    void fire(ExecuteContext context);
+  /** An event has been triggered. */
+  void fire(ExecuteContext context);
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,31 +37,22 @@
  */
 package org.jooq;
 
-import org.jetbrains.annotations.*;
-
-
-// ...
-// ...
 import static org.jooq.SQLDialect.H2;
-// ...
 import static org.jooq.SQLDialect.POSTGRES;
 
+import org.jetbrains.annotations.*;
 import org.jooq.impl.DSL;
 
 /**
- * A step in the construction of {@link DSL#jsonArrayAgg(Field)} or
- * {@link DSL#jsonbArrayAgg(Field)} functions where the <code>RETURNING</code>
- * clause can be defined.
+ * A step in the construction of {@link DSL#jsonArrayAgg(Field)} or {@link DSL#jsonbArrayAgg(Field)}
+ * functions where the <code>RETURNING</code> clause can be defined.
  *
  * @author Lukas Eder
  */
 public interface JSONArrayAggReturningStep<T> extends AggregateFilterStep<T> {
 
-    /**
-     * Add a <code>RETURNING</code> clause to the <code>JSON_ARRAYAGG</code>
-     * function.
-     */
-    @NotNull
-    @Support({ H2, POSTGRES })
-    AggregateFilterStep<T> returning(DataType<?> returning);
+  /** Add a <code>RETURNING</code> clause to the <code>JSON_ARRAYAGG</code> function. */
+  @NotNull
+  @Support({H2, POSTGRES})
+  AggregateFilterStep<T> returning(DataType<?> returning);
 }

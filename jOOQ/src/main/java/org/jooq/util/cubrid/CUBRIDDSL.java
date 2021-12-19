@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,45 +45,42 @@ import org.jooq.impl.DSL;
  * The {@link SQLDialect#CUBRID} specific DSL.
  *
  * @author Lukas Eder
- * @deprecated - 3.13.0 - [#9403] - This dialect is hardly used by anyone with
- *             jOOQ or without jOOQ and will be removed in the near future.
+ * @deprecated - 3.13.0 - [#9403] - This dialect is hardly used by anyone with jOOQ or without jOOQ
+ *     and will be removed in the near future.
  */
 @Deprecated(forRemoval = true, since = "3.13")
 public class CUBRIDDSL extends DSL {
 
-    /**
-     * No instances
-     */
-    protected CUBRIDDSL() {
-    }
+  /** No instances */
+  protected CUBRIDDSL() {}
 
-    // -------------------------------------------------------------------------
-    // MySQL-specific functions
-    // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // MySQL-specific functions
+  // -------------------------------------------------------------------------
 
-    /**
-     * Use the CUBRID-specific <code>INCR()</code> function.
-     * <p>
-     * This function can be used to increment a field value in a
-     * <code>SELECT</code> statement as such: <code><pre>
-     * SELECT article, INCR(read_count)
-     * FROM article_table
-     * WHERE article_id = 130,987</pre></code>
-     */
-    public static <T> Field<T> incr(Field<T> field) {
-        return function("incr", field.getDataType(), field);
-    }
+  /**
+   * Use the CUBRID-specific <code>INCR()</code> function.
+   *
+   * <p>This function can be used to increment a field value in a <code>SELECT</code> statement as
+   * such: <code><pre>
+   * SELECT article, INCR(read_count)
+   * FROM article_table
+   * WHERE article_id = 130,987</pre></code>
+   */
+  public static <T> Field<T> incr(Field<T> field) {
+    return function("incr", field.getDataType(), field);
+  }
 
-    /**
-     * Use the CUBRID-specific <code>DECR()</code> function.
-     * <p>
-     * This function can be used to increment a field value in a
-     * <code>SELECT</code> statement as such: <code><pre>
-     * SELECT article, DECR(read_count)
-     * FROM article_table
-     * WHERE article_id = 130,987</pre></code>
-     */
-    public static <T> Field<T> decr(Field<T> field) {
-        return function("decr", field.getDataType(), field);
-    }
+  /**
+   * Use the CUBRID-specific <code>DECR()</code> function.
+   *
+   * <p>This function can be used to increment a field value in a <code>SELECT</code> statement as
+   * such: <code><pre>
+   * SELECT article, DECR(read_count)
+   * FROM article_table
+   * WHERE article_id = 130,987</pre></code>
+   */
+  public static <T> Field<T> decr(Field<T> field) {
+    return function("decr", field.getDataType(), field);
+  }
 }

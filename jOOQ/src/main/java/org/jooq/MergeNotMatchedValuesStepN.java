@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,29 +38,18 @@
 package org.jooq;
 
 import static org.jooq.SQLDialect.CUBRID;
-// ...
 import static org.jooq.SQLDialect.DERBY;
-// ...
 import static org.jooq.SQLDialect.FIREBIRD;
 import static org.jooq.SQLDialect.H2;
-// ...
 import static org.jooq.SQLDialect.HSQLDB;
-// ...
-// ...
-// ...
-// ...
-// ...
-// ...
-// ...
 
 import java.util.Collection;
-
 import org.jetbrains.annotations.NotNull;
 
 /**
  * This type is used for the {@link Merge}'s DSL API.
- * <p>
- * Example: <code><pre>
+ *
+ * <p>Example: <code><pre>
  * DSLContext create = DSL.using(configuration);
  *
  * create.mergeInto(table)
@@ -78,27 +67,30 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface MergeNotMatchedValuesStepN<R extends Record> {
 
-    /**
-     * Set <code>VALUES</code> for <code>INSERT</code> in the <code>MERGE</code>
-     * statement's <code>WHEN NOT MATCHED THEN INSERT</code> clause.
-     */
-    @NotNull @CheckReturnValue
-    @Support({ CUBRID, DERBY, FIREBIRD, H2, HSQLDB })
-    MergeNotMatchedWhereStep<R> values(Object... values);
+  /**
+   * Set <code>VALUES</code> for <code>INSERT</code> in the <code>MERGE</code> statement's <code>
+   * WHEN NOT MATCHED THEN INSERT</code> clause.
+   */
+  @NotNull
+  @CheckReturnValue
+  @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB})
+  MergeNotMatchedWhereStep<R> values(Object... values);
 
-    /**
-     * Set <code>VALUES</code> for <code>INSERT</code> in the <code>MERGE</code>
-     * statement's <code>WHEN NOT MATCHED THEN INSERT</code> clause.
-     */
-    @NotNull @CheckReturnValue
-    @Support({ CUBRID, DERBY, FIREBIRD, H2, HSQLDB })
-    MergeNotMatchedWhereStep<R> values(Field<?>... values);
+  /**
+   * Set <code>VALUES</code> for <code>INSERT</code> in the <code>MERGE</code> statement's <code>
+   * WHEN NOT MATCHED THEN INSERT</code> clause.
+   */
+  @NotNull
+  @CheckReturnValue
+  @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB})
+  MergeNotMatchedWhereStep<R> values(Field<?>... values);
 
-    /**
-     * Set <code>VALUES</code> for <code>INSERT</code> in the <code>MERGE</code>
-     * statement's <code>WHEN NOT MATCHED THEN INSERT</code> clause.
-     */
-    @NotNull @CheckReturnValue
-    @Support({ CUBRID, DERBY, FIREBIRD, H2, HSQLDB })
-    MergeNotMatchedWhereStep<R> values(Collection<?> values);
+  /**
+   * Set <code>VALUES</code> for <code>INSERT</code> in the <code>MERGE</code> statement's <code>
+   * WHEN NOT MATCHED THEN INSERT</code> clause.
+   */
+  @NotNull
+  @CheckReturnValue
+  @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB})
+  MergeNotMatchedWhereStep<R> values(Collection<?> values);
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -55,9 +55,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import javax.xml.bind.DatatypeConverter;
-
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Fields;
@@ -72,163 +70,174 @@ import org.jooq.tools.json.JSONParser;
  * @author Johannes Bühler
  * @author Lukas Eder
  */
-@SuppressWarnings({ "unchecked", "rawtypes" })
+@SuppressWarnings({"unchecked", "rawtypes"})
 final class JSONReader<R extends Record> {
 
-    private final DSLContext         ctx;
-    private final AbstractRow<R>     row;
-    private final Class<? extends R> recordType;
+  private final DSLContext ctx;
+  private final AbstractRow<R> row;
+  private final Class<? extends R> recordType;
 
-    JSONReader(DSLContext ctx, AbstractRow<R> row, Class<? extends R> recordType) {
-        this.ctx = ctx;
-        this.row = row;
-        this.recordType = recordType != null ? recordType : (Class<? extends R>) Record.class;
-    }
+  JSONReader(DSLContext ctx, AbstractRow<R> row, Class<? extends R> recordType) {
+    this.ctx = ctx;
+    this.row = row;
+    this.recordType = recordType != null ? recordType : (Class<? extends R>) Record.class;
+  }
 
-    final Result<R> read(String string) {
-        return read(new StringReader(string));
-    }
+  final Result<R> read(String string) {
+    return read(new StringReader(string));
+  }
 
-    final Result<R> read(final Reader reader) {
-        return read(reader, false);
-    }
+  final Result<R> read(final Reader reader) {
+    return read(reader, false);
+  }
 
-    final Result<R> read(final Reader reader, boolean multiset) {
-        try {
-            Object root = new JSONParser().parse(reader, new ContainerFactory() {
-                @Override
-                public Map createObjectContainer() {
-                    return new LinkedHashMap();
-                }
-
-                @Override
-                public List createArrayContainer() {
-                    return new ArrayList();
-                }
-            });
-
-            return read(ctx, row, recordType, multiset, root);
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private static final <R extends Record> Result<R> read(
-        DSLContext ctx,
-        AbstractRow<R> actualRow,
-        Class<? extends R> recordType,
-        boolean multiset,
-        Object root
-    ) {
-        List<Field<?>> header = new ArrayList<>();
-
-        List<?> records;
-        Result<R> result = null;
-
-        if (root instanceof Map) {
-            Map<String, Object> o1 = (Map<String, Object>) root;
-            List<Map<String, String>> fields = (List<Map<String, String>>) o1.get("fields");
-
-            if (fields != null) {
-                for (Map<String, String> field : fields) {
-                    String catalog = field.get("catalog");
-                    String schema = field.get("schema");
-                    String table = field.get("table");
-                    String name = field.get("name");
-                    String type = field.get("type");
-
-                    header.add(field(name(catalog, schema, table, name), getDataType(ctx.dialect(), defaultIfBlank(type, "VARCHAR"))));
-                }
-            }
-
-            records = (List<?>) o1.get("records");
-        }
-        else
-            records = (List<?>) root;
-
-        if (actualRow == null && !header.isEmpty())
-            actualRow = (AbstractRow<R>) Tools.row0(header);
-
-        if (actualRow != null)
-            result = new ResultImpl<>(ctx.configuration(), actualRow);
-
-        if (records != null) {
-            for (Object o3 : records) {
-                if (o3 instanceof Map) {
-                    Map<String, Object> record = (Map<String, Object>) o3;
-
-                    if (result == null) {
-                        if (header.isEmpty())
-                            for (String name : record.keySet())
-                                header.add(field(name(name), VARCHAR));
-
-                        result = new ResultImpl<>(ctx.configuration(), actualRow = (AbstractRow<R>) Tools.row0(header));
+  final Result<R> read(final Reader reader, boolean multiset) {
+    try {
+      Object root =
+          new JSONParser()
+              .parse(
+                  reader,
+                  new ContainerFactory() {
+                    @Override
+                    public Map createObjectContainer() {
+                      return new LinkedHashMap();
                     }
 
-                    List<Object> list = multiset
-                        ? patchRecord(
-                            ctx,
-                            multiset,
-                            actualRow,
+                    @Override
+                    public List createArrayContainer() {
+                      return new ArrayList();
+                    }
+                  });
 
-                            // This sort is required if we use the JSONFormat.RecordFormat.OBJECT encoding (e.g. in SQL Server)
-                            record.entrySet().stream().sorted(comparing(Entry::getKey)).map(Entry::getValue).collect(toList())
-                        )
-                        : null;
+      return read(ctx, row, recordType, multiset, root);
+    } catch (Exception e) {
+      throw new RuntimeException(e);
+    }
+  }
 
-                    result.add(newRecord(true, recordType, actualRow, ctx.configuration()).operate(r -> {
-                        if (multiset)
-                            r.from(list);
-                        else
-                            r.fromMap(record);
+  private static final <R extends Record> Result<R> read(
+      DSLContext ctx,
+      AbstractRow<R> actualRow,
+      Class<? extends R> recordType,
+      boolean multiset,
+      Object root) {
+    List<Field<?>> header = new ArrayList<>();
+
+    List<?> records;
+    Result<R> result = null;
+
+    if (root instanceof Map) {
+      Map<String, Object> o1 = (Map<String, Object>) root;
+      List<Map<String, String>> fields = (List<Map<String, String>>) o1.get("fields");
+
+      if (fields != null) {
+        for (Map<String, String> field : fields) {
+          String catalog = field.get("catalog");
+          String schema = field.get("schema");
+          String table = field.get("table");
+          String name = field.get("name");
+          String type = field.get("type");
+
+          header.add(
+              field(
+                  name(catalog, schema, table, name),
+                  getDataType(ctx.dialect(), defaultIfBlank(type, "VARCHAR"))));
+        }
+      }
+
+      records = (List<?>) o1.get("records");
+    } else records = (List<?>) root;
+
+    if (actualRow == null && !header.isEmpty()) actualRow = (AbstractRow<R>) Tools.row0(header);
+
+    if (actualRow != null) result = new ResultImpl<>(ctx.configuration(), actualRow);
+
+    if (records != null) {
+      for (Object o3 : records) {
+        if (o3 instanceof Map) {
+          Map<String, Object> record = (Map<String, Object>) o3;
+
+          if (result == null) {
+            if (header.isEmpty())
+              for (String name : record.keySet()) header.add(field(name(name), VARCHAR));
+
+            result =
+                new ResultImpl<>(
+                    ctx.configuration(), actualRow = (AbstractRow<R>) Tools.row0(header));
+          }
+
+          List<Object> list =
+              multiset
+                  ? patchRecord(
+                      ctx,
+                      multiset,
+                      actualRow,
+
+                      // This sort is required if we use the JSONFormat.RecordFormat.OBJECT encoding
+                      // (e.g. in SQL Server)
+                      record.entrySet().stream()
+                          .sorted(comparing(Entry::getKey))
+                          .map(Entry::getValue)
+                          .collect(toList()))
+                  : null;
+
+          result.add(
+              newRecord(true, recordType, actualRow, ctx.configuration())
+                  .operate(
+                      r -> {
+                        if (multiset) r.from(list);
+                        else r.fromMap(record);
 
                         return r;
-                    }));
-                }
-                else {
-                    List<Object> record = (List<Object>) o3;
+                      }));
+        } else {
+          List<Object> record = (List<Object>) o3;
 
-                    if (result == null) {
-                        if (header.isEmpty())
-                            header.addAll(asList(fields(record.size())));
+          if (result == null) {
+            if (header.isEmpty()) header.addAll(asList(fields(record.size())));
 
-                        result = new ResultImpl<>(ctx.configuration(), actualRow = (AbstractRow<R>) Tools.row0(header));
-                    }
+            result =
+                new ResultImpl<>(
+                    ctx.configuration(), actualRow = (AbstractRow<R>) Tools.row0(header));
+          }
 
-                    patchRecord(ctx, multiset, actualRow, record);
-                    result.add(newRecord(true, recordType, actualRow, ctx.configuration()).operate(r -> {
+          patchRecord(ctx, multiset, actualRow, record);
+          result.add(
+              newRecord(true, recordType, actualRow, ctx.configuration())
+                  .operate(
+                      r -> {
                         r.from(record);
                         return r;
-                    }));
-                }
-            }
+                      }));
         }
-
-        return result;
+      }
     }
 
-    private static final List<Object> patchRecord(DSLContext ctx, boolean multiset, Fields result, List<Object> record) {
-        for (int i = 0; i < result.fields().length; i++) {
-            Field<?> field = result.field(i);
+    return result;
+  }
 
-            // [#8829] LoaderImpl expects binary data to be encoded in base64,
-            //         not according to org.jooq.tools.Convert
-            if (field.getType() == byte[].class && record.get(i) instanceof String)
-                record.set(i, DatatypeConverter.parseBase64Binary((String) record.get(i)));
+  private static final List<Object> patchRecord(
+      DSLContext ctx, boolean multiset, Fields result, List<Object> record) {
+    for (int i = 0; i < result.fields().length; i++) {
+      Field<?> field = result.field(i);
 
-            // [#12155] Recurse for nested data types
-            else if (multiset && field.getDataType().isMultiset())
-                record.set(i, read(
-                    ctx,
-                    (AbstractRow) field.getDataType().getRow(),
-                    (Class) field.getDataType().getRecordType(),
-                    multiset,
-                    record.get(i)
-                ));
-        }
+      // [#8829] LoaderImpl expects binary data to be encoded in base64,
+      //         not according to org.jooq.tools.Convert
+      if (field.getType() == byte[].class && record.get(i) instanceof String)
+        record.set(i, DatatypeConverter.parseBase64Binary((String) record.get(i)));
 
-        return record;
+      // [#12155] Recurse for nested data types
+      else if (multiset && field.getDataType().isMultiset())
+        record.set(
+            i,
+            read(
+                ctx,
+                (AbstractRow) field.getDataType().getRow(),
+                (Class) field.getDataType().getRecordType(),
+                multiset,
+                record.get(i)));
     }
+
+    return record;
+  }
 }
-

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,42 +41,29 @@ import java.util.EventListener;
 
 /**
  * A listener for {@link Migration} lifecycles.
- * <p>
- * This is EXPERIMENTAL functionality and subject to change in future jOOQ
- * versions.
+ *
+ * <p>This is EXPERIMENTAL functionality and subject to change in future jOOQ versions.
  *
  * @author Lukas Eder
  */
 @Internal
 public interface MigrationListener extends EventListener {
 
-    /**
-     * Invoked at the start of a {@link Migration}.
-     */
-    void migrationStart(MigrationContext ctx);
+  /** Invoked at the start of a {@link Migration}. */
+  void migrationStart(MigrationContext ctx);
 
-    /**
-     * Invoked at the end of a {@link Migration}.
-     */
-    void migrationEnd(MigrationContext ctx);
+  /** Invoked at the end of a {@link Migration}. */
+  void migrationEnd(MigrationContext ctx);
 
-    /**
-     * Invoked at the start of a set of {@link Queries} that describe a single version increment.
-     */
-    void queriesStart(MigrationContext ctx);
+  /** Invoked at the start of a set of {@link Queries} that describe a single version increment. */
+  void queriesStart(MigrationContext ctx);
 
-    /**
-     * Invoked at the end of a set of {@link Queries} that describe a single version increment.
-     */
-    void queriesEnd(MigrationContext ctx);
+  /** Invoked at the end of a set of {@link Queries} that describe a single version increment. */
+  void queriesEnd(MigrationContext ctx);
 
-    /**
-     * Invoked at the start of an individual {@link Query}.
-     */
-    void queryStart(MigrationContext ctx);
+  /** Invoked at the start of an individual {@link Query}. */
+  void queryStart(MigrationContext ctx);
 
-    /**
-     * Invoked at the start of an individual {@link Query}.
-     */
-    void queryEnd(MigrationContext ctx);
+  /** Invoked at the start of an individual {@link Query}. */
+  void queryEnd(MigrationContext ctx);
 }

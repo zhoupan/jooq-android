@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,6 @@
  *
  *
  */
-
 package org.jooq.impl;
 
 import static org.jooq.impl.DSL.count;
@@ -54,53 +53,52 @@ import org.jooq.Field;
 import org.jooq.Select;
 import org.jooq.Table;
 
-/**
- * @author Knut Wannheden
- */
+/** @author Knut Wannheden */
 final class UniqueCondition extends AbstractCondition {
 
-    private final Select<?> query;
-    private final boolean   unique;
+  private final Select<?> query;
+  private final boolean unique;
 
-    UniqueCondition(Select<?> query, boolean unique) {
-        this.query = query;
-        this.unique = unique;
+  UniqueCondition(Select<?> query, boolean unique) {
+    this.query = query;
+    this.unique = unique;
+  }
+
+  @Override
+  final boolean isNullable() {
+    return false;
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case H2:
+        if (!unique) ctx.visit(K_NOT).sql(' ');
+
+        ctx.visit(K_UNIQUE).sql(' ');
+        visitSubquery(ctx, query);
+        break;
+
+      default:
+        Table<?> queryTable = query.asTable("t");
+        Field<?>[] queryFields = queryTable.fields();
+        Select<?> subquery =
+            select(one())
+                .from(queryTable)
+                .where(row(queryFields).isNotNull())
+                .groupBy(queryFields)
+                .having(count().gt(one()));
+
+        ctx.visit(unique ? notExists(subquery) : exists(subquery));
+        break;
     }
+  }
 
-    @Override
-    final boolean isNullable() {
-        return false;
-    }
+  @Override
+  public final Condition not() {
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-            case H2:
-                if (!unique)
-                    ctx.visit(K_NOT).sql(' ');
-
-                ctx.visit(K_UNIQUE).sql(' ');
-                visitSubquery(ctx, query);
-                break;
-
-            default:
-                Table<?> queryTable = query.asTable("t");
-                Field<?>[] queryFields = queryTable.fields();
-                Select<?> subquery = select(one())
-                    .from(queryTable)
-                    .where(row(queryFields).isNotNull())
-                    .groupBy(queryFields)
-                    .having(count().gt(one()));
-
-                ctx.visit(unique ? notExists(subquery) : exists(subquery));
-                break;
-        }
-    }
-
-    @Override
-    public final Condition not() {
-
-        // TODO: [#7362] [#10304] Find a better way to prevent double negation and unnecessary parentheses
-        return unique ? new UniqueCondition(query, false) : super.not();
-    }
+    // TODO: [#7362] [#10304] Find a better way to prevent double negation and unnecessary
+    // parentheses
+    return unique ? new UniqueCondition(query, false) : super.not();
+  }
 }

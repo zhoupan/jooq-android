@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,14 +37,10 @@
  */
 package org.jooq.impl;
 
-
 // ...
-import static org.jooq.impl.DSL.val;
-import static org.jooq.impl.SQLDataType.DATE;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-
 import org.jooq.Binding;
 import org.jooq.BindingGetResultSetContext;
 import org.jooq.BindingGetSQLInputContext;
@@ -55,77 +51,62 @@ import org.jooq.BindingSetSQLOutputContext;
 import org.jooq.BindingSetStatementContext;
 import org.jooq.Converter;
 import org.jooq.Converters;
-import org.jooq.RenderContext;
-import org.jooq.SQLDialect;
-import org.jooq.impl.Cast.CastNative;
 
 /**
- * A binding that implements the date-as-timestamp semantics of the jOOQ code
- * generator.
+ * A binding that implements the date-as-timestamp semantics of the jOOQ code generator.
  *
  * @author Lukas Eder
  * @see <a
- *      href="https://github.com/jOOQ/jOOQ/issues/3369">https://github.com/jOOQ/jOOQ/issues/3369</a>
+ *     href="https://github.com/jOOQ/jOOQ/issues/3369">https://github.com/jOOQ/jOOQ/issues/3369</a>
  */
 public class LocalDateAsLocalDateTimeBinding implements Binding<LocalDateTime, LocalDateTime> {
 
-    private final Converter<LocalDateTime, LocalDateTime> converter;
-    private final Binding<LocalDateTime, LocalDateTime>   delegate;
+  private final Converter<LocalDateTime, LocalDateTime> converter;
+  private final Binding<LocalDateTime, LocalDateTime> delegate;
 
-    public LocalDateAsLocalDateTimeBinding() {
-        this.converter = Converters.identity(LocalDateTime.class);
-        this.delegate = DefaultBinding.binding(converter);
-    }
+  public LocalDateAsLocalDateTimeBinding() {
+    this.converter = Converters.identity(LocalDateTime.class);
+    this.delegate = DefaultBinding.binding(converter);
+  }
 
-    @Override
-    public final Converter<LocalDateTime, LocalDateTime> converter() {
-        return converter;
-    }
+  @Override
+  public final Converter<LocalDateTime, LocalDateTime> converter() {
+    return converter;
+  }
 
-    @Override
-    public final void sql(BindingSQLContext<LocalDateTime> ctx) throws SQLException {
+  @Override
+  public final void sql(BindingSQLContext<LocalDateTime> ctx) throws SQLException {
 
+    delegate.sql(ctx);
+  }
 
+  @Override
+  public final void register(BindingRegisterContext<LocalDateTime> ctx) throws SQLException {
+    delegate.register(ctx);
+  }
 
+  @Override
+  public final void set(BindingSetStatementContext<LocalDateTime> ctx) throws SQLException {
+    delegate.set(ctx);
+  }
 
+  @Override
+  public final void set(BindingSetSQLOutputContext<LocalDateTime> ctx) throws SQLException {
+    delegate.set(ctx);
+  }
 
+  @Override
+  public final void get(BindingGetResultSetContext<LocalDateTime> ctx) throws SQLException {
+    delegate.get(ctx);
+  }
 
+  @Override
+  public final void get(BindingGetStatementContext<LocalDateTime> ctx) throws SQLException {
+    delegate.get(ctx);
+  }
 
-
-
-
-
-
-        delegate.sql(ctx);
-    }
-
-    @Override
-    public final void register(BindingRegisterContext<LocalDateTime> ctx) throws SQLException {
-        delegate.register(ctx);
-    }
-
-    @Override
-    public final void set(BindingSetStatementContext<LocalDateTime> ctx) throws SQLException {
-        delegate.set(ctx);
-    }
-
-    @Override
-    public final void set(BindingSetSQLOutputContext<LocalDateTime> ctx) throws SQLException {
-        delegate.set(ctx);
-    }
-
-    @Override
-    public final void get(BindingGetResultSetContext<LocalDateTime> ctx) throws SQLException {
-        delegate.get(ctx);
-    }
-
-    @Override
-    public final void get(BindingGetStatementContext<LocalDateTime> ctx) throws SQLException {
-        delegate.get(ctx);
-    }
-
-    @Override
-    public final void get(BindingGetSQLInputContext<LocalDateTime> ctx) throws SQLException {
-        delegate.get(ctx);
-    }
+  @Override
+  public final void get(BindingGetSQLInputContext<LocalDateTime> ctx) throws SQLException {
+    delegate.get(ctx);
+  }
 }

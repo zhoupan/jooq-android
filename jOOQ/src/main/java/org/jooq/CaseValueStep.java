@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,7 +38,6 @@
 package org.jooq;
 
 import java.util.Map;
-
 import org.jetbrains.annotations.NotNull;
 
 /**
@@ -55,108 +54,95 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface CaseValueStep<V> {
 
-    /**
-     * Compare a value to the already constructed case statement, return result
-     * if values are equal.
-     *
-     * @param <T> The generic result field type parameter
-     * @param compareValue The value to compare with the already constructed
-     *            case statement
-     * @param result The result value if values are equal
-     * @return An intermediary step for case statement construction
-     */
-    @NotNull
-    @Support
-    <T> CaseWhenStep<V, T> when(V compareValue, T result);
+  /**
+   * Compare a value to the already constructed case statement, return result if values are equal.
+   *
+   * @param <T> The generic result field type parameter
+   * @param compareValue The value to compare with the already constructed case statement
+   * @param result The result value if values are equal
+   * @return An intermediary step for case statement construction
+   */
+  @NotNull
+  @Support
+  <T> CaseWhenStep<V, T> when(V compareValue, T result);
 
-    /**
-     * Compare a value to the already constructed case statement, return result
-     * if values are equal.
-     *
-     * @param <T> The generic result field type parameter
-     * @param compareValue The value to compare with the already constructed
-     *            case statement
-     * @param result The result value if values are equal
-     * @return An intermediary step for case statement construction
-     */
-    @NotNull
-    @Support
-    <T> CaseWhenStep<V, T> when(V compareValue, Field<T> result);
+  /**
+   * Compare a value to the already constructed case statement, return result if values are equal.
+   *
+   * @param <T> The generic result field type parameter
+   * @param compareValue The value to compare with the already constructed case statement
+   * @param result The result value if values are equal
+   * @return An intermediary step for case statement construction
+   */
+  @NotNull
+  @Support
+  <T> CaseWhenStep<V, T> when(V compareValue, Field<T> result);
 
-    /**
-     * Compare a value to the already constructed case statement, return result
-     * if values are equal.
-     *
-     * @param <T> The generic result field type parameter
-     * @param compareValue The value to compare with the already constructed
-     *            case statement
-     * @param result The result value if values are equal
-     * @return An intermediary step for case statement construction
-     */
-    @NotNull
-    @Support
-    <T> CaseWhenStep<V, T> when(V compareValue, Select<? extends Record1<T>> result);
+  /**
+   * Compare a value to the already constructed case statement, return result if values are equal.
+   *
+   * @param <T> The generic result field type parameter
+   * @param compareValue The value to compare with the already constructed case statement
+   * @param result The result value if values are equal
+   * @return An intermediary step for case statement construction
+   */
+  @NotNull
+  @Support
+  <T> CaseWhenStep<V, T> when(V compareValue, Select<? extends Record1<T>> result);
 
-    /**
-     * Compare a value to the already constructed case statement, return result
-     * if values are equal.
-     *
-     * @param <T> The generic result field type parameter
-     * @param compareValue The value to compare with the already constructed
-     *            case statement
-     * @param result The result value if values are equal
-     * @return An intermediary step for case statement construction
-     */
-    @NotNull
-    @Support
-    <T> CaseWhenStep<V, T> when(Field<V> compareValue, T result);
+  /**
+   * Compare a value to the already constructed case statement, return result if values are equal.
+   *
+   * @param <T> The generic result field type parameter
+   * @param compareValue The value to compare with the already constructed case statement
+   * @param result The result value if values are equal
+   * @return An intermediary step for case statement construction
+   */
+  @NotNull
+  @Support
+  <T> CaseWhenStep<V, T> when(Field<V> compareValue, T result);
 
-    /**
-     * Compare a value to the already constructed case statement, return result
-     * if values are equal.
-     *
-     * @param <T> The generic result field type parameter
-     * @param compareValue The value to compare with the already constructed
-     *            case statement
-     * @param result The result value if values are equal
-     * @return An intermediary step for case statement construction
-     */
-    @NotNull
-    @Support
-    <T> CaseWhenStep<V, T> when(Field<V> compareValue, Field<T> result);
+  /**
+   * Compare a value to the already constructed case statement, return result if values are equal.
+   *
+   * @param <T> The generic result field type parameter
+   * @param compareValue The value to compare with the already constructed case statement
+   * @param result The result value if values are equal
+   * @return An intermediary step for case statement construction
+   */
+  @NotNull
+  @Support
+  <T> CaseWhenStep<V, T> when(Field<V> compareValue, Field<T> result);
 
-    /**
-     * Compare a value to the already constructed case statement, return result
-     * if values are equal.
-     *
-     * @param <T> The generic result field type parameter
-     * @param compareValue The value to compare with the already constructed
-     *            case statement
-     * @param result The result value if values are equal
-     * @return An intermediary step for case statement construction
-     */
-    @NotNull
-    @Support
-    <T> CaseWhenStep<V, T> when(Field<V> compareValue, Select<? extends Record1<T>> result);
+  /**
+   * Compare a value to the already constructed case statement, return result if values are equal.
+   *
+   * @param <T> The generic result field type parameter
+   * @param compareValue The value to compare with the already constructed case statement
+   * @param result The result value if values are equal
+   * @return An intermediary step for case statement construction
+   */
+  @NotNull
+  @Support
+  <T> CaseWhenStep<V, T> when(Field<V> compareValue, Select<? extends Record1<T>> result);
 
-    /**
-     * Create <code>WHEN .. THEN</code> expressions from a {@link Map}.
-     * <p>
-     * This will iterate over the map's entries to create individual
-     * <code>WHEN .. THEN</code> expressions for each map entry.
-     */
-    @NotNull
-    @Support
-    <T> CaseWhenStep<V, T> mapValues(Map<V, T> values);
+  /**
+   * Create <code>WHEN .. THEN</code> expressions from a {@link Map}.
+   *
+   * <p>This will iterate over the map's entries to create individual <code>WHEN .. THEN</code>
+   * expressions for each map entry.
+   */
+  @NotNull
+  @Support
+  <T> CaseWhenStep<V, T> mapValues(Map<V, T> values);
 
-    /**
-     * Create <code>WHEN .. THEN</code> expressions from a {@link Map}.
-     * <p>
-     * This will iterate over the map's entries to create individual
-     * <code>WHEN .. THEN</code> expressions for each map entry.
-     */
-    @NotNull
-    @Support
-    <T> CaseWhenStep<V, T> mapFields(Map<? extends Field<V>, ? extends Field<T>> fields);
-
+  /**
+   * Create <code>WHEN .. THEN</code> expressions from a {@link Map}.
+   *
+   * <p>This will iterate over the map's entries to create individual <code>WHEN .. THEN</code>
+   * expressions for each map entry.
+   */
+  @NotNull
+  @Support
+  <T> CaseWhenStep<V, T> mapFields(Map<? extends Field<V>, ? extends Field<T>> fields);
 }

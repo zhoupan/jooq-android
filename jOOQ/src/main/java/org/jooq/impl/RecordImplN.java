@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,49 +38,47 @@
 package org.jooq.impl;
 
 import java.util.Collection;
-
 import org.jooq.Field;
 import org.jooq.Record;
 
 /**
  * A general purpose record, typically used for ad-hoc types.
- * <p>
- * This type implements both the general-purpose, type-unsafe {@link Record}
- * interface, as well as the more specific, type-safe {@link Record0}
- * interfaces
+ *
+ * <p>This type implements both the general-purpose, type-unsafe {@link Record} interface, as well
+ * as the more specific, type-safe {@link Record0} interfaces
  *
  * @author Lukas Eder
  */
 final class RecordImplN extends AbstractRecord implements InternalRecord {
 
-    RecordImplN(AbstractRow<?> row) {
-        super(row);
-    }
+  RecordImplN(AbstractRow<?> row) {
+    super(row);
+  }
 
-    /**
-     * @deprecated - 3.14.0 - [#8495] - Prevent the array copy and call
-     *             {@link #RecordImplN(Field...)} instead.
-     */
-    @Deprecated(forRemoval = true, since = "3.14")
-    RecordImplN(Collection<? extends Field<?>> fields) {
-        super(fields);
-    }
+  /**
+   * @deprecated - 3.14.0 - [#8495] - Prevent the array copy and call {@link #RecordImplN(Field...)}
+   *     instead.
+   */
+  @Deprecated(forRemoval = true, since = "3.14")
+  RecordImplN(Collection<? extends Field<?>> fields) {
+    super(fields);
+  }
 
-    RecordImplN(RowImplN fields) {
-        super(fields);
-    }
+  RecordImplN(RowImplN fields) {
+    super(fields);
+  }
 
-    // ------------------------------------------------------------------------
-    // XXX: Type-safe Record APIs
-    // ------------------------------------------------------------------------
+  // ------------------------------------------------------------------------
+  // XXX: Type-safe Record APIs
+  // ------------------------------------------------------------------------
 
-    @Override
-    public RowImplN fieldsRow() {
-        return new RowImplN(fields.fields);
-    }
+  @Override
+  public RowImplN fieldsRow() {
+    return new RowImplN(fields.fields);
+  }
 
-    @Override
-    public final RowImplN valuesRow() {
-        return new RowImplN(Tools.fieldsArray(values, fields.fields.fields));
-    }
+  @Override
+  public final RowImplN valuesRow() {
+    return new RowImplN(Tools.fieldsArray(values, fields.fields.fields));
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -50,61 +50,53 @@ import java.util.Map;
  */
 public class EnumConverter<T, U extends Enum<U>> extends AbstractConverter<T, U> {
 
-    private final Map<T, U>   lookup;
-    private final EnumType    enumType;
+  private final Map<T, U> lookup;
+  private final EnumType enumType;
 
-    public EnumConverter(Class<T> fromType, Class<U> toType) {
-        super(fromType, toType);
+  public EnumConverter(Class<T> fromType, Class<U> toType) {
+    super(fromType, toType);
 
-        // [#8045] Also support Kotlin Int type (which translates to int.class)
-        this.enumType = Number.class.isAssignableFrom(wrapper(fromType)) ? EnumType.ORDINAL : EnumType.STRING;
-        this.lookup = new LinkedHashMap<>();
+    // [#8045] Also support Kotlin Int type (which translates to int.class)
+    this.enumType =
+        Number.class.isAssignableFrom(wrapper(fromType)) ? EnumType.ORDINAL : EnumType.STRING;
+    this.lookup = new LinkedHashMap<>();
 
-        for (U u : toType.getEnumConstants())
-            this.lookup.put(to(u), u);
-    }
+    for (U u : toType.getEnumConstants()) this.lookup.put(to(u), u);
+  }
 
-    @Override
-    public final U from(T databaseObject) {
-        return lookup.get(databaseObject);
-    }
+  @Override
+  public final U from(T databaseObject) {
+    return lookup.get(databaseObject);
+  }
 
-    /**
-     * Subclasses may override this method to provide a custom reverse mapping
-     * implementation
-     * <p>
-     * {@inheritDoc}
-     */
-    @Override
-    public T to(U userObject) {
-        if (userObject == null)
-            return null;
-        else if (enumType == EnumType.ORDINAL)
-            return convert(userObject.ordinal(), fromType());
-        else
-            return convert(userObject.name(), fromType());
-    }
+  /**
+   * Subclasses may override this method to provide a custom reverse mapping implementation
+   *
+   * <p>{@inheritDoc}
+   */
+  @Override
+  public T to(U userObject) {
+    if (userObject == null) return null;
+    else if (enumType == EnumType.ORDINAL) return convert(userObject.ordinal(), fromType());
+    else return convert(userObject.name(), fromType());
+  }
 
-    /**
-     * The type of the converted <code>Enum</code>.
-     * <p>
-     * This corresponds to JPA's <code>EnumType</code>
-     */
-    enum EnumType {
+  /**
+   * The type of the converted <code>Enum</code>.
+   *
+   * <p>This corresponds to JPA's <code>EnumType</code>
+   */
+  enum EnumType {
 
-        /**
-         * Ordinal enum type
-         */
-        ORDINAL,
+    /** Ordinal enum type */
+    ORDINAL,
 
-        /**
-         * String enum type
-         */
-        STRING
-    }
+    /** String enum type */
+    STRING
+  }
 
-    @Override
-    public String toString() {
-        return "EnumConverter [ " + fromType().getName() + " -> " + toType().getName() + " ]";
-    }
+  @Override
+  public String toString() {
+    return "EnumConverter [ " + fromType().getName() + " -> " + toType().getName() + " ]";
+  }
 }

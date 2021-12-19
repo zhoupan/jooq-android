@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,35 +45,22 @@ import org.jooq.Field;
 import org.jooq.XML;
 import org.jooq.XMLAggOrderByStep;
 
-
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class XMLAgg extends AbstractAggregateFunction<XML> implements XMLAggOrderByStep<XML> {
 
-    XMLAgg(Field<XML> arg) {
-        super(false, N_XMLAGG, SQLDataType.XML, arg);
-    }
+  XMLAgg(Field<XML> arg) {
+    super(false, N_XMLAGG, SQLDataType.XML, arg);
+  }
 
-    @Override
-    public void accept(Context<?> ctx) {
+  @Override
+  public void accept(Context<?> ctx) {
 
+    ctx.visit(N_XMLAGG).sql('(');
+    acceptArguments0(ctx);
+    acceptOrderBy(ctx);
+    ctx.sql(')');
 
-
-
-
-
-
-
-
-
-
-        ctx.visit(N_XMLAGG).sql('(');
-        acceptArguments0(ctx);
-        acceptOrderBy(ctx);
-        ctx.sql(')');
-
-        acceptFilterClause(ctx);
-        acceptOverClause(ctx);
-    }
+    acceptFilterClause(ctx);
+    acceptOverClause(ctx);
+  }
 }

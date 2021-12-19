@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,10 +38,8 @@
 package org.jooq.impl;
 
 import java.sql.Connection;
-
-import org.jooq.ConnectionProvider;
-
 import org.jetbrains.annotations.Nullable;
+import org.jooq.ConnectionProvider;
 
 /**
  * An "empty" implementation that is never connected.
@@ -50,18 +48,14 @@ import org.jetbrains.annotations.Nullable;
  */
 public class NoConnectionProvider implements ConnectionProvider {
 
-    /**
-     * This method will always return <code>null</code>.
-     */
-    @Nullable
-    @Override
-    public final Connection acquire() {
-        return null;
-    }
+  /** This method will always return <code>null</code>. */
+  @Nullable
+  @Override
+  public final Connection acquire() {
+    return null;
+  }
 
-    /**
-     * This method has no effect.
-     */
-    @Override
-    public final void release(Connection connection) {}
+  /** This method has no effect. */
+  @Override
+  public final void release(Connection connection) {}
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,19 +40,17 @@ package org.jooq.codegen;
 import org.jooq.meta.CatalogDefinition;
 import org.jooq.meta.CatalogVersionProvider;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 class ConstantCatalogVersionProvider implements CatalogVersionProvider {
 
-    private String constant;
+  private String constant;
 
-    ConstantCatalogVersionProvider(String constant) {
-        this.constant = constant;
-    }
+  ConstantCatalogVersionProvider(String constant) {
+    this.constant = constant;
+  }
 
-    @Override
-    public String version(CatalogDefinition catalog) {
-        return constant;
-    }
+  @Override
+  public String version(CatalogDefinition catalog) {
+    return constant;
+  }
 }

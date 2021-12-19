@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,44 +41,40 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
 import org.jooq.File;
 import org.jooq.Files;
 import org.jooq.Version;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class FilesImpl implements Files {
 
-    private final Version    from;
-    private final Version    to;
-    private final List<File> files;
+  private final Version from;
+  private final Version to;
+  private final List<File> files;
 
+  FilesImpl(Version from, Version to, Collection<? extends File> f) {
+    this.from = from;
+    this.to = to;
+    this.files = new ArrayList<>(f);
+  }
 
-    FilesImpl(Version from, Version to, Collection<? extends File> f) {
-        this.from = from;
-        this.to = to;
-        this.files = new ArrayList<>(f);
-    }
+  @Override
+  public final Iterator<File> iterator() {
+    return files.iterator();
+  }
 
-    @Override
-    public final Iterator<File> iterator() {
-        return files.iterator();
-    }
+  @Override
+  public final Version from() {
+    return from;
+  }
 
-    @Override
-    public final Version from() {
-        return from;
-    }
+  @Override
+  public final Version to() {
+    return to;
+  }
 
-    @Override
-    public final Version to() {
-        return to;
-    }
-
-    @Override
-    public String toString() {
-        return "" + files;
-    }
+  @Override
+  public String toString() {
+    return "" + files;
+  }
 }

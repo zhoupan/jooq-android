@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,32 +41,23 @@ package org.jooq.impl;
 import static org.jooq.impl.Names.N_XMLCONCAT;
 
 import java.util.Collection;
-
 import org.jooq.Context;
 import org.jooq.Field;
 import org.jooq.XML;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class XMLConcat extends AbstractField<XML> {
-    private final QueryPartList<Field<?>> args;
+  private final QueryPartList<Field<?>> args;
 
-    XMLConcat(Collection<? extends Field<?>> args) {
-        super(N_XMLCONCAT, SQLDataType.XML);
+  XMLConcat(Collection<? extends Field<?>> args) {
+    super(N_XMLCONCAT, SQLDataType.XML);
 
-        this.args = new QueryPartList<>(args);
-    }
+    this.args = new QueryPartList<>(args);
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
+  @Override
+  public final void accept(Context<?> ctx) {
 
-
-
-
-
-
-
-        ctx.visit(N_XMLCONCAT).sql('(').visit(args).sql(')');
-    }
+    ctx.visit(N_XMLCONCAT).sql('(').visit(args).sql(')');
+  }
 }

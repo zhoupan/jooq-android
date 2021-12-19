@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,16 +40,14 @@ package org.jooq;
 import java.nio.charset.Charset;
 
 /**
- * A provider of a default {@link Charset} to be used when converting between
- * {@link String} data and <code>byte[]</code> data.
+ * A provider of a default {@link Charset} to be used when converting between {@link String} data
+ * and <code>byte[]</code> data.
  *
  * @author Lukas Eder
  */
 @FunctionalInterface
 public interface CharsetProvider {
 
-    /**
-     * Provide a charset for string to binary conversion.
-     */
-    Charset provide();
+  /** Provide a charset for string to binary conversion. */
+  Charset provide();
 }

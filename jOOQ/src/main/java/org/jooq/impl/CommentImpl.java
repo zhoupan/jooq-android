@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,24 +42,22 @@ import static org.jooq.impl.DSL.inline;
 import org.jooq.Comment;
 import org.jooq.Context;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class CommentImpl extends AbstractQueryPart implements Comment {
-    static final CommentImpl  NO_COMMENT       = new CommentImpl("");
-    private final String      comment;
+  static final CommentImpl NO_COMMENT = new CommentImpl("");
+  private final String comment;
 
-    CommentImpl(String comment) {
-        this.comment = comment == null ? "" : comment;
-    }
+  CommentImpl(String comment) {
+    this.comment = comment == null ? "" : comment;
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        ctx.visit(inline(comment));
-    }
+  @Override
+  public final void accept(Context<?> ctx) {
+    ctx.visit(inline(comment));
+  }
 
-    @Override
-    public final String getComment() {
-        return comment;
-    }
+  @Override
+  public final String getComment() {
+    return comment;
+  }
 }

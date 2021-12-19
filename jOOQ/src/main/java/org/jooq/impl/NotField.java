@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -51,43 +51,34 @@ import org.jooq.Field;
 
 final class NotField extends AbstractField<Boolean> {
 
-    private static final Clause[] CLAUSES = { CONDITION, CONDITION_NOT };
+  private static final Clause[] CLAUSES = {CONDITION, CONDITION_NOT};
 
-    private final Field<Boolean>  field;
+  private final Field<Boolean> field;
 
-    NotField(Field<Boolean> field) {
-        super(N_NOT, BOOLEAN);
-        this.field = field;
+  NotField(Field<Boolean> field) {
+    super(N_NOT, BOOLEAN);
+    this.field = field;
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case CUBRID:
+      case FIREBIRD:
+        ctx.visit(DSL.field(not(condition(field))));
+        break;
+
+      default:
+        ctx.visit(K_NOT)
+            .sql('(')
+            .visit(Tools.hasDefaultConverter(field) ? field : condition(field))
+            .sql(')');
+        break;
     }
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-
-
-
-            case CUBRID:
-            case FIREBIRD:
-                ctx.visit(DSL.field(not(condition(field))));
-                break;
-
-            default:
-                ctx.visit(K_NOT)
-                    .sql('(')
-                    .visit(Tools.hasDefaultConverter(field) ? field : condition(field))
-                    .sql(')');
-                break;
-        }
-    }
-
-    @Override
-    public final Clause[] clauses(Context<?> ctx) {
-        return CLAUSES;
-    }
+  @Override
+  public final Clause[] clauses(Context<?> ctx) {
+    return CLAUSES;
+  }
 }

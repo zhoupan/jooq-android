@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -45,51 +45,50 @@ import org.jooq.Field;
 import org.jooq.Record1;
 import org.jooq.Select;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class CaseImpl implements Case {
 
-    CaseImpl() {
-    }
+  CaseImpl() {}
 
-    @Override
-    public final <V> CaseValueStep<V> value(V value) {
-        return value(Tools.field(value));
-    }
+  @Override
+  public final <V> CaseValueStep<V> value(V value) {
+    return value(Tools.field(value));
+  }
 
-    @Override
-    public final <V> CaseValueStep<V> value(Field<V> value) {
-        return new CaseValueStepImpl<>(value);
-    }
+  @Override
+  public final <V> CaseValueStep<V> value(Field<V> value) {
+    return new CaseValueStepImpl<>(value);
+  }
 
-    @Override
-    public final <T> CaseConditionStep<T> when(Condition condition, T result) {
-        return when(condition, Tools.field(result));
-    }
+  @Override
+  public final <T> CaseConditionStep<T> when(Condition condition, T result) {
+    return when(condition, Tools.field(result));
+  }
 
-    @Override
-    public final <T> CaseConditionStep<T> when(Condition condition, Field<T> result) {
-        return new CaseConditionStepImpl<>(condition, result);
-    }
+  @Override
+  public final <T> CaseConditionStep<T> when(Condition condition, Field<T> result) {
+    return new CaseConditionStepImpl<>(condition, result);
+  }
 
-    @Override
-    public final <T> CaseConditionStep<T> when(Condition condition, Select<? extends Record1<T>> result) {
-        return when(condition, DSL.field(result));
-    }
+  @Override
+  public final <T> CaseConditionStep<T> when(
+      Condition condition, Select<? extends Record1<T>> result) {
+    return when(condition, DSL.field(result));
+  }
 
-    @Override
-    public final <T> CaseConditionStep<T> when(Field<Boolean> condition, T result) {
-        return when(DSL.condition(condition), result);
-    }
+  @Override
+  public final <T> CaseConditionStep<T> when(Field<Boolean> condition, T result) {
+    return when(DSL.condition(condition), result);
+  }
 
-    @Override
-    public final <T> CaseConditionStep<T> when(Field<Boolean> condition, Field<T> result) {
-        return when(DSL.condition(condition), result);
-    }
+  @Override
+  public final <T> CaseConditionStep<T> when(Field<Boolean> condition, Field<T> result) {
+    return when(DSL.condition(condition), result);
+  }
 
-    @Override
-    public final <T> CaseConditionStep<T> when(Field<Boolean> condition, Select<? extends Record1<T>> result) {
-        return when(DSL.condition(condition), result);
-    }
+  @Override
+  public final <T> CaseConditionStep<T> when(
+      Field<Boolean> condition, Select<? extends Record1<T>> result) {
+    return when(DSL.condition(condition), result);
+  }
 }

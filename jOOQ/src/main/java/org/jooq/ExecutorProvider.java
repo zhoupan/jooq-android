@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,40 +39,34 @@ package org.jooq;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
-
 import org.jetbrains.annotations.NotNull;
 
 /**
- * The <code>ExecutorProvider</code> SPI can be used to provide jOOQ with custom
- * asynchronous execution behaviour.
- * <p>
- * Asynchronous operations will call back to this SPI to obtain an executor.
- * This applies, for example, to {@link ResultQuery#fetchAsync()}.
- * <p>
- * The following logic is applied when resolving the appropriate
- * <code>executor</code>:
+ * The <code>ExecutorProvider</code> SPI can be used to provide jOOQ with custom asynchronous
+ * execution behaviour.
+ *
+ * <p>Asynchronous operations will call back to this SPI to obtain an executor. This applies, for
+ * example, to {@link ResultQuery#fetchAsync()}.
+ *
+ * <p>The following logic is applied when resolving the appropriate <code>executor</code>:
+ *
  * <ol>
- * <li>If {@link Configuration#executorProvider()} does not return
- * <code>null</code>, then {@link #provide()} is called to obtain an
- * <code>Executor</code> for the asynchronous task.</li>
- * <li>In the jOOQ Java 8 distribution, {@link ForkJoinPool#commonPool()} is
- * used if <code>{@link ForkJoinPool#getCommonPoolParallelism()} &gt; 1</code></li>
- * <li>A new "one thread per call" <code>Executor</code> is used in any other
- * case.</li>
+ *   <li>If {@link Configuration#executorProvider()} does not return <code>null</code>, then {@link
+ *       #provide()} is called to obtain an <code>Executor</code> for the asynchronous task.
+ *   <li>In the jOOQ Java 8 distribution, {@link ForkJoinPool#commonPool()} is used if <code>
+ *       {@link ForkJoinPool#getCommonPoolParallelism()} &gt; 1</code>
+ *   <li>A new "one thread per call" <code>Executor</code> is used in any other case.
  * </ol>
- * <p>
- * The SPI will not be called if an asynchronous operation explicitly overrides
- * the {@link Executor}, e.g. as is the case for
- * {@link ResultQuery#fetchAsync(Executor)}.
+ *
+ * <p>The SPI will not be called if an asynchronous operation explicitly overrides the {@link
+ * Executor}, e.g. as is the case for {@link ResultQuery#fetchAsync(Executor)}.
  *
  * @author Lukas Eder
  */
 @FunctionalInterface
 public interface ExecutorProvider {
 
-    /**
-     * Provide an <code>Executor</code> for the task at hand.
-     */
-    @NotNull
-    Executor provide();
+  /** Provide an <code>Executor</code> for the task at hand. */
+  @NotNull
+  Executor provide();
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,18 +37,16 @@
  */
 package org.jooq;
 
-import org.jooq.impl.DefaultTransactionListenerProvider;
-
 import org.jetbrains.annotations.NotNull;
+import org.jooq.impl.DefaultTransactionListenerProvider;
 
 /**
  * A provider for {@link TransactionListener} instances.
- * <p>
- * In order to facilitate the lifecycle management of
- * <code>TransactionListener</code> instances that are provided to a jOOQ
- * {@link Configuration}, clients can implement this API. To jOOQ, it is thus
- * irrelevant, if transaction listeners are stateful or stateless, local to an
- * execution, or global to an application.
+ *
+ * <p>In order to facilitate the lifecycle management of <code>TransactionListener</code> instances
+ * that are provided to a jOOQ {@link Configuration}, clients can implement this API. To jOOQ, it is
+ * thus irrelevant, if transaction listeners are stateful or stateless, local to an execution, or
+ * global to an application.
  *
  * @author Lukas Eder
  * @see TransactionListener
@@ -57,22 +55,20 @@ import org.jetbrains.annotations.NotNull;
 @FunctionalInterface
 public interface TransactionListenerProvider {
 
-    /**
-     * Provide an <code>TransactionListener</code> instance.
-     * <p>
-     * Implementations are free to choose whether this method returns new
-     * instances at every call or whether the same instance is returned
-     * repetitively.
-     * <p>
-     * A <code>TransactionListener</code> shall be provided exactly once per
-     * transaction lifecycle, i.e. per call to
-     * {@link DSLContext#transaction(TransactionalRunnable)} or similar API.
-     *
-     * @return An <code>TransactionListener</code> instance.
-     * @see TransactionListener
-     * @see TransactionProvider
-     * @see DefaultTransactionListenerProvider
-     */
-    @NotNull
-    TransactionListener provide();
+  /**
+   * Provide an <code>TransactionListener</code> instance.
+   *
+   * <p>Implementations are free to choose whether this method returns new instances at every call
+   * or whether the same instance is returned repetitively.
+   *
+   * <p>A <code>TransactionListener</code> shall be provided exactly once per transaction lifecycle,
+   * i.e. per call to {@link DSLContext#transaction(TransactionalRunnable)} or similar API.
+   *
+   * @return An <code>TransactionListener</code> instance.
+   * @see TransactionListener
+   * @see TransactionProvider
+   * @see DefaultTransactionListenerProvider
+   */
+  @NotNull
+  TransactionListener provide();
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,6 @@
  *
  *
  */
-
 package org.jooq.meta;
 
 /**
@@ -45,9 +44,6 @@ package org.jooq.meta;
  */
 public interface TableElementDefinition extends Definition {
 
-    /**
-     * The table that this object is part of.
-     */
-    TableDefinition getTable();
-
+  /** The table that this object is part of. */
+  TableDefinition getTable();
 }

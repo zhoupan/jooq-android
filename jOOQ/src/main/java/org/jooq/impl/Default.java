@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,17 +43,15 @@ import static org.jooq.impl.Names.N_DEFAULT;
 import org.jooq.Context;
 import org.jooq.DataType;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class Default<T> extends AbstractField<T> {
 
-    Default(DataType<T> type) {
-        super(N_DEFAULT, type);
-    }
+  Default(DataType<T> type) {
+    super(N_DEFAULT, type);
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        ctx.visit(K_DEFAULT);
-    }
+  @Override
+  public final void accept(Context<?> ctx) {
+    ctx.visit(K_DEFAULT);
+  }
 }

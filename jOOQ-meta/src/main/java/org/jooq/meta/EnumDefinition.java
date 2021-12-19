@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,14 +46,12 @@ import java.util.List;
  */
 public interface EnumDefinition extends Definition {
 
-    /**
-     * @return The literals defined in this enum
-     */
-    List<String> getLiterals();
+  /** @return The literals defined in this enum */
+  List<String> getLiterals();
 
-    /**
-     * @return Whether this enum type is "synthetic", i.e. not defined in the
-     *         database, but in code generation configurations.
-     */
-    boolean isSynthetic();
+  /**
+   * @return Whether this enum type is "synthetic", i.e. not defined in the database, but in code
+   *     generation configurations.
+   */
+  boolean isSynthetic();
 }

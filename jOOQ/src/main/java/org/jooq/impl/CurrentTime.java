@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,74 +38,30 @@
 package org.jooq.impl;
 
 import static org.jooq.impl.Keywords.K_CURRENT;
-import static org.jooq.impl.Keywords.K_HOUR_TO_SECOND;
 import static org.jooq.impl.Keywords.K_TIME;
-import static org.jooq.impl.Names.N_CONVERT;
 import static org.jooq.impl.Names.N_CURRENT_TIME;
-import static org.jooq.impl.Names.N_CURRENT_TIMESTAMP;
-
-import java.sql.Time;
 
 import org.jooq.Context;
 import org.jooq.DataType;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class CurrentTime<T> extends AbstractField<T> {
 
-    CurrentTime(DataType<T> type) {
-        super(N_CURRENT_TIME, type);
+  CurrentTime(DataType<T> type) {
+    super(N_CURRENT_TIME, type);
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case MARIADB:
+      case MYSQL:
+        ctx.visit(N_CURRENT_TIME).sql("()");
+        break;
+
+      default:
+        ctx.visit(K_CURRENT).sql('_').visit(K_TIME);
+        break;
     }
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            case MARIADB:
-            case MYSQL:
-                ctx.visit(N_CURRENT_TIME).sql("()");
-                break;
-
-            default:
-                ctx.visit(K_CURRENT).sql('_').visit(K_TIME);
-                break;
-        }
-    }
+  }
 }

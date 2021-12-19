@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,21 +39,17 @@ package org.jooq.impl;
 
 import org.jooq.Context;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class WrappedList extends AbstractQueryPart {
 
-    private final QueryPartList<?> wrapped;
+  private final QueryPartList<?> wrapped;
 
-    WrappedList(QueryPartList<?> wrapped) {
-        this.wrapped = wrapped;
-    }
+  WrappedList(QueryPartList<?> wrapped) {
+    this.wrapped = wrapped;
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        ctx.sql('(')
-           .visit(wrapped)
-           .sql(')');
-    }
+  @Override
+  public final void accept(Context<?> ctx) {
+    ctx.sql('(').visit(wrapped).sql(')');
+  }
 }

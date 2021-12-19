@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,38 +37,36 @@
  */
 package org.jooq.meta.sqlite.sqlite_master;
 
-
 import org.jooq.Record;
 import org.jooq.TableField;
 import org.jooq.impl.TableImpl;
 import org.jooq.util.sqlite.SQLiteDataType;
 
-
 /**
- * This class is NOT generated, as SQLite does not support meta-querying the
- * meta-model.
+ * This class is NOT generated, as SQLite does not support meta-querying the meta-model.
  *
  * @author Lukas Eder
  */
 public class SQLiteMaster extends TableImpl<Record> {
 
-    private static final long serialVersionUID = -823335201;
+  private static final long serialVersionUID = -823335201;
 
-    /**
-     * The singleton instance of tables
-     */
-    public static final SQLiteMaster                SQLITE_MASTER = new SQLiteMaster();
+  /** The singleton instance of tables */
+  public static final SQLiteMaster SQLITE_MASTER = new SQLiteMaster();
 
-    public static final TableField<Record, String>  TYPE          = createField("type",     SQLiteDataType.VARCHAR, SQLITE_MASTER);
-    public static final TableField<Record, String>  NAME          = createField("name",     SQLiteDataType.VARCHAR, SQLITE_MASTER);
-    public static final TableField<Record, String>  TBL_NAME      = createField("tbl_name", SQLiteDataType.VARCHAR, SQLITE_MASTER);
-    public static final TableField<Record, Integer> ROOTPAGE      = createField("rootpage", SQLiteDataType.INTEGER, SQLITE_MASTER);
-    public static final TableField<Record, String>  SQL           = createField("sql",      SQLiteDataType.VARCHAR, SQLITE_MASTER);
+  public static final TableField<Record, String> TYPE =
+      createField("type", SQLiteDataType.VARCHAR, SQLITE_MASTER);
+  public static final TableField<Record, String> NAME =
+      createField("name", SQLiteDataType.VARCHAR, SQLITE_MASTER);
+  public static final TableField<Record, String> TBL_NAME =
+      createField("tbl_name", SQLiteDataType.VARCHAR, SQLITE_MASTER);
+  public static final TableField<Record, Integer> ROOTPAGE =
+      createField("rootpage", SQLiteDataType.INTEGER, SQLITE_MASTER);
+  public static final TableField<Record, String> SQL =
+      createField("sql", SQLiteDataType.VARCHAR, SQLITE_MASTER);
 
-    /**
-     * No further instances allowed
-     */
-    private SQLiteMaster() {
-        super("sqlite_master");
-    }
+  /** No further instances allowed */
+  private SQLiteMaster() {
+    super("sqlite_master");
+  }
 }

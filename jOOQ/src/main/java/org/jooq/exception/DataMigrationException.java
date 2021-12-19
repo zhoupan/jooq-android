@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,22 +46,22 @@ import org.jooq.Migration;
  */
 public class DataMigrationException extends DataAccessException {
 
-    /**
-     * Constructor for DataMigrationException.
-     *
-     * @param message the detail message
-     */
-    public DataMigrationException(String message) {
-        super(message);
-    }
+  /**
+   * Constructor for DataMigrationException.
+   *
+   * @param message the detail message
+   */
+  public DataMigrationException(String message) {
+    super(message);
+  }
 
-    /**
-     * Constructor for DataMigrationException.
-     *
-     * @param message the detail message
-     * @param cause the cause
-     */
-    public DataMigrationException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  /**
+   * Constructor for DataMigrationException.
+   *
+   * @param message the detail message
+   * @param cause the cause
+   */
+  public DataMigrationException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

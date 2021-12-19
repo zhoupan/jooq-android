@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,35 +39,27 @@ package org.jooq;
 
 import java.sql.Connection;
 import java.util.Properties;
-
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DSL;
 
-/**
- * A resourceful {@link DSLContext} that should be closed in a
- * try-with-resources statement.
- */
+/** A resourceful {@link DSLContext} that should be closed in a try-with-resources statement. */
 public interface CloseableDSLContext extends DSLContext, AutoCloseable {
 
-    // -------------------------------------------------------------------------
-    // XXX AutoCloseable API
-    // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // XXX AutoCloseable API
+  // -------------------------------------------------------------------------
 
-    /**
-     * Close the underlying resources, if any resources have been allocated when
-     * constructing this <code>DSLContext</code>.
-     * <p>
-     * Some {@link DSLContext} constructors, such as {@link DSL#using(String)},
-     * {@link DSL#using(String, Properties)}, or
-     * {@link DSL#using(String, String, String)} allocate a {@link Connection}
-     * resource, which is inaccessible to the outside of the {@link DSLContext}
-     * implementation. Proper resource management must thus be done via this
-     * {@link #close()} method.
-     *
-     * @throws DataAccessException When something went wrong closing the
-     *             underlying resources.
-     */
-    @Override
-    void close() throws DataAccessException;
-
+  /**
+   * Close the underlying resources, if any resources have been allocated when constructing this
+   * <code>DSLContext</code>.
+   *
+   * <p>Some {@link DSLContext} constructors, such as {@link DSL#using(String)}, {@link
+   * DSL#using(String, Properties)}, or {@link DSL#using(String, String, String)} allocate a {@link
+   * Connection} resource, which is inaccessible to the outside of the {@link DSLContext}
+   * implementation. Proper resource management must thus be done via this {@link #close()} method.
+   *
+   * @throws DataAccessException When something went wrong closing the underlying resources.
+   */
+  @Override
+  void close() throws DataAccessException;
 }

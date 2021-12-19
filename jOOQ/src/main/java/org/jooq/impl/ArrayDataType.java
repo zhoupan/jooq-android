@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -51,100 +51,92 @@ import org.jooq.Nullability;
  */
 final class ArrayDataType<T> extends DefaultDataType<T[]> {
 
-    final DataType<T> elementType;
+  final DataType<T> elementType;
 
-    public ArrayDataType(DataType<T> elementType) {
-        super(null, elementType.getArrayType(), elementType.getTypeName(), elementType.getCastTypeName());
+  public ArrayDataType(DataType<T> elementType) {
+    super(
+        null, elementType.getArrayType(), elementType.getTypeName(), elementType.getCastTypeName());
 
-        this.elementType = elementType;
-    }
+    this.elementType = elementType;
+  }
 
-    /**
-     * [#3225] Performant constructor for creating derived types.
-     */
-    ArrayDataType(
-        AbstractDataType<T[]> t,
-        DataType<T> elementType,
-        Integer precision,
-        Integer scale,
-        Integer length,
-        Nullability nullability,
-        Collation collation,
-        CharacterSet characterSet,
-        boolean identity,
-        Field<T[]> defaultValue
-    ) {
-        super(t, precision, scale, length, nullability, collation, characterSet, identity, defaultValue);
+  /** [#3225] Performant constructor for creating derived types. */
+  ArrayDataType(
+      AbstractDataType<T[]> t,
+      DataType<T> elementType,
+      Integer precision,
+      Integer scale,
+      Integer length,
+      Nullability nullability,
+      Collation collation,
+      CharacterSet characterSet,
+      boolean identity,
+      Field<T[]> defaultValue) {
+    super(
+        t, precision, scale, length, nullability, collation, characterSet, identity, defaultValue);
 
-        this.elementType = elementType;
-    }
+    this.elementType = elementType;
+  }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    @Override
-    DefaultDataType<T[]> construct(
-        Integer newPrecision,
-        Integer newScale,
-        Integer newLength,
-        Nullability
+  @SuppressWarnings({"unchecked", "rawtypes"})
+  @Override
+  DefaultDataType<T[]> construct(
+      Integer newPrecision,
+      Integer newScale,
+      Integer newLength,
+      Nullability newNullability,
+      Collation newCollation,
+      CharacterSet newCharacterSet,
+      boolean newIdentity,
+      Field<T[]> newDefaultValue) {
+    return new ArrayDataType<>(
+        this,
+        (AbstractDataType<T>) elementType,
+        newPrecision,
+        newScale,
+        newLength,
         newNullability,
-        Collation newCollation,
-        CharacterSet newCharacterSet,
-        boolean newIdentity,
-        Field<T[]> newDefaultValue
-    ) {
-        return new ArrayDataType<>(
-            this,
-            (AbstractDataType<T>) elementType,
-            newPrecision,
-            newScale,
-            newLength,
-            newNullability,
-            newCollation,
-            newCharacterSet,
-            newIdentity,
-            (Field) newDefaultValue
-        );
+        newCollation,
+        newCharacterSet,
+        newIdentity,
+        (Field) newDefaultValue);
+  }
+
+  @Override
+  public final String getTypeName(Configuration configuration) {
+    String typeName = elementType.getTypeName(configuration);
+    return getArrayType(configuration, typeName);
+  }
+
+  @Override
+  public final String getCastTypeName(Configuration configuration) {
+    String castTypeName = elementType.getCastTypeName(configuration);
+    return getArrayType(configuration, castTypeName);
+  }
+
+  @Override
+  public final Class<?> getArrayComponentType() {
+    return elementType.getType();
+  }
+
+  @Override
+  public final DataType<?> getArrayComponentDataType() {
+    return elementType;
+  }
+
+  private static String getArrayType(Configuration configuration, String dataType) {
+    switch (configuration.family()) {
+      case HSQLDB:
+        return dataType + " array";
+
+      case POSTGRES:
+        return dataType + "[]";
+      case H2:
+        return "array";
+
+        // Default implementation is needed for hash-codes and toString()
+      default:
+        return dataType + "[]";
     }
-
-    @Override
-    public final String getTypeName(Configuration configuration) {
-        String typeName = elementType.getTypeName(configuration);
-        return getArrayType(configuration, typeName);
-    }
-
-    @Override
-    public final String getCastTypeName(Configuration configuration) {
-        String castTypeName = elementType.getCastTypeName(configuration);
-        return getArrayType(configuration, castTypeName);
-    }
-
-    @Override
-    public final Class<?> getArrayComponentType() {
-        return elementType.getType();
-    }
-
-    @Override
-    public final DataType<?> getArrayComponentDataType() {
-        return elementType;
-    }
-
-
-    private static String getArrayType(Configuration configuration, String dataType) {
-        switch (configuration.family()) {
-
-            case HSQLDB:
-                return dataType + " array";
-
-
-
-            case POSTGRES:
-                return dataType + "[]";
-            case H2:
-                return "array";
-
-            // Default implementation is needed for hash-codes and toString()
-            default:
-                return dataType + "[]";
-        }
-    }
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,21 +38,18 @@
 package org.jooq.conf;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-
 import org.jooq.SQLDialect;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 public class SQLDialectAdapter extends XmlAdapter<String, SQLDialect> {
 
-    @Override
-    public SQLDialect unmarshal(String v) throws Exception {
-        return SQLDialect.valueOf(v);
-    }
+  @Override
+  public SQLDialect unmarshal(String v) throws Exception {
+    return SQLDialect.valueOf(v);
+  }
 
-    @Override
-    public String marshal(SQLDialect v) throws Exception {
-        return v.name();
-    }
+  @Override
+  public String marshal(SQLDialect v) throws Exception {
+    return v.name();
+  }
 }

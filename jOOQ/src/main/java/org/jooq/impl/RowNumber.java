@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,34 +43,25 @@ import static org.jooq.impl.SQLDataType.INTEGER;
 
 import org.jooq.Context;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class RowNumber extends AbstractWindowFunction<Integer> {
 
-    RowNumber() {
-        super(N_ROW_NUMBER, INTEGER.notNull());
+  RowNumber() {
+    super(N_ROW_NUMBER, INTEGER.notNull());
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+
+    // [#1524] Don't render this clause where it is not supported
+    switch (ctx.family()) {
+      case HSQLDB:
+        ctx.visit(N_ROWNUM).sql("()");
+        break;
+
+      default:
+        ctx.visit(N_ROW_NUMBER).sql("()");
+        acceptOverClause(ctx);
     }
-
-    @Override
-    public final void accept(Context<?> ctx) {
-
-        // [#1524] Don't render this clause where it is not supported
-        switch (ctx.family()) {
-            case HSQLDB:
-                ctx.visit(N_ROWNUM).sql("()");
-                break;
-
-
-
-
-
-
-
-
-            default:
-                ctx.visit(N_ROW_NUMBER).sql("()");
-                acceptOverClause(ctx);
-        }
-    }
+  }
 }

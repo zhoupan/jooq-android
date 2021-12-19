@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,6 @@
  *
  *
  */
-
 package org.jooq.meta;
 
 import org.jooq.SortOrder;
@@ -45,19 +44,17 @@ import org.jooq.SortOrder;
  *
  * @author Lukas Eder
  */
-public interface IndexColumnDefinition extends TypedElementDefinition<IndexDefinition>, PositionedDefinition {
+public interface IndexColumnDefinition
+    extends TypedElementDefinition<IndexDefinition>, PositionedDefinition {
 
-    /**
-     * The <code>ASC</code> or <code>DESC</code> sort order
-     */
-    SortOrder getSortOrder();
+  /** The <code>ASC</code> or <code>DESC</code> sort order */
+  SortOrder getSortOrder();
 
-    /**
-     * The table column definition that this index column definition is backed
-     * by.
-     * <p>
-     * This may be a virtual and/or invisible column, e.g. in case this index is
-     * a function-based index.
-     */
-    ColumnDefinition getColumn();
+  /**
+   * The table column definition that this index column definition is backed by.
+   *
+   * <p>This may be a virtual and/or invisible column, e.g. in case this index is a function-based
+   * index.
+   */
+  ColumnDefinition getColumn();
 }

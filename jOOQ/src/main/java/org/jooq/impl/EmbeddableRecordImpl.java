@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -48,65 +48,62 @@ import org.jooq.TableField;
 
 /**
  * A record implementation for a record originating from a single table
- * <p>
- * This type is for JOOQ INTERNAL USE only. Do not reference directly
+ *
+ * <p>This type is for JOOQ INTERNAL USE only. Do not reference directly
  *
  * @author Lukas Eder
  */
 @org.jooq.Internal
-public class EmbeddableRecordImpl<R extends EmbeddableRecord<R>> extends AbstractRecord implements EmbeddableRecord<R> {
+public class EmbeddableRecordImpl<R extends EmbeddableRecord<R>> extends AbstractRecord
+    implements EmbeddableRecord<R> {
 
-    /**
-     * @deprecated - [#11058] - 3.14.5 - Please re-generate your code.
-     */
-    @Deprecated
-    public EmbeddableRecordImpl(Field<?>... fields) {
-        super(fields);
-    }
+  /** @deprecated - [#11058] - 3.14.5 - Please re-generate your code. */
+  @Deprecated
+  public EmbeddableRecordImpl(Field<?>... fields) {
+    super(fields);
+  }
 
-    /**
-     * @deprecated - [#11058] - 3.14.5 - Please re-generate your code.
-     */
-    @Deprecated
-    public EmbeddableRecordImpl(TableField<?, ?>... fields) {
-        super(fields);
-    }
+  /** @deprecated - [#11058] - 3.14.5 - Please re-generate your code. */
+  @Deprecated
+  public EmbeddableRecordImpl(TableField<?, ?>... fields) {
+    super(fields);
+  }
 
-    public EmbeddableRecordImpl(Row fields) {
-        super((AbstractRow<?>) fields);
-    }
+  public EmbeddableRecordImpl(Row fields) {
+    super((AbstractRow<?>) fields);
+  }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public final <T> R with(Field<T> field, T value) {
-        return (R) super.with(field, value);
-    }
+  @SuppressWarnings("unchecked")
+  @Override
+  public final <T> R with(Field<T> field, T value) {
+    return (R) super.with(field, value);
+  }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public final <T, U> R with(Field<T> field, U value, Converter<? extends T, ? super U> converter) {
-        return (R) super.with(field, value, converter);
-    }
+  @SuppressWarnings("unchecked")
+  @Override
+  public final <T, U> R with(Field<T> field, U value, Converter<? extends T, ? super U> converter) {
+    return (R) super.with(field, value, converter);
+  }
 
-    /*
-     * Subclasses may override this method
-     */
-    @Override
-    public Row fieldsRow() {
-        return fields;
-    }
+  /*
+   * Subclasses may override this method
+   */
+  @Override
+  public Row fieldsRow() {
+    return fields;
+  }
 
-    /*
-     * Subclasses may override this method
-     */
-    @Override
-    public Row valuesRow() {
-        return row0(fieldsArray(intoArray(), fields.fields.fields()));
-    }
+  /*
+   * Subclasses may override this method
+   */
+  @Override
+  public Row valuesRow() {
+    return row0(fieldsArray(intoArray(), fields.fields.fields()));
+  }
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public final R original() {
-        return (R) super.original();
-    }
+  @SuppressWarnings("unchecked")
+  @Override
+  public final R original() {
+    return (R) super.original();
+  }
 }

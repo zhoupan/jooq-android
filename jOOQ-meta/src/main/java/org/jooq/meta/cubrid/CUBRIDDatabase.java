@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,6 @@
  *
  *
  */
-
 package org.jooq.meta.cubrid;
 
 import static org.jooq.Records.intoList;
@@ -54,12 +53,10 @@ import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.jooq.Condition;
 import org.jooq.DSLContext;
 import org.jooq.Record;
 import org.jooq.Record3;
-import org.jooq.Records;
 import org.jooq.Result;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DSL;
@@ -80,218 +77,222 @@ import org.jooq.meta.SequenceDefinition;
 import org.jooq.meta.TableDefinition;
 import org.jooq.meta.UDTDefinition;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 public class CUBRIDDatabase extends AbstractDatabase {
 
-    @Override
-    protected void loadPrimaryKeys(DefaultRelations relations) throws SQLException {
-        for (Record record : fetchKeys(DB_INDEX.IS_UNIQUE.isTrue().and(DB_INDEX.IS_PRIMARY_KEY.isFalse()))) {
-            String key = record.get("constraint_name", String.class);
-            String tableName = record.get(DB_CLASS.CLASS_NAME);
-            String columnName = record.get(DB_INDEX_KEY.KEY_ATTR_NAME);
+  @Override
+  protected void loadPrimaryKeys(DefaultRelations relations) throws SQLException {
+    for (Record record :
+        fetchKeys(DB_INDEX.IS_UNIQUE.isTrue().and(DB_INDEX.IS_PRIMARY_KEY.isFalse()))) {
+      String key = record.get("constraint_name", String.class);
+      String tableName = record.get(DB_CLASS.CLASS_NAME);
+      String columnName = record.get(DB_INDEX_KEY.KEY_ATTR_NAME);
 
-            TableDefinition table = getTable(getSchemata().get(0), tableName);
-            if (table != null)
-                relations.addUniqueKey(key, table, table.getColumn(columnName));
-        }
+      TableDefinition table = getTable(getSchemata().get(0), tableName);
+      if (table != null) relations.addUniqueKey(key, table, table.getColumn(columnName));
     }
+  }
 
-    @Override
-    protected void loadUniqueKeys(DefaultRelations relations) throws SQLException {
-        for (Record record : fetchKeys(DB_INDEX.IS_PRIMARY_KEY.isTrue())) {
-            String key = record.get("constraint_name", String.class);
-            String tableName = record.get(DB_CLASS.CLASS_NAME);
-            String columnName = record.get(DB_INDEX_KEY.KEY_ATTR_NAME);
+  @Override
+  protected void loadUniqueKeys(DefaultRelations relations) throws SQLException {
+    for (Record record : fetchKeys(DB_INDEX.IS_PRIMARY_KEY.isTrue())) {
+      String key = record.get("constraint_name", String.class);
+      String tableName = record.get(DB_CLASS.CLASS_NAME);
+      String columnName = record.get(DB_INDEX_KEY.KEY_ATTR_NAME);
 
-            TableDefinition table = getTable(getSchemata().get(0), tableName);
-            if (table != null)
-                relations.addPrimaryKey(key, table, table.getColumn(columnName));
-        }
+      TableDefinition table = getTable(getSchemata().get(0), tableName);
+      if (table != null) relations.addPrimaryKey(key, table, table.getColumn(columnName));
     }
+  }
 
-    private Result<Record3<String, String, String>> fetchKeys(Condition condition) {
-        return
-        create().select(
-                    concat(DB_CLASS.CLASS_NAME, val("__"), DB_INDEX.INDEX_NAME).as("constraint_name"),
-                    DB_INDEX_KEY.KEY_ATTR_NAME,
-                    DB_CLASS.CLASS_NAME)
-                .from(DB_INDEX)
-                .join(DB_CLASS).on(DB_INDEX.CLASS_NAME.equal(DB_CLASS.CLASS_NAME))
-                .join(DB_INDEX_KEY).on(
-                    DB_INDEX_KEY.INDEX_NAME.equal(DB_INDEX.INDEX_NAME).and(
-                    DB_INDEX_KEY.CLASS_NAME.equal(DB_INDEX.CLASS_NAME)))
-                .where(condition)
-                .orderBy(
-                    DB_INDEX.INDEX_NAME.asc())
-                .fetch();
-    }
+  private Result<Record3<String, String, String>> fetchKeys(Condition condition) {
+    return create()
+        .select(
+            concat(DB_CLASS.CLASS_NAME, val("__"), DB_INDEX.INDEX_NAME).as("constraint_name"),
+            DB_INDEX_KEY.KEY_ATTR_NAME,
+            DB_CLASS.CLASS_NAME)
+        .from(DB_INDEX)
+        .join(DB_CLASS)
+        .on(DB_INDEX.CLASS_NAME.equal(DB_CLASS.CLASS_NAME))
+        .join(DB_INDEX_KEY)
+        .on(
+            DB_INDEX_KEY
+                .INDEX_NAME
+                .equal(DB_INDEX.INDEX_NAME)
+                .and(DB_INDEX_KEY.CLASS_NAME.equal(DB_INDEX.CLASS_NAME)))
+        .where(condition)
+        .orderBy(DB_INDEX.INDEX_NAME.asc())
+        .fetch();
+  }
 
-    @Override
-    protected void loadForeignKeys(final DefaultRelations relations) throws SQLException {
-        create().connection(connection -> {
-            DatabaseMetaData meta = connection.getMetaData();
+  @Override
+  protected void loadForeignKeys(final DefaultRelations relations) throws SQLException {
+    create()
+        .connection(
+            connection -> {
+              DatabaseMetaData meta = connection.getMetaData();
 
-            for (String table : create()
-                    .selectDistinct(DB_INDEX.CLASS_NAME)
-                    .from(DB_INDEX)
-                    .where(DB_INDEX.IS_FOREIGN_KEY.isTrue())
-                    .collect(intoList())) {
+              for (String table :
+                  create()
+                      .selectDistinct(DB_INDEX.CLASS_NAME)
+                      .from(DB_INDEX)
+                      .where(DB_INDEX.IS_FOREIGN_KEY.isTrue())
+                      .collect(intoList())) {
 
                 for (Record record : create().fetch(meta.getImportedKeys(null, null, table))) {
-                    String foreignKeyName =
-                        record.get("FKTABLE_NAME", String.class) +
-                        "__" +
-                        record.get("FK_NAME", String.class);
-                    String foreignKeyTableName = record.get("FKTABLE_NAME", String.class);
-                    String foreignKeyColumnName = record.get("FKCOLUMN_NAME", String.class);
-                    String uniqueKeyName =
-                        record.get("PKTABLE_NAME", String.class) +
-                        "__" +
-                        record.get("PK_NAME", String.class);
-                    String uniqueKeyTableName = record.get("PKTABLE_NAME", String.class);
+                  String foreignKeyName =
+                      record.get("FKTABLE_NAME", String.class)
+                          + "__"
+                          + record.get("FK_NAME", String.class);
+                  String foreignKeyTableName = record.get("FKTABLE_NAME", String.class);
+                  String foreignKeyColumnName = record.get("FKCOLUMN_NAME", String.class);
+                  String uniqueKeyName =
+                      record.get("PKTABLE_NAME", String.class)
+                          + "__"
+                          + record.get("PK_NAME", String.class);
+                  String uniqueKeyTableName = record.get("PKTABLE_NAME", String.class);
 
-                    TableDefinition foreignKeyTable = getTable(getSchemata().get(0), foreignKeyTableName);
-                    TableDefinition uniqueKeyTable = getTable(getSchemata().get(0), uniqueKeyTableName);
+                  TableDefinition foreignKeyTable =
+                      getTable(getSchemata().get(0), foreignKeyTableName);
+                  TableDefinition uniqueKeyTable =
+                      getTable(getSchemata().get(0), uniqueKeyTableName);
 
-                    if (foreignKeyTable != null && uniqueKeyTable != null)
-                        relations.addForeignKey(
-                            foreignKeyName,
-                            foreignKeyTable,
-                            foreignKeyTable.getColumn(foreignKeyColumnName),
-                            uniqueKeyName,
-                            uniqueKeyTable
-                        );
+                  if (foreignKeyTable != null && uniqueKeyTable != null)
+                    relations.addForeignKey(
+                        foreignKeyName,
+                        foreignKeyTable,
+                        foreignKeyTable.getColumn(foreignKeyColumnName),
+                        uniqueKeyName,
+                        uniqueKeyTable);
                 }
-            }
-        });
+              }
+            });
+  }
+
+  @Override
+  protected void loadCheckConstraints(DefaultRelations r) throws SQLException {
+    // Currently not supported
+  }
+
+  @Override
+  protected List<CatalogDefinition> getCatalogs0() throws SQLException {
+    List<CatalogDefinition> result = new ArrayList<>();
+    result.add(new CatalogDefinition(this, "", ""));
+    return result;
+  }
+
+  @Override
+  protected List<SchemaDefinition> getSchemata0() throws SQLException {
+    List<SchemaDefinition> result = new ArrayList<>();
+    result.add(new SchemaDefinition(this, "", ""));
+    return result;
+  }
+
+  @Override
+  protected List<SequenceDefinition> getSequences0() throws SQLException {
+    List<SequenceDefinition> result = new ArrayList<>();
+
+    for (Record record :
+        create().select(DB_SERIAL.NAME, DB_SERIAL.MAX_VAL).from(DB_SERIAL).fetch()) {
+
+      BigInteger value =
+          defaultIfNull(
+              record.get(DB_SERIAL.MAX_VAL, BigInteger.class), BigInteger.valueOf(Long.MAX_VALUE));
+      DataTypeDefinition type = getDataTypeForMAX_VAL(getSchemata().get(0), value);
+
+      result.add(
+          new DefaultSequenceDefinition(getSchemata().get(0), record.get(DB_SERIAL.NAME), type));
     }
 
-    @Override
-    protected void loadCheckConstraints(DefaultRelations r) throws SQLException {
-        // Currently not supported
+    return result;
+  }
+
+  @Override
+  protected List<TableDefinition> getTables0() throws SQLException {
+    List<TableDefinition> result = new ArrayList<>();
+
+    for (Record record :
+        create()
+            .select(DB_CLASS.CLASS_NAME)
+            .from(DB_CLASS)
+            .orderBy(DB_CLASS.CLASS_NAME.asc())
+            .fetch()) {
+
+      String name = record.get(DB_CLASS.CLASS_NAME);
+
+      CUBRIDTableDefinition table = new CUBRIDTableDefinition(getSchemata().get(0), name, null);
+      result.add(table);
     }
 
-    @Override
-    protected List<CatalogDefinition> getCatalogs0() throws SQLException {
-        List<CatalogDefinition> result = new ArrayList<>();
-        result.add(new CatalogDefinition(this, "", ""));
-        return result;
-    }
+    return result;
+  }
 
-    @Override
-    protected List<SchemaDefinition> getSchemata0() throws SQLException {
-        List<SchemaDefinition> result = new ArrayList<>();
-        result.add(new SchemaDefinition(this, "", ""));
-        return result;
-    }
+  @Override
+  protected List<EnumDefinition> getEnums0() throws SQLException {
+    List<EnumDefinition> result = new ArrayList<>();
 
-    @Override
-    protected List<SequenceDefinition> getSequences0() throws SQLException {
-        List<SequenceDefinition> result = new ArrayList<>();
+    for (TableDefinition tableDefinition : getTables(getSchemata().get(0))) {
+      for (Record record :
+          create()
+              .fetch(
+                  "SHOW COLUMNS FROM {0} WHERE TYPE LIKE 'ENUM(%)'",
+                  field(name(tableDefinition.getInputName())))) {
+        String table = tableDefinition.getInputName();
+        String column = record.get("Field", String.class);
+        String columnType = record.get("Type", String.class);
+        String name = table + "_" + column;
 
-        for (Record record : create()
-                .select(
-                    DB_SERIAL.NAME,
-                    DB_SERIAL.MAX_VAL)
-                .from(DB_SERIAL)
-                .fetch()) {
+        ColumnDefinition columnDefinition = tableDefinition.getColumn(column);
 
-            BigInteger value = defaultIfNull(record.get(DB_SERIAL.MAX_VAL, BigInteger.class), BigInteger.valueOf(Long.MAX_VALUE));
-            DataTypeDefinition type = getDataTypeForMAX_VAL(getSchemata().get(0), value);
+        // [#1137] Avoid generating enum classes for enum types that
+        // are explicitly forced to another type
+        if (getConfiguredForcedType(columnDefinition) == null) {
+          DefaultEnumDefinition definition =
+              new DefaultEnumDefinition(getSchemata().get(0), name, "");
+          for (String string : columnType.replaceAll("ENUM\\(|\\)", "").split(",")) {
+            definition.addLiteral(string.trim().replaceAll("'", ""));
+          }
 
-            result.add(new DefaultSequenceDefinition(
-                getSchemata().get(0),
-                record.get(DB_SERIAL.NAME),
-                type));
+          result.add(definition);
         }
-
-        return result;
+      }
     }
 
-    @Override
-    protected List<TableDefinition> getTables0() throws SQLException {
-        List<TableDefinition> result = new ArrayList<>();
+    return result;
+  }
 
-        for (Record record : create()
-                .select(
-                    DB_CLASS.CLASS_NAME)
-                .from(DB_CLASS)
-                .orderBy(
-                    DB_CLASS.CLASS_NAME.asc())
-                .fetch()) {
+  @Override
+  protected List<DomainDefinition> getDomains0() throws SQLException {
+    List<DomainDefinition> result = new ArrayList<>();
+    return result;
+  }
 
-            String name = record.get(DB_CLASS.CLASS_NAME);
+  @Override
+  protected List<UDTDefinition> getUDTs0() throws SQLException {
+    List<UDTDefinition> result = new ArrayList<>();
+    return result;
+  }
 
-            CUBRIDTableDefinition table = new CUBRIDTableDefinition(getSchemata().get(0), name, null);
-            result.add(table);
-        }
+  @Override
+  protected List<ArrayDefinition> getArrays0() throws SQLException {
+    List<ArrayDefinition> result = new ArrayList<>();
+    return result;
+  }
 
-        return result;
-    }
+  @Override
+  protected List<RoutineDefinition> getRoutines0() throws SQLException {
+    List<RoutineDefinition> result = new ArrayList<>();
+    return result;
+  }
 
-    @Override
-    protected List<EnumDefinition> getEnums0() throws SQLException {
-        List<EnumDefinition> result = new ArrayList<>();
+  @Override
+  protected List<PackageDefinition> getPackages0() throws SQLException {
+    List<PackageDefinition> result = new ArrayList<>();
+    return result;
+  }
 
-        for (TableDefinition tableDefinition : getTables(getSchemata().get(0))) {
-            for (Record record : create().fetch("SHOW COLUMNS FROM {0} WHERE TYPE LIKE 'ENUM(%)'", field(name(tableDefinition.getInputName())))) {
-                String table = tableDefinition.getInputName();
-                String column = record.get("Field", String.class);
-                String columnType = record.get("Type", String.class);
-                String name = table + "_" + column;
-
-                ColumnDefinition columnDefinition = tableDefinition.getColumn(column);
-
-                // [#1137] Avoid generating enum classes for enum types that
-                // are explicitly forced to another type
-                if (getConfiguredForcedType(columnDefinition) == null) {
-                    DefaultEnumDefinition definition = new DefaultEnumDefinition(getSchemata().get(0), name, "");
-                    for (String string : columnType.replaceAll("ENUM\\(|\\)", "").split(",")) {
-                        definition.addLiteral(string.trim().replaceAll("'", ""));
-                    }
-
-                    result.add(definition);
-                }
-            }
-        }
-
-        return result;
-    }
-
-    @Override
-    protected List<DomainDefinition> getDomains0() throws SQLException {
-        List<DomainDefinition> result = new ArrayList<>();
-        return result;
-    }
-
-    @Override
-    protected List<UDTDefinition> getUDTs0() throws SQLException {
-        List<UDTDefinition> result = new ArrayList<>();
-        return result;
-    }
-
-    @Override
-    protected List<ArrayDefinition> getArrays0() throws SQLException {
-        List<ArrayDefinition> result = new ArrayList<>();
-        return result;
-    }
-
-    @Override
-    protected List<RoutineDefinition> getRoutines0() throws SQLException {
-        List<RoutineDefinition> result = new ArrayList<>();
-        return result;
-    }
-
-    @Override
-    protected List<PackageDefinition> getPackages0() throws SQLException {
-        List<PackageDefinition> result = new ArrayList<>();
-        return result;
-    }
-
-    @Override
-    protected DSLContext create0() {
-        return DSL.using(getConnection(), SQLDialect.CUBRID);
-    }
+  @Override
+  protected DSLContext create0() {
+    return DSL.using(getConnection(), SQLDialect.CUBRID);
+  }
 }

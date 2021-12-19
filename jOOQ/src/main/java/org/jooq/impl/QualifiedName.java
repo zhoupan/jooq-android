@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,10 +39,8 @@ package org.jooq.impl;
 
 import static org.jooq.Name.Quoted.DEFAULT;
 import static org.jooq.Name.Quoted.MIXED;
-// ...
 import static org.jooq.impl.Tools.anyMatch;
 import static org.jooq.impl.Tools.map;
-import static org.jooq.impl.Tools.stringLiteral;
 
 import org.jooq.Context;
 import org.jooq.Name;
@@ -55,201 +53,168 @@ import org.jooq.tools.StringUtils;
  */
 final class QualifiedName extends AbstractName {
 
-    private final UnqualifiedName[] qualifiedName;
+  private final UnqualifiedName[] qualifiedName;
 
-    QualifiedName(String[] qualifiedName) {
-        this(qualifiedName, DEFAULT);
+  QualifiedName(String[] qualifiedName) {
+    this(qualifiedName, DEFAULT);
+  }
+
+  QualifiedName(String[] qualifiedName, Quoted quoted) {
+    this(names(qualifiedName, quoted));
+  }
+
+  QualifiedName(Name[] qualifiedName) {
+    this.qualifiedName = last(nonEmpty(qualifiedName));
+  }
+
+  private QualifiedName(UnqualifiedName[] qualifiedName) {
+    this.qualifiedName = qualifiedName;
+  }
+
+  private static final UnqualifiedName[] names(String[] qualifiedName, Quoted quoted) {
+    return map(
+        nonEmpty(qualifiedName), s -> new UnqualifiedName(s, quoted), UnqualifiedName[]::new);
+  }
+
+  private static final UnqualifiedName[] last(Name[] qualifiedName) {
+    if (qualifiedName instanceof UnqualifiedName[]) return (UnqualifiedName[]) qualifiedName;
+
+    UnqualifiedName[] result = new UnqualifiedName[qualifiedName.length];
+
+    for (int i = 0; i < qualifiedName.length; i++)
+      if (qualifiedName[i] instanceof QualifiedName) {
+        QualifiedName q = (QualifiedName) qualifiedName[i];
+        result[i] = q.qualifiedName[q.qualifiedName.length - 1];
+      } else if (qualifiedName[i] instanceof UnqualifiedName)
+        result[i] = (UnqualifiedName) qualifiedName[i];
+      else result[i] = new UnqualifiedName(qualifiedName[i].last());
+
+    return result;
+  }
+
+  private static final String[] nonEmpty(String[] qualifiedName) {
+    String[] result;
+    int nulls = 0;
+
+    for (String name : qualifiedName) if (StringUtils.isEmpty(name)) nulls++;
+
+    if (nulls > 0) {
+      result = new String[qualifiedName.length - nulls];
+
+      for (int i = qualifiedName.length - 1; i >= 0; i--)
+        if (StringUtils.isEmpty(qualifiedName[i])) nulls--;
+        else result[i - nulls] = qualifiedName[i];
+    } else {
+      result = qualifiedName;
     }
 
-    QualifiedName(String[] qualifiedName, Quoted quoted) {
-        this(names(qualifiedName, quoted));
+    return result;
+  }
+
+  private static final Name[] nonEmpty(Name[] names) {
+    Name[] result;
+    int nulls = 0;
+
+    for (Name name : names) if (name == null || name.equals(NO_NAME)) nulls++;
+
+    if (nulls > 0) {
+      result = new Name[names.length - nulls];
+
+      for (int i = names.length - 1; i >= 0; i--)
+        if (names[i] == null || names[i].equals(NO_NAME)) nulls--;
+        else result[i - nulls] = names[i];
+    } else {
+      result = names;
     }
 
-    QualifiedName(Name[] qualifiedName) {
-        this.qualifiedName = last(nonEmpty(qualifiedName));
+    return result;
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+
+    // [#3437] Fully qualify this field only if allowed in the current context
+    if (ctx.qualify()) {
+      String separator = "";
+
+      for (UnqualifiedName name : qualifiedName) {
+        ctx.sql(separator).visit(name);
+        separator = ".";
+      }
+    } else {
+      ctx.visit(qualifiedName[qualifiedName.length - 1]);
     }
+  }
 
-    private QualifiedName(UnqualifiedName[] qualifiedName) {
-        this.qualifiedName = qualifiedName;
-    }
+  @Override
+  public final String first() {
+    return qualifiedName.length > 0 ? qualifiedName[0].last() : null;
+  }
 
-    private static final UnqualifiedName[] names(String[] qualifiedName, Quoted quoted) {
-        return map(nonEmpty(qualifiedName), s -> new UnqualifiedName(s, quoted), UnqualifiedName[]::new);
-    }
+  @Override
+  public final String last() {
+    return qualifiedName.length > 0 ? qualifiedName[qualifiedName.length - 1].last() : null;
+  }
 
-    private static final UnqualifiedName[] last(Name[] qualifiedName) {
-        if (qualifiedName instanceof UnqualifiedName[])
-            return (UnqualifiedName[]) qualifiedName;
+  @Override
+  public final boolean empty() {
+    return !anyMatch(qualifiedName, n -> !n.empty());
+  }
 
-        UnqualifiedName[] result = new UnqualifiedName[qualifiedName.length];
+  @Override
+  public final boolean qualified() {
+    return qualifiedName.length > 1;
+  }
 
-        for (int i = 0; i < qualifiedName.length; i++)
-            if (qualifiedName[i] instanceof QualifiedName) {
-                QualifiedName q = (QualifiedName) qualifiedName[i];
-                result[i] = q.qualifiedName[q.qualifiedName.length - 1];
-            }
-            else if (qualifiedName[i] instanceof UnqualifiedName)
-                result[i] = (UnqualifiedName) qualifiedName[i];
-            else
-                result[i] = new UnqualifiedName(qualifiedName[i].last());
+  @Override
+  public final boolean qualifierQualified() {
+    return qualifiedName.length > 2;
+  }
 
-        return result;
-    }
+  @Override
+  public final Name qualifier() {
+    if (qualifiedName.length <= 1) return null;
+    if (qualifiedName.length == 2) return qualifiedName[0];
 
-    private static final String[] nonEmpty(String[] qualifiedName) {
-        String[] result;
-        int nulls = 0;
+    UnqualifiedName[] qualifier = new UnqualifiedName[qualifiedName.length - 1];
+    System.arraycopy(qualifiedName, 0, qualifier, 0, qualifier.length);
+    return new QualifiedName(qualifier);
+  }
 
-        for (String name : qualifiedName)
-            if (StringUtils.isEmpty(name))
-                nulls++;
+  @Override
+  public final Name unqualifiedName() {
+    if (qualifiedName.length == 0) return this;
+    else return qualifiedName[qualifiedName.length - 1];
+  }
 
-        if (nulls > 0) {
-            result = new String[qualifiedName.length - nulls];
+  @Override
+  public final Quoted quoted() {
+    Quoted result = null;
 
-            for (int i = qualifiedName.length - 1; i >= 0; i--)
-                if (StringUtils.isEmpty(qualifiedName[i]))
-                    nulls--;
-                else
-                    result[i - nulls] = qualifiedName[i];
-        }
-        else {
-            result = qualifiedName;
-        }
+    for (UnqualifiedName name : qualifiedName)
+      if (result == null) result = name.quoted();
+      else if (result != name.quoted()) return MIXED;
 
-        return result;
-    }
+    return result == null ? DEFAULT : result;
+  }
 
-    private static final Name[] nonEmpty(Name[] names) {
-        Name[] result;
-        int nulls = 0;
+  @Override
+  public final Name quotedName() {
+    return new QualifiedName(map(qualifiedName, n -> n.quotedName(), Name[]::new));
+  }
 
-        for (Name name : names)
-            if (name == null || name.equals(NO_NAME))
-                nulls++;
+  @Override
+  public final Name unquotedName() {
+    return new QualifiedName(map(qualifiedName, n -> n.unquotedName(), Name[]::new));
+  }
 
-        if (nulls > 0) {
-            result = new Name[names.length - nulls];
+  @Override
+  public final String[] getName() {
+    return map(qualifiedName, n -> n.last(), String[]::new);
+  }
 
-            for (int i = names.length - 1; i >= 0; i--)
-                if (names[i] == null || names[i].equals(NO_NAME))
-                    nulls--;
-                else
-                    result[i - nulls] = names[i];
-        }
-        else {
-            result = names;
-        }
-
-        return result;
-    }
-
-    @Override
-    public final void accept(Context<?> ctx) {
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        // [#3437] Fully qualify this field only if allowed in the current context
-        if (ctx.qualify()) {
-            String separator = "";
-
-            for (UnqualifiedName name : qualifiedName) {
-                ctx.sql(separator).visit(name);
-                separator = ".";
-            }
-        }
-        else {
-            ctx.visit(qualifiedName[qualifiedName.length - 1]);
-        }
-    }
-
-    @Override
-    public final String first() {
-        return qualifiedName.length > 0 ? qualifiedName[0].last() : null;
-    }
-
-    @Override
-    public final String last() {
-        return qualifiedName.length > 0 ? qualifiedName[qualifiedName.length - 1].last() : null;
-    }
-
-    @Override
-    public final boolean empty() {
-        return !anyMatch(qualifiedName, n -> !n.empty());
-    }
-
-    @Override
-    public final boolean qualified() {
-        return qualifiedName.length > 1;
-    }
-
-    @Override
-    public final boolean qualifierQualified() {
-        return qualifiedName.length > 2;
-    }
-
-    @Override
-    public final Name qualifier() {
-        if (qualifiedName.length <= 1)
-            return null;
-        if (qualifiedName.length == 2)
-            return qualifiedName[0];
-
-        UnqualifiedName[] qualifier = new UnqualifiedName[qualifiedName.length - 1];
-        System.arraycopy(qualifiedName, 0, qualifier, 0, qualifier.length);
-        return new QualifiedName(qualifier);
-    }
-
-    @Override
-    public final Name unqualifiedName() {
-        if (qualifiedName.length == 0)
-            return this;
-        else
-            return qualifiedName[qualifiedName.length - 1];
-    }
-
-    @Override
-    public final Quoted quoted() {
-        Quoted result = null;
-
-        for (UnqualifiedName name : qualifiedName)
-            if (result == null)
-                result = name.quoted();
-            else if (result != name.quoted())
-                return MIXED;
-
-        return result == null ? DEFAULT : result;
-    }
-
-    @Override
-    public final Name quotedName() {
-        return new QualifiedName(map(qualifiedName, n -> n.quotedName(), Name[]::new));
-    }
-
-    @Override
-    public final Name unquotedName() {
-        return new QualifiedName(map(qualifiedName, n -> n.unquotedName(), Name[]::new));
-    }
-
-    @Override
-    public final String[] getName() {
-        return map(qualifiedName, n -> n.last(), String[]::new);
-    }
-
-    @Override
-    public final Name[] parts() {
-        return qualifiedName.clone();
-    }
+  @Override
+  public final Name[] parts() {
+    return qualifiedName.clone();
+  }
 }

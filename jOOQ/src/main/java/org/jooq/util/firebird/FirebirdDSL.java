@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,15 +44,12 @@ import org.jooq.impl.DSL;
  * The {@link SQLDialect#FIREBIRD} specific DSL.
  *
  * @author Lukas Eder
- * @deprecated - 3.15.0 - [#10796] - This class will be removed, soon, no more
- *             vendor specific DSL API will be added.
+ * @deprecated - 3.15.0 - [#10796] - This class will be removed, soon, no more vendor specific DSL
+ *     API will be added.
  */
 @Deprecated(forRemoval = true, since = "3.15")
 public class FirebirdDSL extends DSL {
 
-    /**
-     * No instances
-     */
-    protected FirebirdDSL() {
-    }
+  /** No instances */
+  protected FirebirdDSL() {}
 }

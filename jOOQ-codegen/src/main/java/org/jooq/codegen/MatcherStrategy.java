@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,14 +41,10 @@ import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 import static org.jooq.tools.StringUtils.defaultIfEmpty;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
 import org.jooq.meta.CatalogDefinition;
 import org.jooq.meta.ColumnDefinition;
 import org.jooq.meta.Definition;
@@ -73,402 +69,409 @@ import org.jooq.meta.jaxb.MatchersTableType;
 import org.jooq.tools.StringUtils;
 
 /**
- * A generator strategy that names objects according to a {@link Matchers}
- * configuration object.
+ * A generator strategy that names objects according to a {@link Matchers} configuration object.
  *
  * @author Lukas Eder
  */
 public class MatcherStrategy extends DefaultGeneratorStrategy {
 
-    private final Matchers matchers;
-    private final Patterns patterns;
+  private final Matchers matchers;
+  private final Patterns patterns;
 
-    public MatcherStrategy(Matchers matchers) {
-        this(matchers, new Patterns());
+  public MatcherStrategy(Matchers matchers) {
+    this(matchers, new Patterns());
+  }
+
+  public MatcherStrategy(Matchers matchers, Patterns patterns) {
+    this.matchers = matchers;
+    this.patterns = patterns;
+  }
+
+  public Matchers getMatchers() {
+    return matchers;
+  }
+
+  public Patterns getPatterns() {
+    return patterns;
+  }
+
+  /**
+   * Take a {@link Definition}, try to match its name or qualified name against an expression, and
+   * apply a rule upon match.
+   */
+  private final String match(Definition definition, String expression, MatcherRule rule) {
+    if (rule != null)
+      return match(definition, expression, rule.getExpression(), rule.getTransform());
+
+    return null;
+  }
+
+  private final String match(Definition definition, String expression, String ruleExpression) {
+    return match(definition, expression, ruleExpression, null);
+  }
+
+  private final String match(
+      Definition definition,
+      String expression,
+      String ruleExpression,
+      MatcherTransformType ruleTransformType) {
+    // [#3734] If users forget to specify the rule's expression but they use
+    // a transformer (e.g. PASCAL), we should assume the "default" replacement
+    if (ruleTransformType != null && ruleExpression == null) ruleExpression = "$0";
+
+    if (ruleExpression != null) {
+      Pattern p = patterns.pattern(defaultIfEmpty(expression, "^.*$").trim());
+      Matcher m = p.matcher(definition.getName());
+
+      if (m.matches()) return transform(m.replaceAll(ruleExpression), ruleTransformType);
+
+      m = p.matcher(definition.getQualifiedName());
+
+      if (m.matches()) return transform(m.replaceAll(ruleExpression), ruleTransformType);
     }
 
-    public MatcherStrategy(Matchers matchers, Patterns patterns) {
-        this.matchers = matchers;
-        this.patterns = patterns;
+    return null;
+  }
+
+  private final String transform(String string, MatcherTransformType transform) {
+    if (transform == null) return string;
+
+    switch (transform) {
+      case AS_IS:
+        return string;
+      case LOWER:
+        return string.toLowerCase(getTargetLocale());
+      case LOWER_FIRST_LETTER:
+        return StringUtils.toLC(string);
+      case UPPER:
+        return string.toUpperCase(getTargetLocale());
+      case UPPER_FIRST_LETTER:
+        return StringUtils.toUC(string);
+      case CAMEL:
+        return StringUtils.toCamelCaseLC(string);
+      case PASCAL:
+        return StringUtils.toCamelCase(string);
+
+      default:
+        throw new UnsupportedOperationException("Transform Type not supported : " + transform);
+    }
+  }
+
+  private final List<MatchersCatalogType> catalogs(Definition definition) {
+    if (definition instanceof CatalogDefinition) return matchers.getCatalogs();
+
+    return emptyList();
+  }
+
+  private final List<MatchersSchemaType> schemas(Definition definition) {
+    if (definition instanceof SchemaDefinition) return matchers.getSchemas();
+
+    return emptyList();
+  }
+
+  private final List<MatchersTableType> tables(Definition definition) {
+    if (definition instanceof TableDefinition) return matchers.getTables();
+
+    return emptyList();
+  }
+
+  private final List<MatchersFieldType> fields(Definition definition) {
+    if (definition instanceof ColumnDefinition) return matchers.getFields();
+
+    return emptyList();
+  }
+
+  private final List<MatchersRoutineType> routines(Definition definition) {
+    if (definition instanceof RoutineDefinition) return matchers.getRoutines();
+
+    return emptyList();
+  }
+
+  private final List<MatchersSequenceType> sequences(Definition definition) {
+    if (definition instanceof SequenceDefinition) return matchers.getSequences();
+
+    return emptyList();
+  }
+
+  private final List<MatchersEnumType> enums(Definition definition) {
+    if (definition instanceof EnumDefinition) return matchers.getEnums();
+
+    return emptyList();
+  }
+
+  private final List<MatchersEmbeddableType> embeddables(Definition definition) {
+    if (definition instanceof EmbeddableDefinition) return matchers.getEmbeddables();
+
+    return emptyList();
+  }
+
+  private final List<String> split(String result) {
+    return Stream.of(result.split(",")).map(String::trim).collect(toList());
+  }
+
+  @Override
+  public String getJavaIdentifier(Definition definition) {
+    for (MatchersCatalogType catalogs : catalogs(definition)) {
+      String result = match(definition, catalogs.getExpression(), catalogs.getCatalogIdentifier());
+      if (result != null) return result;
     }
 
-    public Matchers getMatchers() {
-        return matchers;
+    for (MatchersSchemaType schemas : schemas(definition)) {
+      String result = match(definition, schemas.getExpression(), schemas.getSchemaIdentifier());
+      if (result != null) return result;
     }
 
-    public Patterns getPatterns() {
-        return patterns;
+    for (MatchersTableType tables : tables(definition)) {
+      String result = match(definition, tables.getExpression(), tables.getTableIdentifier());
+      if (result != null) return result;
     }
 
-    /**
-     * Take a {@link Definition}, try to match its name or qualified name
-     * against an expression, and apply a rule upon match.
-     */
-    private final String match(Definition definition, String expression, MatcherRule rule) {
-        if (rule != null)
-            return match(definition, expression, rule.getExpression(), rule.getTransform());
-
-        return null;
+    for (MatchersFieldType fields : fields(definition)) {
+      String result = match(definition, fields.getExpression(), fields.getFieldIdentifier());
+      if (result != null) return result;
     }
 
-    private final String match(Definition definition, String expression, String ruleExpression) {
-        return match(definition, expression, ruleExpression, null);
+    for (MatchersSequenceType sequences : sequences(definition)) {
+      String result =
+          match(definition, sequences.getExpression(), sequences.getSequenceIdentifier());
+      if (result != null) return result;
     }
 
-    private final String match(Definition definition, String expression, String ruleExpression, MatcherTransformType ruleTransformType) {
-        // [#3734] If users forget to specify the rule's expression but they use
-        // a transformer (e.g. PASCAL), we should assume the "default" replacement
-        if (ruleTransformType != null && ruleExpression == null)
-            ruleExpression = "$0";
+    // Default to standard behaviour
+    return super.getJavaIdentifier(definition);
+  }
 
-        if (ruleExpression != null) {
-            Pattern p = patterns.pattern(defaultIfEmpty(expression, "^.*$").trim());
-            Matcher m = p.matcher(definition.getName());
-
-            if (m.matches())
-                return transform(m.replaceAll(ruleExpression), ruleTransformType);
-
-            m = p.matcher(definition.getQualifiedName());
-
-            if (m.matches())
-                return transform(m.replaceAll(ruleExpression), ruleTransformType);
-        }
-
-        return null;
+  @Override
+  public String getJavaSetterName(Definition definition, Mode mode) {
+    for (MatchersFieldType fields : fields(definition)) {
+      String result = match(definition, fields.getExpression(), fields.getFieldSetter());
+      if (result != null) return result;
     }
 
-    private final String transform(String string, MatcherTransformType transform) {
-        if (transform == null)
-            return string;
+    // Default to standard behaviour
+    return super.getJavaSetterName(definition, mode);
+  }
 
-        switch (transform) {
-            case AS_IS:
-                return string;
-            case LOWER:
-                return string.toLowerCase(getTargetLocale());
-            case LOWER_FIRST_LETTER:
-                return StringUtils.toLC(string);
-            case UPPER:
-                return string.toUpperCase(getTargetLocale());
-            case UPPER_FIRST_LETTER:
-                return StringUtils.toUC(string);
-            case CAMEL:
-                return StringUtils.toCamelCaseLC(string);
-            case PASCAL:
-                return StringUtils.toCamelCase(string);
-
-            default:
-                throw new UnsupportedOperationException("Transform Type not supported : " + transform);
-        }
+  @Override
+  public String getJavaGetterName(Definition definition, Mode mode) {
+    for (MatchersFieldType fields : fields(definition)) {
+      String result = match(definition, fields.getExpression(), fields.getFieldGetter());
+      if (result != null) return result;
     }
 
-    private final List<MatchersCatalogType> catalogs(Definition definition) {
-        if (definition instanceof CatalogDefinition)
-            return matchers.getCatalogs();
+    // Default to standard behaviour
+    return super.getJavaGetterName(definition, mode);
+  }
 
-        return emptyList();
+  @Override
+  public String getJavaMethodName(Definition definition, Mode mode) {
+    for (MatchersRoutineType routines : routines(definition)) {
+      String result = match(definition, routines.getExpression(), routines.getRoutineMethod());
+
+      if (result != null) return result;
     }
 
-    private final List<MatchersSchemaType> schemas(Definition definition) {
-        if (definition instanceof SchemaDefinition)
-            return matchers.getSchemas();
+    // Default to standard behaviour
+    return super.getJavaMethodName(definition, mode);
+  }
 
-        return emptyList();
+  @Override
+  public String getJavaClassExtends(Definition definition, Mode mode) {
+    for (MatchersTableType tables : tables(definition)) {
+      String result = null;
+
+      switch (mode) {
+        case POJO:
+          result = match(definition, tables.getExpression(), tables.getPojoExtends());
+          break;
+      }
+
+      if (result != null) return result;
     }
 
-    private final List<MatchersTableType> tables(Definition definition) {
-        if (definition instanceof TableDefinition)
-            return matchers.getTables();
+    for (MatchersEmbeddableType embeddables : embeddables(definition)) {
+      String result = null;
 
-        return emptyList();
+      switch (mode) {
+        case POJO:
+          result = match(definition, embeddables.getExpression(), embeddables.getPojoExtends());
+          break;
+      }
+
+      if (result != null) return result;
     }
 
-    private final List<MatchersFieldType> fields(Definition definition) {
-        if (definition instanceof ColumnDefinition)
-            return matchers.getFields();
+    // Default to standard behaviour
+    return super.getJavaClassExtends(definition, mode);
+  }
 
-        return emptyList();
+  @Override
+  public List<String> getJavaClassImplements(Definition definition, Mode mode) {
+    for (MatchersCatalogType catalogs : catalogs(definition)) {
+      String result = match(definition, catalogs.getExpression(), catalogs.getCatalogImplements());
+
+      if (result != null) return split(result);
     }
 
-    private final List<MatchersRoutineType> routines(Definition definition) {
-        if (definition instanceof RoutineDefinition)
-            return matchers.getRoutines();
+    for (MatchersSchemaType schemas : schemas(definition)) {
+      String result = match(definition, schemas.getExpression(), schemas.getSchemaImplements());
 
-        return emptyList();
+      if (result != null) return split(result);
     }
 
-    private final List<MatchersSequenceType> sequences(Definition definition) {
-        if (definition instanceof SequenceDefinition)
-            return matchers.getSequences();
+    for (MatchersTableType tables : tables(definition)) {
+      String result = null;
 
-        return emptyList();
+      switch (mode) {
+        case DEFAULT:
+          result = match(definition, tables.getExpression(), tables.getTableImplements());
+          break;
+        case DAO:
+          result = match(definition, tables.getExpression(), tables.getDaoImplements());
+          break;
+        case INTERFACE:
+          result = match(definition, tables.getExpression(), tables.getInterfaceImplements());
+          break;
+        case POJO:
+          result = match(definition, tables.getExpression(), tables.getPojoImplements());
+          break;
+        case RECORD:
+          result = match(definition, tables.getExpression(), tables.getRecordImplements());
+          break;
+      }
+
+      if (result != null) return split(result);
     }
 
-    private final List<MatchersEnumType> enums(Definition definition) {
-        if (definition instanceof EnumDefinition)
-            return matchers.getEnums();
+    for (MatchersEmbeddableType embeddables : embeddables(definition)) {
+      String result = null;
 
-        return emptyList();
+      switch (mode) {
+        case INTERFACE:
+          result =
+              match(definition, embeddables.getExpression(), embeddables.getInterfaceImplements());
+          break;
+        case POJO:
+          result = match(definition, embeddables.getExpression(), embeddables.getPojoImplements());
+          break;
+        case RECORD:
+        case DEFAULT:
+          result =
+              match(definition, embeddables.getExpression(), embeddables.getRecordImplements());
+          break;
+      }
+
+      if (result != null) return split(result);
     }
 
-    private final List<MatchersEmbeddableType> embeddables(Definition definition) {
-        if (definition instanceof EmbeddableDefinition)
-            return matchers.getEmbeddables();
+    for (MatchersRoutineType routines : routines(definition)) {
+      String result = match(definition, routines.getExpression(), routines.getRoutineImplements());
 
-        return emptyList();
+      if (result != null) return split(result);
     }
 
-    private final List<String> split(String result) {
-        return Stream.of(result.split(",")).map(String::trim).collect(toList());
+    for (MatchersEnumType enums : enums(definition)) {
+      String result = match(definition, enums.getExpression(), enums.getEnumImplements());
+
+      if (result != null) return split(result);
     }
 
-    @Override
-    public String getJavaIdentifier(Definition definition) {
-        for (MatchersCatalogType catalogs : catalogs(definition)) {
-            String result = match(definition, catalogs.getExpression(), catalogs.getCatalogIdentifier());
-            if (result != null)
-                return result;
-        }
+    // Default to standard behaviour
+    return super.getJavaClassImplements(definition, mode);
+  }
 
-        for (MatchersSchemaType schemas : schemas(definition)) {
-            String result = match(definition, schemas.getExpression(), schemas.getSchemaIdentifier());
-            if (result != null)
-                return result;
-        }
+  @Override
+  public String getJavaClassName(Definition definition, Mode mode) {
+    for (MatchersCatalogType catalogs : catalogs(definition)) {
+      String result = match(definition, catalogs.getExpression(), catalogs.getCatalogClass());
 
-        for (MatchersTableType tables : tables(definition)) {
-            String result = match(definition, tables.getExpression(), tables.getTableIdentifier());
-            if (result != null)
-                return result;
-        }
-
-        for (MatchersFieldType fields : fields(definition)) {
-            String result = match(definition, fields.getExpression(), fields.getFieldIdentifier());
-            if (result != null)
-                return result;
-        }
-
-        for (MatchersSequenceType sequences : sequences(definition)) {
-            String result = match(definition, sequences.getExpression(), sequences.getSequenceIdentifier());
-            if (result != null)
-                return result;
-        }
-
-        // Default to standard behaviour
-        return super.getJavaIdentifier(definition);
+      if (result != null) return result;
     }
 
-    @Override
-    public String getJavaSetterName(Definition definition, Mode mode) {
-        for (MatchersFieldType fields : fields(definition)) {
-            String result = match(definition, fields.getExpression(), fields.getFieldSetter());
-            if (result != null)
-                return result;
-        }
+    for (MatchersSchemaType schemas : schemas(definition)) {
+      String result = match(definition, schemas.getExpression(), schemas.getSchemaClass());
 
-        // Default to standard behaviour
-        return super.getJavaSetterName(definition, mode);
+      if (result != null) return result;
     }
 
-    @Override
-    public String getJavaGetterName(Definition definition, Mode mode) {
-        for (MatchersFieldType fields : fields(definition)) {
-            String result = match(definition, fields.getExpression(), fields.getFieldGetter());
-            if (result != null)
-                return result;
-        }
+    for (MatchersTableType tables : tables(definition)) {
+      String result = null;
 
-        // Default to standard behaviour
-        return super.getJavaGetterName(definition, mode);
+      switch (mode) {
+        case DEFAULT:
+          result = match(definition, tables.getExpression(), tables.getTableClass());
+          break;
+        case DAO:
+          result = match(definition, tables.getExpression(), tables.getDaoClass());
+          break;
+        case INTERFACE:
+          result = match(definition, tables.getExpression(), tables.getInterfaceClass());
+          break;
+        case POJO:
+          result = match(definition, tables.getExpression(), tables.getPojoClass());
+          break;
+        case RECORD:
+          result = match(definition, tables.getExpression(), tables.getRecordClass());
+          break;
+      }
+
+      if (result != null) return result;
     }
 
-    @Override
-    public String getJavaMethodName(Definition definition, Mode mode) {
-        for (MatchersRoutineType routines : routines(definition)) {
-            String result = match(definition, routines.getExpression(), routines.getRoutineMethod());
+    for (MatchersEmbeddableType embeddables : embeddables(definition)) {
+      String result = null;
 
-            if (result != null)
-                return result;
-        }
+      switch (mode) {
+        case INTERFACE:
+          result = match(definition, embeddables.getExpression(), embeddables.getInterfaceClass());
+          break;
+        case POJO:
+          result = match(definition, embeddables.getExpression(), embeddables.getPojoClass());
+          break;
+        case RECORD:
+        case DEFAULT:
+          result = match(definition, embeddables.getExpression(), embeddables.getRecordClass());
+          break;
+      }
 
-        // Default to standard behaviour
-        return super.getJavaMethodName(definition, mode);
+      if (result != null) return result;
     }
 
-    @Override
-    public String getJavaClassExtends(Definition definition, Mode mode) {
-        for (MatchersTableType tables : tables(definition)) {
-            String result = null;
+    for (MatchersRoutineType routines : routines(definition)) {
+      String result = match(definition, routines.getExpression(), routines.getRoutineClass());
 
-            switch (mode) {
-                case POJO: result = match(definition, tables.getExpression(), tables.getPojoExtends()); break;
-            }
-
-            if (result != null)
-                return result;
-        }
-
-        for (MatchersEmbeddableType embeddables : embeddables(definition)) {
-            String result = null;
-
-            switch (mode) {
-                case POJO: result = match(definition, embeddables.getExpression(), embeddables.getPojoExtends()); break;
-            }
-
-            if (result != null)
-                return result;
-        }
-
-        // Default to standard behaviour
-        return super.getJavaClassExtends(definition, mode);
+      if (result != null) return result;
     }
 
-    @Override
-    public List<String> getJavaClassImplements(Definition definition, Mode mode) {
-        for (MatchersCatalogType catalogs : catalogs(definition)) {
-            String result = match(definition, catalogs.getExpression(), catalogs.getCatalogImplements());
+    for (MatchersEnumType enums : enums(definition)) {
+      String result = match(definition, enums.getExpression(), enums.getEnumClass());
 
-            if (result != null)
-                return split(result);
-        }
-
-        for (MatchersSchemaType schemas : schemas(definition)) {
-            String result = match(definition, schemas.getExpression(), schemas.getSchemaImplements());
-
-            if (result != null)
-                return split(result);
-        }
-
-        for (MatchersTableType tables : tables(definition)) {
-            String result = null;
-
-            switch (mode) {
-                case DEFAULT:   result = match(definition, tables.getExpression(), tables.getTableImplements());     break;
-                case DAO:       result = match(definition, tables.getExpression(), tables.getDaoImplements());       break;
-                case INTERFACE: result = match(definition, tables.getExpression(), tables.getInterfaceImplements()); break;
-                case POJO:      result = match(definition, tables.getExpression(), tables.getPojoImplements());      break;
-                case RECORD:    result = match(definition, tables.getExpression(), tables.getRecordImplements());    break;
-            }
-
-            if (result != null)
-                return split(result);
-        }
-
-        for (MatchersEmbeddableType embeddables : embeddables(definition)) {
-            String result = null;
-
-            switch (mode) {
-                case INTERFACE: result = match(definition, embeddables.getExpression(), embeddables.getInterfaceImplements()); break;
-                case POJO:      result = match(definition, embeddables.getExpression(), embeddables.getPojoImplements());      break;
-                case RECORD:
-                case DEFAULT:   result = match(definition, embeddables.getExpression(), embeddables.getRecordImplements());    break;
-            }
-
-            if (result != null)
-                return split(result);
-        }
-
-        for (MatchersRoutineType routines : routines(definition)) {
-            String result = match(definition, routines.getExpression(), routines.getRoutineImplements());
-
-            if (result != null)
-                return split(result);
-        }
-
-        for (MatchersEnumType enums : enums(definition)) {
-            String result = match(definition, enums.getExpression(), enums.getEnumImplements());
-
-            if (result != null)
-                return split(result);
-        }
-
-        // Default to standard behaviour
-        return super.getJavaClassImplements(definition, mode);
+      if (result != null) return result;
     }
 
-    @Override
-    public String getJavaClassName(Definition definition, Mode mode) {
-        for (MatchersCatalogType catalogs : catalogs(definition)) {
-            String result = match(definition, catalogs.getExpression(), catalogs.getCatalogClass());
+    // Default to standard behaviour
+    return super.getJavaClassName(definition, mode);
+  }
 
-            if (result != null)
-                return result;
-        }
+  @Override
+  public String getJavaPackageName(Definition definition, Mode mode) {
+    return super.getJavaPackageName(definition, mode);
+  }
 
-        for (MatchersSchemaType schemas : schemas(definition)) {
-            String result = match(definition, schemas.getExpression(), schemas.getSchemaClass());
+  @Override
+  public String getJavaMemberName(Definition definition, Mode mode) {
+    for (MatchersFieldType fields : fields(definition)) {
+      String result = match(definition, fields.getExpression(), fields.getFieldMember());
 
-            if (result != null)
-                return result;
-        }
-
-        for (MatchersTableType tables : tables(definition)) {
-            String result = null;
-
-            switch (mode) {
-                case DEFAULT:   result = match(definition, tables.getExpression(), tables.getTableClass());     break;
-                case DAO:       result = match(definition, tables.getExpression(), tables.getDaoClass());       break;
-                case INTERFACE: result = match(definition, tables.getExpression(), tables.getInterfaceClass()); break;
-                case POJO:      result = match(definition, tables.getExpression(), tables.getPojoClass());      break;
-                case RECORD:    result = match(definition, tables.getExpression(), tables.getRecordClass());    break;
-            }
-
-            if (result != null)
-                return result;
-        }
-
-        for (MatchersEmbeddableType embeddables : embeddables(definition)) {
-            String result = null;
-
-            switch (mode) {
-                case INTERFACE: result = match(definition, embeddables.getExpression(), embeddables.getInterfaceClass()); break;
-                case POJO:      result = match(definition, embeddables.getExpression(), embeddables.getPojoClass());      break;
-                case RECORD:
-                case DEFAULT:   result = match(definition, embeddables.getExpression(), embeddables.getRecordClass());    break;
-            }
-
-            if (result != null)
-                return result;
-        }
-
-        for (MatchersRoutineType routines : routines(definition)) {
-            String result = match(definition, routines.getExpression(), routines.getRoutineClass());
-
-            if (result != null)
-                return result;
-        }
-
-        for (MatchersEnumType enums : enums(definition)) {
-            String result = match(definition, enums.getExpression(), enums.getEnumClass());
-
-            if (result != null)
-                return result;
-        }
-
-        // Default to standard behaviour
-        return super.getJavaClassName(definition, mode);
+      if (result != null) return result;
     }
 
-    @Override
-    public String getJavaPackageName(Definition definition, Mode mode) {
-        return super.getJavaPackageName(definition, mode);
-    }
+    // Default to standard behaviour
+    return super.getJavaMemberName(definition, mode);
+  }
 
-    @Override
-    public String getJavaMemberName(Definition definition, Mode mode) {
-        for (MatchersFieldType fields : fields(definition)) {
-            String result = match(definition, fields.getExpression(), fields.getFieldMember());
-
-            if (result != null)
-                return result;
-        }
-
-        // Default to standard behaviour
-        return super.getJavaMemberName(definition, mode);
-    }
-
-    @Override
-    public String getOverloadSuffix(Definition definition, Mode mode, String overloadIndex) {
-        return super.getOverloadSuffix(definition, mode, overloadIndex);
-    }
+  @Override
+  public String getOverloadSuffix(Definition definition, Mode mode, String overloadIndex) {
+    return super.getOverloadSuffix(definition, mode, overloadIndex);
+  }
 }

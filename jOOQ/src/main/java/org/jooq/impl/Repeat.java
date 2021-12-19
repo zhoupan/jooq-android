@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,7 @@
  */
 package org.jooq.impl;
 
+import static org.jooq.SQLDialect.*;
 import static org.jooq.impl.DSL.*;
 import static org.jooq.impl.Internal.*;
 import static org.jooq.impl.Keywords.*;
@@ -46,114 +47,71 @@ import static org.jooq.impl.Tools.*;
 import static org.jooq.impl.Tools.BooleanDataKey.*;
 import static org.jooq.impl.Tools.DataExtendedKey.*;
 import static org.jooq.impl.Tools.DataKey.*;
-import static org.jooq.SQLDialect.*;
-
-import org.jooq.*;
-import org.jooq.Record;
-import org.jooq.conf.*;
-import org.jooq.impl.*;
-import org.jooq.tools.*;
 
 import java.util.*;
+import org.jooq.*;
+import org.jooq.conf.*;
+import org.jooq.tools.*;
 
+/** The <code>REPEAT</code> statement. */
+@SuppressWarnings({"rawtypes", "unchecked", "unused"})
+final class Repeat extends AbstractField<String> {
 
-/**
- * The <code>REPEAT</code> statement.
- */
-@SuppressWarnings({ "rawtypes", "unchecked", "unused" })
-final class Repeat
-extends
-    AbstractField<String>
-{
+  private final Field<String> string;
+  private final Field<? extends Number> count;
 
-    private final Field<String>           string;
-    private final Field<? extends Number> count;
+  Repeat(Field<String> string, Field<? extends Number> count) {
+    super(N_REPEAT, allNotNull(VARCHAR, string, count));
 
-    Repeat(
-        Field<String> string,
-        Field<? extends Number> count
-    ) {
-        super(
-            N_REPEAT,
-            allNotNull(VARCHAR, string, count)
-        );
+    this.string = nullSafeNotNull(string, VARCHAR);
+    this.count = nullSafeNotNull(count, INTEGER);
+  }
 
-        this.string = nullSafeNotNull(string, VARCHAR);
-        this.count = nullSafeNotNull(count, INTEGER);
-    }
+  // -------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // -------------------------------------------------------------------------
 
-    // -------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // -------------------------------------------------------------------------
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case FIREBIRD:
+        ctx.visit(DSL.rpad(string, imul(DSL.length(string), count), string));
+        break;
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-
-
-
-
-
-
-
-
-
-
-
-
-            case FIREBIRD:
-                ctx.visit(DSL.rpad(string, imul(DSL.length(string), count), string));
-                break;
-
-            case SQLITE: {
-                // Emulation of REPEAT() for SQLite currently cannot be achieved
-                // using RPAD() above, as RPAD() expects characters, not strings
-                // Another option is documented here, though:
-                // https://stackoverflow.com/a/51792334/521799
-                ctx.visit(N_REPLACE).sql('(').visit(N_HEX).sql('(').visit(N_ZEROBLOB).sql('(').visit(count).sql(")), '00', ").visit(string).sql(')');
-                break;
-            }
-
-
-
-
-
-
-
-
-
-            default:
-                ctx.visit(function(N_REPEAT, getDataType(), string, count));
-                break;
+      case SQLITE:
+        {
+          // Emulation of REPEAT() for SQLite currently cannot be achieved
+          // using RPAD() above, as RPAD() expects characters, not strings
+          // Another option is documented here, though:
+          // https://stackoverflow.com/a/51792334/521799
+          ctx.visit(N_REPLACE)
+              .sql('(')
+              .visit(N_HEX)
+              .sql('(')
+              .visit(N_ZEROBLOB)
+              .sql('(')
+              .visit(count)
+              .sql(")), '00', ")
+              .visit(string)
+              .sql(')');
+          break;
         }
+
+      default:
+        ctx.visit(function(N_REPEAT, getDataType(), string, count));
+        break;
     }
+  }
 
+  // -------------------------------------------------------------------------
+  // The Object API
+  // -------------------------------------------------------------------------
 
-
-
-
-
-
-
-
-
-
-
-
-
-    // -------------------------------------------------------------------------
-    // The Object API
-    // -------------------------------------------------------------------------
-
-    @Override
-    public boolean equals(Object that) {
-        if (that instanceof Repeat) {
-            return
-                StringUtils.equals(string, ((Repeat) that).string) &&
-                StringUtils.equals(count, ((Repeat) that).count)
-            ;
-        }
-        else
-            return super.equals(that);
-    }
+  @Override
+  public boolean equals(Object that) {
+    if (that instanceof Repeat) {
+      return StringUtils.equals(string, ((Repeat) that).string)
+          && StringUtils.equals(count, ((Repeat) that).count);
+    } else return super.equals(that);
+  }
 }

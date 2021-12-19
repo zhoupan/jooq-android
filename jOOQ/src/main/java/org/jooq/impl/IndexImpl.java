@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,20 +41,14 @@ package org.jooq.impl;
 // ...
 // ...
 import static org.jooq.SQLDialect.MARIADB;
-// ...
 import static org.jooq.SQLDialect.MYSQL;
 import static org.jooq.SQLDialect.POSTGRES;
-// ...
-// ...
-// ...
-// ...
 import static org.jooq.impl.DSL.name;
 import static org.jooq.impl.Tools.EMPTY_SORTFIELD;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-
 import org.jooq.Condition;
 import org.jooq.Context;
 import org.jooq.Index;
@@ -64,60 +58,61 @@ import org.jooq.SQLDialect;
 import org.jooq.SortField;
 import org.jooq.Table;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 class IndexImpl extends AbstractNamed implements Index {
-    private static final Set<SQLDialect>     NO_SUPPORT_INDEX_QUALIFICATION = SQLDialect.supportedBy(MARIADB, MYSQL, POSTGRES);
+  private static final Set<SQLDialect> NO_SUPPORT_INDEX_QUALIFICATION =
+      SQLDialect.supportedBy(MARIADB, MYSQL, POSTGRES);
 
-    private final Table<?>                   table;
-    private final SortField<?>[]             fields;
-    private final Condition                  where;
-    private final boolean                    unique;
+  private final Table<?> table;
+  private final SortField<?>[] fields;
+  private final Condition where;
+  private final boolean unique;
 
-    IndexImpl(Name name) {
-        this(name, null, EMPTY_SORTFIELD, null, false);
-    }
+  IndexImpl(Name name) {
+    this(name, null, EMPTY_SORTFIELD, null, false);
+  }
 
-    IndexImpl(Name name, Table<?> table, OrderField<?>[] fields, Condition where, boolean unique) {
-        super(name.empty() ? name : qualify(table, name), CommentImpl.NO_COMMENT);
+  IndexImpl(Name name, Table<?> table, OrderField<?>[] fields, Condition where, boolean unique) {
+    super(name.empty() ? name : qualify(table, name), CommentImpl.NO_COMMENT);
 
-        this.table = table;
-        this.fields = Tools.sortFields(fields);
-        this.where = where;
-        this.unique = unique;
-    }
+    this.table = table;
+    this.fields = Tools.sortFields(fields);
+    this.where = where;
+    this.unique = unique;
+  }
 
-    final SortField<?>[]    $fields()      { return fields; }
-    final boolean           $unique()      { return unique; }
+  final SortField<?>[] $fields() {
+    return fields;
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        if (NO_SUPPORT_INDEX_QUALIFICATION.contains(ctx.dialect()))
-            ctx.visit(getUnqualifiedName());
-        else if (getTable() == null)
-            ctx.visit(getQualifiedName());
-        else
-            ctx.visit(name(getTable().getQualifiedName().qualifier(), getUnqualifiedName()));
-    }
+  final boolean $unique() {
+    return unique;
+  }
 
-    @Override
-    public final Table<?> getTable() {
-        return table;
-    }
+  @Override
+  public final void accept(Context<?> ctx) {
+    if (NO_SUPPORT_INDEX_QUALIFICATION.contains(ctx.dialect())) ctx.visit(getUnqualifiedName());
+    else if (getTable() == null) ctx.visit(getQualifiedName());
+    else ctx.visit(name(getTable().getQualifiedName().qualifier(), getUnqualifiedName()));
+  }
 
-    @Override
-    public final List<SortField<?>> getFields() {
-        return Arrays.asList(fields);
-    }
+  @Override
+  public final Table<?> getTable() {
+    return table;
+  }
 
-    @Override
-    public final Condition getWhere() {
-        return where;
-    }
+  @Override
+  public final List<SortField<?>> getFields() {
+    return Arrays.asList(fields);
+  }
 
-    @Override
-    public boolean getUnique() {
-        return unique;
-    }
+  @Override
+  public final Condition getWhere() {
+    return where;
+  }
+
+  @Override
+  public boolean getUnique() {
+    return unique;
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,334 +42,302 @@ import java.time.Period;
 import java.time.format.DateTimeParseException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.jooq.tools.Convert;
 import org.jooq.tools.StringUtils;
 
 /**
  * A combined {@link YearToMonth} / {@link DayToSecond} interval.
+ *
+ * <p>Some databases (e.g. PostgreSQL) allow for mixing <code>YEAR TO MONTH</code> and <code>
+ * DAY TO SECOND</code> intervals, despite the many questions such a combination raises. The <code>
+ * YearToSecond</code> type intends to model such vendor specific intervals.
+ *
+ * <p>The numeric value of this interval corresponds to its "context free" number of milliseconds.
+ * While the {@link DayToSecond} interval component can provide such a value easily (being
+ * independent of time zones, daylight saving times, leap years, or leap seconds), the {@link
+ * YearToMonth} component cannot. The implemented rules are those of PostgreSQL:
+ *
  * <p>
- * Some databases (e.g. PostgreSQL) allow for mixing <code>YEAR TO MONTH</code>
- * and <code>DAY TO SECOND</code> intervals, despite the many questions such a
- * combination raises. The <code>YearToSecond</code> type intends to model such
- * vendor specific intervals.
- * <p>
- * The numeric value of this interval corresponds to its "context free" number
- * of milliseconds. While the {@link DayToSecond} interval component can provide
- * such a value easily (being independent of time zones, daylight saving times,
- * leap years, or leap seconds), the {@link YearToMonth} component cannot. The
- * implemented rules are those of PostgreSQL:
- * <p>
+ *
  * <ul>
- * <li>A day has 86400 seconds</li>
- * <li>A month has 30 days</li>
- * <li>A year has 365.25 days</li>
- * <li>A year has 12 months</li>
+ *   <li>A day has 86400 seconds
+ *   <li>A month has 30 days
+ *   <li>A year has 365.25 days
+ *   <li>A year has 12 months
  * </ul>
+ *
+ * <p>Examples:
+ *
  * <p>
- * Examples:
- * <p>
+ *
  * <ul>
- * <li><code>P11M</code> has 330 days</li>
- * <li><code>P1Y-1M</code> has 330 days</li>
- * <li><code>P1Y</code> has 365.25 days</li>
- * <li><code>P1Y1M</code> has 396.25 days</li>
+ *   <li><code>P11M</code> has 330 days
+ *   <li><code>P1Y-1M</code> has 330 days
+ *   <li><code>P1Y</code> has 365.25 days
+ *   <li><code>P1Y1M</code> has 396.25 days
  * </ul>
  *
  * @author Lukas Eder
  */
 public final class YearToSecond extends Number implements Interval, Comparable<YearToSecond> {
 
-    private static final Pattern PATTERN = Pattern.compile("^([+-])?(\\d+)-(\\d+) ([+-])?(?:(\\d+) )?(\\d+):(\\d+):(\\d+)(?:\\.(\\d+))?$");
+  private static final Pattern PATTERN =
+      Pattern.compile(
+          "^([+-])?(\\d+)-(\\d+) ([+-])?(?:(\\d+) )?(\\d+):(\\d+):(\\d+)(?:\\.(\\d+))?$");
 
-    private final YearToMonth    yearToMonth;
-    private final DayToSecond    dayToSecond;
+  private final YearToMonth yearToMonth;
+  private final DayToSecond dayToSecond;
 
-    public YearToSecond(YearToMonth yearToMonth, DayToSecond dayToSecond) {
-        this.yearToMonth = yearToMonth == null ? new YearToMonth() : yearToMonth;
-        this.dayToSecond = dayToSecond == null ? new DayToSecond() : dayToSecond;
-    }
+  public YearToSecond(YearToMonth yearToMonth, DayToSecond dayToSecond) {
+    this.yearToMonth = yearToMonth == null ? new YearToMonth() : yearToMonth;
+    this.dayToSecond = dayToSecond == null ? new DayToSecond() : dayToSecond;
+  }
 
-    /**
-     * Load a {@link Double} representation of a
-     * <code>INTERVAL YEAR TO SECOND</code> by assuming standard 24 hour days and
-     * 60 second minutes.
-     *
-     * @param milli The number of milliseconds as a fractional number
-     * @return The loaded <code>INTERVAL DAY TO SECOND</code> object
-     */
-    public static YearToSecond valueOf(double milli) {
-        double abs = Math.abs(milli);
+  /**
+   * Load a {@link Double} representation of a <code>INTERVAL YEAR TO SECOND</code> by assuming
+   * standard 24 hour days and 60 second minutes.
+   *
+   * @param milli The number of milliseconds as a fractional number
+   * @return The loaded <code>INTERVAL DAY TO SECOND</code> object
+   */
+  public static YearToSecond valueOf(double milli) {
+    double abs = Math.abs(milli);
 
-        int y = (int) (abs / (365.25 * 86400000.0)); abs = abs % (365.25 * 86400000.0);
-        int m = (int) (abs / (30.0 * 86400000.0)); abs = abs % (30.0 * 86400000.0);
+    int y = (int) (abs / (365.25 * 86400000.0));
+    abs = abs % (365.25 * 86400000.0);
+    int m = (int) (abs / (30.0 * 86400000.0));
+    abs = abs % (30.0 * 86400000.0);
 
-        YearToSecond result = new YearToSecond(new YearToMonth(y, m), DayToSecond.valueOf(abs));
+    YearToSecond result = new YearToSecond(new YearToMonth(y, m), DayToSecond.valueOf(abs));
 
-        if (milli < 0)
-            result = result.neg();
+    if (milli < 0) result = result.neg();
 
-        return result;
-    }
+    return result;
+  }
 
-    /**
-     * Transform a {@link Duration} into a {@link YearToSecond} interval by
-     * taking its number of milliseconds.
-     */
-    public static YearToSecond valueOf(Duration duration) {
-        return duration == null ? null : valueOf(duration.toMillis());
-    }
+  /**
+   * Transform a {@link Duration} into a {@link YearToSecond} interval by taking its number of
+   * milliseconds.
+   */
+  public static YearToSecond valueOf(Duration duration) {
+    return duration == null ? null : valueOf(duration.toMillis());
+  }
 
-    @Override
-    public final Duration toDuration() {
-        return yearToMonth.toDuration().plus(dayToSecond.toDuration());
-    }
+  @Override
+  public final Duration toDuration() {
+    return yearToMonth.toDuration().plus(dayToSecond.toDuration());
+  }
 
-    /**
-     * Transform a {@link Period} into a {@link YearToSecond} interval.
-     */
-    public static YearToSecond valueOf(Period period) {
-        return period == null ? null : new YearToSecond(
+  /** Transform a {@link Period} into a {@link YearToSecond} interval. */
+  public static YearToSecond valueOf(Period period) {
+    return period == null
+        ? null
+        : new YearToSecond(
             new YearToMonth(period.getYears(), period.getMonths()),
-            new DayToSecond(period.getDays())
-        );
-    }
+            new DayToSecond(period.getDays()));
+  }
 
-    /**
-     * Parse a string representation of a <code>INTERVAL YEAR TO SECOND</code>
-     *
-     * @param string A string representation of the form
-     *            <code>[+|-][years]-[months] [+|-][days] [hours]:[minutes]:[seconds].[fractional seconds]</code>
-     * @return The parsed <code>YEAR TO SECOND</code> object, or
-     *         <code>null</code> if the string could not be parsed.
-     */
-    public static YearToSecond valueOf(String string) {
-        if (string != null) {
+  /**
+   * Parse a string representation of a <code>INTERVAL YEAR TO SECOND</code>
+   *
+   * @param string A string representation of the form <code>
+   *     [+|-][years]-[months] [+|-][days] [hours]:[minutes]:[seconds].[fractional seconds]</code>
+   * @return The parsed <code>YEAR TO SECOND</code> object, or <code>null</code> if the string could
+   *     not be parsed.
+   */
+  public static YearToSecond valueOf(String string) {
+    if (string != null) {
 
-            // Accept also doubles as the number of milliseconds
-            try {
-                return valueOf(Double.parseDouble(string));
-            }
-            catch (NumberFormatException e) {
-                Matcher matcher = PATTERN.matcher(string);
+      // Accept also doubles as the number of milliseconds
+      try {
+        return valueOf(Double.parseDouble(string));
+      } catch (NumberFormatException e) {
+        Matcher matcher = PATTERN.matcher(string);
 
-                if (matcher.find()) {
-                    return new YearToSecond(parseYM(matcher, 0), parseDS(matcher, 3));
-                }
-                else {
-                    try {
-                        return YearToSecond.valueOf(Duration.parse(string));
-                    }
-                    catch (DateTimeParseException ignore) {}
-                }
-            }
+        if (matcher.find()) {
+          return new YearToSecond(parseYM(matcher, 0), parseDS(matcher, 3));
+        } else {
+          try {
+            return YearToSecond.valueOf(Duration.parse(string));
+          } catch (DateTimeParseException ignore) {
+          }
         }
-
-        return null;
+      }
     }
 
-    static YearToMonth parseYM(Matcher matcher, int groupOffset) {
-        boolean negativeYM = "-".equals(matcher.group(groupOffset + 1));
-        int years = Integer.parseInt(matcher.group(groupOffset + 2));
-        int months = Integer.parseInt(matcher.group(groupOffset + 3));
+    return null;
+  }
 
-        return new YearToMonth(years, months, negativeYM);
-    }
+  static YearToMonth parseYM(Matcher matcher, int groupOffset) {
+    boolean negativeYM = "-".equals(matcher.group(groupOffset + 1));
+    int years = Integer.parseInt(matcher.group(groupOffset + 2));
+    int months = Integer.parseInt(matcher.group(groupOffset + 3));
 
-    static DayToSecond parseDS(Matcher matcher, int groupOffset) {
-        boolean negativeDS = "-".equals(matcher.group(groupOffset + 1));
+    return new YearToMonth(years, months, negativeYM);
+  }
 
-        int days = Convert.convert(matcher.group(groupOffset + 2), int.class);
-        int hours = Convert.convert(matcher.group(groupOffset + 3), int.class);
-        int minutes = Convert.convert(matcher.group(groupOffset + 4), int.class);
-        int seconds = Convert.convert(matcher.group(groupOffset + 5), int.class);
-        int nano = Convert.convert(StringUtils.rightPad(matcher.group(groupOffset + 6), 9, "0"), int.class);
+  static DayToSecond parseDS(Matcher matcher, int groupOffset) {
+    boolean negativeDS = "-".equals(matcher.group(groupOffset + 1));
 
-        return new DayToSecond(days, hours, minutes, seconds, nano, negativeDS);
-    }
+    int days = Convert.convert(matcher.group(groupOffset + 2), int.class);
+    int hours = Convert.convert(matcher.group(groupOffset + 3), int.class);
+    int minutes = Convert.convert(matcher.group(groupOffset + 4), int.class);
+    int seconds = Convert.convert(matcher.group(groupOffset + 5), int.class);
+    int nano =
+        Convert.convert(StringUtils.rightPad(matcher.group(groupOffset + 6), 9, "0"), int.class);
 
-    // -------------------------------------------------------------------------
-    // XXX Interval API
-    // -------------------------------------------------------------------------
+    return new DayToSecond(days, hours, minutes, seconds, nano, negativeDS);
+  }
 
-    @Override
-    public final YearToSecond neg() {
-        return new YearToSecond(yearToMonth.neg(), dayToSecond.neg());
-    }
+  // -------------------------------------------------------------------------
+  // XXX Interval API
+  // -------------------------------------------------------------------------
 
-    @Override
-    public final YearToSecond abs() {
-        return new YearToSecond(yearToMonth.abs(), dayToSecond.abs());
-    }
+  @Override
+  public final YearToSecond neg() {
+    return new YearToSecond(yearToMonth.neg(), dayToSecond.neg());
+  }
 
-    public final YearToMonth getYearToMonth() {
-        return yearToMonth;
-    }
+  @Override
+  public final YearToSecond abs() {
+    return new YearToSecond(yearToMonth.abs(), dayToSecond.abs());
+  }
 
-    public final DayToSecond getDayToSecond() {
-        return dayToSecond;
-    }
+  public final YearToMonth getYearToMonth() {
+    return yearToMonth;
+  }
 
-    public final int getYears() {
-        return yearToMonth.getYears();
-    }
+  public final DayToSecond getDayToSecond() {
+    return dayToSecond;
+  }
 
-    public final int getMonths() {
-        return yearToMonth.getMonths();
-    }
+  public final int getYears() {
+    return yearToMonth.getYears();
+  }
 
-    /**
-     * Get the day-part of this interval
-     */
-    public final int getDays() {
-        return dayToSecond.getDays();
-    }
+  public final int getMonths() {
+    return yearToMonth.getMonths();
+  }
 
-    /**
-     * Get the hour-part of this interval
-     */
-    public final int getHours() {
-        return dayToSecond.getHours();
-    }
+  /** Get the day-part of this interval */
+  public final int getDays() {
+    return dayToSecond.getDays();
+  }
 
-    /**
-     * Get the minute-part of this interval
-     */
-    public final int getMinutes() {
-        return dayToSecond.getMinutes();
-    }
+  /** Get the hour-part of this interval */
+  public final int getHours() {
+    return dayToSecond.getHours();
+  }
 
-    /**
-     * Get the second-part of this interval
-     */
-    public final int getSeconds() {
-        return dayToSecond.getSeconds();
-    }
+  /** Get the minute-part of this interval */
+  public final int getMinutes() {
+    return dayToSecond.getMinutes();
+  }
 
-    /**
-     * Get the (truncated) milli-part of this interval
-     */
-    public final int getMilli() {
-        return dayToSecond.getMilli();
-    }
+  /** Get the second-part of this interval */
+  public final int getSeconds() {
+    return dayToSecond.getSeconds();
+  }
 
-    /**
-     * Get the (truncated) micro-part of this interval
-     */
-    public final int getMicro() {
-        return dayToSecond.getMicro();
-    }
+  /** Get the (truncated) milli-part of this interval */
+  public final int getMilli() {
+    return dayToSecond.getMilli();
+  }
 
-    /**
-     * Get the nano-part of this interval
-     */
-    public final int getNano() {
-        return dayToSecond.getNano();
-    }
+  /** Get the (truncated) micro-part of this interval */
+  public final int getMicro() {
+    return dayToSecond.getMicro();
+  }
 
-    @Override
-    public final int getSign() {
-        double value = doubleValue();
+  /** Get the nano-part of this interval */
+  public final int getNano() {
+    return dayToSecond.getNano();
+  }
 
-        return value > 0
-             ? 1
-             : value < 0
-             ? -1
-             : 0;
-    }
+  @Override
+  public final int getSign() {
+    double value = doubleValue();
 
-    // -------------------------------------------------------------------------
-    // XXX Number API
-    // -------------------------------------------------------------------------
+    return value > 0 ? 1 : value < 0 ? -1 : 0;
+  }
 
-    @Override
-    public final int intValue() {
-        return (int) doubleValue();
-    }
+  // -------------------------------------------------------------------------
+  // XXX Number API
+  // -------------------------------------------------------------------------
 
-    @Override
-    public final long longValue() {
-        return (long) doubleValue();
-    }
+  @Override
+  public final int intValue() {
+    return (int) doubleValue();
+  }
 
-    @Override
-    public final float floatValue() {
-        return (float) doubleValue();
-    }
+  @Override
+  public final long longValue() {
+    return (long) doubleValue();
+  }
 
-    @Override
-    public final double doubleValue() {
-        return (yearToMonth.getYears() * 365.25
-              + yearToMonth.getMonths() * 30) * 86400000 * yearToMonth.getSign()
-              + dayToSecond.doubleValue();
-    }
+  @Override
+  public final float floatValue() {
+    return (float) doubleValue();
+  }
 
-    // -------------------------------------------------------------------------
-    // XXX Comparable and Object API
-    // -------------------------------------------------------------------------
+  @Override
+  public final double doubleValue() {
+    return (yearToMonth.getYears() * 365.25 + yearToMonth.getMonths() * 30)
+            * 86400000
+            * yearToMonth.getSign()
+        + dayToSecond.doubleValue();
+  }
 
-    @Override
-    public final int compareTo(YearToSecond that) {
-        return Double.compare(doubleValue(), that.doubleValue());
-    }
+  // -------------------------------------------------------------------------
+  // XXX Comparable and Object API
+  // -------------------------------------------------------------------------
 
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 0;
-        int h1 = dayToSecond.hashCode();
-        int h2 = yearToMonth.hashCode();
-        if (h1 != 0)
-            result = prime * result + h1;
-        if (h2 != 0)
-            result = prime * result + h2;
-        return result;
-    }
+  @Override
+  public final int compareTo(YearToSecond that) {
+    return Double.compare(doubleValue(), that.doubleValue());
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() == obj.getClass()) {
-            YearToSecond other = (YearToSecond) obj;
-            if (dayToSecond == null) {
-                if (other.dayToSecond != null)
-                    return false;
-            }
-            else if (!dayToSecond.equals(other.dayToSecond))
-                return false;
-            if (yearToMonth == null) {
-                if (other.yearToMonth != null)
-                    return false;
-            }
-            else if (!yearToMonth.equals(other.yearToMonth))
-                return false;
-            return true;
-        }
-        else if (obj instanceof YearToMonth) {
-            YearToMonth other = (YearToMonth) obj;
-            return getDayToSecond().intValue() == 0 &&
-                   getYearToMonth().equals(other);
-        }
-        else if (obj instanceof DayToSecond) {
-            DayToSecond other = (DayToSecond) obj;
-            return getYearToMonth().intValue() == 0 &&
-                   getDayToSecond().equals(other);
-        }
-        else
-            return false;
-    }
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 0;
+    int h1 = dayToSecond.hashCode();
+    int h2 = yearToMonth.hashCode();
+    if (h1 != 0) result = prime * result + h1;
+    if (h2 != 0) result = prime * result + h2;
+    return result;
+  }
 
-    @Override
-    public final String toString() {
-        StringBuilder sb = new StringBuilder();
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+    if (obj == null) return false;
+    if (getClass() == obj.getClass()) {
+      YearToSecond other = (YearToSecond) obj;
+      if (dayToSecond == null) {
+        if (other.dayToSecond != null) return false;
+      } else if (!dayToSecond.equals(other.dayToSecond)) return false;
+      if (yearToMonth == null) {
+        if (other.yearToMonth != null) return false;
+      } else if (!yearToMonth.equals(other.yearToMonth)) return false;
+      return true;
+    } else if (obj instanceof YearToMonth) {
+      YearToMonth other = (YearToMonth) obj;
+      return getDayToSecond().intValue() == 0 && getYearToMonth().equals(other);
+    } else if (obj instanceof DayToSecond) {
+      DayToSecond other = (DayToSecond) obj;
+      return getYearToMonth().intValue() == 0 && getDayToSecond().equals(other);
+    } else return false;
+  }
 
-        sb.append(yearToMonth);
-        sb.append(' ');
-        sb.append(dayToSecond);
+  @Override
+  public final String toString() {
+    StringBuilder sb = new StringBuilder();
 
-        return sb.toString();
-    }
+    sb.append(yearToMonth);
+    sb.append(' ');
+    sb.append(dayToSecond);
+
+    return sb.toString();
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,12 +39,9 @@ package org.jooq.impl;
 
 import java.io.Serializable;
 import java.util.function.Supplier;
-
 import org.jooq.Internal;
 
-/**
- * A lazy supplier
- */
+/** A lazy supplier */
 @Internal
 @FunctionalInterface
 public interface LazySupplier<T> extends Serializable, Supplier<T> {}

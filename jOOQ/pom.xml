@@ -1,6 +1,9 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<?xml version="1.0" encoding="UTF-8" ?>
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd"
+>
 
     <modelVersion>4.0.0</modelVersion>
 
@@ -50,7 +53,7 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package>*</Export-Package>
-                        
+
                         <!-- [#12408] Some of these are resolved by introspecting reflective usage -->
                         <Import-Package>
                             javax.persistence;resolution:=optional,
@@ -70,7 +73,8 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <configuration>
                     <archive>
-                        <manifestFile>${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
+                        <manifestFile
+            >${project.build.outputDirectory}/META-INF/MANIFEST.MF</manifestFile>
                         <manifestEntries>
                             <Automatic-Module-Name>org.jooq</Automatic-Module-Name>
                         </manifestEntries>
@@ -108,7 +112,7 @@
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
         </dependency>
-        
+
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>

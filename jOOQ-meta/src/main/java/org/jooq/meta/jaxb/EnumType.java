@@ -1,4 +1,40 @@
-
+/* 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Other licenses:
+ * -----------------------------------------------------------------------------
+ * Commercial licenses for this work are available. These replace the above
+ * ASL 2.0 and offer limited warranties, support, maintenance, and commercial
+ * database integrations.
+ *
+ * For more information, please visit: http://www.jooq.org/licenses
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 package org.jooq.meta.jaxb;
 
 import java.io.Serializable;
@@ -11,12 +47,11 @@ import org.jooq.util.jaxb.tools.StringAdapter;
 import org.jooq.util.jaxb.tools.XMLAppendable;
 import org.jooq.util.jaxb.tools.XMLBuilder;
 
-
 /**
- * <p>Java class for EnumType complex type.
- * 
+ * Java class for EnumType complex type.
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="EnumType"&gt;
  *   &lt;complexContent&gt;
@@ -29,106 +64,102 @@ import org.jooq.util.jaxb.tools.XMLBuilder;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "EnumType", propOrder = {
+@XmlType(
+    name = "EnumType",
+    propOrder = {})
+@SuppressWarnings({"all"})
+public class EnumType implements Serializable, XMLAppendable {
 
-})
-@SuppressWarnings({
-    "all"
-})
-public class EnumType implements Serializable, XMLAppendable
-{
+  private static final long serialVersionUID = 31500L;
 
-    private final static long serialVersionUID = 31500L;
-    @XmlElement(required = true)
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String name;
-    @XmlElement(required = true)
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String literals;
+  @XmlElement(required = true)
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String name;
 
-    public String getName() {
-        return name;
+  @XmlElement(required = true)
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String literals;
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String value) {
+    this.name = value;
+  }
+
+  public String getLiterals() {
+    return literals;
+  }
+
+  public void setLiterals(String value) {
+    this.literals = value;
+  }
+
+  public EnumType withName(String value) {
+    setName(value);
+    return this;
+  }
+
+  public EnumType withLiterals(String value) {
+    setLiterals(value);
+    return this;
+  }
+
+  @Override
+  public final void appendTo(XMLBuilder builder) {
+    builder.append("name", name);
+    builder.append("literals", literals);
+  }
+
+  @Override
+  public String toString() {
+    XMLBuilder builder = XMLBuilder.nonFormatting();
+    appendTo(builder);
+    return builder.toString();
+  }
+
+  @Override
+  public boolean equals(Object that) {
+    if (this == that) {
+      return true;
     }
-
-    public void setName(String value) {
-        this.name = value;
+    if (that == null) {
+      return false;
     }
-
-    public String getLiterals() {
-        return literals;
+    if (getClass() != that.getClass()) {
+      return false;
     }
-
-    public void setLiterals(String value) {
-        this.literals = value;
+    EnumType other = ((EnumType) that);
+    if (name == null) {
+      if (other.name != null) {
+        return false;
+      }
+    } else {
+      if (!name.equals(other.name)) {
+        return false;
+      }
     }
-
-    public EnumType withName(String value) {
-        setName(value);
-        return this;
+    if (literals == null) {
+      if (other.literals != null) {
+        return false;
+      }
+    } else {
+      if (!literals.equals(other.literals)) {
+        return false;
+      }
     }
+    return true;
+  }
 
-    public EnumType withLiterals(String value) {
-        setLiterals(value);
-        return this;
-    }
-
-    @Override
-    public final void appendTo(XMLBuilder builder) {
-        builder.append("name", name);
-        builder.append("literals", literals);
-    }
-
-    @Override
-    public String toString() {
-        XMLBuilder builder = XMLBuilder.nonFormatting();
-        appendTo(builder);
-        return builder.toString();
-    }
-
-    @Override
-    public boolean equals(Object that) {
-        if (this == that) {
-            return true;
-        }
-        if (that == null) {
-            return false;
-        }
-        if (getClass()!= that.getClass()) {
-            return false;
-        }
-        EnumType other = ((EnumType) that);
-        if (name == null) {
-            if (other.name!= null) {
-                return false;
-            }
-        } else {
-            if (!name.equals(other.name)) {
-                return false;
-            }
-        }
-        if (literals == null) {
-            if (other.literals!= null) {
-                return false;
-            }
-        } else {
-            if (!literals.equals(other.literals)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = ((prime*result)+((name == null)? 0 :name.hashCode()));
-        result = ((prime*result)+((literals == null)? 0 :literals.hashCode()));
-        return result;
-    }
-
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = ((prime * result) + ((name == null) ? 0 : name.hashCode()));
+    result = ((prime * result) + ((literals == null) ? 0 : literals.hashCode()));
+    return result;
+  }
 }

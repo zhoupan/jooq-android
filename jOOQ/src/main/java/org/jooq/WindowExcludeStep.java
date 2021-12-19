@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,29 +43,17 @@ package org.jooq;
 // ...
 // ...
 import static org.jooq.SQLDialect.H2;
-// ...
 import static org.jooq.SQLDialect.MARIADB;
 import static org.jooq.SQLDialect.MYSQL;
-// ...
-// ...
 import static org.jooq.SQLDialect.POSTGRES;
-// ...
-// ...
-// ...
-// ...
 import static org.jooq.SQLDialect.SQLITE;
-// ...
-// ...
-// ...
-// ...
-// ...
 
 import org.jetbrains.annotations.NotNull;
 
 /**
  * This type is used for the window function DSL API.
- * <p>
- * Example: <code><pre>
+ *
+ * <p>Example: <code><pre>
  * field.firstValue()
  *      .ignoreNulls()
  *      .over()
@@ -80,31 +68,23 @@ import org.jetbrains.annotations.NotNull;
  */
 public interface WindowExcludeStep<T> extends WindowFinalStep<T> {
 
-    /**
-     * Add an <code>EXCLUDE CURRENT ROW</code> clause.
-     */
-    @NotNull
-    @Support({ H2, POSTGRES, SQLITE })
-    WindowFinalStep<T> excludeCurrentRow();
+  /** Add an <code>EXCLUDE CURRENT ROW</code> clause. */
+  @NotNull
+  @Support({H2, POSTGRES, SQLITE})
+  WindowFinalStep<T> excludeCurrentRow();
 
-    /**
-     * Add an <code>EXCLUDE GROUP</code> clause.
-     */
-    @NotNull
-    @Support({ H2, POSTGRES, SQLITE })
-    WindowFinalStep<T> excludeGroup();
+  /** Add an <code>EXCLUDE GROUP</code> clause. */
+  @NotNull
+  @Support({H2, POSTGRES, SQLITE})
+  WindowFinalStep<T> excludeGroup();
 
-    /**
-     * Add an <code>EXCLUDE TIES</code> clause.
-     */
-    @NotNull
-    @Support({ H2, POSTGRES, SQLITE })
-    WindowFinalStep<T> excludeTies();
+  /** Add an <code>EXCLUDE TIES</code> clause. */
+  @NotNull
+  @Support({H2, POSTGRES, SQLITE})
+  WindowFinalStep<T> excludeTies();
 
-    /**
-     * Add an <code>EXCLUDE NO OTHERS</code> clause.
-     */
-    @NotNull
-    @Support({ H2, MARIADB, MYSQL, POSTGRES, SQLITE })
-    WindowFinalStep<T> excludeNoOthers();
+  /** Add an <code>EXCLUDE NO OTHERS</code> clause. */
+  @NotNull
+  @Support({H2, MARIADB, MYSQL, POSTGRES, SQLITE})
+  WindowFinalStep<T> excludeNoOthers();
 }

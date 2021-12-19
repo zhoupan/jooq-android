@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,10 +41,10 @@ import org.jooq.impl.DSL;
 
 /**
  * A quantified select for use in quantified comparison predicates.
- * <p>
- * <strong>Example:</strong>
- * <p>
- * <code><pre>
+ *
+ * <p><strong>Example:</strong>
+ *
+ * <p><code><pre>
  * // Assuming import static org.jooq.impl.DSL.*;
  *
  * using(configuration)
@@ -55,12 +55,9 @@ import org.jooq.impl.DSL;
  *    )))
  *    .fetch();
  * </pre></code>
- * <p>
- * Instances can be created using {@link DSL#any(Select)} and
- * {@link DSL#all(Select)}.
+ *
+ * <p>Instances can be created using {@link DSL#any(Select)} and {@link DSL#all(Select)}.
  *
  * @author Lukas Eder
  */
-public interface QuantifiedSelect<R extends Record> extends QueryPart {
-
-}
+public interface QuantifiedSelect<R extends Record> extends QueryPart {}

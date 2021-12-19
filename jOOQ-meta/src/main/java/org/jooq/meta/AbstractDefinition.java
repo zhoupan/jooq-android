@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,22 +35,16 @@
  *
  *
  */
-
 package org.jooq.meta;
 
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
-import static java.util.Arrays.asList;
 import static org.jooq.impl.DSL.name;
 
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.jooq.DSLContext;
 import org.jooq.Name;
 import org.jooq.SQLDialect;
-import org.jooq.meta.jaxb.CommentType;
 import org.jooq.tools.StringUtils;
 
 /**
@@ -60,276 +54,263 @@ import org.jooq.tools.StringUtils;
  */
 public abstract class AbstractDefinition implements Definition {
 
-    private final Database          database;
-    private final SchemaDefinition  schema;
-    private final PackageDefinition pkg;
-    private final String            name;
-    private final String            schemaComment;
+  private final Database database;
+  private final SchemaDefinition schema;
+  private final PackageDefinition pkg;
+  private final String name;
+  private final String schemaComment;
 
+  private final String overload;
+  private final String source;
 
+  // [#2238] Some caches for strings that are heavy to calculate in large schemas
+  private transient String qualifiedInputName;
+  private transient String qualifiedOutputName;
+  private transient Name qualifiedInputNamePart;
+  private transient Name qualifiedOutputNamePart;
+  private transient Integer hashCode;
 
-    private final String            overload;
-    private final String            source;
+  public AbstractDefinition(Database database, SchemaDefinition schema, String name) {
+    this(database, schema, name, null);
+  }
 
-    // [#2238] Some caches for strings that are heavy to calculate in large schemas
-    private transient String        qualifiedInputName;
-    private transient String        qualifiedOutputName;
-    private transient Name          qualifiedInputNamePart;
-    private transient Name          qualifiedOutputNamePart;
-    private transient Integer       hashCode;
+  public AbstractDefinition(
+      Database database, SchemaDefinition schema, String name, String comment) {
+    this(database, schema, name, comment, null);
+  }
 
-    public AbstractDefinition(Database database, SchemaDefinition schema, String name) {
-        this(database, schema, name, null);
-    }
+  public AbstractDefinition(
+      Database database, SchemaDefinition schema, String name, String comment, String overload) {
+    this(database, schema, null, name, comment, overload);
+  }
 
-    public AbstractDefinition(Database database, SchemaDefinition schema, String name, String comment) {
-        this(database, schema, name, comment, null);
-    }
+  public AbstractDefinition(
+      Database database,
+      SchemaDefinition schema,
+      PackageDefinition pkg,
+      String name,
+      String comment,
+      String overload) {
+    this(database, schema, pkg, name, comment, overload, null);
+  }
 
-    public AbstractDefinition(Database database, SchemaDefinition schema, String name, String comment, String overload) {
-        this(database, schema, null, name, comment, overload);
-    }
+  public AbstractDefinition(
+      Database database,
+      SchemaDefinition schema,
+      PackageDefinition pkg,
+      String name,
+      String comment,
+      String overload,
+      String source) {
+    this.database = database;
 
-    public AbstractDefinition(Database database, SchemaDefinition schema, PackageDefinition pkg, String name, String comment, String overload) {
-        this(database, schema, pkg, name, comment, overload, null);
-    }
+    // The subclass constructor cannot pass "this" to the super constructor
+    this.schema =
+        (schema == null && this instanceof SchemaDefinition) ? (SchemaDefinition) this : schema;
+    this.pkg = pkg;
+    this.name = name;
+    this.overload = overload;
+    this.source = source;
+    this.schemaComment = comment;
+  }
 
-    public AbstractDefinition(Database database, SchemaDefinition schema, PackageDefinition pkg, String name, String comment, String overload, String source) {
-        this.database = database;
+  @Override
+  public List<Definition> getDefinitionPath() {
+    List<Definition> result = new ArrayList<>(getSchema().getDefinitionPath());
 
-        // The subclass constructor cannot pass "this" to the super constructor
-        this.schema = (schema == null && this instanceof SchemaDefinition)
-            ? (SchemaDefinition) this
-            : schema;
-        this.pkg = pkg;
-        this.name = name;
-        this.overload = overload;
-        this.source = source;
-        this.schemaComment = comment;
-    }
+    if (getPackage() != null) result.add(getPackage());
 
-    @Override
-    public List<Definition> getDefinitionPath() {
-        List<Definition> result = new ArrayList<>(getSchema().getDefinitionPath());
+    result.add(this);
+    return result;
+  }
 
-        if (getPackage() != null)
-            result.add(getPackage());
+  @Override
+  public final PackageDefinition getPackage() {
+    return pkg;
+  }
 
-        result.add(this);
-        return result;
-    }
+  @Override
+  public final String getOverload() {
+    return overload;
+  }
 
-    @Override
-    public final PackageDefinition getPackage() {
-        return pkg;
-    }
+  @Override
+  public /* non-final */ CatalogDefinition getCatalog() {
+    return getSchema().getCatalog();
+  }
 
-    @Override
-    public final String getOverload() {
-        return overload;
-    }
+  @Override
+  public final SchemaDefinition getSchema() {
+    return schema;
+  }
 
-    @Override
-    public /* non-final */ CatalogDefinition getCatalog() {
-        return getSchema().getCatalog();
-    }
+  @Override
+  public final String getName() {
+    return name;
+  }
 
-    @Override
-    public final SchemaDefinition getSchema() {
-        return schema;
-    }
+  @Override
+  public final String getInputName() {
+    return name;
+  }
 
-    @Override
-    public final String getName() {
-        return name;
-    }
+  /**
+   * Subclasses may override this method
+   *
+   * <p>{@inheritDoc}
+   */
+  @Override
+  public String getOutputName() {
+    return getInputName();
+  }
 
-    @Override
-    public final String getInputName() {
-        return name;
-    }
+  @Override
+  public final String getComment() {
 
-    /**
-     * Subclasses may override this method
-     *
-     * {@inheritDoc}
-     */
-    @Override
-    public String getOutputName() {
-        return getInputName();
-    }
+    return schemaComment;
+  }
 
-    @Override
-    public final String getComment() {
+  @Override
+  public final String getQualifiedName() {
+    return getQualifiedInputName();
+  }
 
+  @Override
+  public final String getQualifiedInputName() {
+    if (qualifiedInputName == null) {
+      StringBuilder sb = new StringBuilder();
 
+      String separator = "";
+      for (Definition part : getDefinitionPath()) {
 
+        // [#6855] Some databases (e.g. SQLite) might not have a schema
+        String input = part.getInputName();
 
+        if (!StringUtils.isEmpty(input)) {
+          sb.append(separator);
+          sb.append(part.getInputName());
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        return schemaComment;
-    }
-
-    @Override
-    public final String getQualifiedName() {
-        return getQualifiedInputName();
-    }
-
-    @Override
-    public final String getQualifiedInputName() {
-        if (qualifiedInputName == null) {
-            StringBuilder sb = new StringBuilder();
-
-            String separator = "";
-            for (Definition part : getDefinitionPath()) {
-
-                // [#6855] Some databases (e.g. SQLite) might not have a schema
-                String input = part.getInputName();
-
-                if (!StringUtils.isEmpty(input)) {
-                    sb.append(separator);
-                    sb.append(part.getInputName());
-
-                    separator = ".";
-                }
-            }
-
-            qualifiedInputName = sb.toString();
+          separator = ".";
         }
+      }
 
-        return qualifiedInputName;
+      qualifiedInputName = sb.toString();
     }
 
-    @Override
-    public final String getQualifiedOutputName() {
-        if (qualifiedOutputName == null) {
-            StringBuilder sb = new StringBuilder();
+    return qualifiedInputName;
+  }
 
-            String separator = "";
-            for (Definition part : getDefinitionPath()) {
-                if (part instanceof CatalogDefinition && ((CatalogDefinition) part).isDefaultCatalog())
-                    continue;
-                else if (part instanceof SchemaDefinition && ((SchemaDefinition) part).isDefaultSchema())
-                    continue;
+  @Override
+  public final String getQualifiedOutputName() {
+    if (qualifiedOutputName == null) {
+      StringBuilder sb = new StringBuilder();
 
-                sb.append(separator);
-                sb.append(part.getOutputName());
+      String separator = "";
+      for (Definition part : getDefinitionPath()) {
+        if (part instanceof CatalogDefinition && ((CatalogDefinition) part).isDefaultCatalog())
+          continue;
+        else if (part instanceof SchemaDefinition && ((SchemaDefinition) part).isDefaultSchema())
+          continue;
 
-                separator = ".";
-            }
+        sb.append(separator);
+        sb.append(part.getOutputName());
 
-            qualifiedOutputName = sb.toString();
-        }
+        separator = ".";
+      }
 
-        return qualifiedOutputName;
+      qualifiedOutputName = sb.toString();
     }
 
-    @Override
-    public final Name getQualifiedNamePart() {
-        return getQualifiedInputNamePart();
+    return qualifiedOutputName;
+  }
+
+  @Override
+  public final Name getQualifiedNamePart() {
+    return getQualifiedInputNamePart();
+  }
+
+  @Override
+  public final Name getQualifiedInputNamePart() {
+    if (qualifiedInputNamePart == null) {
+      List<String> list = new ArrayList<>();
+
+      for (Definition part : getDefinitionPath()) list.add(part.getInputName());
+
+      qualifiedInputNamePart = name(list);
     }
 
-    @Override
-    public final Name getQualifiedInputNamePart() {
-        if (qualifiedInputNamePart == null) {
-            List<String> list = new ArrayList<>();
+    return qualifiedInputNamePart;
+  }
 
-            for (Definition part : getDefinitionPath())
-                list.add(part.getInputName());
+  @Override
+  public final Name getQualifiedOutputNamePart() {
+    if (qualifiedOutputNamePart == null) {
+      List<String> list = new ArrayList<>();
 
-            qualifiedInputNamePart = name(list);
-        }
+      for (Definition part : getDefinitionPath()) {
+        if (part instanceof CatalogDefinition && ((CatalogDefinition) part).isDefaultCatalog())
+          continue;
+        else if (part instanceof SchemaDefinition && ((SchemaDefinition) part).isDefaultSchema())
+          continue;
 
-        return qualifiedInputNamePart;
+        list.add(part.getOutputName());
+      }
+
+      qualifiedOutputNamePart = name(list);
     }
 
-    @Override
-    public final Name getQualifiedOutputNamePart() {
-        if (qualifiedOutputNamePart == null) {
-            List<String> list = new ArrayList<>();
+    return qualifiedOutputNamePart;
+  }
 
-            for (Definition part : getDefinitionPath()) {
-                if (part instanceof CatalogDefinition && ((CatalogDefinition) part).isDefaultCatalog())
-                    continue;
-                else if (part instanceof SchemaDefinition && ((SchemaDefinition) part).isDefaultSchema())
-                    continue;
+  @Override
+  public final Database getDatabase() {
+    return database;
+  }
 
-                list.add(part.getOutputName());
-            }
+  protected final Connection getConnection() {
+    return database.getConnection();
+  }
 
-            qualifiedOutputNamePart = name(list);
-        }
+  @Override
+  public String toString() {
+    return getQualifiedName();
+  }
 
-        return qualifiedOutputNamePart;
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj) return true;
+
+    if (obj instanceof Definition) {
+      Definition that = (Definition) obj;
+      return that.getQualifiedName().equals(getQualifiedName());
     }
 
-    @Override
-    public final Database getDatabase() {
-        return database;
-    }
+    return false;
+  }
 
-    protected final Connection getConnection() {
-        return database.getConnection();
-    }
+  @Override
+  public int hashCode() {
+    if (hashCode == null) hashCode = getQualifiedName().hashCode();
 
-    @Override
-    public String toString() {
-        return getQualifiedName();
-    }
+    return hashCode;
+  }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
+  protected final DSLContext create() {
+    return database.create();
+  }
 
-        if (obj instanceof Definition) {
-            Definition that = (Definition) obj;
-            return that.getQualifiedName().equals(getQualifiedName());
-        }
+  protected final DSLContext create(boolean muteExceptions) {
+    if (database instanceof AbstractDatabase)
+      return ((AbstractDatabase) database).create(muteExceptions);
+    else return database.create();
+  }
 
-        return false;
-    }
+  protected final SQLDialect getDialect() {
+    return database.getDialect();
+  }
 
-    @Override
-    public int hashCode() {
-        if (hashCode == null)
-            hashCode = getQualifiedName().hashCode();
-
-        return hashCode;
-    }
-
-    protected final DSLContext create() {
-        return database.create();
-    }
-
-    protected final DSLContext create(boolean muteExceptions) {
-        if (database instanceof AbstractDatabase)
-            return ((AbstractDatabase) database).create(muteExceptions);
-        else
-            return database.create();
-    }
-
-    protected final SQLDialect getDialect() {
-        return database.getDialect();
-    }
-
-    @Override
-    public final String getSource() {
-        return source != null ? source : getDatabase().getSources().get(this);
-    }
+  @Override
+  public final String getSource() {
+    return source != null ? source : getDatabase().getSources().get(this);
+  }
 }

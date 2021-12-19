@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -35,7 +35,6 @@
  *
  *
  */
-
 package org.jooq.impl;
 
 // ...
@@ -50,54 +49,49 @@ import org.jooq.Select;
 import org.jooq.Table;
 import org.jooq.TableOptions;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 class DerivedTable<R extends Record> extends AbstractTable<R> {
 
-    private final Select<R> query;
+  private final Select<R> query;
 
-    DerivedTable(Select<R> query) {
-        super(TableOptions.expression(), N_SELECT);
+  DerivedTable(Select<R> query) {
+    super(TableOptions.expression(), N_SELECT);
 
-        this.query = query;
-    }
+    this.query = query;
+  }
 
-    final Select<R> query() {
-        return query;
-    }
+  final Select<R> query() {
+    return query;
+  }
 
-    @Override
-    public final Table<R> as(Name alias) {
-        return new TableAlias<>(this, alias, c -> true);
-    }
+  @Override
+  public final Table<R> as(Name alias) {
+    return new TableAlias<>(this, alias, c -> true);
+  }
 
-    @Override
-    public final Table<R> as(Name alias, Name... fieldAliases) {
-        return new TableAlias<>(this, alias, fieldAliases, c -> true);
-    }
+  @Override
+  public final Table<R> as(Name alias, Name... fieldAliases) {
+    return new TableAlias<>(this, alias, fieldAliases, c -> true);
+  }
 
-    @Override
-    /* non-final */ FieldsImpl<R> fields0() {
-        return new FieldsImpl<>(query.getSelect());
-    }
+  @Override
+  /* non-final */ FieldsImpl<R> fields0() {
+    return new FieldsImpl<>(query.getSelect());
+  }
 
-    @Override
-    public final Class<? extends R> getRecordType() {
-        return query.getRecordType();
-    }
+  @Override
+  public final Class<? extends R> getRecordType() {
+    return query.getRecordType();
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
+  @Override
+  public final void accept(Context<?> ctx) {
 
+    visitSubquery(ctx, query, false);
+  }
 
-
-
-        visitSubquery(ctx, query, false);
-    }
-
-    @Override // Avoid AbstractTable implementation
-    public final Clause[] clauses(Context<?> ctx) {
-        return null;
-    }
+  @Override // Avoid AbstractTable implementation
+  public final Clause[] clauses(Context<?> ctx) {
+    return null;
+  }
 }

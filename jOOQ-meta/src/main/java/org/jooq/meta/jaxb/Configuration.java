@@ -1,4 +1,40 @@
-
+/* 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Other licenses:
+ * -----------------------------------------------------------------------------
+ * Commercial licenses for this work are available. These replace the above
+ * ASL 2.0 and offer limited warranties, support, maintenance, and commercial
+ * database integrations.
+ *
+ * For more information, please visit: http://www.jooq.org/licenses
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
 package org.jooq.meta.jaxb;
 
 import java.io.Serializable;
@@ -13,12 +49,11 @@ import org.jooq.util.jaxb.tools.StringAdapter;
 import org.jooq.util.jaxb.tools.XMLAppendable;
 import org.jooq.util.jaxb.tools.XMLBuilder;
 
-
 /**
- * <p>Java class for anonymous complex type.
- * 
+ * Java class for anonymous complex type.
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType&gt;
  *   &lt;complexContent&gt;
@@ -34,243 +69,230 @@ import org.jooq.util.jaxb.tools.XMLBuilder;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
-
-})
+@XmlType(
+    name = "",
+    propOrder = {})
 @XmlRootElement(name = "configuration")
-@SuppressWarnings({
-    "all"
-})
-public class Configuration implements Serializable, XMLAppendable
-{
+@SuppressWarnings({"all"})
+public class Configuration implements Serializable, XMLAppendable {
 
-    private final static long serialVersionUID = 31500L;
-    @XmlSchemaType(name = "string")
-    protected Logging logging;
-    @XmlElement(defaultValue = "FAIL")
-    @XmlSchemaType(name = "string")
-    protected OnError onError = OnError.FAIL;
-    protected Jdbc jdbc;
-    @XmlElement(required = true)
-    protected Generator generator;
-    @XmlJavaTypeAdapter(StringAdapter.class)
-    protected String basedir;
+  private static final long serialVersionUID = 31500L;
 
-    /**
-     * The logging configuration element specifies the code generation logging threshold.
-     * 
-     */
-    public Logging getLogging() {
-        return logging;
+  @XmlSchemaType(name = "string")
+  protected Logging logging;
+
+  @XmlElement(defaultValue = "FAIL")
+  @XmlSchemaType(name = "string")
+  protected OnError onError = OnError.FAIL;
+
+  protected Jdbc jdbc;
+
+  @XmlElement(required = true)
+  protected Generator generator;
+
+  @XmlJavaTypeAdapter(StringAdapter.class)
+  protected String basedir;
+
+  /** The logging configuration element specifies the code generation logging threshold. */
+  public Logging getLogging() {
+    return logging;
+  }
+
+  /** The logging configuration element specifies the code generation logging threshold. */
+  public void setLogging(Logging value) {
+    this.logging = value;
+  }
+
+  /**
+   * The action to be taken by the generator as the consequence of an encountered exception.
+   * Defaults to FAIL.
+   */
+  public OnError getOnError() {
+    return onError;
+  }
+
+  /**
+   * The action to be taken by the generator as the consequence of an encountered exception.
+   * Defaults to FAIL.
+   */
+  public void setOnError(OnError value) {
+    this.onError = value;
+  }
+
+  /**
+   * The JDBC configuration element contains information about how to set up the database connection
+   * used for source code generation.
+   */
+  public Jdbc getJdbc() {
+    return jdbc;
+  }
+
+  /**
+   * The JDBC configuration element contains information about how to set up the database connection
+   * used for source code generation.
+   */
+  public void setJdbc(Jdbc value) {
+    this.jdbc = value;
+  }
+
+  /**
+   * The GENERATOR configuration element contains information about source code generation itself.
+   */
+  public Generator getGenerator() {
+    return generator;
+  }
+
+  /**
+   * The GENERATOR configuration element contains information about source code generation itself.
+   */
+  public void setGenerator(Generator value) {
+    this.generator = value;
+  }
+
+  /**
+   * The base directory that should be used instead of the JVM's working directory, to resolve all
+   * relative paths.
+   */
+  public String getBasedir() {
+    return basedir;
+  }
+
+  /**
+   * The base directory that should be used instead of the JVM's working directory, to resolve all
+   * relative paths.
+   */
+  public void setBasedir(String value) {
+    this.basedir = value;
+  }
+
+  /** The logging configuration element specifies the code generation logging threshold. */
+  public Configuration withLogging(Logging value) {
+    setLogging(value);
+    return this;
+  }
+
+  /**
+   * The action to be taken by the generator as the consequence of an encountered exception.
+   * Defaults to FAIL.
+   */
+  public Configuration withOnError(OnError value) {
+    setOnError(value);
+    return this;
+  }
+
+  /**
+   * The JDBC configuration element contains information about how to set up the database connection
+   * used for source code generation.
+   */
+  public Configuration withJdbc(Jdbc value) {
+    setJdbc(value);
+    return this;
+  }
+
+  /**
+   * The GENERATOR configuration element contains information about source code generation itself.
+   */
+  public Configuration withGenerator(Generator value) {
+    setGenerator(value);
+    return this;
+  }
+
+  /**
+   * The base directory that should be used instead of the JVM's working directory, to resolve all
+   * relative paths.
+   */
+  public Configuration withBasedir(String value) {
+    setBasedir(value);
+    return this;
+  }
+
+  @Override
+  public final void appendTo(XMLBuilder builder) {
+    builder.append("logging", logging);
+    builder.append("onError", onError);
+    builder.append("jdbc", jdbc);
+    builder.append("generator", generator);
+    builder.append("basedir", basedir);
+  }
+
+  @Override
+  public String toString() {
+    XMLBuilder builder = XMLBuilder.nonFormatting();
+    appendTo(builder);
+    return builder.toString();
+  }
+
+  @Override
+  public boolean equals(Object that) {
+    if (this == that) {
+      return true;
     }
-
-    /**
-     * The logging configuration element specifies the code generation logging threshold.
-     * 
-     */
-    public void setLogging(Logging value) {
-        this.logging = value;
+    if (that == null) {
+      return false;
     }
-
-    /**
-     * The action to be taken by the generator as the consequence of an encountered exception. Defaults to FAIL.
-     * 
-     */
-    public OnError getOnError() {
-        return onError;
+    if (getClass() != that.getClass()) {
+      return false;
     }
-
-    /**
-     * The action to be taken by the generator as the consequence of an encountered exception. Defaults to FAIL.
-     * 
-     */
-    public void setOnError(OnError value) {
-        this.onError = value;
+    Configuration other = ((Configuration) that);
+    if (logging == null) {
+      if (other.logging != null) {
+        return false;
+      }
+    } else {
+      if (!logging.equals(other.logging)) {
+        return false;
+      }
     }
-
-    /**
-     * The JDBC configuration element contains information about how to set up the database connection used for source code generation.
-     * 
-     */
-    public Jdbc getJdbc() {
-        return jdbc;
+    if (onError == null) {
+      if (other.onError != null) {
+        return false;
+      }
+    } else {
+      if (!onError.equals(other.onError)) {
+        return false;
+      }
     }
-
-    /**
-     * The JDBC configuration element contains information about how to set up the database connection used for source code generation.
-     * 
-     */
-    public void setJdbc(Jdbc value) {
-        this.jdbc = value;
+    if (jdbc == null) {
+      if (other.jdbc != null) {
+        return false;
+      }
+    } else {
+      if (!jdbc.equals(other.jdbc)) {
+        return false;
+      }
     }
-
-    /**
-     * The GENERATOR configuration element contains information about source code generation itself.
-     * 
-     */
-    public Generator getGenerator() {
-        return generator;
+    if (generator == null) {
+      if (other.generator != null) {
+        return false;
+      }
+    } else {
+      if (!generator.equals(other.generator)) {
+        return false;
+      }
     }
-
-    /**
-     * The GENERATOR configuration element contains information about source code generation itself.
-     * 
-     */
-    public void setGenerator(Generator value) {
-        this.generator = value;
+    if (basedir == null) {
+      if (other.basedir != null) {
+        return false;
+      }
+    } else {
+      if (!basedir.equals(other.basedir)) {
+        return false;
+      }
     }
+    return true;
+  }
 
-    /**
-     * The base directory that should be used instead of the JVM's working directory, to resolve all relative paths.
-     * 
-     */
-    public String getBasedir() {
-        return basedir;
-    }
-
-    /**
-     * The base directory that should be used instead of the JVM's working directory, to resolve all relative paths.
-     * 
-     */
-    public void setBasedir(String value) {
-        this.basedir = value;
-    }
-
-    /**
-     * The logging configuration element specifies the code generation logging threshold.
-     * 
-     */
-    public Configuration withLogging(Logging value) {
-        setLogging(value);
-        return this;
-    }
-
-    /**
-     * The action to be taken by the generator as the consequence of an encountered exception. Defaults to FAIL.
-     * 
-     */
-    public Configuration withOnError(OnError value) {
-        setOnError(value);
-        return this;
-    }
-
-    /**
-     * The JDBC configuration element contains information about how to set up the database connection used for source code generation.
-     * 
-     */
-    public Configuration withJdbc(Jdbc value) {
-        setJdbc(value);
-        return this;
-    }
-
-    /**
-     * The GENERATOR configuration element contains information about source code generation itself.
-     * 
-     */
-    public Configuration withGenerator(Generator value) {
-        setGenerator(value);
-        return this;
-    }
-
-    /**
-     * The base directory that should be used instead of the JVM's working directory, to resolve all relative paths.
-     * 
-     */
-    public Configuration withBasedir(String value) {
-        setBasedir(value);
-        return this;
-    }
-
-    @Override
-    public final void appendTo(XMLBuilder builder) {
-        builder.append("logging", logging);
-        builder.append("onError", onError);
-        builder.append("jdbc", jdbc);
-        builder.append("generator", generator);
-        builder.append("basedir", basedir);
-    }
-
-    @Override
-    public String toString() {
-        XMLBuilder builder = XMLBuilder.nonFormatting();
-        appendTo(builder);
-        return builder.toString();
-    }
-
-    @Override
-    public boolean equals(Object that) {
-        if (this == that) {
-            return true;
-        }
-        if (that == null) {
-            return false;
-        }
-        if (getClass()!= that.getClass()) {
-            return false;
-        }
-        Configuration other = ((Configuration) that);
-        if (logging == null) {
-            if (other.logging!= null) {
-                return false;
-            }
-        } else {
-            if (!logging.equals(other.logging)) {
-                return false;
-            }
-        }
-        if (onError == null) {
-            if (other.onError!= null) {
-                return false;
-            }
-        } else {
-            if (!onError.equals(other.onError)) {
-                return false;
-            }
-        }
-        if (jdbc == null) {
-            if (other.jdbc!= null) {
-                return false;
-            }
-        } else {
-            if (!jdbc.equals(other.jdbc)) {
-                return false;
-            }
-        }
-        if (generator == null) {
-            if (other.generator!= null) {
-                return false;
-            }
-        } else {
-            if (!generator.equals(other.generator)) {
-                return false;
-            }
-        }
-        if (basedir == null) {
-            if (other.basedir!= null) {
-                return false;
-            }
-        } else {
-            if (!basedir.equals(other.basedir)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = ((prime*result)+((logging == null)? 0 :logging.hashCode()));
-        result = ((prime*result)+((onError == null)? 0 :onError.hashCode()));
-        result = ((prime*result)+((jdbc == null)? 0 :jdbc.hashCode()));
-        result = ((prime*result)+((generator == null)? 0 :generator.hashCode()));
-        result = ((prime*result)+((basedir == null)? 0 :basedir.hashCode()));
-        return result;
-    }
-
+  @Override
+  public int hashCode() {
+    final int prime = 31;
+    int result = 1;
+    result = ((prime * result) + ((logging == null) ? 0 : logging.hashCode()));
+    result = ((prime * result) + ((onError == null) ? 0 : onError.hashCode()));
+    result = ((prime * result) + ((jdbc == null) ? 0 : jdbc.hashCode()));
+    result = ((prime * result) + ((generator == null) ? 0 : generator.hashCode()));
+    result = ((prime * result) + ((basedir == null) ? 0 : basedir.hashCode()));
+    return result;
+  }
 }

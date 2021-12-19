@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,7 +43,6 @@ import static org.jooq.tools.StringUtils.defaultIfNull;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.jooq.TableOptions.TableType;
 import org.jooq.meta.AbstractTableDefinition;
 import org.jooq.meta.ColumnDefinition;
@@ -56,62 +55,71 @@ import org.jooq.util.xml.jaxb.Column;
 import org.jooq.util.xml.jaxb.InformationSchema;
 import org.jooq.util.xml.jaxb.Table;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 public class XMLTableDefinition extends AbstractTableDefinition {
 
-    private final InformationSchema info;
-    private final Table             table;
+  private final InformationSchema info;
+  private final Table table;
 
-    public XMLTableDefinition(SchemaDefinition schema, InformationSchema info, Table table) {
-        this(schema, info, table, "");
+  public XMLTableDefinition(SchemaDefinition schema, InformationSchema info, Table table) {
+    this(schema, info, table, "");
+  }
+
+  public XMLTableDefinition(
+      SchemaDefinition schema, InformationSchema info, Table table, String comment) {
+    this(schema, info, table, comment, TableType.TABLE, null);
+  }
+
+  public XMLTableDefinition(
+      SchemaDefinition schema,
+      InformationSchema info,
+      Table table,
+      String comment,
+      TableType tableType,
+      String source) {
+    super(schema, table.getTableName(), comment, tableType, source);
+
+    this.info = info;
+    this.table = table;
+  }
+
+  @Override
+  protected List<ColumnDefinition> getElements0() throws SQLException {
+    List<ColumnDefinition> result = new ArrayList<>();
+
+    for (Column column : info.getColumns()) {
+      if (StringUtils.equals(
+              defaultIfNull(table.getTableCatalog(), ""),
+              defaultIfNull(column.getTableCatalog(), ""))
+          && StringUtils.equals(
+              defaultIfNull(table.getTableSchema(), ""), defaultIfNull(column.getTableSchema(), ""))
+          && StringUtils.equals(
+              defaultIfNull(table.getTableName(), ""), defaultIfNull(column.getTableName(), ""))) {
+
+        SchemaDefinition schema = getDatabase().getSchema(column.getTableSchema());
+
+        DataTypeDefinition type =
+            new DefaultDataTypeDefinition(
+                getDatabase(),
+                schema,
+                column.getDataType(),
+                unbox(column.getCharacterMaximumLength()),
+                unbox(column.getNumericPrecision()),
+                unbox(column.getNumericScale()),
+                column.isIsNullable(),
+                column.getColumnDefault());
+
+        result.add(
+            new DefaultColumnDefinition(
+                this,
+                column.getColumnName(),
+                unbox(column.getOrdinalPosition()),
+                type,
+                column.getIdentityGeneration() != null,
+                column.getComment()));
+      }
     }
 
-    public XMLTableDefinition(SchemaDefinition schema, InformationSchema info, Table table, String comment) {
-        this(schema, info, table, comment, TableType.TABLE, null);
-    }
-
-    public XMLTableDefinition(SchemaDefinition schema, InformationSchema info, Table table, String comment, TableType tableType, String source) {
-        super(schema, table.getTableName(), comment, tableType, source);
-
-        this.info = info;
-        this.table = table;
-    }
-
-    @Override
-    protected List<ColumnDefinition> getElements0() throws SQLException {
-        List<ColumnDefinition> result = new ArrayList<>();
-
-        for (Column column : info.getColumns()) {
-            if (StringUtils.equals(defaultIfNull(table.getTableCatalog(), ""), defaultIfNull(column.getTableCatalog(), "")) &&
-                StringUtils.equals(defaultIfNull(table.getTableSchema(), ""), defaultIfNull(column.getTableSchema(), "")) &&
-                StringUtils.equals(defaultIfNull(table.getTableName(), ""), defaultIfNull(column.getTableName(), ""))) {
-
-                SchemaDefinition schema = getDatabase().getSchema(column.getTableSchema());
-
-                DataTypeDefinition type = new DefaultDataTypeDefinition(
-                    getDatabase(),
-                    schema,
-                    column.getDataType(),
-                    unbox(column.getCharacterMaximumLength()),
-                    unbox(column.getNumericPrecision()),
-                    unbox(column.getNumericScale()),
-                    column.isIsNullable(),
-                    column.getColumnDefault()
-                );
-
-                result.add(new DefaultColumnDefinition(
-                    this,
-                    column.getColumnName(),
-                    unbox(column.getOrdinalPosition()),
-                    type,
-                    column.getIdentityGeneration() != null,
-                    column.getComment()
-                ));
-            }
-        }
-
-        return result;
-    }
+    return result;
+  }
 }

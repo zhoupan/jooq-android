@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,26 +42,26 @@ import java.sql.SQLException;
 
 /**
  * Add JDBC 4.1 API compliance to a JDBC 4.0 {@link ResultSet}.
- * <p>
- * Extend this type if you want to compile {@link ResultSet} implementations on
- * both JDBC 4.0 (JDK 6) and 4.1 (JDK 7).
+ *
+ * <p>Extend this type if you want to compile {@link ResultSet} implementations on both JDBC 4.0
+ * (JDK 6) and 4.1 (JDK 7).
  *
  * @author Lukas Eder
- * @deprecated - 3.15.0 - [#11618] - This type is no longer used by jOOQ and
- *             will be removed in the future.
+ * @deprecated - 3.15.0 - [#11618] - This type is no longer used by jOOQ and will be removed in the
+ *     future.
  */
 @Deprecated
 public abstract class JDBC41ResultSet {
 
-    // JDBC 4.1 compliance: @Override
-    @SuppressWarnings("unused")
-    public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+  // JDBC 4.1 compliance: @Override
+  @SuppressWarnings("unused")
+  public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
 
-    // JDBC 4.1 compliance: @Override
-    @SuppressWarnings("unused")
-    public <T> T getObject(String columnLabel, Class<T> type) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+  // JDBC 4.1 compliance: @Override
+  @SuppressWarnings("unused")
+  public <T> T getObject(String columnLabel, Class<T> type) throws SQLException {
+    throw new UnsupportedOperationException("Not supported yet.");
+  }
 }

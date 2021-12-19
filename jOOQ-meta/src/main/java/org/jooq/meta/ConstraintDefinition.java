@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,13 +44,9 @@ package org.jooq.meta;
  */
 public interface ConstraintDefinition extends Definition {
 
-    /**
-     * The table holding this constraint.
-     */
-    TableDefinition getTable();
+  /** The table holding this constraint. */
+  TableDefinition getTable();
 
-    /**
-     * Whether this constraint is enforced.
-     */
-    boolean enforced();
+  /** Whether this constraint is enforced. */
+  boolean enforced();
 }

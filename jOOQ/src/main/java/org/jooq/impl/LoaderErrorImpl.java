@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -43,47 +43,43 @@ import org.jooq.LoaderError;
 import org.jooq.Query;
 import org.jooq.exception.DataAccessException;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class LoaderErrorImpl implements LoaderError {
 
-    private final DataAccessException exception;
-    private final int                 rowIndex;
-    private final String[]            row;
-    private final Query               query;
+  private final DataAccessException exception;
+  private final int rowIndex;
+  private final String[] row;
+  private final Query query;
 
-    LoaderErrorImpl(DataAccessException exception, Object[] row, int rowIndex, Query query) {
-        this.exception = exception;
-        this.row = strings(row);
-        this.rowIndex = rowIndex;
-        this.query = query;
-    }
+  LoaderErrorImpl(DataAccessException exception, Object[] row, int rowIndex, Query query) {
+    this.exception = exception;
+    this.row = strings(row);
+    this.rowIndex = rowIndex;
+    this.query = query;
+  }
 
-    private static String[] strings(Object[] row) {
-        if (row == null)
-            return null;
-        else
-            return map(row, o -> o == null ? null : o.toString(), String[]::new);
-    }
+  private static String[] strings(Object[] row) {
+    if (row == null) return null;
+    else return map(row, o -> o == null ? null : o.toString(), String[]::new);
+  }
 
-    @Override
-    public DataAccessException exception() {
-        return exception;
-    }
+  @Override
+  public DataAccessException exception() {
+    return exception;
+  }
 
-    @Override
-    public int rowIndex() {
-        return rowIndex;
-    }
+  @Override
+  public int rowIndex() {
+    return rowIndex;
+  }
 
-    @Override
-    public String[] row() {
-        return row;
-    }
+  @Override
+  public String[] row() {
+    return row;
+  }
 
-    @Override
-    public Query query() {
-        return query;
-    }
+  @Override
+  public Query query() {
+    return query;
+  }
 }

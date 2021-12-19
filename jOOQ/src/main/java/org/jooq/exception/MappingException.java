@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,40 +44,42 @@ import org.jooq.Result;
 import org.jooq.ResultQuery;
 
 /**
- * An error occurred while fetching data into a user defined Java object with
- * any of these methods:
+ * An error occurred while fetching data into a user defined Java object with any of these methods:
+ *
  * <ul>
- * <li> {@link ResultQuery#fetchInto(Class)}</li>
- * <li> {@link Cursor#fetchInto(Class)}</li>
- * <li> {@link Result#into(Class)}</li>
- * <li> {@link Record#into(Class)}</li>
+ *   <li>{@link ResultQuery#fetchInto(Class)}
+ *   <li>{@link Cursor#fetchInto(Class)}
+ *   <li>{@link Result#into(Class)}
+ *   <li>{@link Record#into(Class)}
  * </ul>
+ *
  * ... or when copying data into a {@link Record} with any of these methods
+ *
  * <ul>
- * <li> {@link DSLContext#newRecord(org.jooq.Table, Object)}</li>
- * <li> {@link Record#from(Object)}</li>
+ *   <li>{@link DSLContext#newRecord(org.jooq.Table, Object)}
+ *   <li>{@link Record#from(Object)}
  * </ul>
  *
  * @author Lukas Eder
  */
 public class MappingException extends DataAccessException {
 
-    /**
-     * Constructor for MappingException.
-     *
-     * @param message the detail message
-     */
-    public MappingException(String message) {
-        super(message);
-    }
+  /**
+   * Constructor for MappingException.
+   *
+   * @param message the detail message
+   */
+  public MappingException(String message) {
+    super(message);
+  }
 
-    /**
-     * Constructor for MappingException.
-     *
-     * @param message the detail message
-     * @param cause the root cause
-     */
-    public MappingException(String message, Throwable cause) {
-        super(message, cause);
-    }
+  /**
+   * Constructor for MappingException.
+   *
+   * @param message the detail message
+   * @param cause the root cause
+   */
+  public MappingException(String message, Throwable cause) {
+    super(message, cause);
+  }
 }

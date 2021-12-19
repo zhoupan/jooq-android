@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,18 +41,17 @@ import java.io.File;
 import java.util.Comparator;
 
 /**
- * A comparator that compares file names semantically, just like the Windows
- * Explorer.
- * <p>
- * <strong>Desired semantic ordering:</strong>
+ * A comparator that compares file names semantically, just like the Windows Explorer.
+ *
+ * <p><strong>Desired semantic ordering:</strong>
  *
  * <pre>
  * version-1
  * version-2
  * version-10
  * </pre>
- * <p>
- * <strong>Undesired, lexicographic ordering:</strong>
+ *
+ * <p><strong>Undesired, lexicographic ordering:</strong>
  *
  * <pre>
  * version-1
@@ -64,13 +63,13 @@ import java.util.Comparator;
  */
 final class FileComparator implements Comparator<File> {
 
-    public static final FileComparator INSTANCE = new FileComparator();
+  public static final FileComparator INSTANCE = new FileComparator();
 
-    @Override
-    public final int compare(File o1, File o2) {
-        String s1 = o1 == null ? null : o1.getName();
-        String s2 = o2 == null ? null : o2.getName();
+  @Override
+  public final int compare(File o1, File o2) {
+    String s1 = o1 == null ? null : o1.getName();
+    String s2 = o2 == null ? null : o2.getName();
 
-        return FilenameComparator.INSTANCE.compare(s1, s2);
-    }
+    return FilenameComparator.INSTANCE.compare(s1, s2);
+  }
 }

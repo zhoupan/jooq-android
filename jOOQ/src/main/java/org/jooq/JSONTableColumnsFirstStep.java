@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,14 +37,10 @@
  */
 package org.jooq;
 
-import org.jetbrains.annotations.*;
-
-
-// ...
-// ...
 import static org.jooq.SQLDialect.MYSQL;
-// ...
 import static org.jooq.SQLDialect.POSTGRES;
+
+import org.jetbrains.annotations.*;
 // ...
 
 /**
@@ -54,52 +50,33 @@ import static org.jooq.SQLDialect.POSTGRES;
  */
 public interface JSONTableColumnsFirstStep {
 
-    /**
-     * Add a column to the <code>COLUMNS</code> clause of the
-     * <code>JSON_TABLE</code> expression.
-     */
-    @NotNull
-    @Support({ MYSQL, POSTGRES })
-    JSONTableColumnForOrdinalityStep column(String name);
+  /** Add a column to the <code>COLUMNS</code> clause of the <code>JSON_TABLE</code> expression. */
+  @NotNull
+  @Support({MYSQL, POSTGRES})
+  JSONTableColumnForOrdinalityStep column(String name);
 
-    /**
-     * Add a column to the <code>COLUMNS</code> clause of the
-     * <code>JSON_TABLE</code> expression.
-     */
-    @NotNull
-    @Support({ MYSQL, POSTGRES })
-    JSONTableColumnForOrdinalityStep column(Name name);
+  /** Add a column to the <code>COLUMNS</code> clause of the <code>JSON_TABLE</code> expression. */
+  @NotNull
+  @Support({MYSQL, POSTGRES})
+  JSONTableColumnForOrdinalityStep column(Name name);
 
-    /**
-     * Add a column to the <code>COLUMNS</code> clause of the
-     * <code>JSON_TABLE</code> expression.
-     */
-    @NotNull
-    @Support({ MYSQL, POSTGRES })
-    JSONTableColumnPathStep column(Field<?> name);
+  /** Add a column to the <code>COLUMNS</code> clause of the <code>JSON_TABLE</code> expression. */
+  @NotNull
+  @Support({MYSQL, POSTGRES})
+  JSONTableColumnPathStep column(Field<?> name);
 
-    /**
-     * Add a column to the <code>COLUMNS</code> clause of the
-     * <code>JSON_TABLE</code> expression.
-     */
-    @NotNull
-    @Support({ MYSQL, POSTGRES })
-    JSONTableColumnPathStep column(String name, DataType<?> type);
+  /** Add a column to the <code>COLUMNS</code> clause of the <code>JSON_TABLE</code> expression. */
+  @NotNull
+  @Support({MYSQL, POSTGRES})
+  JSONTableColumnPathStep column(String name, DataType<?> type);
 
-    /**
-     * Add a column to the <code>COLUMNS</code> clause of the
-     * <code>JSON_TABLE</code> expression.
-     */
-    @NotNull
-    @Support({ MYSQL, POSTGRES })
-    JSONTableColumnPathStep column(Name name, DataType<?> type);
+  /** Add a column to the <code>COLUMNS</code> clause of the <code>JSON_TABLE</code> expression. */
+  @NotNull
+  @Support({MYSQL, POSTGRES})
+  JSONTableColumnPathStep column(Name name, DataType<?> type);
 
-    /**
-     * Add a column to the <code>COLUMNS</code> clause of the
-     * <code>JSON_TABLE</code> expression.
-     */
-    @NotNull
-    @Support({ MYSQL, POSTGRES })
-    JSONTableColumnPathStep column(Field<?> name, DataType<?> type);
-
+  /** Add a column to the <code>COLUMNS</code> clause of the <code>JSON_TABLE</code> expression. */
+  @NotNull
+  @Support({MYSQL, POSTGRES})
+  JSONTableColumnPathStep column(Field<?> name, DataType<?> type);
 }

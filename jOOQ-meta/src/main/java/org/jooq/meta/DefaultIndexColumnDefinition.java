@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -39,52 +39,50 @@ package org.jooq.meta;
 
 import org.jooq.SortOrder;
 
-/**
- * @author Lukas Eder
- */
-public class DefaultIndexColumnDefinition
-    extends AbstractTypedElementDefinition<IndexDefinition>
+/** @author Lukas Eder */
+public class DefaultIndexColumnDefinition extends AbstractTypedElementDefinition<IndexDefinition>
     implements IndexColumnDefinition {
 
-    private final ColumnDefinition column;
-    private final SortOrder        sortOrder;
-    private final int              position;
+  private final ColumnDefinition column;
+  private final SortOrder sortOrder;
+  private final int position;
 
-    public DefaultIndexColumnDefinition(IndexDefinition container, ColumnDefinition column, SortOrder sortOrder, int position) {
-        super(container, column.getInputName(), position, column.getDefinedType(), "");
+  public DefaultIndexColumnDefinition(
+      IndexDefinition container, ColumnDefinition column, SortOrder sortOrder, int position) {
+    super(container, column.getInputName(), position, column.getDefinedType(), "");
 
-        this.column = column;
-        this.sortOrder = sortOrder;
-        this.position = position;
-    }
+    this.column = column;
+    this.sortOrder = sortOrder;
+    this.position = position;
+  }
 
-    @Override
-    public DataTypeDefinition getType() {
-        return getColumn().getType();
-    }
+  @Override
+  public DataTypeDefinition getType() {
+    return getColumn().getType();
+  }
 
-    @Override
-    public DataTypeDefinition getType(JavaTypeResolver resolver) {
-        return getColumn().getType(resolver);
-    }
+  @Override
+  public DataTypeDefinition getType(JavaTypeResolver resolver) {
+    return getColumn().getType(resolver);
+  }
 
-    @Override
-    public DataTypeDefinition getDefinedType() {
-        return getColumn().getDefinedType();
-    }
+  @Override
+  public DataTypeDefinition getDefinedType() {
+    return getColumn().getDefinedType();
+  }
 
-    @Override
-    public int getPosition() {
-        return position;
-    }
+  @Override
+  public int getPosition() {
+    return position;
+  }
 
-    @Override
-    public SortOrder getSortOrder() {
-        return sortOrder;
-    }
+  @Override
+  public SortOrder getSortOrder() {
+    return sortOrder;
+  }
 
-    @Override
-    public ColumnDefinition getColumn() {
-        return column;
-    }
+  @Override
+  public ColumnDefinition getColumn() {
+    return column;
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,26 +44,26 @@ import org.jooq.DSLContext;
 import org.jooq.migrations.xml.jaxb.MigrationsType;
 
 /**
- * A default implementation of the {@link CommitProvider} SPI, which provides
- * a materialisation of the currently available database version graph.
- * <p>
- * It is based
+ * A default implementation of the {@link CommitProvider} SPI, which provides a materialisation of
+ * the currently available database version graph.
+ *
+ * <p>It is based
  *
  * @author Lukas Eder
  */
 @org.jooq.Internal
 public class DefaultCommitProvider implements CommitProvider {
 
-    private final DSLContext     ctx;
-    private final MigrationsType migrations;
+  private final DSLContext ctx;
+  private final MigrationsType migrations;
 
-    public DefaultCommitProvider(Configuration configuration, MigrationsType migrations) {
-        this.ctx = configuration.dsl();
-        this.migrations = migrations;
-    }
+  public DefaultCommitProvider(Configuration configuration, MigrationsType migrations) {
+    this.ctx = configuration.dsl();
+    this.migrations = migrations;
+  }
 
-    @Override
-    public Commits provide() {
-        return ctx.commits().load(migrations);
-    }
+  @Override
+  public Commits provide() {
+    return ctx.commits().load(migrations);
+  }
 }

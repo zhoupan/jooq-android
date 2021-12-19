@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -47,65 +47,57 @@ import static org.jooq.impl.Tools.combine;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.jooq.Context;
 import org.jooq.Field;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 final class FieldFunction<T> extends AbstractField<Integer> {
-    private final QueryPartListView<Field<?>> arguments;
+  private final QueryPartListView<Field<?>> arguments;
 
-    FieldFunction(Field<T> field, Field<T>[] arguments) {
-        super(N_FIELD, INTEGER);
+  FieldFunction(Field<T> field, Field<T>[] arguments) {
+    super(N_FIELD, INTEGER);
 
-        this.arguments = wrap(combine(field, arguments));
+    this.arguments = wrap(combine(field, arguments));
+  }
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case MARIADB:
+      case MYSQL:
+        if (arguments.size() > 1) ctx.visit(N_FIELD).sql('(').visit(arguments).sql(')');
+        else acceptDefault(ctx);
+
+        break;
+
+      default:
+        acceptDefault(ctx);
+        break;
     }
+  }
 
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
+  private final void acceptDefault(Context<?> ctx) {
+    int size = arguments.size();
 
+    if (size == 1) {
+      ctx.visit(zero());
+    } else {
+      List<Field<?>> args = new ArrayList<>();
+      args.add(arguments.get(0));
 
-            case MARIADB:
-            case MYSQL:
-                if (arguments.size() > 1)
-                    ctx.visit(N_FIELD).sql('(').visit(arguments).sql(')');
-                else
-                    acceptDefault(ctx);
+      for (int i = 1; i < size; i++) {
+        args.add(arguments.get(i));
+        args.add(inline(i));
+      }
 
-                break;
+      args.add(inline(0));
 
-            default:
-                acceptDefault(ctx);
-                break;
-        }
+      ctx.visit(
+          DSL.decode(
+              args.get(0),
+              args.get(1),
+              args.get(2),
+              (Object[]) args.subList(3, args.size()).toArray(EMPTY_FIELD)));
     }
-
-    private final void acceptDefault(Context<?> ctx) {
-        int size = arguments.size();
-
-        if (size == 1) {
-            ctx.visit(zero());
-        }
-        else {
-            List<Field<?>> args = new ArrayList<>();
-            args.add(arguments.get(0));
-
-            for (int i = 1; i < size; i++) {
-                args.add(arguments.get(i));
-                args.add(inline(i));
-            }
-
-            args.add(inline(0));
-
-            ctx.visit(DSL.decode(
-                args.get(0),
-                args.get(1),
-                args.get(2),
-                (Object[]) args.subList(3, args.size()).toArray(EMPTY_FIELD)
-            ));
-        }
-    }
+  }
 }

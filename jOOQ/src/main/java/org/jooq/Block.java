@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -41,17 +41,16 @@ import org.jooq.impl.DSL;
 
 /**
  * A procedural block.
- * <p>
- * Many RDBMS support procedural languages and in those languages, blocks are an
- * essential means of grouping logic and creating scope. Some databases support
- * executing anonymous blocks, in case of which the jOOQ <code>Block</code> can
- * be executed like any other {@link Query}. This works in a similar way as a
- * {@link Batch} containing multiple queries, but unlike a {@link Batch}, a
+ *
+ * <p>Many RDBMS support procedural languages and in those languages, blocks are an essential means
+ * of grouping logic and creating scope. Some databases support executing anonymous blocks, in case
+ * of which the jOOQ <code>Block</code> can be executed like any other {@link Query}. This works in
+ * a similar way as a {@link Batch} containing multiple queries, but unlike a {@link Batch}, a
  * {@link Block} can contain procedural code as well.
- * <p>
- * <strong>Example:</strong>
- * <p>
- * <code><pre>
+ *
+ * <p><strong>Example:</strong>
+ *
+ * <p><code><pre>
  * // Assuming import static org.jooq.impl.DSL.*;
  *
  * // Wrapping SQL statements only
@@ -73,11 +72,9 @@ import org.jooq.impl.DSL;
  *    )
  *    .execute();
  * </pre></code>
- * <p>
- * Instances can be created using {@link DSL#begin(Statement...)} and overloads.
+ *
+ * <p>Instances can be created using {@link DSL#begin(Statement...)} and overloads.
  *
  * @author Lukas Eder
  */
-public interface Block extends RowCountQuery {
-
-}
+public interface Block extends RowCountQuery {}

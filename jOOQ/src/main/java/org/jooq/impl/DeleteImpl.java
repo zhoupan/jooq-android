@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,7 +44,6 @@ import static org.jooq.impl.DSL.table;
 import static org.jooq.impl.Tools.map;
 
 import java.util.Collection;
-
 import org.jooq.Condition;
 import org.jooq.Configuration;
 import org.jooq.DeleteConditionStep;
@@ -86,393 +85,874 @@ import org.jooq.SelectFieldOrAsterisk;
 import org.jooq.Table;
 import org.jooq.TableLike;
 
-/**
- * @author Lukas Eder
- */
-@SuppressWarnings({ "rawtypes", "unchecked" })
-final class DeleteImpl<R extends Record>
-    extends AbstractDelegatingDMLQuery<R, DeleteQueryImpl<R>>
+/** @author Lukas Eder */
+@SuppressWarnings({"rawtypes", "unchecked"})
+final class DeleteImpl<R extends Record> extends AbstractDelegatingDMLQuery<R, DeleteQueryImpl<R>>
     implements
 
-    // Cascading interface implementations for Delete behaviour
-    DeleteUsingStep<R>,
-    DeleteConditionStep<R> {
-    private boolean           returningResult;
-
-    DeleteImpl(Configuration configuration, WithImpl with, Table<R> table) {
-        super(new DeleteQueryImpl<>(configuration, with, table));
-    }
-
-    @Override
-    public final DeleteImpl<R> using(TableLike<?> table) {
-        getDelegate().addUsing(table);
-        return this;
-    }
-
-    @Override
-    public final DeleteImpl<R> using(TableLike<?>... tables) {
-        getDelegate().addUsing(tables);
-        return this;
-    }
-
-    @Override
-    public final DeleteImpl<R> using(Collection<? extends TableLike<?>> tables) {
-        getDelegate().addUsing(tables);
-        return this;
-    }
-
-    @Override
-    public final DeleteImpl<R> using(SQL sql) {
-        return using(table(sql));
-    }
-
-    @Override
-    public final DeleteImpl<R> using(String sql) {
-        return using(table(sql));
-    }
-
-    @Override
-    public final DeleteImpl<R> using(String sql, Object... bindings) {
-        return using(table(sql, bindings));
-    }
-
-    @Override
-    public final DeleteImpl<R> using(String sql, QueryPart... parts) {
-        return using(table(sql, parts));
-    }
-
-    @Override
-    public final DeleteImpl<R> using(Name name) {
-        return using(table(name));
-    }
-
-    @Override
-    public final DeleteImpl<R> where(Condition conditions) {
-        getDelegate().addConditions(conditions);
-        return this;
-    }
-
-    @Override
-    public final DeleteImpl<R> where(Condition... conditions) {
-        getDelegate().addConditions(conditions);
-        return this;
-    }
-
-    @Override
-    public final DeleteImpl<R> where(Collection<? extends Condition> conditions) {
-        getDelegate().addConditions(conditions);
-        return this;
-    }
-
-    @Override
-    public final DeleteImpl<R> where(Field<Boolean> condition) {
-        return where(condition(condition));
-    }
-
-    @Override
-    public final DeleteImpl<R> where(SQL sql) {
-        return where(condition(sql));
-    }
-
-    @Override
-    public final DeleteImpl<R> where(String sql) {
-        return where(condition(sql));
-    }
-
-    @Override
-    public final DeleteImpl<R> where(String sql, Object... bindings) {
-        return where(condition(sql, bindings));
-    }
-
-    @Override
-    public final DeleteImpl<R> where(String sql, QueryPart... parts) {
-        return where(condition(sql, parts));
-    }
-
-    @Override
-    public final DeleteImpl<R> whereExists(Select<?> select) {
-        return andExists(select);
-    }
-
-    @Override
-    public final DeleteImpl<R> whereNotExists(Select<?> select) {
-        return andNotExists(select);
-    }
-
-    @Override
-    public final DeleteImpl<R> and(Condition condition) {
-        getDelegate().addConditions(condition);
-        return this;
-    }
-
-    @Override
-    public final DeleteImpl<R> and(Field<Boolean> condition) {
-        return and(condition(condition));
-    }
-
-    @Override
-    public final DeleteImpl<R> and(SQL sql) {
-        return and(condition(sql));
-    }
-
-    @Override
-    public final DeleteImpl<R> and(String sql) {
-        return and(condition(sql));
-    }
-
-    @Override
-    public final DeleteImpl<R> and(String sql, Object... bindings) {
-        return and(condition(sql, bindings));
-    }
-
-    @Override
-    public final DeleteImpl<R> and(String sql, QueryPart... parts) {
-        return and(condition(sql, parts));
-    }
-
-    @Override
-    public final DeleteImpl<R> andNot(Condition condition) {
-        return and(condition.not());
-    }
-
-    @Override
-    public final DeleteImpl<R> andNot(Field<Boolean> condition) {
-        return andNot(condition(condition));
-    }
-
-    @Override
-    public final DeleteImpl<R> andExists(Select<?> select) {
-        return and(exists(select));
-    }
-
-    @Override
-    public final DeleteImpl<R> andNotExists(Select<?> select) {
-        return and(notExists(select));
-    }
-
-    @Override
-    public final DeleteImpl<R> or(Condition condition) {
-        getDelegate().addConditions(Operator.OR, condition);
-        return this;
-    }
-
-    @Override
-    public final DeleteImpl<R> or(Field<Boolean> condition) {
-        return or(condition(condition));
-    }
-
-    @Override
-    public final DeleteImpl<R> or(SQL sql) {
-        return or(condition(sql));
-    }
-
-    @Override
-    public final DeleteImpl<R> or(String sql) {
-        return or(condition(sql));
-    }
-
-    @Override
-    public final DeleteImpl<R> or(String sql, Object... bindings) {
-        return or(condition(sql, bindings));
-    }
-
-    @Override
-    public final DeleteImpl<R> or(String sql, QueryPart... parts) {
-        return or(condition(sql, parts));
-    }
-
-    @Override
-    public final DeleteImpl<R> orNot(Condition condition) {
-        return or(condition.not());
-    }
-
-    @Override
-    public final DeleteImpl<R> orNot(Field<Boolean> condition) {
-        return orNot(condition(condition));
-    }
-
-    @Override
-    public final DeleteImpl<R> orExists(Select<?> select) {
-        return or(exists(select));
-    }
-
-    @Override
-    public final DeleteImpl<R> orNotExists(Select<?> select) {
-        return or(notExists(select));
-    }
-
-    @Override
-    public final DeleteImpl<R> orderBy(OrderField<?>... fields) {
-        getDelegate().addOrderBy(fields);
-        return this;
-    }
-
-    @Override
-    public final DeleteImpl<R> orderBy(Collection<? extends OrderField<?>> fields) {
-        getDelegate().addOrderBy(fields);
-        return this;
-    }
-
-    @Override
-    public final DeleteImpl<R> orderBy(int... fieldIndexes) {
-        return orderBy(map(fieldIndexes, v -> DSL.inline(v)));
-    }
-
-    @Override
-    public final DeleteImpl<R> limit(Number numberOfRows) {
-        getDelegate().addLimit(numberOfRows);
-        return this;
-    }
-
-    @Override
-    public final DeleteImpl<R> limit(Param<? extends Number> numberOfRows) {
-        getDelegate().addLimit(numberOfRows);
-        return this;
-    }
-
-    @Override
-    public final DeleteResultStep<R> returning() {
-        getDelegate().setReturning();
-        return new DMLQueryAsResultQuery<>(getDelegate(), returningResult);
-    }
-
-    @Override
-    public final DeleteResultStep<R> returning(SelectFieldOrAsterisk... f) {
-        getDelegate().setReturning(f);
-        return new DMLQueryAsResultQuery<>(getDelegate(), returningResult);
-    }
-
-    @Override
-    public final DeleteResultStep<R> returning(Collection<? extends SelectFieldOrAsterisk> f) {
-        getDelegate().setReturning(f);
-        return new DMLQueryAsResultQuery<>(getDelegate(), returningResult);
-    }
-
-    @Override
-    public final DeleteResultStep<Record> returningResult(SelectFieldOrAsterisk... f) {
-        returningResult = true;
-        getDelegate().setReturning(f);
-        return new DMLQueryAsResultQuery(getDelegate(), returningResult);
-    }
-
-    @Override
-    public final DeleteResultStep<Record> returningResult(Collection<? extends SelectFieldOrAsterisk> f) {
-        returningResult = true;
-        getDelegate().setReturning(f);
-        return new DMLQueryAsResultQuery(getDelegate(), returningResult);
-    }
-
-
-
-    @Override
-    public final <T1> DeleteResultStep<Record1<T1>> returningResult(SelectField<T1> field1) {
-        return (DeleteResultStep) returningResult(new SelectField[] { field1 });
-    }
-
-    @Override
-    public final <T1, T2> DeleteResultStep<Record2<T1, T2>> returningResult(SelectField<T1> field1, SelectField<T2> field2) {
-        return (DeleteResultStep) returningResult(new SelectField[] { field1, field2 });
-    }
-
-    @Override
-    public final <T1, T2, T3> DeleteResultStep<Record3<T1, T2, T3>> returningResult(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3) {
-        return (DeleteResultStep) returningResult(new SelectField[] { field1, field2, field3 });
-    }
-
-    @Override
-    public final <T1, T2, T3, T4> DeleteResultStep<Record4<T1, T2, T3, T4>> returningResult(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4) {
-        return (DeleteResultStep) returningResult(new SelectField[] { field1, field2, field3, field4 });
-    }
-
-    @Override
-    public final <T1, T2, T3, T4, T5> DeleteResultStep<Record5<T1, T2, T3, T4, T5>> returningResult(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5) {
-        return (DeleteResultStep) returningResult(new SelectField[] { field1, field2, field3, field4, field5 });
-    }
-
-    @Override
-    public final <T1, T2, T3, T4, T5, T6> DeleteResultStep<Record6<T1, T2, T3, T4, T5, T6>> returningResult(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6) {
-        return (DeleteResultStep) returningResult(new SelectField[] { field1, field2, field3, field4, field5, field6 });
-    }
-
-    @Override
-    public final <T1, T2, T3, T4, T5, T6, T7> DeleteResultStep<Record7<T1, T2, T3, T4, T5, T6, T7>> returningResult(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7) {
-        return (DeleteResultStep) returningResult(new SelectField[] { field1, field2, field3, field4, field5, field6, field7 });
-    }
-
-    @Override
-    public final <T1, T2, T3, T4, T5, T6, T7, T8> DeleteResultStep<Record8<T1, T2, T3, T4, T5, T6, T7, T8>> returningResult(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8) {
-        return (DeleteResultStep) returningResult(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8 });
-    }
-
-    @Override
-    public final <T1, T2, T3, T4, T5, T6, T7, T8, T9> DeleteResultStep<Record9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> returningResult(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9) {
-        return (DeleteResultStep) returningResult(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9 });
-    }
-
-    @Override
-    public final <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> DeleteResultStep<Record10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>> returningResult(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10) {
-        return (DeleteResultStep) returningResult(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10 });
-    }
-
-    @Override
-    public final <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> DeleteResultStep<Record11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>> returningResult(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11) {
-        return (DeleteResultStep) returningResult(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11 });
-    }
-
-    @Override
-    public final <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> DeleteResultStep<Record12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>> returningResult(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12) {
-        return (DeleteResultStep) returningResult(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12 });
-    }
-
-    @Override
-    public final <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> DeleteResultStep<Record13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>> returningResult(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13) {
-        return (DeleteResultStep) returningResult(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13 });
-    }
-
-    @Override
-    public final <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> DeleteResultStep<Record14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>> returningResult(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13, SelectField<T14> field14) {
-        return (DeleteResultStep) returningResult(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14 });
-    }
-
-    @Override
-    public final <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> DeleteResultStep<Record15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>> returningResult(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13, SelectField<T14> field14, SelectField<T15> field15) {
-        return (DeleteResultStep) returningResult(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15 });
-    }
-
-    @Override
-    public final <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16> DeleteResultStep<Record16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>> returningResult(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13, SelectField<T14> field14, SelectField<T15> field15, SelectField<T16> field16) {
-        return (DeleteResultStep) returningResult(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16 });
-    }
-
-    @Override
-    public final <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17> DeleteResultStep<Record17<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17>> returningResult(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13, SelectField<T14> field14, SelectField<T15> field15, SelectField<T16> field16, SelectField<T17> field17) {
-        return (DeleteResultStep) returningResult(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17 });
-    }
-
-    @Override
-    public final <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18> DeleteResultStep<Record18<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18>> returningResult(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13, SelectField<T14> field14, SelectField<T15> field15, SelectField<T16> field16, SelectField<T17> field17, SelectField<T18> field18) {
-        return (DeleteResultStep) returningResult(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18 });
-    }
-
-    @Override
-    public final <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19> DeleteResultStep<Record19<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19>> returningResult(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13, SelectField<T14> field14, SelectField<T15> field15, SelectField<T16> field16, SelectField<T17> field17, SelectField<T18> field18, SelectField<T19> field19) {
-        return (DeleteResultStep) returningResult(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19 });
-    }
-
-    @Override
-    public final <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20> DeleteResultStep<Record20<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20>> returningResult(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13, SelectField<T14> field14, SelectField<T15> field15, SelectField<T16> field16, SelectField<T17> field17, SelectField<T18> field18, SelectField<T19> field19, SelectField<T20> field20) {
-        return (DeleteResultStep) returningResult(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19, field20 });
-    }
-
-    @Override
-    public final <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21> DeleteResultStep<Record21<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21>> returningResult(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13, SelectField<T14> field14, SelectField<T15> field15, SelectField<T16> field16, SelectField<T17> field17, SelectField<T18> field18, SelectField<T19> field19, SelectField<T20> field20, SelectField<T21> field21) {
-        return (DeleteResultStep) returningResult(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19, field20, field21 });
-    }
-
-    @Override
-    public final <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22> DeleteResultStep<Record22<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21, T22>> returningResult(SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3, SelectField<T4> field4, SelectField<T5> field5, SelectField<T6> field6, SelectField<T7> field7, SelectField<T8> field8, SelectField<T9> field9, SelectField<T10> field10, SelectField<T11> field11, SelectField<T12> field12, SelectField<T13> field13, SelectField<T14> field14, SelectField<T15> field15, SelectField<T16> field16, SelectField<T17> field17, SelectField<T18> field18, SelectField<T19> field19, SelectField<T20> field20, SelectField<T21> field21, SelectField<T22> field22) {
-        return (DeleteResultStep) returningResult(new SelectField[] { field1, field2, field3, field4, field5, field6, field7, field8, field9, field10, field11, field12, field13, field14, field15, field16, field17, field18, field19, field20, field21, field22 });
-    }
-
-
+        // Cascading interface implementations for Delete behaviour
+        DeleteUsingStep<R>,
+        DeleteConditionStep<R> {
+  private boolean returningResult;
+
+  DeleteImpl(Configuration configuration, WithImpl with, Table<R> table) {
+    super(new DeleteQueryImpl<>(configuration, with, table));
+  }
+
+  @Override
+  public final DeleteImpl<R> using(TableLike<?> table) {
+    getDelegate().addUsing(table);
+    return this;
+  }
+
+  @Override
+  public final DeleteImpl<R> using(TableLike<?>... tables) {
+    getDelegate().addUsing(tables);
+    return this;
+  }
+
+  @Override
+  public final DeleteImpl<R> using(Collection<? extends TableLike<?>> tables) {
+    getDelegate().addUsing(tables);
+    return this;
+  }
+
+  @Override
+  public final DeleteImpl<R> using(SQL sql) {
+    return using(table(sql));
+  }
+
+  @Override
+  public final DeleteImpl<R> using(String sql) {
+    return using(table(sql));
+  }
+
+  @Override
+  public final DeleteImpl<R> using(String sql, Object... bindings) {
+    return using(table(sql, bindings));
+  }
+
+  @Override
+  public final DeleteImpl<R> using(String sql, QueryPart... parts) {
+    return using(table(sql, parts));
+  }
+
+  @Override
+  public final DeleteImpl<R> using(Name name) {
+    return using(table(name));
+  }
+
+  @Override
+  public final DeleteImpl<R> where(Condition conditions) {
+    getDelegate().addConditions(conditions);
+    return this;
+  }
+
+  @Override
+  public final DeleteImpl<R> where(Condition... conditions) {
+    getDelegate().addConditions(conditions);
+    return this;
+  }
+
+  @Override
+  public final DeleteImpl<R> where(Collection<? extends Condition> conditions) {
+    getDelegate().addConditions(conditions);
+    return this;
+  }
+
+  @Override
+  public final DeleteImpl<R> where(Field<Boolean> condition) {
+    return where(condition(condition));
+  }
+
+  @Override
+  public final DeleteImpl<R> where(SQL sql) {
+    return where(condition(sql));
+  }
+
+  @Override
+  public final DeleteImpl<R> where(String sql) {
+    return where(condition(sql));
+  }
+
+  @Override
+  public final DeleteImpl<R> where(String sql, Object... bindings) {
+    return where(condition(sql, bindings));
+  }
+
+  @Override
+  public final DeleteImpl<R> where(String sql, QueryPart... parts) {
+    return where(condition(sql, parts));
+  }
+
+  @Override
+  public final DeleteImpl<R> whereExists(Select<?> select) {
+    return andExists(select);
+  }
+
+  @Override
+  public final DeleteImpl<R> whereNotExists(Select<?> select) {
+    return andNotExists(select);
+  }
+
+  @Override
+  public final DeleteImpl<R> and(Condition condition) {
+    getDelegate().addConditions(condition);
+    return this;
+  }
+
+  @Override
+  public final DeleteImpl<R> and(Field<Boolean> condition) {
+    return and(condition(condition));
+  }
+
+  @Override
+  public final DeleteImpl<R> and(SQL sql) {
+    return and(condition(sql));
+  }
+
+  @Override
+  public final DeleteImpl<R> and(String sql) {
+    return and(condition(sql));
+  }
+
+  @Override
+  public final DeleteImpl<R> and(String sql, Object... bindings) {
+    return and(condition(sql, bindings));
+  }
+
+  @Override
+  public final DeleteImpl<R> and(String sql, QueryPart... parts) {
+    return and(condition(sql, parts));
+  }
+
+  @Override
+  public final DeleteImpl<R> andNot(Condition condition) {
+    return and(condition.not());
+  }
+
+  @Override
+  public final DeleteImpl<R> andNot(Field<Boolean> condition) {
+    return andNot(condition(condition));
+  }
+
+  @Override
+  public final DeleteImpl<R> andExists(Select<?> select) {
+    return and(exists(select));
+  }
+
+  @Override
+  public final DeleteImpl<R> andNotExists(Select<?> select) {
+    return and(notExists(select));
+  }
+
+  @Override
+  public final DeleteImpl<R> or(Condition condition) {
+    getDelegate().addConditions(Operator.OR, condition);
+    return this;
+  }
+
+  @Override
+  public final DeleteImpl<R> or(Field<Boolean> condition) {
+    return or(condition(condition));
+  }
+
+  @Override
+  public final DeleteImpl<R> or(SQL sql) {
+    return or(condition(sql));
+  }
+
+  @Override
+  public final DeleteImpl<R> or(String sql) {
+    return or(condition(sql));
+  }
+
+  @Override
+  public final DeleteImpl<R> or(String sql, Object... bindings) {
+    return or(condition(sql, bindings));
+  }
+
+  @Override
+  public final DeleteImpl<R> or(String sql, QueryPart... parts) {
+    return or(condition(sql, parts));
+  }
+
+  @Override
+  public final DeleteImpl<R> orNot(Condition condition) {
+    return or(condition.not());
+  }
+
+  @Override
+  public final DeleteImpl<R> orNot(Field<Boolean> condition) {
+    return orNot(condition(condition));
+  }
+
+  @Override
+  public final DeleteImpl<R> orExists(Select<?> select) {
+    return or(exists(select));
+  }
+
+  @Override
+  public final DeleteImpl<R> orNotExists(Select<?> select) {
+    return or(notExists(select));
+  }
+
+  @Override
+  public final DeleteImpl<R> orderBy(OrderField<?>... fields) {
+    getDelegate().addOrderBy(fields);
+    return this;
+  }
+
+  @Override
+  public final DeleteImpl<R> orderBy(Collection<? extends OrderField<?>> fields) {
+    getDelegate().addOrderBy(fields);
+    return this;
+  }
+
+  @Override
+  public final DeleteImpl<R> orderBy(int... fieldIndexes) {
+    return orderBy(map(fieldIndexes, v -> DSL.inline(v)));
+  }
+
+  @Override
+  public final DeleteImpl<R> limit(Number numberOfRows) {
+    getDelegate().addLimit(numberOfRows);
+    return this;
+  }
+
+  @Override
+  public final DeleteImpl<R> limit(Param<? extends Number> numberOfRows) {
+    getDelegate().addLimit(numberOfRows);
+    return this;
+  }
+
+  @Override
+  public final DeleteResultStep<R> returning() {
+    getDelegate().setReturning();
+    return new DMLQueryAsResultQuery<>(getDelegate(), returningResult);
+  }
+
+  @Override
+  public final DeleteResultStep<R> returning(SelectFieldOrAsterisk... f) {
+    getDelegate().setReturning(f);
+    return new DMLQueryAsResultQuery<>(getDelegate(), returningResult);
+  }
+
+  @Override
+  public final DeleteResultStep<R> returning(Collection<? extends SelectFieldOrAsterisk> f) {
+    getDelegate().setReturning(f);
+    return new DMLQueryAsResultQuery<>(getDelegate(), returningResult);
+  }
+
+  @Override
+  public final DeleteResultStep<Record> returningResult(SelectFieldOrAsterisk... f) {
+    returningResult = true;
+    getDelegate().setReturning(f);
+    return new DMLQueryAsResultQuery(getDelegate(), returningResult);
+  }
+
+  @Override
+  public final DeleteResultStep<Record> returningResult(
+      Collection<? extends SelectFieldOrAsterisk> f) {
+    returningResult = true;
+    getDelegate().setReturning(f);
+    return new DMLQueryAsResultQuery(getDelegate(), returningResult);
+  }
+
+  @Override
+  public final <T1> DeleteResultStep<Record1<T1>> returningResult(SelectField<T1> field1) {
+    return (DeleteResultStep) returningResult(new SelectField[] {field1});
+  }
+
+  @Override
+  public final <T1, T2> DeleteResultStep<Record2<T1, T2>> returningResult(
+      SelectField<T1> field1, SelectField<T2> field2) {
+    return (DeleteResultStep) returningResult(new SelectField[] {field1, field2});
+  }
+
+  @Override
+  public final <T1, T2, T3> DeleteResultStep<Record3<T1, T2, T3>> returningResult(
+      SelectField<T1> field1, SelectField<T2> field2, SelectField<T3> field3) {
+    return (DeleteResultStep) returningResult(new SelectField[] {field1, field2, field3});
+  }
+
+  @Override
+  public final <T1, T2, T3, T4> DeleteResultStep<Record4<T1, T2, T3, T4>> returningResult(
+      SelectField<T1> field1,
+      SelectField<T2> field2,
+      SelectField<T3> field3,
+      SelectField<T4> field4) {
+    return (DeleteResultStep) returningResult(new SelectField[] {field1, field2, field3, field4});
+  }
+
+  @Override
+  public final <T1, T2, T3, T4, T5> DeleteResultStep<Record5<T1, T2, T3, T4, T5>> returningResult(
+      SelectField<T1> field1,
+      SelectField<T2> field2,
+      SelectField<T3> field3,
+      SelectField<T4> field4,
+      SelectField<T5> field5) {
+    return (DeleteResultStep)
+        returningResult(new SelectField[] {field1, field2, field3, field4, field5});
+  }
+
+  @Override
+  public final <T1, T2, T3, T4, T5, T6>
+      DeleteResultStep<Record6<T1, T2, T3, T4, T5, T6>> returningResult(
+          SelectField<T1> field1,
+          SelectField<T2> field2,
+          SelectField<T3> field3,
+          SelectField<T4> field4,
+          SelectField<T5> field5,
+          SelectField<T6> field6) {
+    return (DeleteResultStep)
+        returningResult(new SelectField[] {field1, field2, field3, field4, field5, field6});
+  }
+
+  @Override
+  public final <T1, T2, T3, T4, T5, T6, T7>
+      DeleteResultStep<Record7<T1, T2, T3, T4, T5, T6, T7>> returningResult(
+          SelectField<T1> field1,
+          SelectField<T2> field2,
+          SelectField<T3> field3,
+          SelectField<T4> field4,
+          SelectField<T5> field5,
+          SelectField<T6> field6,
+          SelectField<T7> field7) {
+    return (DeleteResultStep)
+        returningResult(new SelectField[] {field1, field2, field3, field4, field5, field6, field7});
+  }
+
+  @Override
+  public final <T1, T2, T3, T4, T5, T6, T7, T8>
+      DeleteResultStep<Record8<T1, T2, T3, T4, T5, T6, T7, T8>> returningResult(
+          SelectField<T1> field1,
+          SelectField<T2> field2,
+          SelectField<T3> field3,
+          SelectField<T4> field4,
+          SelectField<T5> field5,
+          SelectField<T6> field6,
+          SelectField<T7> field7,
+          SelectField<T8> field8) {
+    return (DeleteResultStep)
+        returningResult(
+            new SelectField[] {field1, field2, field3, field4, field5, field6, field7, field8});
+  }
+
+  @Override
+  public final <T1, T2, T3, T4, T5, T6, T7, T8, T9>
+      DeleteResultStep<Record9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> returningResult(
+          SelectField<T1> field1,
+          SelectField<T2> field2,
+          SelectField<T3> field3,
+          SelectField<T4> field4,
+          SelectField<T5> field5,
+          SelectField<T6> field6,
+          SelectField<T7> field7,
+          SelectField<T8> field8,
+          SelectField<T9> field9) {
+    return (DeleteResultStep)
+        returningResult(
+            new SelectField[] {
+              field1, field2, field3, field4, field5, field6, field7, field8, field9
+            });
+  }
+
+  @Override
+  public final <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>
+      DeleteResultStep<Record10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>> returningResult(
+          SelectField<T1> field1,
+          SelectField<T2> field2,
+          SelectField<T3> field3,
+          SelectField<T4> field4,
+          SelectField<T5> field5,
+          SelectField<T6> field6,
+          SelectField<T7> field7,
+          SelectField<T8> field8,
+          SelectField<T9> field9,
+          SelectField<T10> field10) {
+    return (DeleteResultStep)
+        returningResult(
+            new SelectField[] {
+              field1, field2, field3, field4, field5, field6, field7, field8, field9, field10
+            });
+  }
+
+  @Override
+  public final <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>
+      DeleteResultStep<Record11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>> returningResult(
+          SelectField<T1> field1,
+          SelectField<T2> field2,
+          SelectField<T3> field3,
+          SelectField<T4> field4,
+          SelectField<T5> field5,
+          SelectField<T6> field6,
+          SelectField<T7> field7,
+          SelectField<T8> field8,
+          SelectField<T9> field9,
+          SelectField<T10> field10,
+          SelectField<T11> field11) {
+    return (DeleteResultStep)
+        returningResult(
+            new SelectField[] {
+              field1, field2, field3, field4, field5, field6, field7, field8, field9, field10,
+              field11
+            });
+  }
+
+  @Override
+  public final <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>
+      DeleteResultStep<Record12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>> returningResult(
+          SelectField<T1> field1,
+          SelectField<T2> field2,
+          SelectField<T3> field3,
+          SelectField<T4> field4,
+          SelectField<T5> field5,
+          SelectField<T6> field6,
+          SelectField<T7> field7,
+          SelectField<T8> field8,
+          SelectField<T9> field9,
+          SelectField<T10> field10,
+          SelectField<T11> field11,
+          SelectField<T12> field12) {
+    return (DeleteResultStep)
+        returningResult(
+            new SelectField[] {
+              field1, field2, field3, field4, field5, field6, field7, field8, field9, field10,
+              field11, field12
+            });
+  }
+
+  @Override
+  public final <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>
+      DeleteResultStep<Record13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>>
+          returningResult(
+              SelectField<T1> field1,
+              SelectField<T2> field2,
+              SelectField<T3> field3,
+              SelectField<T4> field4,
+              SelectField<T5> field5,
+              SelectField<T6> field6,
+              SelectField<T7> field7,
+              SelectField<T8> field8,
+              SelectField<T9> field9,
+              SelectField<T10> field10,
+              SelectField<T11> field11,
+              SelectField<T12> field12,
+              SelectField<T13> field13) {
+    return (DeleteResultStep)
+        returningResult(
+            new SelectField[] {
+              field1, field2, field3, field4, field5, field6, field7, field8, field9, field10,
+              field11, field12, field13
+            });
+  }
+
+  @Override
+  public final <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>
+      DeleteResultStep<Record14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>>
+          returningResult(
+              SelectField<T1> field1,
+              SelectField<T2> field2,
+              SelectField<T3> field3,
+              SelectField<T4> field4,
+              SelectField<T5> field5,
+              SelectField<T6> field6,
+              SelectField<T7> field7,
+              SelectField<T8> field8,
+              SelectField<T9> field9,
+              SelectField<T10> field10,
+              SelectField<T11> field11,
+              SelectField<T12> field12,
+              SelectField<T13> field13,
+              SelectField<T14> field14) {
+    return (DeleteResultStep)
+        returningResult(
+            new SelectField[] {
+              field1, field2, field3, field4, field5, field6, field7, field8, field9, field10,
+              field11, field12, field13, field14
+            });
+  }
+
+  @Override
+  public final <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>
+      DeleteResultStep<Record15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>>
+          returningResult(
+              SelectField<T1> field1,
+              SelectField<T2> field2,
+              SelectField<T3> field3,
+              SelectField<T4> field4,
+              SelectField<T5> field5,
+              SelectField<T6> field6,
+              SelectField<T7> field7,
+              SelectField<T8> field8,
+              SelectField<T9> field9,
+              SelectField<T10> field10,
+              SelectField<T11> field11,
+              SelectField<T12> field12,
+              SelectField<T13> field13,
+              SelectField<T14> field14,
+              SelectField<T15> field15) {
+    return (DeleteResultStep)
+        returningResult(
+            new SelectField[] {
+              field1, field2, field3, field4, field5, field6, field7, field8, field9, field10,
+              field11, field12, field13, field14, field15
+            });
+  }
+
+  @Override
+  public final <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>
+      DeleteResultStep<
+              Record16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>>
+          returningResult(
+              SelectField<T1> field1,
+              SelectField<T2> field2,
+              SelectField<T3> field3,
+              SelectField<T4> field4,
+              SelectField<T5> field5,
+              SelectField<T6> field6,
+              SelectField<T7> field7,
+              SelectField<T8> field8,
+              SelectField<T9> field9,
+              SelectField<T10> field10,
+              SelectField<T11> field11,
+              SelectField<T12> field12,
+              SelectField<T13> field13,
+              SelectField<T14> field14,
+              SelectField<T15> field15,
+              SelectField<T16> field16) {
+    return (DeleteResultStep)
+        returningResult(
+            new SelectField[] {
+              field1, field2, field3, field4, field5, field6, field7, field8, field9, field10,
+              field11, field12, field13, field14, field15, field16
+            });
+  }
+
+  @Override
+  public final <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17>
+      DeleteResultStep<
+              Record17<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17>>
+          returningResult(
+              SelectField<T1> field1,
+              SelectField<T2> field2,
+              SelectField<T3> field3,
+              SelectField<T4> field4,
+              SelectField<T5> field5,
+              SelectField<T6> field6,
+              SelectField<T7> field7,
+              SelectField<T8> field8,
+              SelectField<T9> field9,
+              SelectField<T10> field10,
+              SelectField<T11> field11,
+              SelectField<T12> field12,
+              SelectField<T13> field13,
+              SelectField<T14> field14,
+              SelectField<T15> field15,
+              SelectField<T16> field16,
+              SelectField<T17> field17) {
+    return (DeleteResultStep)
+        returningResult(
+            new SelectField[] {
+              field1, field2, field3, field4, field5, field6, field7, field8, field9, field10,
+              field11, field12, field13, field14, field15, field16, field17
+            });
+  }
+
+  @Override
+  public final <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18>
+      DeleteResultStep<
+              Record18<
+                  T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18>>
+          returningResult(
+              SelectField<T1> field1,
+              SelectField<T2> field2,
+              SelectField<T3> field3,
+              SelectField<T4> field4,
+              SelectField<T5> field5,
+              SelectField<T6> field6,
+              SelectField<T7> field7,
+              SelectField<T8> field8,
+              SelectField<T9> field9,
+              SelectField<T10> field10,
+              SelectField<T11> field11,
+              SelectField<T12> field12,
+              SelectField<T13> field13,
+              SelectField<T14> field14,
+              SelectField<T15> field15,
+              SelectField<T16> field16,
+              SelectField<T17> field17,
+              SelectField<T18> field18) {
+    return (DeleteResultStep)
+        returningResult(
+            new SelectField[] {
+              field1, field2, field3, field4, field5, field6, field7, field8, field9, field10,
+              field11, field12, field13, field14, field15, field16, field17, field18
+            });
+  }
+
+  @Override
+  public final <
+          T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19>
+      DeleteResultStep<
+              Record19<
+                  T1,
+                  T2,
+                  T3,
+                  T4,
+                  T5,
+                  T6,
+                  T7,
+                  T8,
+                  T9,
+                  T10,
+                  T11,
+                  T12,
+                  T13,
+                  T14,
+                  T15,
+                  T16,
+                  T17,
+                  T18,
+                  T19>>
+          returningResult(
+              SelectField<T1> field1,
+              SelectField<T2> field2,
+              SelectField<T3> field3,
+              SelectField<T4> field4,
+              SelectField<T5> field5,
+              SelectField<T6> field6,
+              SelectField<T7> field7,
+              SelectField<T8> field8,
+              SelectField<T9> field9,
+              SelectField<T10> field10,
+              SelectField<T11> field11,
+              SelectField<T12> field12,
+              SelectField<T13> field13,
+              SelectField<T14> field14,
+              SelectField<T15> field15,
+              SelectField<T16> field16,
+              SelectField<T17> field17,
+              SelectField<T18> field18,
+              SelectField<T19> field19) {
+    return (DeleteResultStep)
+        returningResult(
+            new SelectField[] {
+              field1, field2, field3, field4, field5, field6, field7, field8, field9, field10,
+              field11, field12, field13, field14, field15, field16, field17, field18, field19
+            });
+  }
+
+  @Override
+  public final <
+          T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20>
+      DeleteResultStep<
+              Record20<
+                  T1,
+                  T2,
+                  T3,
+                  T4,
+                  T5,
+                  T6,
+                  T7,
+                  T8,
+                  T9,
+                  T10,
+                  T11,
+                  T12,
+                  T13,
+                  T14,
+                  T15,
+                  T16,
+                  T17,
+                  T18,
+                  T19,
+                  T20>>
+          returningResult(
+              SelectField<T1> field1,
+              SelectField<T2> field2,
+              SelectField<T3> field3,
+              SelectField<T4> field4,
+              SelectField<T5> field5,
+              SelectField<T6> field6,
+              SelectField<T7> field7,
+              SelectField<T8> field8,
+              SelectField<T9> field9,
+              SelectField<T10> field10,
+              SelectField<T11> field11,
+              SelectField<T12> field12,
+              SelectField<T13> field13,
+              SelectField<T14> field14,
+              SelectField<T15> field15,
+              SelectField<T16> field16,
+              SelectField<T17> field17,
+              SelectField<T18> field18,
+              SelectField<T19> field19,
+              SelectField<T20> field20) {
+    return (DeleteResultStep)
+        returningResult(
+            new SelectField[] {
+              field1, field2, field3, field4, field5, field6, field7, field8, field9, field10,
+              field11, field12, field13, field14, field15, field16, field17, field18, field19,
+              field20
+            });
+  }
+
+  @Override
+  public final <
+          T1,
+          T2,
+          T3,
+          T4,
+          T5,
+          T6,
+          T7,
+          T8,
+          T9,
+          T10,
+          T11,
+          T12,
+          T13,
+          T14,
+          T15,
+          T16,
+          T17,
+          T18,
+          T19,
+          T20,
+          T21>
+      DeleteResultStep<
+              Record21<
+                  T1,
+                  T2,
+                  T3,
+                  T4,
+                  T5,
+                  T6,
+                  T7,
+                  T8,
+                  T9,
+                  T10,
+                  T11,
+                  T12,
+                  T13,
+                  T14,
+                  T15,
+                  T16,
+                  T17,
+                  T18,
+                  T19,
+                  T20,
+                  T21>>
+          returningResult(
+              SelectField<T1> field1,
+              SelectField<T2> field2,
+              SelectField<T3> field3,
+              SelectField<T4> field4,
+              SelectField<T5> field5,
+              SelectField<T6> field6,
+              SelectField<T7> field7,
+              SelectField<T8> field8,
+              SelectField<T9> field9,
+              SelectField<T10> field10,
+              SelectField<T11> field11,
+              SelectField<T12> field12,
+              SelectField<T13> field13,
+              SelectField<T14> field14,
+              SelectField<T15> field15,
+              SelectField<T16> field16,
+              SelectField<T17> field17,
+              SelectField<T18> field18,
+              SelectField<T19> field19,
+              SelectField<T20> field20,
+              SelectField<T21> field21) {
+    return (DeleteResultStep)
+        returningResult(
+            new SelectField[] {
+              field1, field2, field3, field4, field5, field6, field7, field8, field9, field10,
+              field11, field12, field13, field14, field15, field16, field17, field18, field19,
+              field20, field21
+            });
+  }
+
+  @Override
+  public final <
+          T1,
+          T2,
+          T3,
+          T4,
+          T5,
+          T6,
+          T7,
+          T8,
+          T9,
+          T10,
+          T11,
+          T12,
+          T13,
+          T14,
+          T15,
+          T16,
+          T17,
+          T18,
+          T19,
+          T20,
+          T21,
+          T22>
+      DeleteResultStep<
+              Record22<
+                  T1,
+                  T2,
+                  T3,
+                  T4,
+                  T5,
+                  T6,
+                  T7,
+                  T8,
+                  T9,
+                  T10,
+                  T11,
+                  T12,
+                  T13,
+                  T14,
+                  T15,
+                  T16,
+                  T17,
+                  T18,
+                  T19,
+                  T20,
+                  T21,
+                  T22>>
+          returningResult(
+              SelectField<T1> field1,
+              SelectField<T2> field2,
+              SelectField<T3> field3,
+              SelectField<T4> field4,
+              SelectField<T5> field5,
+              SelectField<T6> field6,
+              SelectField<T7> field7,
+              SelectField<T8> field8,
+              SelectField<T9> field9,
+              SelectField<T10> field10,
+              SelectField<T11> field11,
+              SelectField<T12> field12,
+              SelectField<T13> field13,
+              SelectField<T14> field14,
+              SelectField<T15> field15,
+              SelectField<T16> field16,
+              SelectField<T17> field17,
+              SelectField<T18> field18,
+              SelectField<T19> field19,
+              SelectField<T20> field20,
+              SelectField<T21> field21,
+              SelectField<T22> field22) {
+    return (DeleteResultStep)
+        returningResult(
+            new SelectField[] {
+              field1, field2, field3, field4, field5, field6, field7, field8, field9, field10,
+              field11, field12, field13, field14, field15, field16, field17, field18, field19,
+              field20, field21, field22
+            });
+  }
 }

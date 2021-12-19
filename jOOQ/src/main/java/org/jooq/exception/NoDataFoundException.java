@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,26 +40,23 @@ package org.jooq.exception;
 import org.jooq.ResultQuery;
 
 /**
- * No rows were returned from a {@link ResultQuery}, when exactly one row was
- * expected.
+ * No rows were returned from a {@link ResultQuery}, when exactly one row was expected.
  *
  * @author Lukas Eder
  */
 public class NoDataFoundException extends InvalidResultException {
 
-    /**
-     * Constructor for NoDataFoundException.
-     */
-    public NoDataFoundException() {
-        super(null);
-    }
+  /** Constructor for NoDataFoundException. */
+  public NoDataFoundException() {
+    super(null);
+  }
 
-    /**
-     * Constructor for NoDataFoundException.
-     *
-     * @param message the detail message
-     */
-    public NoDataFoundException(String message) {
-        super(message);
-    }
+  /**
+   * Constructor for NoDataFoundException.
+   *
+   * @param message the detail message
+   */
+  public NoDataFoundException(String message) {
+    super(message);
+  }
 }

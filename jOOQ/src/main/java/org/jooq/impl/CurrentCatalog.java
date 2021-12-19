@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,6 +37,7 @@
  */
 package org.jooq.impl;
 
+import static org.jooq.SQLDialect.*;
 import static org.jooq.impl.DSL.*;
 import static org.jooq.impl.Internal.*;
 import static org.jooq.impl.Keywords.*;
@@ -46,90 +47,46 @@ import static org.jooq.impl.Tools.*;
 import static org.jooq.impl.Tools.BooleanDataKey.*;
 import static org.jooq.impl.Tools.DataExtendedKey.*;
 import static org.jooq.impl.Tools.DataKey.*;
-import static org.jooq.SQLDialect.*;
-
-import org.jooq.*;
-import org.jooq.Record;
-import org.jooq.conf.*;
-import org.jooq.impl.*;
-import org.jooq.tools.*;
 
 import java.util.*;
+import org.jooq.*;
+import org.jooq.conf.*;
+import org.jooq.tools.*;
 
+/** The <code>CURRENT CATALOG</code> statement. */
+@SuppressWarnings({"unused"})
+final class CurrentCatalog extends AbstractField<String> {
 
-/**
- * The <code>CURRENT CATALOG</code> statement.
- */
-@SuppressWarnings({ "unused" })
-final class CurrentCatalog
-extends
-    AbstractField<String>
-{
+  CurrentCatalog() {
+    super(N_CURRENT_CATALOG, allNotNull(VARCHAR));
+  }
 
-    CurrentCatalog() {
-        super(
-            N_CURRENT_CATALOG,
-            allNotNull(VARCHAR)
-        );
+  // -------------------------------------------------------------------------
+  // XXX: QueryPart API
+  // -------------------------------------------------------------------------
+
+  @Override
+  public final void accept(Context<?> ctx) {
+    switch (ctx.family()) {
+      case FIREBIRD:
+      case SQLITE:
+        ctx.visit(inline(""));
+        break;
+
+      default:
+        ctx.visit(N_CURRENT_DATABASE).sql("()");
+        break;
     }
+  }
 
-    // -------------------------------------------------------------------------
-    // XXX: QueryPart API
-    // -------------------------------------------------------------------------
+  // -------------------------------------------------------------------------
+  // The Object API
+  // -------------------------------------------------------------------------
 
-
-
-    @Override
-    public final void accept(Context<?> ctx) {
-        switch (ctx.family()) {
-            case FIREBIRD:
-            case SQLITE:
-                ctx.visit(inline(""));
-                break;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            default:
-                ctx.visit(N_CURRENT_DATABASE).sql("()");
-                break;
-        }
-    }
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // -------------------------------------------------------------------------
-    // The Object API
-    // -------------------------------------------------------------------------
-
-    @Override
-    public boolean equals(Object that) {
-        if (that instanceof CurrentCatalog) {
-            return true;
-        }
-        else
-            return super.equals(that);
-    }
+  @Override
+  public boolean equals(Object that) {
+    if (that instanceof CurrentCatalog) {
+      return true;
+    } else return super.equals(that);
+  }
 }

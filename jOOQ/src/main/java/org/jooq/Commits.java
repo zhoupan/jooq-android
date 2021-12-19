@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,60 +38,42 @@
 package org.jooq;
 
 import java.util.Collection;
-
-import org.jooq.migrations.xml.jaxb.MigrationsType;
-
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jooq.migrations.xml.jaxb.MigrationsType;
 
 /**
  * A (sub) set of commits.
- * <p>
- * This type is used to group together a set of commits that form a subgraph of
- * the complete commit graph. Like the complete graph, this subgraph will have a
- * single {@link #root()} node.
+ *
+ * <p>This type is used to group together a set of commits that form a subgraph of the complete
+ * commit graph. Like the complete graph, this subgraph will have a single {@link #root()} node.
  *
  * @author Lukas Eder
  */
 public interface Commits extends Iterable<Commit> {
 
-    /**
-     * The root node.
-     */
-    @NotNull
-    Commit root();
+  /** The root node. */
+  @NotNull
+  Commit root();
 
-    /**
-     * Get a commit from the graph by ID, or <code>null</code>, if the ID was
-     * not found.
-     */
-    @Nullable
-    Commit get(String id);
+  /** Get a commit from the graph by ID, or <code>null</code>, if the ID was not found. */
+  @Nullable
+  Commit get(String id);
 
-    /**
-     * Add a commit to the graph.
-     */
-    void add(Commit commit);
+  /** Add a commit to the graph. */
+  void add(Commit commit);
 
-    /**
-     * Add all commits to the graph.
-     */
-    void addAll(Commit... commits);
+  /** Add all commits to the graph. */
+  void addAll(Commit... commits);
 
-    /**
-     * Add all commits to the graph.
-     */
-    void addAll(Collection<? extends Commit> commits);
+  /** Add all commits to the graph. */
+  void addAll(Collection<? extends Commit> commits);
 
-    /**
-     * Load XML content into this commits graph.
-     */
-    @NotNull
-    Commits load(MigrationsType migrations);
+  /** Load XML content into this commits graph. */
+  @NotNull
+  Commits load(MigrationsType migrations);
 
-    /**
-     * Export XML content from this commits graph.
-     */
-    @NotNull
-    MigrationsType export();
+  /** Export XML content from this commits graph. */
+  @NotNull
+  MigrationsType export();
 }

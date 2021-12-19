@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,47 +46,46 @@ import org.jooq.MetaProvider;
 import org.jooq.SQLDialect;
 import org.jooq.Source;
 
-
 /**
- * A {@link MetaProvider} implementation that can handle different types of
- * {@link Source} content.
+ * A {@link MetaProvider} implementation that can handle different types of {@link Source} content.
  *
  * @author Lukas Eder
  */
 final class SourceMetaProvider implements MetaProvider {
 
-    private final Configuration configuration;
-    private final Source[]      sources;
+  private final Configuration configuration;
+  private final Source[] sources;
 
-    SourceMetaProvider(Configuration configuration, Source... sources) {
-        this.configuration = configuration;
-        this.sources = sources;
+  SourceMetaProvider(Configuration configuration, Source... sources) {
+    this.configuration = configuration;
+    this.sources = sources;
+  }
+
+  @Override
+  public final Meta provide() {
+    if (sources.length > 0) {
+      String s = sources[0].readString();
+      sources[0] = Source.of(s);
+
+      // TODO: Implement more thorough and reusable "isXML()" check in MiniJAXB
+      if (s.startsWith("<?xml") || s.startsWith("<information_schema") || s.startsWith("<!--"))
+        return new InformationSchemaMetaProvider(configuration, sources).provide();
     }
 
-    @Override
-    public final Meta provide() {
-        if (sources.length > 0) {
-            String s = sources[0].readString();
-            sources[0] = Source.of(s);
+    SQLDialect dialect = configuration.settings().getInterpreterDialect();
+    switch (defaultIfNull(dialect, DEFAULT).family()) {
+      case DEFAULT:
+        return new InterpreterMetaProvider(configuration, sources).provide();
 
-            // TODO: Implement more thorough and reusable "isXML()" check in MiniJAXB
-            if (s.startsWith("<?xml") || s.startsWith("<information_schema") || s.startsWith("<!--"))
-                return new InformationSchemaMetaProvider(configuration, sources).provide();
-        }
+      case DERBY:
+      case H2:
+      case HSQLDB:
+      case SQLITE:
+        return new TranslatingMetaProvider(configuration, sources).provide();
 
-        SQLDialect dialect = configuration.settings().getInterpreterDialect();
-        switch (defaultIfNull(dialect, DEFAULT).family()) {
-            case DEFAULT:
-                return new InterpreterMetaProvider(configuration, sources).provide();
-
-            case DERBY:
-            case H2:
-            case HSQLDB:
-            case SQLITE:
-                return new TranslatingMetaProvider(configuration, sources).provide();
-
-            default:
-                throw new UnsupportedOperationException("Interpreter dialect not yet supported: " + dialect);
-        }
+      default:
+        throw new UnsupportedOperationException(
+            "Interpreter dialect not yet supported: " + dialect);
     }
+  }
 }

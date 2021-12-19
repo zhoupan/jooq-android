@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -46,15 +46,13 @@ import java.util.List;
  */
 public interface DomainDefinition extends TypedElementDefinition<SchemaDefinition> {
 
-    /**
-     * @return The check constraints defined in this domain.
-     */
-    List<String> getCheckClauses();
+  /** @return The check constraints defined in this domain. */
+  List<String> getCheckClauses();
 
-    /**
-     * @return The domain's base type.
-     * @deprecated - [#681] - 3.14.0 - Use {@link #getDefinedType()} instead.
-     */
-    @Deprecated
-    DataTypeDefinition getBaseType();
+  /**
+   * @return The domain's base type.
+   * @deprecated - [#681] - 3.14.0 - Use {@link #getDefinedType()} instead.
+   */
+  @Deprecated
+  DataTypeDefinition getBaseType();
 }

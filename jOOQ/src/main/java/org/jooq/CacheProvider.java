@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,7 +40,6 @@ package org.jooq;
 import java.util.Collections;
 import java.util.Map;
 import java.util.concurrent.ConcurrentMap;
-
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -51,15 +50,14 @@ import org.jetbrains.annotations.Nullable;
 @FunctionalInterface
 public interface CacheProvider {
 
-    /**
-     * Provide a thread safe map for the given {@link CacheType}.
-     * <p>
-     * Implementations must ensure that the resulting {@link Map} is thread
-     * safe. Two examples of such thread safe maps are {@link ConcurrentMap} or
-     * {@link Collections#synchronizedMap(Map)}.
-     * <p>
-     * A <code>null</code> cache effectively turns off caching for the key.
-     */
-    @Nullable
-    Map<Object, Object> provide(CacheContext context);
+  /**
+   * Provide a thread safe map for the given {@link CacheType}.
+   *
+   * <p>Implementations must ensure that the resulting {@link Map} is thread safe. Two examples of
+   * such thread safe maps are {@link ConcurrentMap} or {@link Collections#synchronizedMap(Map)}.
+   *
+   * <p>A <code>null</code> cache effectively turns off caching for the key.
+   */
+  @Nullable
+  Map<Object, Object> provide(CacheContext context);
 }
