@@ -1,0 +1,105 @@
+/* 
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ * Other licenses:
+ * -----------------------------------------------------------------------------
+ * Commercial licenses for this work are available. These replace the above
+ * ASL 2.0 and offer limited warranties, support, maintenance, and commercial
+ * database integrations.
+ *
+ * For more information, please visit: http://www.jooq.org/licenses
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ *
+ */
+package io.r2dbc.spi;
+
+/** Represents a transaction isolation level constant. */
+public final class IsolationLevel implements TransactionDefinition {
+
+  private static final ConstantPool<IsolationLevel> CONSTANTS =
+      new ConstantPool<IsolationLevel>() {
+
+        @Override
+        IsolationLevel createConstant(String name, boolean sensitive) {
+          return new IsolationLevel(name);
+        }
+      };
+
+  /** The read committed isolation level. */
+  public static final IsolationLevel READ_COMMITTED = IsolationLevel.valueOf("READ COMMITTED");
+
+  /** The read uncommitted isolation level. */
+  public static final IsolationLevel READ_UNCOMMITTED = IsolationLevel.valueOf("READ UNCOMMITTED");
+
+  /** The repeatable read isolation level. */
+  public static final IsolationLevel REPEATABLE_READ = IsolationLevel.valueOf("REPEATABLE READ");
+
+  /** The serializable isolation level. */
+  public static final IsolationLevel SERIALIZABLE = IsolationLevel.valueOf("SERIALIZABLE");
+
+  private final String sql;
+
+  private IsolationLevel(String sql) {
+    this.sql = Assert.requireNonNull(sql, "sql must not be null");
+  }
+
+  /**
+   * Returns a constant single of an isolation level.
+   *
+   * @param sql the SQL statement representing the isolation level
+   * @return a constant singleton of the the isolation level
+   * @throws IllegalArgumentException if {@code name} is {@code null} or empty
+   */
+  public static IsolationLevel valueOf(String sql) {
+    Assert.requireNonNull(sql, "sql must not be null");
+    Assert.requireNonEmpty(sql, "sql must not be empty");
+    return CONSTANTS.valueOf(sql, false);
+  }
+
+  @Override
+  public <T> T getAttribute(Option<T> option) {
+    Assert.requireNonNull(option, "option must not be null");
+    if (option.equals(TransactionDefinition.ISOLATION_LEVEL)) {
+      return option.cast(this);
+    }
+    return null;
+  }
+
+  /**
+   * Returns the SQL string represented by each value.
+   *
+   * @return the SQL string represented by each value
+   */
+  public String asSql() {
+    return this.sql;
+  }
+
+  @Override
+  public String toString() {
+    return "IsolationLevel{" + "sql='" + this.sql + '\'' + '}';
+  }
+}
