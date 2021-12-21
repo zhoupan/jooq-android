@@ -1,4 +1,8 @@
-/target
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+/**/src/main/java/META-INF
 *.iml
 # Include top level code styles and inspection profile
 .idea/.*
@@ -8,3 +12,13 @@
 # Ignore project level .idea folders
 */.idea
 /jOOQ-r2dbc/
+
+### eclipse ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+.externalToolBuilders
