@@ -93,6 +93,11 @@
    </dependency>
    <dependency>
     <groupId>org.jooq</groupId>
+    <artifactId>jooq-jpa</artifactId>
+    <version>${project.version}</version>
+   </dependency>
+   <dependency>
+    <groupId>org.jooq</groupId>
     <artifactId>jooq-postgres-extensions</artifactId>
     <version>${project.version}</version>
    </dependency>
@@ -681,6 +686,7 @@
   <module>jOOQ-retrofix-reactive-streams</module>
   <module>jOOQ-retrofix-r2dbc-spi</module>
   <module>jOOQ</module>
+  <module>jOOQ-jpa</module>
   <module>jOOQ-checker</module>
   <module>jOOQ-postgres-extensions</module>
   <module>jOOQ-meta</module>
