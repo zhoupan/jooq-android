@@ -52,11 +52,11 @@ import org.jooq.Field;
 
 /** @author Lukas Eder */
 final class FieldFunction<T> extends AbstractField<Integer> {
+
   private final QueryPartListView<Field<?>> arguments;
 
   FieldFunction(Field<T> field, Field<T>[] arguments) {
     super(N_FIELD, INTEGER);
-
     this.arguments = wrap(combine(field, arguments));
   }
 
@@ -67,9 +67,7 @@ final class FieldFunction<T> extends AbstractField<Integer> {
       case MYSQL:
         if (arguments.size() > 1) ctx.visit(N_FIELD).sql('(').visit(arguments).sql(')');
         else acceptDefault(ctx);
-
         break;
-
       default:
         acceptDefault(ctx);
         break;
@@ -78,20 +76,16 @@ final class FieldFunction<T> extends AbstractField<Integer> {
 
   private final void acceptDefault(Context<?> ctx) {
     int size = arguments.size();
-
     if (size == 1) {
       ctx.visit(zero());
     } else {
       List<Field<?>> args = new ArrayList<>();
       args.add(arguments.get(0));
-
       for (int i = 1; i < size; i++) {
         args.add(arguments.get(i));
         args.add(inline(i));
       }
-
       args.add(inline(0));
-
       ctx.visit(
           DSL.decode(
               args.get(0),

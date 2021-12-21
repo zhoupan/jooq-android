@@ -44,6 +44,7 @@ import java.util.function.Function;
 final class MappingIterator<T, U> implements Iterator<U> {
 
   final Iterator<? extends T> delegate;
+
   final Function<? super T, ? extends U> mapper;
 
   MappingIterator(Iterator<? extends T> delegate, Function<? super T, ? extends U> mapper) {

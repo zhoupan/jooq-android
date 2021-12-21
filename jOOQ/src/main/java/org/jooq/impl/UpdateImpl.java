@@ -120,12 +120,11 @@ import org.jooq.UpdateWhereStep;
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 final class UpdateImpl<R extends Record> extends AbstractDelegatingDMLQuery<R, UpdateQueryImpl<R>>
-    implements
-
-        // Cascading interface implementations for Update behaviour
+    implements // Cascading interface implementations for Update behaviour
         UpdateSetFirstStep<R>,
         UpdateSetMoreStep<R>,
         UpdateConditionStep<R> {
+
   private boolean returningResult;
 
   UpdateImpl(Configuration configuration, WithImpl with, Table<R> table) {

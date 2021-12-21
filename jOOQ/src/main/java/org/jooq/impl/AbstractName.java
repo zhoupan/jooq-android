@@ -54,6 +54,7 @@ import org.jooq.WindowSpecification;
  * @author Lukas Eder
  */
 abstract class AbstractName extends AbstractQueryPart implements Name, SimpleQueryPart {
+
   static final UnqualifiedName NO_NAME = new UnqualifiedName("");
 
   @Override
@@ -65,7 +66,6 @@ abstract class AbstractName extends AbstractQueryPart implements Name, SimpleQue
   public final Name append(Name name) {
     if (empty()) return name;
     else if (name.empty()) return this;
-
     Name[] p1 = parts();
     Name[] p2 = name.parts();
     Name[] array = new Name[p1.length + p2.length];
@@ -1350,7 +1350,6 @@ abstract class AbstractName extends AbstractQueryPart implements Name, SimpleQue
   // ------------------------------------------------------------------------
   // XXX: Object API
   // ------------------------------------------------------------------------
-
   @Override
   public int hashCode() {
     return Arrays.hashCode(getName());
@@ -1359,36 +1358,27 @@ abstract class AbstractName extends AbstractQueryPart implements Name, SimpleQue
   @Override
   public boolean equals(Object that) {
     if (this == that) return true;
-
     // [#1626] [#11126] NameImpl equality can be decided without executing the
     // rather expensive implementation of AbstractQueryPart.equals()
     if (that instanceof AbstractName) {
-
       // [#11126] No need to access name arrays if not both names are equally qualified
       if (qualified() != ((AbstractName) that).qualified()) return false;
       else return Arrays.equals(getName(), (((AbstractName) that).getName()));
     }
-
     return super.equals(that);
   }
 
   @Override
   public final boolean equalsIgnoreCase(Name that) {
     if (this == that) return true;
-
     String[] thisName = getName();
     String[] thatName = that.getName();
-
     if (thisName.length != thatName.length) return false;
-
     for (int i = 0; i < thisName.length; i++) {
       if (thisName[i] == null && thatName[i] == null) continue;
-
       if (thisName[i] == null || thatName[i] == null) return false;
-
       if (!thisName[i].equalsIgnoreCase(thatName[i])) return false;
     }
-
     return true;
   }
 

@@ -65,7 +65,6 @@ final class StddevPop extends DefaultAggregateFunction<BigDecimal> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   void acceptFunctionName(Context<?> ctx) {
     switch (ctx.family()) {

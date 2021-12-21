@@ -65,7 +65,6 @@ final class Tau extends AbstractField<BigDecimal> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -78,7 +77,6 @@ final class Tau extends AbstractField<BigDecimal> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Tau) {

@@ -73,20 +73,28 @@ import org.jooq.SQLDialect;
 final class BetweenCondition<T> extends AbstractCondition implements BetweenAndStep<T> {
 
   private static final Clause[] CLAUSES_BETWEEN = {CONDITION, CONDITION_BETWEEN};
+
   private static final Clause[] CLAUSES_BETWEEN_SYMMETRIC = {
     CONDITION, CONDITION_BETWEEN_SYMMETRIC
   };
+
   private static final Clause[] CLAUSES_NOT_BETWEEN = {CONDITION, CONDITION_NOT_BETWEEN};
+
   private static final Clause[] CLAUSES_NOT_BETWEEN_SYMMETRIC = {
     CONDITION, CONDITION_NOT_BETWEEN_SYMMETRIC
   };
+
   private static final Set<SQLDialect> NO_SUPPORT_SYMMETRIC =
       SQLDialect.supportedBy(CUBRID, DERBY, FIREBIRD, H2, IGNITE, MARIADB, MYSQL, SQLITE);
 
   private final boolean symmetric;
+
   private final boolean not;
+
   final Field<T> field;
+
   final Field<T> minValue;
+
   Field<T> maxValue;
 
   BetweenCondition(Field<T> field, Field<T> minValue, boolean not, boolean symmetric) {
@@ -110,7 +118,8 @@ final class BetweenCondition<T> extends AbstractCondition implements BetweenAndS
     } else return super.and(f);
   }
 
-  @Override // Avoid AbstractCondition implementation
+  // Avoid AbstractCondition implementation
+  @Override
   public final Clause[] clauses(Context<?> ctx) {
     return not
         ? symmetric ? CLAUSES_NOT_BETWEEN_SYMMETRIC : CLAUSES_NOT_BETWEEN
@@ -125,7 +134,6 @@ final class BetweenCondition<T> extends AbstractCondition implements BetweenAndS
       RowN f = row(embeddedFields(field));
       RowN min = row(embeddedFields(minValue));
       RowN max = row(embeddedFields(maxValue));
-
       ctx.visit(
           not
               ? symmetric ? f.notBetweenSymmetric(min).and(max) : f.notBetween(min).and(max)

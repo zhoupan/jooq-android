@@ -59,6 +59,7 @@ import org.jooq.Name;
  * @author Lukas Eder
  */
 public abstract class CustomField<T> extends AbstractField<T> {
+
   private static final Clause[] CLAUSES = {CUSTOM};
 
   protected CustomField(String name, DataType<T> type) {
@@ -79,6 +80,7 @@ public abstract class CustomField<T> extends AbstractField<T> {
   public static final <T> CustomField<T> of(
       Name name, DataType<T> type, Consumer<? super Context<?>> consumer) {
     return new CustomField<T>(name, type) {
+
       @Override
       public void accept(Context<?> ctx) {
         consumer.accept(ctx);
@@ -89,7 +91,6 @@ public abstract class CustomField<T> extends AbstractField<T> {
   // -------------------------------------------------------------------------
   // Implementation required
   // -------------------------------------------------------------------------
-
   /** Subclasses must implement this method. <hr/> {@inheritDoc} */
   @Override
   public abstract void accept(Context<?> ctx);
@@ -97,7 +98,6 @@ public abstract class CustomField<T> extends AbstractField<T> {
   // -------------------------------------------------------------------------
   // No further overrides allowed
   // -------------------------------------------------------------------------
-
   @Override
   public final Clause[] clauses(Context<?> ctx) {
     return CLAUSES;

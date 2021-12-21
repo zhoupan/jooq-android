@@ -99,7 +99,6 @@ public interface Routine<T> extends Qualified, Attachable {
   // -------------------------------------------------------------------------
   // XXX: Meta information
   // -------------------------------------------------------------------------
-
   /**
    * The parameter representing this routine's {@link #getReturnValue()}
    *
@@ -138,7 +137,6 @@ public interface Routine<T> extends Qualified, Attachable {
   // -------------------------------------------------------------------------
   // XXX: Call API
   // -------------------------------------------------------------------------
-
   /**
    * Execute the stored object using a {@link Configuration} object
    *
@@ -156,7 +154,6 @@ public interface Routine<T> extends Qualified, Attachable {
   // -------------------------------------------------------------------------
   // XXX: Call data
   // -------------------------------------------------------------------------
-
   /** Set the routine's IN value for an IN parameter. */
   <Z> void setValue(Parameter<Z> parameter, Z value);
 

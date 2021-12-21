@@ -95,7 +95,6 @@ public class XMLasDOMBinding extends AbstractXMLBinding<Node> {
   // ------------------------------------------------------------------------
   // The following logic originates from jOOX
   // ------------------------------------------------------------------------
-
   /** Transform an {@link Node} into a <code>String</code>. */
   static final String toString(Node node) {
     try {
@@ -115,13 +114,11 @@ public class XMLasDOMBinding extends AbstractXMLBinding<Node> {
   public static Document fromString(String name) {
     Document document = builder().newDocument();
     DocumentFragment fragment = createContent(document, name);
-
     if (fragment != null) {
       document.appendChild(fragment);
     } else {
       document.appendChild(document.createElement(name));
     }
-
     return document;
   }
 
@@ -129,33 +126,27 @@ public class XMLasDOMBinding extends AbstractXMLBinding<Node> {
   public static DocumentBuilder builder() {
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-
       // -----------------------------------------------------------------
       // [#4592] FIX START: Prevent OWASP attack vectors
       try {
         factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
       } catch (ParserConfigurationException ignore) {
       }
-
       try {
         factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
       } catch (ParserConfigurationException ignore) {
       }
-
       try {
         factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
       } catch (ParserConfigurationException ignore) {
       }
-
       factory.setXIncludeAware(false);
       factory.setExpandEntityReferences(false);
       // [#4592] FIX END
       // -----------------------------------------------------------------
-
       // [#9] [#107] In order to take advantage of namespace-related DOM
       // features, the internal builder should be namespace-aware
       factory.setNamespaceAware(true);
-
       DocumentBuilder builder = factory.newDocumentBuilder();
       return builder;
     } catch (Exception e) {
@@ -173,49 +164,37 @@ public class XMLasDOMBinding extends AbstractXMLBinding<Node> {
    *     </ul>
    */
   static final DocumentFragment createContent(Document doc, String text) {
-
     // Text might hold XML content
     if (text != null && text.contains("<")) {
       DocumentBuilder builder = builder();
-
       try {
-
         // [#128] Trimming will get rid of leading and trailing whitespace, which would
         // otherwise cause a HIERARCHY_REQUEST_ERR raised by the parser
         text = text.trim();
-
         // There is a processing instruction. We can safely assume
         // valid XML and parse it as such
         if (text.startsWith("<?xml")) {
           Document parsed = builder.parse(new InputSource(new StringReader(text)));
           DocumentFragment fragment = parsed.createDocumentFragment();
           fragment.appendChild(parsed.getDocumentElement());
-
           return (DocumentFragment) doc.importNode(fragment, true);
-        }
-
-        // Any XML document fragment. To be on the safe side, fragments
+        } else // Any XML document fragment. To be on the safe side, fragments
         // are wrapped in a dummy root node
-        else {
+        {
           String wrapped = "<dummy>" + text + "</dummy>";
           Document parsed = builder.parse(new InputSource(new StringReader(wrapped)));
           DocumentFragment fragment = parsed.createDocumentFragment();
           NodeList children = parsed.getDocumentElement().getChildNodes();
-
           // appendChild removes children also from NodeList!
           while (children.getLength() > 0) {
             fragment.appendChild(children.item(0));
           }
-
           return (DocumentFragment) doc.importNode(fragment, true);
         }
-      }
-
-      // The XML content is invalid
+      } // The XML content is invalid
       catch (IOException | SAXException ignore) {
       }
     }
-
     // Plain text or invalid XML
     return null;
   }

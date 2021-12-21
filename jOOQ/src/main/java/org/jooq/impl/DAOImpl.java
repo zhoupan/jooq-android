@@ -83,14 +83,16 @@ import org.jooq.conf.Settings;
 public abstract class DAOImpl<R extends UpdatableRecord<R>, P, T> implements DAO<R, P, T> {
 
   private final Table<R> table;
+
   private final Class<P> type;
+
   private RecordMapper<R, P> mapper;
+
   private Configuration configuration;
 
   // -------------------------------------------------------------------------
   // XXX: Constructors and initialisation
   // -------------------------------------------------------------------------
-
   protected DAOImpl(Table<R> table, Class<P> type) {
     this(table, type, null);
   }
@@ -98,7 +100,6 @@ public abstract class DAOImpl<R extends UpdatableRecord<R>, P, T> implements DAO
   protected DAOImpl(Table<R> table, Class<P> type, Configuration configuration) {
     this.table = table;
     this.type = type;
-
     setConfiguration(configuration);
   }
 
@@ -151,7 +152,6 @@ public abstract class DAOImpl<R extends UpdatableRecord<R>, P, T> implements DAO
   // -------------------------------------------------------------------------
   // XXX: DAO API
   // -------------------------------------------------------------------------
-
   @Override
   public /* non-final */ void insert(P object) {
     insert(singletonList(object));
@@ -165,17 +165,14 @@ public abstract class DAOImpl<R extends UpdatableRecord<R>, P, T> implements DAO
 
   @Override
   public /* non-final */ void insert(Collection<P> objects) {
-
     // Execute a batch INSERT
     if (objects.size() > 1)
-
       // [#2536] [#3327] We cannot batch INSERT RETURNING calls yet
       if (!FALSE.equals(settings().isReturnRecordToPojo()))
         for (R record : records(objects, false)) record.insert();
       else ctx().batchInsert(records(objects, false)).execute();
-
-    // Execute a regular INSERT
-    else if (objects.size() == 1) records(objects, false).get(0).insert();
+    else // Execute a regular INSERT
+    if (objects.size() == 1) records(objects, false).get(0).insert();
   }
 
   @Override
@@ -191,18 +188,15 @@ public abstract class DAOImpl<R extends UpdatableRecord<R>, P, T> implements DAO
 
   @Override
   public /* non-final */ void update(Collection<P> objects) {
-
     // Execute a batch UPDATE
     if (objects.size() > 1)
-
       // [#2536] [#3327] We cannot batch UPDATE RETURNING calls yet
       if (!FALSE.equals(settings().isReturnRecordToPojo())
           && TRUE.equals(settings().isReturnAllOnUpdatableRecord()))
         for (R record : records(objects, true)) record.update();
       else ctx().batchUpdate(records(objects, true)).execute();
-
-    // Execute a regular UPDATE
-    else if (objects.size() == 1) records(objects, true).get(0).update();
+    else // Execute a regular UPDATE
+    if (objects.size() == 1) records(objects, true).get(0).update();
   }
 
   @Override
@@ -218,18 +212,15 @@ public abstract class DAOImpl<R extends UpdatableRecord<R>, P, T> implements DAO
 
   @Override
   public /* non-final */ void merge(Collection<P> objects) {
-
     // Execute a batch MERGE
     if (objects.size() > 1)
-
       // [#2536] [#3327] We cannot batch MERGE RETURNING calls yet
       if (!FALSE.equals(settings().isReturnRecordToPojo())
           && TRUE.equals(settings().isReturnAllOnUpdatableRecord()))
         for (R record : records(objects, false)) record.merge();
       else ctx().batchMerge(records(objects, false)).execute();
-
-    // Execute a regular MERGE
-    else if (objects.size() == 1) records(objects, false).get(0).merge();
+    else // Execute a regular MERGE
+    if (objects.size() == 1) records(objects, false).get(0).merge();
   }
 
   @Override
@@ -245,18 +236,15 @@ public abstract class DAOImpl<R extends UpdatableRecord<R>, P, T> implements DAO
 
   @Override
   public /* non-final */ void delete(Collection<P> objects) {
-
     // Execute a batch DELETE
     if (objects.size() > 1)
-
       // [#2536] [#3327] We cannot batch DELETE RETURNING calls yet
       if (!FALSE.equals(settings().isReturnRecordToPojo())
           && TRUE.equals(settings().isReturnAllOnUpdatableRecord()))
         for (R record : records(objects, true)) record.delete();
       else ctx().batchDelete(records(objects, true)).execute();
-
-    // Execute a regular DELETE
-    else if (objects.size() == 1) records(objects, true).get(0).delete();
+    else // Execute a regular DELETE
+    if (objects.size() == 1) records(objects, true).get(0).delete();
   }
 
   @SuppressWarnings("unchecked")
@@ -268,7 +256,6 @@ public abstract class DAOImpl<R extends UpdatableRecord<R>, P, T> implements DAO
   @Override
   public /* non-final */ void deleteById(Collection<T> ids) {
     Field<?>[] pk = pk();
-
     if (pk != null) ctx().delete(table).where(equal(pk, ids)).execute();
   }
 
@@ -280,7 +267,6 @@ public abstract class DAOImpl<R extends UpdatableRecord<R>, P, T> implements DAO
   @Override
   public /* non-final */ boolean existsById(T id) {
     Field<?>[] pk = pk();
-
     if (pk != null)
       return ctx().selectCount().from(table).where(equal(pk, id)).fetchOne(0, Integer.class) > 0;
     else return false;
@@ -299,15 +285,15 @@ public abstract class DAOImpl<R extends UpdatableRecord<R>, P, T> implements DAO
   @Override
   public /* non-final */ P findById(T id) {
     Field<?>[] pk = pk();
-
     if (pk != null) return ctx().selectFrom(table).where(equal(pk, id)).fetchOne(mapper());
-
     return null;
   }
 
   @Override
-  public /* non-final */ <Z> List<P> fetchRange(
-      Field<Z> field, Z lowerInclusive, Z upperInclusive) {
+  public <
+          /* non-final */
+          Z>
+      List<P> fetchRange(Field<Z> field, Z lowerInclusive, Z upperInclusive) {
     return ctx()
         .selectFrom(table)
         .where(
@@ -321,22 +307,34 @@ public abstract class DAOImpl<R extends UpdatableRecord<R>, P, T> implements DAO
 
   @SuppressWarnings("unchecked")
   @Override
-  public /* non-final */ <Z> List<P> fetch(Field<Z> field, Z... values) {
+  public <
+          /* non-final */
+          Z>
+      List<P> fetch(Field<Z> field, Z... values) {
     return fetch(field, Arrays.asList(values));
   }
 
   @Override
-  public /* non-final */ <Z> List<P> fetch(Field<Z> field, Collection<? extends Z> values) {
+  public <
+          /* non-final */
+          Z>
+      List<P> fetch(Field<Z> field, Collection<? extends Z> values) {
     return ctx().selectFrom(table).where(field.in(values)).fetch(mapper());
   }
 
   @Override
-  public /* non-final */ <Z> P fetchOne(Field<Z> field, Z value) {
+  public <
+          /* non-final */
+          Z>
+      P fetchOne(Field<Z> field, Z value) {
     return ctx().selectFrom(table).where(field.equal(value)).fetchOne(mapper());
   }
 
   @Override
-  public /* non-final */ <Z> Optional<P> fetchOptional(Field<Z> field, Z value) {
+  public <
+          /* non-final */
+          Z>
+      Optional<P> fetchOptional(Field<Z> field, Z value) {
     return Optional.ofNullable(fetchOne(field, value));
   }
 
@@ -353,33 +351,26 @@ public abstract class DAOImpl<R extends UpdatableRecord<R>, P, T> implements DAO
   // ------------------------------------------------------------------------
   // XXX: Template methods for generated subclasses
   // ------------------------------------------------------------------------
-
   @SuppressWarnings("unchecked")
   protected /* non-final */ T compositeKeyRecord(Object... values) {
     UniqueKey<R> key = table.getPrimaryKey();
     if (key == null) return null;
-
     TableField<R, Object>[] fields = (TableField<R, Object>[]) key.getFieldsArray();
     Record result = configuration().dsl().newRecord(fields);
-
     for (int i = 0; i < values.length; i++)
       result.set(fields[i], fields[i].getDataType().convert(values[i]));
-
     return (T) result;
   }
 
   // ------------------------------------------------------------------------
   // XXX: Private utility methods
   // ------------------------------------------------------------------------
-
   @SuppressWarnings("unchecked")
   private /* non-final */ Condition equal(Field<?>[] pk, T id) {
     if (pk.length == 1) {
       return ((Field<Object>) pk[0]).equal(pk[0].getDataType().convert(id));
-    }
-
-    // [#2573] Composite key T types are of type Record[N]
-    else {
+    } else // [#2573] Composite key T types are of type Record[N]
+    {
       return row(pk).equal((Record) id);
     }
   }
@@ -392,15 +383,13 @@ public abstract class DAOImpl<R extends UpdatableRecord<R>, P, T> implements DAO
       } else {
         return ((Field<Object>) pk[0]).in(pk[0].getDataType().convert(ids));
       }
-    }
-
-    // [#2573] Composite key T types are of type Record[N]
-    else {
+    } else // [#2573] Composite key T types are of type Record[N]
+    {
       return row(pk).in(ids.toArray(EMPTY_RECORD));
     }
   }
 
-  private /* non-final */ Field<?>[] pk() {
+  private Field<?>[] pk() {
     UniqueKey<?> key = table.getPrimaryKey();
     return key == null ? null : key.getFieldsArray();
   }
@@ -409,59 +398,46 @@ public abstract class DAOImpl<R extends UpdatableRecord<R>, P, T> implements DAO
     List<R> result = new ArrayList<>(objects.size());
     Field<?>[] pk = pk();
     DSLContext ctx;
-
     // [#7731] Create a Record -> POJO mapping to allow for reusing the below
-    //         derived Configuration for improved reflection caching.
+    // derived Configuration for improved reflection caching.
     IdentityHashMap<R, Object> mapping =
         !FALSE.equals(settings().isReturnRecordToPojo()) ? new IdentityHashMap<>() : null;
-
     // [#2536] Upon store(), insert(), update(), delete(), returned values in the record
-    //         are copied back to the relevant POJO using the RecordListener SPI
+    // are copied back to the relevant POJO using the RecordListener SPI
     if (mapping != null) {
       Consumer<? super RecordContext> end =
           c -> {
             Record record = c.record();
-
             // TODO: [#2536] Use mapper()
             if (record != null) record.into(mapping.get(record));
           };
-
       ctx =
           configuration()
               .deriveAppending(onStoreEnd(end).onInsertEnd(end).onUpdateEnd(end).onDeleteEnd(end))
               .dsl();
     } else ctx = ctx();
-
     for (P object : objects) {
       R record = ctx.newRecord(table, object);
-
       if (mapping != null) mapping.put(record, object);
-
       if (forUpdate && pk != null) for (Field<?> field : pk) record.changed(field, false);
-
       Tools.resetChangedOnNotNull(record);
       result.add(record);
     }
-
     return result;
   }
 
-  private /* non-final */ RecordListenerProvider[] providers(
+  private RecordListenerProvider[] providers(
       final RecordListenerProvider[] providers, final IdentityHashMap<R, Object> mapping) {
     RecordListenerProvider[] result = Arrays.copyOf(providers, providers.length + 1);
-
     Consumer<? super RecordContext> end =
         ctx -> {
           Record record = ctx.record();
-
           // TODO: [#2536] Use mapper()
           if (record != null) record.into(mapping.get(record));
         };
-
     result[providers.length] =
         new DefaultRecordListenerProvider(
             onStoreEnd(end).onInsertEnd(end).onUpdateEnd(end).onDeleteEnd(end));
-
     return result;
   }
 }

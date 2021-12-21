@@ -92,7 +92,6 @@ public final class Mock {
   static final Result<?> result(Record data) {
     Result<Record> result = using(data.configuration()).newResult(data.fields());
     result.add(data);
-
     return result;
   }
 

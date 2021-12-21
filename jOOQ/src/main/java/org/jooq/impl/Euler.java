@@ -65,7 +65,6 @@ final class Euler extends AbstractField<BigDecimal> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -80,11 +79,9 @@ final class Euler extends AbstractField<BigDecimal> {
       case POSTGRES:
         ctx.visit(DSL.exp(one()));
         break;
-
       case SQLITE:
         ctx.visit(inline(Math.E, BigDecimal.class));
         break;
-
       default:
         ctx.visit(function(N_EULER, getDataType()));
         break;
@@ -94,7 +91,6 @@ final class Euler extends AbstractField<BigDecimal> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Euler) {

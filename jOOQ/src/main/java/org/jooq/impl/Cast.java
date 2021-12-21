@@ -64,7 +64,6 @@ final class Cast<T> extends AbstractField<T> {
 
   public Cast(Field<?> field, DataType<T> type) {
     super(N_CAST, type.nullable(field.getDataType().nullable()));
-
     this.field = field;
   }
 
@@ -78,7 +77,6 @@ final class Cast<T> extends AbstractField<T> {
       case DERBY:
         ctx.visit(new CastDerby());
         break;
-
       default:
         ctx.visit(new CastNative<>(field, getDataType()));
         break;
@@ -93,7 +91,6 @@ final class Cast<T> extends AbstractField<T> {
 
     @SuppressWarnings("unchecked")
     private final Field<Boolean> asDecodeNumberToBoolean() {
-
       // [#859] 0 => false, null => null, all else is true
       return DSL.choose((Field<Integer>) field)
           .when(inline(0), inline(false))
@@ -104,7 +101,6 @@ final class Cast<T> extends AbstractField<T> {
     @SuppressWarnings("unchecked")
     private final Field<Boolean> asDecodeVarcharToBoolean() {
       Field<String> s = (Field<String>) field;
-
       // [#859] '0', 'f', 'false' => false, null => null, all else is true
       return DSL.when(s.equal(inline("0")), inline(false))
           .when(DSL.lower(s).equal(inline("false")), inline(false))
@@ -117,7 +113,6 @@ final class Cast<T> extends AbstractField<T> {
     @Override
     public final void accept(Context<?> ctx) {
       DataType<T> type = getSQLDataType();
-
       // [#857] Interestingly, Derby does not allow for casting numeric
       // types directly to VARCHAR. An intermediary cast to CHAR is needed
       if (field.getDataType().isNumeric() && type.isString() && !CHAR.equals(type))
@@ -127,26 +122,26 @@ final class Cast<T> extends AbstractField<T> {
                 new CastNative<>(
                     new CastNative<>(field, CHAR(38)), (DataType<String>) getDataType()))
             .sql(')');
-
-      // [#888] ... neither does casting character types to FLOAT (and similar)
-      else if (field.getDataType().isString()
+      else // [#888] ... neither does casting character types to FLOAT (and similar)
+      if (field.getDataType().isString()
           && (FLOAT.equals(type) || DOUBLE.equals(type) || REAL.equals(type)))
         ctx.visit(new CastNative<>(new CastNative<>(field, DECIMAL), getDataType()));
-
-      // [#859] ... neither does casting numeric types to BOOLEAN
-      else if (field.getDataType().isNumeric() && BOOLEAN.equals(type))
+      else // [#859] ... neither does casting numeric types to BOOLEAN
+      if (field.getDataType().isNumeric() && BOOLEAN.equals(type))
         ctx.visit(asDecodeNumberToBoolean());
-
-      // [#859] ... neither does casting character types to BOOLEAN
-      else if (field.getDataType().isString() && BOOLEAN.equals(type))
+      else // [#859] ... neither does casting character types to BOOLEAN
+      if (field.getDataType().isString() && BOOLEAN.equals(type))
         ctx.visit(asDecodeVarcharToBoolean());
       else super.accept(ctx);
     }
   }
 
   static class CastNative<T> extends AbstractQueryPart {
+
     private final QueryPart expression;
+
     private final DataType<T> type;
+
     private final Keyword typeAsKeyword;
 
     CastNative(QueryPart expression, DataType<T> type) {
@@ -163,10 +158,8 @@ final class Cast<T> extends AbstractField<T> {
 
     @Override
     public void accept(Context<?> ctx) {
-
       // Avoid casting bind values inside an explicit cast...
       CastMode castMode = ctx.castMode();
-
       // Default rendering, if no special case has applied yet
       ctx.visit(K_CAST)
           .sql('(')
@@ -176,10 +169,8 @@ final class Cast<T> extends AbstractField<T> {
           .sql(' ')
           .visit(K_AS)
           .sql(' ');
-
       if (typeAsKeyword != null) ctx.visit(typeAsKeyword);
       else ctx.sql(type.getCastTypeName(ctx.configuration()));
-
       ctx.sql(')');
     }
   }

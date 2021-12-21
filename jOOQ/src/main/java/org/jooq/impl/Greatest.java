@@ -48,56 +48,47 @@ import org.jooq.Field;
 
 /** @author Lukas Eder */
 final class Greatest<T> extends AbstractField<T> {
+
   private final Field<?>[] args;
 
   Greatest(DataType<T> type, Field<?>... args) {
     super(N_GREATEST, type);
-
     this.args = args;
   }
 
   @SuppressWarnings("unchecked")
   @Override
   public final void accept(Context<?> ctx) {
-
     // In any dialect, a single argument is always the greatest
     if (args.length == 1) {
       ctx.visit(args[0]);
       return;
     }
-
     switch (ctx.family()) {
         // This implementation has O(2^n) complexity. Better implementations
         // are very welcome
         // [#1049] TODO Fix this!
-
       case DERBY:
         {
           Field<T> first = (Field<T>) args[0];
           Field<T> other = (Field<T>) args[1];
-
           if (args.length > 2) {
             Field<?>[] remaining = new Field[args.length - 2];
             System.arraycopy(args, 2, remaining, 0, remaining.length);
-
             ctx.visit(
                 DSL.when(first.gt(other), DSL.greatest(first, remaining))
                     .otherwise(DSL.greatest(other, remaining)));
           } else {
             ctx.visit(DSL.when(first.gt(other), first).otherwise(other));
           }
-
           return;
         }
-
       case FIREBIRD:
         ctx.visit(function(N_MAXVALUE, getDataType(), args));
         return;
-
       case SQLITE:
         ctx.visit(function(N_MAX, getDataType(), args));
         return;
-
       default:
         ctx.visit(function(N_GREATEST, getDataType(), args));
         return;

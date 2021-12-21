@@ -95,10 +95,8 @@ public interface Name extends QueryPart, Comparable<Name> {
 
     /** The name is explicitly quoted. */
     QUOTED,
-
     /** The name is explicitly not quoted. */
     UNQUOTED,
-
     /**
      * The name is not quoted explicitly.
      *
@@ -107,7 +105,6 @@ public interface Name extends QueryPart, Comparable<Name> {
      * RenderQuotedNames#EXPLICIT_DEFAULT_UNQUOTED}.
      */
     DEFAULT,
-
     /**
      * The {@link Name#qualified()} name has mixed values for individual {@link Name#quoted()}
      * flags.
@@ -284,7 +281,6 @@ public interface Name extends QueryPart, Comparable<Name> {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, POSTGRES, SQLITE})
   DerivedColumnList fields(Function<? super Field<?>, ? extends String> fieldNameFunction);
@@ -303,7 +299,6 @@ public interface Name extends QueryPart, Comparable<Name> {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, POSTGRES, SQLITE})
   DerivedColumnList fields(

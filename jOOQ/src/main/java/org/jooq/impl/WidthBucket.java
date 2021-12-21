@@ -58,15 +58,17 @@ import org.jooq.tools.*;
 final class WidthBucket<T extends Number> extends AbstractField<T> {
 
   private final Field<T> field;
+
   private final Field<T> low;
+
   private final Field<T> high;
+
   private final Field<Integer> buckets;
 
   WidthBucket(Field<T> field, Field<T> low, Field<T> high, Field<Integer> buckets) {
     super(
         N_WIDTH_BUCKET,
         allNotNull((DataType) dataType(INTEGER, field, false), field, low, high, buckets));
-
     this.field = nullSafeNotNull(field, INTEGER);
     this.low = nullSafeNotNull(low, INTEGER);
     this.high = nullSafeNotNull(high, INTEGER);
@@ -76,7 +78,6 @@ final class WidthBucket<T extends Number> extends AbstractField<T> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -92,7 +93,6 @@ final class WidthBucket<T extends Number> extends AbstractField<T> {
             .visit(buckets)
             .sql(')');
         break;
-
       default:
         ctx.visit(
             DSL.when(field.lt(low), zero())
@@ -109,7 +109,6 @@ final class WidthBucket<T extends Number> extends AbstractField<T> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof WidthBucket) {

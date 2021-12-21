@@ -46,8 +46,11 @@ final class Intern implements Serializable {
 
   // Some temp variables for String interning
   int[] internIndexes;
+
   Field<?>[] internFields;
+
   String[] internNameStrings;
+
   Name[] internNames;
 
   final int[] internIndexes(Field<?>[] fields) {
@@ -56,7 +59,6 @@ final class Intern implements Serializable {
     else if (internNameStrings != null)
       return new FieldsImpl<>(fields).indexesOf(internNameStrings);
     else if (internNames != null) return new FieldsImpl<>(fields).indexesOf(internNames);
-
     return null;
   }
 }

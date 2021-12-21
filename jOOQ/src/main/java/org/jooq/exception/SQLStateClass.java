@@ -147,11 +147,11 @@ public enum SQLStateClass {
   C40_TRANSACTION_ROLLBACK("40"),
   C42_SYNTAX_ERROR_OR_ACCESS_RULE_VIOLATION("42"),
   CHZ_REMOTE_DATABASE_ACCESS("HZ"),
-
   OTHER(""),
   NONE("");
 
   private static final Map<String, SQLStateClass> lookup = new HashMap<>();
+
   private final String className;
 
   static {
@@ -170,13 +170,11 @@ public enum SQLStateClass {
 
   public static SQLStateClass fromCode(String code) {
     if (code == null || code.length() < 2) return SQLStateClass.OTHER;
-
     SQLStateClass result = lookup.get(code.substring(0, 2));
     return result != null ? result : SQLStateClass.OTHER;
   }
 
   static SQLStateClass fromSQLiteVendorCode(int errorCode) {
-
     // See https://sqlite.org/c3ref/c_abort.html
     // And https://sqlite.org/c3ref/c_abort_rollback.html
     switch (errorCode & 0xFF) {
@@ -195,7 +193,6 @@ public enum SQLStateClass {
       case 28:
         return C01_WARNING;
     }
-
     return SQLStateClass.OTHER;
   }
 }

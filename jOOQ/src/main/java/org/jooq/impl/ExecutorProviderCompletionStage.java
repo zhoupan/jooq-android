@@ -60,6 +60,7 @@ import org.jooq.ExecutorProvider;
 final class ExecutorProviderCompletionStage<T> implements CompletionStage<T> {
 
   private final CompletionStage<T> delegate;
+
   private final ExecutorProvider provider;
 
   static final <T> ExecutorProviderCompletionStage<T> of(

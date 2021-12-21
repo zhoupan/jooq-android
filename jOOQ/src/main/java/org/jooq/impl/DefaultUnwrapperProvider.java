@@ -58,7 +58,6 @@ final class DefaultUnwrapperProvider implements UnwrapperProvider {
     private static int maxUnwrappedStatements = 256;
 
     static final boolean isWrapperFor(Wrapper w, Class<?> iface) {
-
       // [#10692] Some JDBC drivers do not implement this method
       try {
         return w.isWrapperFor(iface);
@@ -77,18 +76,15 @@ final class DefaultUnwrapperProvider implements UnwrapperProvider {
     @SuppressWarnings("unchecked")
     private <T> T unwrap(Connection wrapper, Class<T> iface) {
       Connection result = wrapper;
-
       return (T) result;
     }
 
     @SuppressWarnings("unchecked")
     private <T> T unwrap(Statement wrapper, Class<T> iface) {
       Statement result = wrapper;
-
       return (T) result;
     }
   }
-  ;
 
   @Override
   public Unwrapper provide() {

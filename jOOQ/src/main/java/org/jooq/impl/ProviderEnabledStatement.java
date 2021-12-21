@@ -53,14 +53,12 @@ final class ProviderEnabledStatement extends DefaultStatement {
 
   ProviderEnabledStatement(ProviderEnabledConnection connection, Statement statement) {
     super(statement);
-
     this.connection = connection;
   }
 
   // ------------------------------------------------------------------------
   // XXX Closing the Statement
   // ------------------------------------------------------------------------
-
   @Override
   public final void close() throws SQLException {
     try {

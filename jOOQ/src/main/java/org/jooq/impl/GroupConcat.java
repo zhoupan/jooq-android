@@ -54,7 +54,9 @@ final class GroupConcat extends AbstractAggregateFunction<String>
     implements GroupConcatOrderByStep {
 
   private final Field<?> field;
+
   private final SortFieldList orderBy;
+
   private String separator;
 
   GroupConcat(Field<?> field) {
@@ -63,7 +65,6 @@ final class GroupConcat extends AbstractAggregateFunction<String>
 
   GroupConcat(Field<?> field, boolean distinct) {
     super(distinct, N_GROUP_CONCAT, SQLDataType.VARCHAR, field);
-
     this.field = field;
     this.orderBy = new SortFieldList();
   }
@@ -71,10 +72,8 @@ final class GroupConcat extends AbstractAggregateFunction<String>
   @Override
   public final void accept(Context<?> ctx) {
     ListAgg result;
-
     if (separator == null) result = new ListAgg(distinct, field, inline(","));
     else result = new ListAgg(distinct, field, inline(separator));
-
     if (orderBy.isEmpty()) ctx.visit(result);
     else ctx.visit(result.withinGroupOrderBy(orderBy));
   }

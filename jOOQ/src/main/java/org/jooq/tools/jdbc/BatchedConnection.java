@@ -76,7 +76,9 @@ import java.util.regex.Pattern;
 public class BatchedConnection extends DefaultConnection {
 
   final int batchSize;
+
   String lastSQL;
+
   BatchedPreparedStatement lastStatement;
 
   public BatchedConnection(Connection delegate) {
@@ -85,14 +87,12 @@ public class BatchedConnection extends DefaultConnection {
 
   public BatchedConnection(Connection delegate, int batchSize) {
     super(delegate);
-
     this.batchSize = batchSize;
   }
 
   // -------------------------------------------------------------------------
   // XXX: Wrappers
   // -------------------------------------------------------------------------
-
   @SuppressWarnings("unchecked")
   @Override
   public <T> T unwrap(Class<T> iface) throws SQLException {
@@ -107,7 +107,6 @@ public class BatchedConnection extends DefaultConnection {
   // -------------------------------------------------------------------------
   // XXX: Utilities
   // -------------------------------------------------------------------------
-
   void executeLastBatch(String sql) throws SQLException {
     if (!sql.equals(lastSQL)) executeLastBatch();
   }
@@ -115,10 +114,8 @@ public class BatchedConnection extends DefaultConnection {
   void executeLastBatch() throws SQLException {
     if (lastStatement != null) {
       if (lastStatement.batches > 0) lastStatement.executeBatch();
-
       safeClose(lastStatement);
     }
-
     clearLastBatch();
   }
 
@@ -129,9 +126,7 @@ public class BatchedConnection extends DefaultConnection {
 
   void setBatch(BatchedPreparedStatement s) throws SQLException {
     if (lastStatement == s) return;
-
     if (lastStatement != null) executeLastBatch();
-
     lastStatement = s;
     lastSQL = s.sql;
   }
@@ -139,7 +134,6 @@ public class BatchedConnection extends DefaultConnection {
   // -------------------------------------------------------------------------
   // XXX: Creating non-batchable statements
   // -------------------------------------------------------------------------
-
   @Override
   public Statement createStatement() throws SQLException {
     executeLastBatch();
@@ -217,7 +211,6 @@ public class BatchedConnection extends DefaultConnection {
   // -------------------------------------------------------------------------
   // XXX: Creating non-batchable statements
   // -------------------------------------------------------------------------
-
   @Override
   public PreparedStatement prepareStatement(String sql) throws SQLException {
     executeLastBatch(sql);
@@ -229,7 +222,6 @@ public class BatchedConnection extends DefaultConnection {
 
   private PreparedStatement prepareStatement0(String sql) throws SQLException {
     PreparedStatement result = super.prepareStatement(sql);
-
     if (P_DML.matcher(sql).matches()) {
       lastSQL = sql;
       return lastStatement = new BatchedPreparedStatement(sql, this, result);
@@ -239,7 +231,6 @@ public class BatchedConnection extends DefaultConnection {
   // -------------------------------------------------------------------------
   // XXX: Ignored operations
   // -------------------------------------------------------------------------
-
   @Override
   public void commit() throws SQLException {
     executeLastBatch();
@@ -378,7 +369,6 @@ public class BatchedConnection extends DefaultConnection {
     } catch (SQLException e) {
       throw new SQLClientInfoException(emptyMap(), e);
     }
-
     super.setClientInfo(name, value);
   }
 
@@ -389,7 +379,6 @@ public class BatchedConnection extends DefaultConnection {
     } catch (SQLException e) {
       throw new SQLClientInfoException(emptyMap(), e);
     }
-
     super.setClientInfo(properties);
   }
 

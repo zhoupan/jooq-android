@@ -109,21 +109,29 @@ import org.jooq.types.YearToMonth;
 import org.jooq.types.YearToSecond;
 
 final class Expression<T> extends AbstractTransformable<T> {
+
   private static final Set<SQLDialect> SUPPORT_BIT_AND = SQLDialect.supportedBy(H2, HSQLDB);
+
   private static final Set<SQLDialect> SUPPORT_BIT_OR_XOR = SQLDialect.supportedBy(H2, HSQLDB);
+
   private static final Set<SQLDialect> EMULATE_BIT_XOR = SQLDialect.supportedBy(SQLITE);
+
   private static final Set<SQLDialect> EMULATE_SHR_SHL = SQLDialect.supportedBy(HSQLDB);
+
   private static final Set<SQLDialect> HASH_OP_FOR_BIT_XOR = SQLDialect.supportedBy(POSTGRES);
+
   private static final Set<SQLDialect> SUPPORT_YEAR_TO_SECOND = SQLDialect.supportedBy(POSTGRES);
 
   private final ExpressionOperator operator;
+
   private final boolean internal;
+
   private final Field<T> lhs;
+
   private final Field<?> rhs;
 
   Expression(ExpressionOperator operator, boolean internal, Field<T> lhs, Field<?> rhs) {
     super(DSL.name(operator.toSQL()), lhs.getDataType());
-
     this.operator = operator;
     this.internal = internal;
     this.lhs = lhs;
@@ -132,23 +140,18 @@ final class Expression<T> extends AbstractTransformable<T> {
 
   @Override
   DataType<?> getExpressionDataType() {
-
     // [#11959] Workaround for lack of proper data type information for interval based expressions
     AbstractField<?> l = (AbstractField<?>) lhs;
     AbstractField<?> r = (AbstractField<?>) rhs;
-
     DataType<?> lt = l.getExpressionDataType();
     DataType<?> rt = r.getExpressionDataType();
-
     switch (operator) {
       case MULTIPLY:
       case DIVIDE:
         return rt.isInterval() ? rt : lt;
-
       case ADD:
         return lt.isInterval() ? rt : lt;
     }
-
     return lt;
   }
 
@@ -156,11 +159,9 @@ final class Expression<T> extends AbstractTransformable<T> {
   @Override
   final void accept0(Context<?> ctx) {
     SQLDialect family = ctx.family();
-
     // ---------------------------------------------------------------------
     // XXX: Bitwise operators
     // ---------------------------------------------------------------------
-
     // DB2, H2 and HSQLDB know functions, instead of operators
     if (BIT_AND == operator && SUPPORT_BIT_AND.contains(ctx.dialect()))
       ctx.visit(function(N_BITAND, getDataType(), lhs, rhs));
@@ -174,9 +175,8 @@ final class Expression<T> extends AbstractTransformable<T> {
       ctx.visit(function(N_BITOR, getDataType(), lhs, rhs));
     else if (BIT_OR == operator && FIREBIRD == family)
       ctx.visit(function(N_BIN_OR, getDataType(), lhs, rhs));
-
-    // ~(a & b) & (a | b)
-    else if (BIT_XOR == operator && EMULATE_BIT_XOR.contains(ctx.dialect()))
+    else // ~(a & b) & (a | b)
+    if (BIT_XOR == operator && EMULATE_BIT_XOR.contains(ctx.dialect()))
       ctx.visit(
           DSL.bitAnd(
               DSL.bitNot(DSL.bitAnd(lhsAsNumber(), rhsAsNumber())),
@@ -186,62 +186,51 @@ final class Expression<T> extends AbstractTransformable<T> {
         case FIREBIRD:
           ctx.visit(function(SHL == operator ? N_BIN_SHL : N_BIN_SHR, getDataType(), lhs, rhs));
           break;
-
         case H2:
           ctx.visit(function(SHL == operator ? N_LSHIFT : N_RSHIFT, getDataType(), lhs, rhs));
           break;
-
         default:
-
           // Many dialects don't support shifts. Use multiplication/division instead
           if (SHL == operator && EMULATE_SHR_SHL.contains(ctx.dialect()))
             ctx.visit(
                 imul(
                     lhs,
                     (Field<? extends Number>) castIfNeeded(DSL.power(two(), rhsAsNumber()), lhs)));
-
-          // [#3962] This emulation is expensive. If this is emulated, BitCount should
+          else // [#3962] This emulation is expensive. If this is emulated, BitCount should
           // use division instead of SHR directly
-          else if (SHR == operator && EMULATE_SHR_SHL.contains(ctx.dialect()))
+          if (SHR == operator && EMULATE_SHR_SHL.contains(ctx.dialect()))
             ctx.visit(
                 idiv(
                     lhs,
                     (Field<? extends Number>) castIfNeeded(DSL.power(two(), rhsAsNumber()), lhs)));
-
-          // Use the default operator expression for all other cases
-          else ctx.visit(new DefaultExpression<>(lhs, operator, rhs));
-
+          else
+            // Use the default operator expression for all other cases
+            ctx.visit(new DefaultExpression<>(lhs, operator, rhs));
           break;
       }
-    }
-
-    // These operators are not supported in any dialect
-    else if (BIT_NAND == operator) ctx.visit(DSL.bitNot(DSL.bitAnd(lhsAsNumber(), rhsAsNumber())));
+    } else // These operators are not supported in any dialect
+    if (BIT_NAND == operator) ctx.visit(DSL.bitNot(DSL.bitAnd(lhsAsNumber(), rhsAsNumber())));
     else if (BIT_NOR == operator) ctx.visit(DSL.bitNot(DSL.bitOr(lhsAsNumber(), rhsAsNumber())));
     else if (BIT_XNOR == operator) ctx.visit(DSL.bitNot(DSL.bitXor(lhsAsNumber(), rhsAsNumber())));
-
-    // ---------------------------------------------------------------------
+    else // ---------------------------------------------------------------------
     // XXX: Date time arithmetic operators
     // ---------------------------------------------------------------------
-
     // [#585] Date time arithmetic for numeric or interval RHS
-    else if ((ADD == operator || SUBTRACT == operator)
+    if ((ADD == operator || SUBTRACT == operator)
         && lhs.getDataType().isDateTime()
         && (rhs.getDataType().isNumeric() || rhs.getDataType().isInterval()))
       ctx.visit(new DateExpression<>(lhs, operator, rhs));
-
-    // ---------------------------------------------------------------------
-    // XXX: Other operators
-    // ---------------------------------------------------------------------
-
-    // Use the default operator expression for all other cases
-    else ctx.visit(new DefaultExpression<>(lhs, operator, rhs));
+    else
+      // ---------------------------------------------------------------------
+      // XXX: Other operators
+      // ---------------------------------------------------------------------
+      // Use the default operator expression for all other cases
+      ctx.visit(new DefaultExpression<>(lhs, operator, rhs));
   }
 
   @Override
   @SuppressWarnings("null")
   public final Field<?> transform(TransformUnneededArithmeticExpressions transform) {
-
     return this;
   }
 
@@ -264,12 +253,13 @@ final class Expression<T> extends AbstractTransformable<T> {
   private static class DateExpression<T> extends AbstractField<T> {
 
     private final Field<T> lhs;
+
     private final ExpressionOperator operator;
+
     private final Field<?> rhs;
 
     DateExpression(Field<T> lhs, ExpressionOperator operator, Field<?> rhs) {
       super(DSL.name(operator.toSQL()), lhs.getDataType());
-
       this.lhs = lhs;
       this.operator = operator;
       this.rhs = rhs;
@@ -277,9 +267,7 @@ final class Expression<T> extends AbstractTransformable<T> {
 
     private final <U> Field<U> p(U u) {
       Param<U> result = val(u);
-
       if (((Param<?>) rhs).isInline()) ((AbstractParamX<?>) result).setInline0(true);
-
       return result;
     }
 
@@ -294,7 +282,6 @@ final class Expression<T> extends AbstractTransformable<T> {
     private final void acceptYTSExpression(Context<?> ctx) {
       if (rhs instanceof Param) {
         YearToSecond yts = rhsAsYTS();
-
         ctx.visit(
             new DateExpression<>(
                 new DateExpression<>(lhs, operator, p(yts.getYearToMonth())),
@@ -308,7 +295,6 @@ final class Expression<T> extends AbstractTransformable<T> {
     @SuppressWarnings({"unchecked", "rawtypes"})
     private final void acceptIntervalExpression(Context<?> ctx) {
       SQLDialect family = ctx.family();
-
       int sign = (operator == ADD) ? 1 : -1;
       switch (family) {
         case CUBRID:
@@ -316,9 +302,7 @@ final class Expression<T> extends AbstractTransformable<T> {
         case MYSQL:
           {
             Interval interval = rhsAsInterval();
-
             if (operator == SUBTRACT) interval = interval.neg();
-
             if (rhs.getType() == YearToMonth.class)
               ctx.visit(N_DATE_ADD)
                   .sql('(')
@@ -341,11 +325,10 @@ final class Expression<T> extends AbstractTransformable<T> {
                   .sql(' ')
                   .visit(K_DAY_MILLISECOND)
                   .sql(')');
-
-            // [#6820] Workaround for bugs:
-            //         https://bugs.mysql.com/bug.php?id=88573
-            //         https://jira.mariadb.org/browse/MDEV-14452
             else
+              // [#6820] Workaround for bugs:
+              // https://bugs.mysql.com/bug.php?id=88573
+              // https://jira.mariadb.org/browse/MDEV-14452
               ctx.visit(N_DATE_ADD)
                   .sql('(')
                   .visit(lhs)
@@ -359,15 +342,12 @@ final class Expression<T> extends AbstractTransformable<T> {
                   .sql(' ')
                   .visit(K_DAY_MICROSECOND)
                   .sql(')');
-
             break;
           }
-
         case DERBY:
           {
             boolean needsCast = getDataType().getType() != Timestamp.class;
             if (needsCast) ctx.visit(K_CAST).sql('(');
-
             if (rhs.getType() == YearToMonth.class)
               ctx.sql("{fn ")
                   .visit(N_TIMESTAMPADD)
@@ -398,7 +378,6 @@ final class Expression<T> extends AbstractTransformable<T> {
                   .sql(", ")
                   .visit(lhs)
                   .sql(") }) }");
-
             // [#1883] TIMESTAMPADD returns TIMESTAMP columns. If this
             // is a DATE column, cast it to DATE
             if (needsCast)
@@ -407,10 +386,8 @@ final class Expression<T> extends AbstractTransformable<T> {
                   .sql(' ')
                   .visit(keyword(getDataType().getCastTypeName(ctx.configuration())))
                   .sql(')');
-
             break;
           }
-
         case FIREBIRD:
           {
             if (rhs.getType() == YearToMonth.class)
@@ -422,9 +399,8 @@ final class Expression<T> extends AbstractTransformable<T> {
                   .sql(", ")
                   .visit(lhs)
                   .sql(')');
-
-            // [#10448] Firebird only supports adding integers
-            else if (rhsAsDTS().getMilli() > 0)
+            else // [#10448] Firebird only supports adding integers
+            if (rhsAsDTS().getMilli() > 0)
               ctx.visit(N_DATEADD)
                   .sql('(')
                   .visit(K_MILLISECOND)
@@ -449,17 +425,13 @@ final class Expression<T> extends AbstractTransformable<T> {
                   .sql(", ")
                   .visit(lhs)
                   .sql(')');
-
             break;
           }
-
         case SQLITE:
           {
             boolean ytm = rhs.getType() == YearToMonth.class;
             Field<?> interval = p(ytm ? rhsAsYTM().intValue() : rhsAsDTS().getTotalSeconds());
-
             if (sign < 0) interval = interval.neg();
-
             interval = interval.concat(inline(ytm ? " months" : " seconds"));
             ctx.visit(N_STRFTIME)
                 .sql("('%Y-%m-%d %H:%M:%f', ")
@@ -469,7 +441,6 @@ final class Expression<T> extends AbstractTransformable<T> {
                 .sql(')');
             break;
           }
-
         case H2:
         case HSQLDB:
         case POSTGRES:
@@ -503,23 +474,18 @@ final class Expression<T> extends AbstractTransformable<T> {
                   .sql(", ")
                   .visit(lhs)
                   .sql(')');
-
             break;
           }
-
         case HSQLDB:
           {
             if (operator == ADD) ctx.visit(lhs.add(DSL.field("({0}) day", rhsAsNumber())));
             else ctx.visit(lhs.sub(DSL.field("({0}) day", rhsAsNumber())));
-
             break;
           }
-
         case DERBY:
           {
             boolean needsCast = getDataType().getType() != Timestamp.class;
             if (needsCast) ctx.visit(K_CAST).sql('(');
-
             if (operator == ADD)
               ctx.sql("{fn ")
                   .visit(N_TIMESTAMPADD)
@@ -540,7 +506,6 @@ final class Expression<T> extends AbstractTransformable<T> {
                   .sql(", ")
                   .visit(lhs)
                   .sql(") }");
-
             // [#1883] TIMESTAMPADD returns TIMESTAMP columns. If this
             // is a DATE column, cast it to DATE
             if (needsCast)
@@ -549,10 +514,8 @@ final class Expression<T> extends AbstractTransformable<T> {
                   .sql(' ')
                   .visit(keyword(getDataType().getCastTypeName(ctx.configuration())))
                   .sql(')');
-
             break;
           }
-
         case CUBRID:
         case MARIADB:
         case MYSQL:
@@ -579,22 +542,17 @@ final class Expression<T> extends AbstractTransformable<T> {
                   .sql(' ')
                   .visit(K_DAY)
                   .sql(')');
-
             break;
           }
-
         case POSTGRES:
           {
-
             // This seems to be the most reliable way to avoid issues
             // with incompatible data types and timezones
             // ? + CAST (? || ' days' as interval)
             if (operator == ADD) ctx.visit(new DateAdd(lhs, rhsAsNumber(), DatePart.DAY));
             else ctx.visit(new DateAdd(lhs, rhsAsNumber().neg(), DatePart.DAY));
-
             break;
           }
-
         case SQLITE:
           if (operator == ADD)
             ctx.visit(N_STRFTIME)
@@ -610,9 +568,7 @@ final class Expression<T> extends AbstractTransformable<T> {
                 .sql(", ")
                 .visit(rhsAsNumber().neg().concat(inline(" day")))
                 .sql(')');
-
           break;
-
           // These dialects can add / subtract days using +/- operators
         default:
           ctx.visit(new DefaultExpression<>(lhs, operator, rhs));
@@ -678,12 +634,13 @@ final class Expression<T> extends AbstractTransformable<T> {
   private static class DefaultExpression<T> extends AbstractField<T> {
 
     private final Field<T> lhs;
+
     private final ExpressionOperator operator;
+
     private final Field<?> rhs;
 
     DefaultExpression(Field<T> lhs, ExpressionOperator operator, Field<?> rhs) {
       super(operator.toName(), lhs.getDataType());
-
       this.lhs = lhs;
       this.operator = operator;
       this.rhs = rhs;
@@ -699,12 +656,9 @@ final class Expression<T> extends AbstractTransformable<T> {
     private static final void accept0(
         Context<?> ctx, ExpressionOperator operator, Field<?> lhs, Field<?> rhs) {
       String op = operator.toSQL();
-
       if (operator == BIT_XOR && HASH_OP_FOR_BIT_XOR.contains(ctx.dialect())) op = "#";
-
       // [#10665] Associativity is only given for two operands of the same data type
       boolean associativity = operator.associative() && lhs.getDataType().equals(rhs.getDataType());
-
       accept1(ctx, operator, lhs, associativity);
       ctx.sql(' ').sql(op).sql(' ');
       accept1(ctx, operator, rhs, associativity);
@@ -714,13 +668,11 @@ final class Expression<T> extends AbstractTransformable<T> {
         Context<?> ctx, ExpressionOperator operator, Field<?> field, boolean associativity) {
       if (associativity && field instanceof Expression) {
         Expression<?> expr = (Expression<?>) field;
-
         if (operator == expr.operator) {
           accept0(ctx, expr.operator, expr.lhs, expr.rhs);
           return;
         }
       }
-
       ctx.visit(field);
     }
   }

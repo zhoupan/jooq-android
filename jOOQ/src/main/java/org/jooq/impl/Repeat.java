@@ -58,11 +58,11 @@ import org.jooq.tools.*;
 final class Repeat extends AbstractField<String> {
 
   private final Field<String> string;
+
   private final Field<? extends Number> count;
 
   Repeat(Field<String> string, Field<? extends Number> count) {
     super(N_REPEAT, allNotNull(VARCHAR, string, count));
-
     this.string = nullSafeNotNull(string, VARCHAR);
     this.count = nullSafeNotNull(count, INTEGER);
   }
@@ -70,14 +70,12 @@ final class Repeat extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
       case FIREBIRD:
         ctx.visit(DSL.rpad(string, imul(DSL.length(string), count), string));
         break;
-
       case SQLITE:
         {
           // Emulation of REPEAT() for SQLite currently cannot be achieved
@@ -96,7 +94,6 @@ final class Repeat extends AbstractField<String> {
               .sql(')');
           break;
         }
-
       default:
         ctx.visit(function(N_REPEAT, getDataType(), string, count));
         break;
@@ -106,7 +103,6 @@ final class Repeat extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Repeat) {

@@ -51,19 +51,14 @@ public final class ExceptionTools {
   public static <T extends Throwable> T getCause(Throwable t, Class<? extends T> type) {
     Throwable next = t.getCause();
     Throwable prev;
-
     for (int i = 0; i < maxCauseLookups; i++) {
       if (next == null) return null;
-
       if (type.isInstance(next)) return (T) next;
-
       prev = next;
       next = next.getCause();
-
       // Don't trust exceptions to respect the default behaviour of Throwable.getCause()
       if (prev == next) return null;
     }
-
     return null;
   }
 

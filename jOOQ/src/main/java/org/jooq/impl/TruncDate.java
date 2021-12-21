@@ -50,11 +50,11 @@ import org.jooq.Field;
 final class TruncDate<T> extends AbstractField<T> {
 
   private final Field<T> date;
+
   private final DatePart part;
 
   TruncDate(Field<T> date, DatePart part) {
     super(N_TRUNC, date.getDataType());
-
     this.date = date;
     this.part = part;
   }
@@ -63,9 +63,7 @@ final class TruncDate<T> extends AbstractField<T> {
   public final void accept(Context<?> ctx) {
     String keyword = null;
     String format = null;
-
     switch (ctx.family()) {
-
         // [http://jira.cubrid.org/browse/ENGINE-120] This currently doesn't work for all date parts
         // in CUBRID
       case CUBRID:
@@ -93,11 +91,9 @@ final class TruncDate<T> extends AbstractField<T> {
             default:
               throwUnsupported();
           }
-
           ctx.visit(N_TRUNC).sql('(').visit(date).sql(", ").visit(inline(keyword)).sql(')');
           break;
         }
-
       case H2:
         {
           switch (part) {
@@ -122,7 +118,6 @@ final class TruncDate<T> extends AbstractField<T> {
             default:
               throwUnsupported();
           }
-
           ctx.visit(DSL.keyword("parsedatetime"))
               .sql('(')
               .visit(DSL.keyword("formatdatetime"))
@@ -135,28 +130,26 @@ final class TruncDate<T> extends AbstractField<T> {
               .sql(')');
           break;
         }
-
         // These don't work yet and need better integration-testing:
         // ---------------------------------------------------------
-        //            case MARIADB:
-        //            case MYSQL: {
-        //                switch (part) {
-        //                    case YEAR:   return DSL.field("{str_to_date}({date_format}({0},
-        // '%Y-00-00 00:00:00.0'), '%Y-%m-%d %H:%i:%s.0')", getDataType(), date);
-        //                    case MONTH:  return DSL.field("{str_to_date}({date_format}({0},
-        // '%Y-%m-00 00:00:00.0'), '%Y-%m-%d %H:%i:%s.0')", getDataType(), date);
-        //                    case DAY:    return DSL.field("{str_to_date}({date_format}({0},
-        // '%Y-%m-%d 00:00:00.0'), '%Y-%m-%d %H:%i:%s.0')", getDataType(), date);
-        //                    case HOUR:   return DSL.field("{str_to_date}({date_format}({0},
-        // '%Y-%m-%d %H:00:00.0'), '%Y-%m-%d %H:%i:%s.0')", getDataType(), date);
-        //                    case MINUTE: return DSL.field("{str_to_date}({date_format}({0},
-        // '%Y-%m-%d %H:%i:00.0'), '%Y-%m-%d %H:%i:%s.0')", getDataType(), date);
-        //                    case SECOND: return DSL.field("{str_to_date}({date_format}({0},
-        // '%Y-%m-%d %H:%i:%s.0'), '%Y-%m-%d %H:%i:%s.0')", getDataType(), date);
-        //                    default: throwUnsupported();
-        //                }
-        //            }
-
+        // case MARIADB:
+        // case MYSQL: {
+        // switch (part) {
+        // case YEAR:   return DSL.field("{str_to_date}({date_format}({0}, '%Y-00-00 00:00:00.0'),
+        // '%Y-%m-%d %H:%i:%s.0')", getDataType(), date);
+        // case MONTH:  return DSL.field("{str_to_date}({date_format}({0}, '%Y-%m-00 00:00:00.0'),
+        // '%Y-%m-%d %H:%i:%s.0')", getDataType(), date);
+        // case DAY:    return DSL.field("{str_to_date}({date_format}({0}, '%Y-%m-%d 00:00:00.0'),
+        // '%Y-%m-%d %H:%i:%s.0')", getDataType(), date);
+        // case HOUR:   return DSL.field("{str_to_date}({date_format}({0}, '%Y-%m-%d %H:00:00.0'),
+        // '%Y-%m-%d %H:%i:%s.0')", getDataType(), date);
+        // case MINUTE: return DSL.field("{str_to_date}({date_format}({0}, '%Y-%m-%d %H:%i:00.0'),
+        // '%Y-%m-%d %H:%i:%s.0')", getDataType(), date);
+        // case SECOND: return DSL.field("{str_to_date}({date_format}({0}, '%Y-%m-%d %H:%i:%s.0'),
+        // '%Y-%m-%d %H:%i:%s.0')", getDataType(), date);
+        // default: throwUnsupported();
+        // }
+        // }
       case POSTGRES:
         {
           switch (part) {
@@ -181,31 +174,28 @@ final class TruncDate<T> extends AbstractField<T> {
             default:
               throwUnsupported();
           }
-
           ctx.visit(N_DATE_TRUNC).sql('(').visit(inline(keyword)).sql(", ").visit(date).sql(')');
           break;
         }
-
         // These don't work yet and need better integration-testing:
         // ---------------------------------------------------------
-        //            case SQLITE: {
-        //                switch (part) {
-        //                    case YEAR:   return DSL.field("{strftime}({0}, '%Y-00-00
-        // 00:00:00.0')", getDataType(), date);
-        //                    case MONTH:  return DSL.field("{strftime}({0}, '%Y-%m-00
-        // 00:00:00.0')", getDataType(), date);
-        //                    case DAY:    return DSL.field("{strftime}({0}, '%Y-%m-%d
-        // 00:00:00.0')", getDataType(), date);
-        //                    case HOUR:   return DSL.field("{strftime}({0}, '%Y-%m-%d
-        // %H:00:00.0')", getDataType(), date);
-        //                    case MINUTE: return DSL.field("{strftime}({0}, '%Y-%m-%d
-        // %H:%i:00.0')", getDataType(), date);
-        //                    case SECOND: return DSL.field("{strftime}({0}, '%Y-%m-%d
-        // %H:%i:%s.0')", getDataType(), date);
-        //                    default: throwUnsupported();
-        //                }
-        //            }
-
+        // case SQLITE: {
+        // switch (part) {
+        // case YEAR:   return DSL.field("{strftime}({0}, '%Y-00-00 00:00:00.0')", getDataType(),
+        // date);
+        // case MONTH:  return DSL.field("{strftime}({0}, '%Y-%m-00 00:00:00.0')", getDataType(),
+        // date);
+        // case DAY:    return DSL.field("{strftime}({0}, '%Y-%m-%d 00:00:00.0')", getDataType(),
+        // date);
+        // case HOUR:   return DSL.field("{strftime}({0}, '%Y-%m-%d %H:00:00.0')", getDataType(),
+        // date);
+        // case MINUTE: return DSL.field("{strftime}({0}, '%Y-%m-%d %H:%i:00.0')", getDataType(),
+        // date);
+        // case SECOND: return DSL.field("{strftime}({0}, '%Y-%m-%d %H:%i:%s.0')", getDataType(),
+        // date);
+        // default: throwUnsupported();
+        // }
+        // }
       default:
         ctx.visit(N_TRUNC).sql('(').visit(date).sql(", ").visit(inline(keyword)).sql(')');
         break;

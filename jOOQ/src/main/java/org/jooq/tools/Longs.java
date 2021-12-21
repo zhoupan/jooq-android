@@ -50,37 +50,30 @@ import java.util.Arrays;
  * @since 1.0
  */
 public final class Longs {
+
   private Longs() {}
 
   // adapted from com.google.common.primitives.Longs#tryParse()
   // modified for performance and to allow parsing numbers with leading '+'
   public static Long tryParse(String string) {
     if (string.isEmpty()) return null;
-
     int radix = 10;
     char firstChar = string.charAt(0);
     boolean negative = firstChar == '-';
     int index = negative || firstChar == '+' ? 1 : 0;
     int length = string.length();
     if (index == length) return null;
-
     int digit = Character.digit(string.charAt(index++), 10);
     if (digit < 0 || digit >= radix) return null;
-
     long accum = -digit;
-
     long cap = Long.MIN_VALUE / radix;
-
     while (index < length) {
       digit = Character.digit(string.charAt(index++), 10);
       if (digit < 0 || digit >= radix || accum < cap) return null;
-
       accum *= radix;
       if (accum < Long.MIN_VALUE + digit) return null;
-
       accum -= digit;
     }
-
     if (negative) return accum;
     else if (accum == Long.MIN_VALUE) return null;
     else return -accum;

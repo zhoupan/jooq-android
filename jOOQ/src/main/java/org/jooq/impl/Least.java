@@ -48,55 +48,46 @@ import org.jooq.Field;
 
 /** @author Lukas Eder */
 final class Least<T> extends AbstractField<T> {
+
   private final Field<?>[] args;
 
   Least(DataType<T> type, Field<?>... args) {
     super(N_LEAST, type);
-
     this.args = args;
   }
 
   @SuppressWarnings("unchecked")
   @Override
   public final void accept(Context<?> ctx) {
-
     // In any dialect, a single argument is always the least
     if (args.length == 1) {
       ctx.visit(args[0]);
       return;
     }
-
     switch (ctx.family()) {
         // This implementation has O(2^n) complexity. Better implementations
         // are very welcome
-
       case DERBY:
         {
           Field<T> first = (Field<T>) args[0];
           Field<T> other = (Field<T>) args[1];
-
           if (args.length > 2) {
             Field<?>[] remaining = new Field<?>[args.length - 2];
             System.arraycopy(args, 2, remaining, 0, remaining.length);
-
             ctx.visit(
                 DSL.when(first.lt(other), DSL.least(first, remaining))
                     .otherwise(DSL.least(other, remaining)));
           } else {
             ctx.visit(DSL.when(first.lt(other), first).otherwise(other));
           }
-
           return;
         }
-
       case FIREBIRD:
         ctx.visit(function(N_MINVALUE, getDataType(), args));
         return;
-
       case SQLITE:
         ctx.visit(function(N_MIN, getDataType(), args));
         return;
-
       default:
         ctx.visit(function(N_LEAST, getDataType(), args));
         return;

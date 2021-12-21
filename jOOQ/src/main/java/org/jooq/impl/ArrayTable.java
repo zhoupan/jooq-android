@@ -63,8 +63,11 @@ import org.jooq.util.h2.H2DataType;
 final class ArrayTable extends AbstractTable<Record> {
 
   private final Field<?> array;
+
   private final FieldsImpl<Record> field;
+
   private final Name alias;
+
   private final Name[] fieldAliases;
 
   ArrayTable(Field<?> array) {
@@ -72,7 +75,6 @@ final class ArrayTable extends AbstractTable<Record> {
   }
 
   ArrayTable(Field<?> array, Name alias) {
-
     // [#7863] TODO: Possibly resolve field aliases from UDT type
     this(array, alias, new Name[] {N_COLUMN_VALUE});
   }
@@ -80,16 +82,12 @@ final class ArrayTable extends AbstractTable<Record> {
   @SuppressWarnings({"unchecked"})
   ArrayTable(Field<?> array, Name alias, Name[] fieldAliases) {
     super(TableOptions.expression(), alias);
-
     Class<?> arrayType;
-
     if (array.getDataType().getType().isArray()) {
       arrayType = array.getDataType().getArrayComponentType();
-    }
-
-    // Is this case possible?
-    else arrayType = Object.class;
-
+    } else
+      // Is this case possible?
+      arrayType = Object.class;
     this.array = array;
     this.alias = alias;
     this.fieldAliases = fieldAliases;
@@ -97,7 +95,6 @@ final class ArrayTable extends AbstractTable<Record> {
   }
 
   private static final FieldsImpl<Record> init(Class<?> arrayType, Name alias) {
-
     // [#1114] [#7863] VARRAY/TABLE of OBJECT have more than one field
     if (Record.class.isAssignableFrom(arrayType)) {
       try {
@@ -108,10 +105,8 @@ final class ArrayTable extends AbstractTable<Record> {
       } catch (Exception e) {
         throw new DataTypeException("Bad UDT Type : " + arrayType, e);
       }
-    }
-
-    // Simple array types have a synthetic field called "COLUMN_VALUE"
-    else
+    } else
+      // Simple array types have a synthetic field called "COLUMN_VALUE"
       return new FieldsImpl<>(
           DSL.field(name(alias.last(), "COLUMN_VALUE"), DSL.getDataType(arrayType)));
   }
@@ -133,7 +128,6 @@ final class ArrayTable extends AbstractTable<Record> {
 
   @Override
   public final boolean declaresTables() {
-
     // Always true, because unnested tables are always aliased
     return true;
   }
@@ -147,14 +141,11 @@ final class ArrayTable extends AbstractTable<Record> {
     switch (configuration.family()) {
       case H2:
         return new H2ArrayTable().as(alias);
-
         // [#756] These dialects need special care when aliasing unnested
         // arrays
-
       case HSQLDB:
       case POSTGRES:
         return new PostgresHSQLDBTable().as(alias, fieldAliases);
-
         // Other dialects can simulate unnested arrays using UNION ALL
       default:
         if (array.getDataType().getType().isArray() && array instanceof Param) return emulate();
@@ -179,13 +170,11 @@ final class ArrayTable extends AbstractTable<Record> {
           .visit(
               fieldAliases == null || fieldAliases.length == 0 ? N_COLUMN_VALUE : fieldAliases[0])
           .sql(' ');
-
       // If the array type is unknown (e.g. because it's returned from
       // a stored function), then a reasonable choice for arbitrary types is varchar
       if (array.getDataType().getType() == Object[].class)
         ctx.sql(H2DataType.VARCHAR.getTypeName());
       else ctx.sql(array.getDataType().getTypeName());
-
       ctx.sql(" = ").visit(array).sql(')');
     }
   }

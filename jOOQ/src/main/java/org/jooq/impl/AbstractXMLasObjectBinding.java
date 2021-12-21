@@ -80,7 +80,9 @@ public class AbstractXMLasObjectBinding<T> extends AbstractXMLBinding<T> {
   private static final class XMLasObjectConverter<T> implements Converter<XML, T> {
 
     Class<T> type;
+
     XmlRootElement root;
+
     transient JAXBContext ctx;
 
     private XMLasObjectConverter(Class<T> type) {
@@ -100,22 +102,18 @@ public class AbstractXMLasObjectBinding<T> extends AbstractXMLBinding<T> {
     @Override
     public T from(XML t) {
       if (t == null) return null;
-
       return JAXB.unmarshal(new StringReader("" + t), type);
     }
 
     @Override
     public XML to(T u) {
       if (u == null) return null;
-
       try {
         StringWriter s = new StringWriter();
-
         Object o = u;
         if (root == null) {
           o = new JAXBElement<>(new QName(decapitalize(type.getSimpleName())), type, u);
         }
-
         Marshaller m = ctx.createMarshaller();
         m.setProperty(Marshaller.JAXB_FRAGMENT, true);
         m.marshal(o, s);
@@ -141,7 +139,6 @@ public class AbstractXMLasObjectBinding<T> extends AbstractXMLBinding<T> {
 
     private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
       ois.defaultReadObject();
-
       ctx = initCtx();
     }
   }

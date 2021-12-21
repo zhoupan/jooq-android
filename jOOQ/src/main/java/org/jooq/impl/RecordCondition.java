@@ -55,23 +55,20 @@ final class RecordCondition extends AbstractCondition {
   @Override
   public void accept(Context<?> ctx) {
     ConditionProviderImpl condition = new ConditionProviderImpl();
-
     int size = record.size();
     for (int i = 0; i < size; i++) {
       Object value = record.get(i);
-
       if (value != null) {
         Field f1 = record.field(i);
         Field f2 = DSL.val(value, f1.getDataType());
-
         condition.addConditions(f1.eq(f2));
       }
     }
-
     ctx.visit(condition);
   }
 
-  @Override // Avoid AbstractCondition implementation
+  // Avoid AbstractCondition implementation
+  @Override
   public final Clause[] clauses(Context<?> ctx) {
     return null;
   }

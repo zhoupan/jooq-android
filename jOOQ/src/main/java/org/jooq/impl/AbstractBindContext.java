@@ -60,7 +60,6 @@ abstract class AbstractBindContext extends AbstractContext<BindContext> implemen
   // ------------------------------------------------------------------------
   // BindContext API
   // ------------------------------------------------------------------------
-
   @Override
   protected void visit0(QueryPartInternal internal) {
     bindInternal(internal);
@@ -78,7 +77,6 @@ abstract class AbstractBindContext extends AbstractContext<BindContext> implemen
   // ------------------------------------------------------------------------
   // RenderContext API
   // ------------------------------------------------------------------------
-
   @Override
   public final String peekAlias() {
     return null;
@@ -247,7 +245,6 @@ abstract class AbstractBindContext extends AbstractContext<BindContext> implemen
   // ------------------------------------------------------------------------
   // AbstractBindContext template methods
   // ------------------------------------------------------------------------
-
   /** Subclasses may override this method to achieve different behaviour */
   protected void bindInternal(QueryPartInternal internal) {
     internal.accept(this);
@@ -262,7 +259,6 @@ abstract class AbstractBindContext extends AbstractContext<BindContext> implemen
   // ------------------------------------------------------------------------
   // Object API
   // ------------------------------------------------------------------------
-
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();

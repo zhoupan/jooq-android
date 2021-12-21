@@ -58,11 +58,11 @@ import org.jooq.tools.jdbc.DefaultConnection;
 final class SettingsEnabledConnection extends DefaultConnection {
 
   private final Settings settings;
+
   private final ExecuteContext ctx;
 
   SettingsEnabledConnection(Connection delegate, Settings settings, ExecuteContext ctx) {
     super(delegate);
-
     this.settings = settings;
     this.ctx = ctx;
   }
@@ -70,7 +70,6 @@ final class SettingsEnabledConnection extends DefaultConnection {
   // ------------------------------------------------------------------------
   // XXX Creation of PreparedStatements
   // ------------------------------------------------------------------------
-
   private final boolean executePreparedStatements0() {
     return executePreparedStatements(settings)
         && !TRUE.equals(ctx.data(DATA_FORCE_STATIC_STATEMENT));

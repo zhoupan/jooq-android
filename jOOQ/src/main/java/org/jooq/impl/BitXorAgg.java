@@ -64,7 +64,6 @@ final class BitXorAgg<T extends Number> extends DefaultAggregateFunction<T> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   public static final Set<SQLDialect> NO_SUPPORT_NATIVE =
       SQLDialect.supportedUntil(CUBRID, DERBY, FIREBIRD, H2, HSQLDB, IGNITE, POSTGRES, SQLITE);
 
@@ -72,13 +71,11 @@ final class BitXorAgg<T extends Number> extends DefaultAggregateFunction<T> {
   public final void accept(Context<?> ctx) {
     if (NO_SUPPORT_NATIVE.contains(ctx.dialect())) {
       Field<?> field = getArguments().get(0);
-
       // TODO: Is 2's complement implemented correctly?
       if (field.getType() == Byte.class) {
         Field<Byte> f = (Field<Byte>) field;
         Field<Byte> b0 = inline((byte) 0);
         Field<Byte> b2 = inline((byte) 2);
-
         ctx.visit(
             when(
                     o(DSL.count().filterWhere(bitCheck(f, (byte) 0x01))).mod(b2).eq(one()),
@@ -123,7 +120,6 @@ final class BitXorAgg<T extends Number> extends DefaultAggregateFunction<T> {
         Field<Short> f = (Field<Short>) field;
         Field<Short> s0 = inline((short) 0);
         Field<Short> s2 = inline((short) 2);
-
         ctx.visit(
             when(
                     o(DSL.count().filterWhere(bitCheck(f, (short) 0x0001))).mod(s2).eq(one()),
@@ -238,7 +234,6 @@ final class BitXorAgg<T extends Number> extends DefaultAggregateFunction<T> {
         Field<Integer> f = (Field<Integer>) field;
         Field<Integer> i0 = inline(0);
         Field<Integer> i2 = inline(2);
-
         ctx.visit(
             when(
                     o(DSL.count().filterWhere(bitCheck(f, 0x00000001))).mod(i2).eq(one()),
@@ -403,7 +398,6 @@ final class BitXorAgg<T extends Number> extends DefaultAggregateFunction<T> {
         Field<Long> f = (Field<Long>) field;
         Field<Long> l0 = inline(0L);
         Field<Long> l2 = inline(2L);
-
         ctx.visit(
             when(
                     o(DSL.count().filterWhere(bitCheck(f, 0x0000000000000001L))).mod(l2).eq(one()),
@@ -850,14 +844,13 @@ final class BitXorAgg<T extends Number> extends DefaultAggregateFunction<T> {
                                 .eq(one()),
                             inline(0x8000000000000000L))
                         .else_(l0)));
-      }
-      // Currently not supported
-      else super.accept(ctx);
+      } else
+        // Currently not supported
+        super.accept(ctx);
     } else super.accept(ctx);
   }
 
   private final <N extends Number> Condition bitCheck(Field<N> field, N mask) {
-
     // [#11956] TODO: Potentially refactor this to use GETBIT()
     return f(DSL.bitAnd(field, inline(mask)).eq(inline(mask)));
   }
@@ -872,7 +865,6 @@ final class BitXorAgg<T extends Number> extends DefaultAggregateFunction<T> {
       case POSTGRES:
         ctx.visit(N_BIT_XOR);
         break;
-
       default:
         super.acceptFunctionName(ctx);
         break;

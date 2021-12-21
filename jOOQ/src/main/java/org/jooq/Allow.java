@@ -134,7 +134,7 @@ public @interface Allow {
    * with {@link Support}.
    */
   SQLDialect[] value() default {
-    CUBRID, DEFAULT, SQL99, DERBY, FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, POSTGRES, SQLITE,
+    CUBRID, DEFAULT, SQL99, DERBY, FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, POSTGRES, SQLITE
   };
 
   /**

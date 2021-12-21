@@ -108,7 +108,6 @@ public interface Cursor<R extends Record> extends Fields, Iterable<R>, Formattab
 
   /** @deprecated - 3.10 - [#6363] - Use {@link #fetchNext(int)} instead. */
   @NotNull
-  @Deprecated(forRemoval = true, since = "3.10")
   Result<R> fetch(int number) throws DataAccessException;
 
   /**
@@ -140,7 +139,6 @@ public interface Cursor<R extends Record> extends Fields, Iterable<R>, Formattab
    * @deprecated - 3.15.0 - [#11902] - Use {@link Iterable#forEach(Consumer)} based methods,
    *     instead.
    */
-  @Deprecated(forRemoval = true, since = "3.15")
   @NotNull
   <H extends RecordHandler<? super R>> H fetchInto(H handler) throws DataAccessException;
 
@@ -195,7 +193,6 @@ public interface Cursor<R extends Record> extends Fields, Iterable<R>, Formattab
 
   /** @deprecated - 3.10 - [#6363] - Use {@link #fetchNext()} instead. */
   @Nullable
-  @Deprecated(forRemoval = true, since = "3.10")
   R fetchOne() throws DataAccessException;
 
   /**
@@ -204,17 +201,14 @@ public interface Cursor<R extends Record> extends Fields, Iterable<R>, Formattab
    *     instead.
    */
   @NotNull
-  @Deprecated(forRemoval = true, since = "3.10")
   <H extends RecordHandler<? super R>> H fetchOneInto(H handler) throws DataAccessException;
 
   /** @deprecated - 3.10 - [#6363] - Use {@link #fetchNext(RecordMapper)} instead. */
   @Nullable
-  @Deprecated(forRemoval = true, since = "3.10")
   <E> E fetchOne(RecordMapper<? super R, E> mapper) throws DataAccessException;
 
   /** @deprecated - 3.10 - [#6363] - Use {@link #fetchNextInto(Table)} instead. */
   @Nullable
-  @Deprecated(forRemoval = true, since = "3.10")
   <Z extends Record> Z fetchOneInto(Table<Z> table) throws DataAccessException, MappingException;
 
   /**
@@ -247,13 +241,11 @@ public interface Cursor<R extends Record> extends Fields, Iterable<R>, Formattab
    * @deprecated - 3.15.0 - [#11902] - Use {@link Iterable#forEach(Consumer)} based methods,
    *     instead.
    */
-  @Deprecated(forRemoval = true, since = "3.15")
   @NotNull
   <H extends RecordHandler<? super R>> H fetchNextInto(H handler) throws DataAccessException;
 
   /** @deprecated - 3.10 - [#6363] - Use {@link #fetchNextInto(Class)} instead. */
   @Nullable
-  @Deprecated(forRemoval = true, since = "3.10")
   <E> E fetchOneInto(Class<? extends E> type) throws DataAccessException, MappingException;
 
   /**
@@ -309,23 +301,19 @@ public interface Cursor<R extends Record> extends Fields, Iterable<R>, Formattab
 
   /** @deprecated - 3.10 - [#6363] - Use {@link #fetchNextOptional()} instead. */
   @NotNull
-  @Deprecated(forRemoval = true, since = "3.10")
   Optional<R> fetchOptional() throws DataAccessException;
 
   /** @deprecated - 3.10 - [#6363] - Use {@link #fetchNextOptionalInto(Class)} instead. */
   @NotNull
-  @Deprecated(forRemoval = true, since = "3.10")
   <E> Optional<E> fetchOptionalInto(Class<? extends E> type)
       throws DataAccessException, MappingException;
 
   /** @deprecated - 3.10 - [#6363] - Use {@link #fetchNextOptional(RecordMapper)} instead. */
   @NotNull
-  @Deprecated(forRemoval = true, since = "3.10")
   <E> Optional<E> fetchOptional(RecordMapper<? super R, E> mapper) throws DataAccessException;
 
   /** @deprecated - 3.10 - [#6363] - Use {@link #fetchNextOptionalInto(Table)} instead. */
   @NotNull
-  @Deprecated(forRemoval = true, since = "3.10")
   <Z extends Record> Optional<Z> fetchOptionalInto(Table<Z> table)
       throws DataAccessException, MappingException;
 

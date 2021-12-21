@@ -45,8 +45,8 @@ import org.jooq.DataType;
 import org.jooq.Name;
 import org.jooq.ParamMode;
 import org.jooq.Parameter;
-// ...
 
+// ...
 /**
  * A common base class for stored procedure parameters
  *
@@ -55,7 +55,9 @@ import org.jooq.Parameter;
 final class ParameterImpl<T> extends AbstractField<T> implements Parameter<T> {
 
   private final ParamMode paramMode;
+
   private final boolean isDefaulted;
+
   private final boolean isUnnamed;
 
   ParameterImpl(ParamMode paramMode, Name name, DataType<T> type) {
@@ -63,11 +65,9 @@ final class ParameterImpl<T> extends AbstractField<T> implements Parameter<T> {
   }
 
   /** @deprecated - [#11327] - 3.15.0 - Do not reuse this constructor */
-  @Deprecated
   ParameterImpl(
       ParamMode paramMode, Name name, DataType<T> type, boolean isDefaulted, boolean isUnnamed) {
     super(name, type);
-
     this.paramMode = paramMode;
     this.isDefaulted = isDefaulted;
     this.isUnnamed = isUnnamed;
@@ -76,17 +76,14 @@ final class ParameterImpl<T> extends AbstractField<T> implements Parameter<T> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
-
     ctx.visit(getUnqualifiedName());
   }
 
   // -------------------------------------------------------------------------
   // XXX: Parameter API
   // -------------------------------------------------------------------------
-
   @Override
   public final ParamMode getParamMode() {
     return paramMode;

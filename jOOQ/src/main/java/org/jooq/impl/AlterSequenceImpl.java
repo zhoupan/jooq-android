@@ -59,18 +59,31 @@ final class AlterSequenceImpl<T extends Number> extends AbstractDDLQuery
     implements AlterSequenceStep<T>, AlterSequenceFlagsStep<T>, AlterSequenceFinalStep {
 
   private final Sequence<T> sequence;
+
   private final boolean alterSequenceIfExists;
+
   private Sequence<?> renameTo;
+
   private boolean restart;
+
   private Field<T> restartWith;
+
   private Field<T> startWith;
+
   private Field<T> incrementBy;
+
   private Field<T> minvalue;
+
   private boolean noMinvalue;
+
   private Field<T> maxvalue;
+
   private boolean noMaxvalue;
+
   private Boolean cycle;
+
   private Field<T> cache;
+
   private boolean noCache;
 
   AlterSequenceImpl(
@@ -110,7 +123,6 @@ final class AlterSequenceImpl<T extends Number> extends AbstractDDLQuery
       Field<T> cache,
       boolean noCache) {
     super(configuration);
-
     this.sequence = sequence;
     this.alterSequenceIfExists = alterSequenceIfExists;
     this.renameTo = renameTo;
@@ -186,7 +198,6 @@ final class AlterSequenceImpl<T extends Number> extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: DSL API
   // -------------------------------------------------------------------------
-
   @Override
   public final AlterSequenceImpl<T> renameTo(String renameTo) {
     return renameTo(DSL.sequence(DSL.name(renameTo)));
@@ -308,13 +319,16 @@ final class AlterSequenceImpl<T extends Number> extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Clause[] CLAUSES = {Clause.ALTER_SEQUENCE};
+
   private static final Set<SQLDialect> NO_SUPPORT_IF_EXISTS =
       SQLDialect.supportedBy(CUBRID, DERBY, FIREBIRD);
+
   private static final Set<SQLDialect> NO_SEPARATOR = SQLDialect.supportedBy(CUBRID, MARIADB);
+
   private static final Set<SQLDialect> NO_SUPPORT_CACHE =
       SQLDialect.supportedBy(DERBY, FIREBIRD, HSQLDB);
+
   private static final Set<SQLDialect> EMULATE_NO_CACHE = SQLDialect.supportedBy(POSTGRES);
 
   private final boolean supportsIfExists(Context<?> ctx) {
@@ -333,9 +347,7 @@ final class AlterSequenceImpl<T extends Number> extends AbstractDDLQuery
       case MARIADB:
         if (renameTo != null) acceptRenameTable(ctx);
         else accept1(ctx);
-
         break;
-
       default:
         accept1(ctx);
         break;
@@ -344,7 +356,6 @@ final class AlterSequenceImpl<T extends Number> extends AbstractDDLQuery
 
   private final void acceptRenameTable(Context<?> ctx) {
     boolean qualify = ctx.qualify();
-
     ctx.start(Clause.ALTER_SEQUENCE_SEQUENCE)
         .start(Clause.ALTER_SEQUENCE_RENAME)
         .visit(K_ALTER_TABLE)
@@ -363,9 +374,7 @@ final class AlterSequenceImpl<T extends Number> extends AbstractDDLQuery
         .visit(K_ALTER)
         .sql(' ')
         .visit(ctx.family() == CUBRID ? K_SERIAL : K_SEQUENCE);
-
     if (alterSequenceIfExists && supportsIfExists(ctx)) ctx.sql(' ').visit(K_IF_EXISTS);
-
     switch (ctx.family()) {
       default:
         {
@@ -373,9 +382,7 @@ final class AlterSequenceImpl<T extends Number> extends AbstractDDLQuery
           break;
         }
     }
-
     ctx.end(Clause.ALTER_SEQUENCE_SEQUENCE);
-
     if (renameTo != null) {
       ctx.start(Clause.ALTER_SEQUENCE_RENAME)
           .sql(' ')
@@ -385,41 +392,31 @@ final class AlterSequenceImpl<T extends Number> extends AbstractDDLQuery
           .end(Clause.ALTER_SEQUENCE_RENAME);
     } else {
       ctx.start(Clause.ALTER_SEQUENCE_RESTART);
-
       String noSeparator = NO_SEPARATOR.contains(ctx.dialect()) ? "" : " ";
-
       if (incrementBy != null) {
         ctx.sql(' ').visit(K_INCREMENT_BY).sql(' ').visit(incrementBy);
       }
-
       if (minvalue != null) ctx.sql(' ').visit(K_MINVALUE).sql(' ').visit(minvalue);
       else if (noMinvalue) ctx.sql(' ').visit(K_NO).sql(noSeparator).visit(K_MINVALUE);
-
       if (maxvalue != null) ctx.sql(' ').visit(K_MAXVALUE).sql(' ').visit(maxvalue);
       else if (noMaxvalue) ctx.sql(' ').visit(K_NO).sql(noSeparator).visit(K_MAXVALUE);
-
       if (startWith != null) {
         ctx.sql(' ').visit(K_START_WITH).sql(' ').visit(startWith);
       }
-
       if (restart) {
-
         ctx.sql(' ').visit(K_RESTART);
       } else if (restartWith != null) {
         if (ctx.family() == CUBRID) ctx.sql(' ').visit(K_START_WITH).sql(' ').visit(restartWith);
         else ctx.sql(' ').visit(K_RESTART_WITH).sql(' ').visit(restartWith);
       }
-
       if (!NO_SUPPORT_CACHE.contains(ctx.dialect()))
         if (cache != null) ctx.sql(' ').visit(K_CACHE).sql(' ').visit(cache);
         else if (noCache)
           if (EMULATE_NO_CACHE.contains(ctx.dialect())) ctx.sql(' ').visit(K_CACHE).sql(' ').sql(1);
           else ctx.sql(' ').visit(K_NO).sql(noSeparator).visit(K_CACHE);
-
       if (Boolean.TRUE.equals(cycle)) ctx.sql(' ').visit(K_CYCLE);
       else if (Boolean.FALSE.equals(cycle))
         ctx.sql(' ').visit(K_NO).sql(noSeparator).visit(K_CYCLE);
-
       ctx.end(Clause.ALTER_SEQUENCE_RESTART);
     }
   }

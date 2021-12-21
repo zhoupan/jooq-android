@@ -52,12 +52,10 @@ final class ExplainQuery {
 
   static Explain explain(final DSLContext ctx, final Query query) {
     Result<Record> result = null;
-
     switch (ctx.family()) {
       case H2:
         result = ctx.fetch("{explain analyze} {0}", query);
         break;
-
         // [#12381] No bind values supported in HSQLDB
       case HSQLDB:
         result =
@@ -66,24 +64,18 @@ final class ExplainQuery {
                 .dsl()
                 .fetch("{explain plan for} {0}", query);
         break;
-
       default:
         result = ctx.fetch("{explain} {0}", query);
         break;
     }
-
     double cost = Double.NaN;
     double rows = Double.NaN;
-
     switch (ctx.family()) {
-
         // H2's EXPLAIN ANALYZE output is rather difficult to digest
       case H2:
-
         // HSQLDB's EXPLAIN PLAN FOR output doesn't contain any useful additional information
       case HSQLDB:
         break;
-
       case MARIADB:
       case MYSQL:
         {
@@ -91,7 +83,6 @@ final class ExplainQuery {
           rows = result.get(0).get("rows", double.class);
           break;
         }
-
       case POSTGRES:
         {
           Matcher matcher =
@@ -99,17 +90,18 @@ final class ExplainQuery {
                   .matcher(result.get(0).get(0, String.class));
           cost = Double.parseDouble(matcher.replaceAll("$1"));
           rows = Double.parseDouble(matcher.replaceAll("$2"));
-
           break;
         }
     }
-
     return new ExplainImpl(rows, cost, result.format());
   }
 
-  private static final /* record */ class ExplainImpl implements Explain {
+  private static final class /* record */ ExplainImpl implements Explain {
+
     private final double rows;
+
     private final double cost;
+
     private final String plan;
 
     public ExplainImpl(double rows, double cost, String plan) {

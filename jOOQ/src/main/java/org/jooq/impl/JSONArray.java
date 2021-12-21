@@ -59,8 +59,11 @@ final class JSONArray<T> extends AbstractField<T>
     implements JSONArrayNullStep<T>, JSONArrayReturningStep<T> {
 
   private final DataType<T> type;
+
   private final Collection<? extends Field<?>> fields;
+
   private JSONOnNull onNull;
+
   private DataType<?> returning;
 
   JSONArray(DataType<T> type, Collection<? extends Field<?>> fields) {
@@ -73,7 +76,6 @@ final class JSONArray<T> extends AbstractField<T>
       JSONOnNull onNull,
       DataType<?> returning) {
     super(N_JSON_ARRAY, type);
-
     this.type = type;
     this.fields = fields;
     this.onNull = onNull;
@@ -83,7 +85,6 @@ final class JSONArray<T> extends AbstractField<T>
   // -------------------------------------------------------------------------
   // XXX: DSL API
   // -------------------------------------------------------------------------
-
   @Override
   public final JSONArray<T> nullOnNull() {
     this.onNull = JSONOnNull.NULL_ON_NULL;
@@ -105,13 +106,11 @@ final class JSONArray<T> extends AbstractField<T>
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public void accept(Context<?> ctx) {
     QueryPartCollectionView<Field<?>> mapped =
         QueryPartCollectionView.wrap((Collection<Field<?>>) fields)
             .map(JSONEntryImpl.jsonCastMapper(ctx));
-
     switch (ctx.family()) {
       case POSTGRES:
         if (onNull == JSONOnNull.ABSENT_ON_NULL) {
@@ -128,19 +127,15 @@ final class JSONArray<T> extends AbstractField<T>
               .sql('(')
               .visit(mapped)
               .sql(')');
-
         break;
-
       default:
         {
           JSONNull jsonNull;
           JSONReturning jsonReturning = new JSONReturning(returning);
-
           // Workaround for https://github.com/h2database/h2database/issues/2496
           if (ctx.family() == H2 && fields.isEmpty())
             jsonNull = new JSONNull(JSONOnNull.NULL_ON_NULL);
           else jsonNull = new JSONNull(onNull);
-
           Field<T> jsonArray =
               CustomField.of(
                   N_JSON_ARRAY,
@@ -151,7 +146,6 @@ final class JSONArray<T> extends AbstractField<T>
                           .visit(
                               QueryPartListView.wrap(mapped, jsonNull, jsonReturning).separator(""))
                           .sql(')'));
-
           switch (ctx.family()) {
             default:
               ctx.visit(jsonArray);
@@ -165,7 +159,6 @@ final class JSONArray<T> extends AbstractField<T>
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof JSONArray) {

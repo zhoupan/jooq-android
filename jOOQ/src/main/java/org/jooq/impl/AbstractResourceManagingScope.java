@@ -61,7 +61,6 @@ abstract class AbstractResourceManagingScope extends AbstractScope
   // ------------------------------------------------------------------------
   // XXX ResourceManagingScope API
   // ------------------------------------------------------------------------
-
   @Override
   public final Array autoFree(Array array) {
     DefaultExecuteContext.register(array);

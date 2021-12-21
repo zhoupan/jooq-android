@@ -58,12 +58,13 @@ import org.jooq.tools.*;
 final class SetCommand extends AbstractDDLQuery {
 
   private final Name name;
+
   private final Param<?> value;
+
   private final boolean setLocal;
 
   SetCommand(Configuration configuration, Name name, Param<?> value, boolean setLocal) {
     super(configuration);
-
     this.name = name;
     this.value = value;
     this.setLocal = setLocal;
@@ -84,15 +85,12 @@ final class SetCommand extends AbstractDDLQuery {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Set<SQLDialect> NO_SUPPORT_BIND_VALUES = SQLDialect.supportedBy(POSTGRES);
 
   @Override
   public final void accept(Context<?> ctx) {
     ctx.visit(K_SET);
-
     if (setLocal) ctx.sql(' ').visit(K_LOCAL);
-
     ctx.sql(' ')
         .visit(name)
         .sql(" = ")

@@ -80,11 +80,17 @@ public final class FilePattern {
   private static final JooqLogger log = JooqLogger.getLogger(FilePattern.class);
 
   private final Sort sort;
+
   private final Comparator<File> comparator;
+
   private final File basedir;
+
   private final String pattern;
+
   private final String encoding;
+
   private final Pattern regexForMatches;
+
   private final Pattern regexForLoad;
 
   public FilePattern() {
@@ -97,7 +103,6 @@ public final class FilePattern {
     this.basedir = basedir == null ? new File(".") : basedir;
     this.pattern = pattern;
     this.encoding = encoding;
-
     this.regexForMatches = Pattern.compile("^" + regex() + "$");
     this.regexForLoad = Pattern.compile("^.*?" + regex() + "$");
   }
@@ -136,7 +141,6 @@ public final class FilePattern {
 
   private static final Comparator<File> fileComparator(Sort sort) {
     if (sort == null) sort = SEMANTIC;
-
     switch (sort) {
       case ALPHANUMERIC:
         return naturalOrder();
@@ -175,27 +179,20 @@ public final class FilePattern {
   public final void load(Consumer<Source> loader) {
     boolean loaded = false;
     URL url = null;
-
     try {
       url = FilePattern.class.getResource(pattern);
-    }
-
-    // [#10143] Starting with Java 7, and especially when running on the module path,
-    //          there could be an InvalidPathException here.
+    } // [#10143] Starting with Java 7, and especially when running on the module path,
+    // there could be an InvalidPathException here.
     catch (Exception ignore) {
     }
-
     File file = null;
-
     try {
       if (url != null) {
         log.info("Reading from classpath: " + pattern);
-
         load0(new File(url.toURI()), loader);
         loaded = true;
       } else {
         file = new File(pattern);
-
         if (file.exists()) {
           load(file, comparator, null, loader);
           loaded = true;
@@ -203,27 +200,21 @@ public final class FilePattern {
           load(new File(basedir, pattern), comparator, null, loader);
           loaded = true;
         } else {
-
           // [#9726] The wildcard could be in the middle of a path segment, which
-          //         has to be ignored, e.g. the prefix of a/b*/c is a/
+          // has to be ignored, e.g. the prefix of a/b*/c is a/
           String prefix = pattern.replaceAll("[^\\/]*?[*?].*", "");
           file = new File(prefix);
-
           if (!file.isAbsolute()) file = new File(basedir, prefix).getAbsoluteFile();
-
           load(file, comparator, regexForLoad, loader);
           loaded = true;
         }
       }
-    }
-
-    // It is quite unlikely that a classpath URL doesn't produce a valid URI
+    } // It is quite unlikely that a classpath URL doesn't produce a valid URI
     catch (URISyntaxException e) {
       throw new RuntimeException(e);
     } catch (java.io.IOException e) {
       throw new IOException("Error while loading pattern", e);
     }
-
     if (!loaded) log.error("Could not find source(s) : " + pattern);
   }
 
@@ -246,12 +237,9 @@ public final class FilePattern {
       }
     } else if (file.isDirectory()) {
       log.info("Reading from: " + file);
-
       File[] files = file.listFiles();
-
       if (files != null) {
         if (fileComparator != null) Arrays.sort(files, fileComparator);
-
         for (File f : files) load(f, comparator, regex, loader);
       }
     }
@@ -286,7 +274,6 @@ public final class FilePattern {
      * </pre>
      */
     SEMANTIC,
-
     /**
      * Standard alphanumeric sorting.
      *
@@ -299,10 +286,8 @@ public final class FilePattern {
      * </pre>
      */
     ALPHANUMERIC,
-
     /** Flyway compatible sorting. */
     FLYWAY,
-
     /** No explicit sorting (may be non deterministic, depending on the file system). */
     NONE;
 

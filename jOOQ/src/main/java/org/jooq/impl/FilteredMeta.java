@@ -67,14 +67,23 @@ import org.jooq.UniqueKey;
 final class FilteredMeta extends AbstractMeta {
 
   private final AbstractMeta meta;
+
   private final Predicate<? super Catalog> catalogFilter;
+
   private final Predicate<? super Schema> schemaFilter;
+
   private final Predicate<? super Table<?>> tableFilter;
+
   private final Predicate<? super Domain<?>> domainFilter;
+
   private final Predicate<? super Sequence<?>> sequenceFilter;
+
   private final Predicate<? super UniqueKey<?>> primaryKeyFilter;
+
   private final Predicate<? super UniqueKey<?>> uniqueKeyFilter;
+
   private final Predicate<? super ForeignKey<?, ?>> foreignKeyFilter;
+
   private final Predicate<? super Index> indexFilter;
 
   FilteredMeta(
@@ -89,7 +98,6 @@ final class FilteredMeta extends AbstractMeta {
       Predicate<? super ForeignKey<?, ?>> foreignKeyFilter,
       Predicate<? super Index> indexFilter) {
     super(meta.configuration());
-
     this.meta = meta;
     this.catalogFilter = catalogFilter;
     this.schemaFilter = schemaFilter;
@@ -105,10 +113,8 @@ final class FilteredMeta extends AbstractMeta {
   @Override
   final List<Catalog> getCatalogs0() {
     List<Catalog> result = new ArrayList<>();
-
     for (Catalog c : meta.getCatalogs())
       if (catalogFilter == null || catalogFilter.test(c)) result.add(new FilteredCatalog(c));
-
     return result;
   }
 
@@ -248,7 +254,9 @@ final class FilteredMeta extends AbstractMeta {
   }
 
   private static class And<Q extends QueryPart> implements Predicate<Q> {
+
     private final Predicate<? super Q> p1;
+
     private final Predicate<? super Q> p2;
 
     And(Predicate<? super Q> p1, Predicate<? super Q> p2) {
@@ -265,11 +273,11 @@ final class FilteredMeta extends AbstractMeta {
   private class FilteredCatalog extends CatalogImpl {
 
     private final Catalog delegate;
+
     private transient List<Schema> schemas;
 
     private FilteredCatalog(Catalog delegate) {
       super(delegate.getQualifiedName(), delegate.getCommentPart());
-
       this.delegate = delegate;
     }
 
@@ -277,25 +285,26 @@ final class FilteredMeta extends AbstractMeta {
     public final List<Schema> getSchemas() {
       if (schemas == null) {
         schemas = new ArrayList<>();
-
         for (Schema s : delegate.getSchemas())
           if (schemaFilter == null || schemaFilter.test(s))
             schemas.add(new FilteredSchema(this, s));
       }
-
       return Collections.unmodifiableList(schemas);
     }
   }
 
   private class FilteredSchema extends SchemaImpl {
+
     private final Schema delegate;
+
     private transient List<Domain<?>> domains;
+
     private transient List<Table<?>> tables;
+
     private transient List<Sequence<?>> sequences;
 
     private FilteredSchema(FilteredCatalog catalog, Schema delegate) {
       super(delegate.getQualifiedName(), catalog, delegate.getCommentPart());
-
       this.delegate = delegate;
     }
 
@@ -303,13 +312,11 @@ final class FilteredMeta extends AbstractMeta {
     public final List<Domain<?>> getDomains() {
       if (domains == null) {
         domains = new ArrayList<>();
-
         for (Domain<?> d : delegate.getDomains())
           if (domainFilter == null || domainFilter.test(d))
             // TODO: Schema is wrong here
             domains.add(d);
       }
-
       return Collections.unmodifiableList(domains);
     }
 
@@ -317,11 +324,9 @@ final class FilteredMeta extends AbstractMeta {
     public final List<Table<?>> getTables() {
       if (tables == null) {
         tables = new ArrayList<>();
-
         for (Table<?> t : delegate.getTables())
           if (tableFilter == null || tableFilter.test(t)) tables.add(new FilteredTable<>(this, t));
       }
-
       return Collections.unmodifiableList(tables);
     }
 
@@ -329,13 +334,11 @@ final class FilteredMeta extends AbstractMeta {
     public final List<Sequence<?>> getSequences() {
       if (sequences == null) {
         sequences = new ArrayList<>();
-
         for (Sequence<?> t : delegate.getSequences())
           if (sequenceFilter == null || sequenceFilter.test(t))
             // TODO: Schema is wrong here
             sequences.add(t);
       }
-
       return Collections.unmodifiableList(sequences);
     }
 
@@ -347,10 +350,15 @@ final class FilteredMeta extends AbstractMeta {
   }
 
   private class FilteredTable<R extends Record> extends TableImpl<R> {
+
     private final Table<R> delegate;
+
     private transient List<Index> indexes;
+
     private transient UniqueKey<R> primaryKey;
+
     private transient List<UniqueKey<R>> uniqueKeys;
+
     private transient List<ForeignKey<R, ?>> references;
 
     private FilteredTable(FilteredSchema schema, Table<R> delegate) {
@@ -361,9 +369,7 @@ final class FilteredMeta extends AbstractMeta {
           null,
           delegate.getCommentPart(),
           delegate.getOptions());
-
       this.delegate = delegate;
-
       for (Field<?> field : delegate.fields())
         createField(field.getQualifiedName(), field.getDataType(), this, field.getComment());
     }
@@ -372,21 +378,17 @@ final class FilteredMeta extends AbstractMeta {
     public final List<Index> getIndexes() {
       if (indexes == null) {
         indexes = new ArrayList<>();
-
         for (Index index : delegate.getIndexes())
           if (indexFilter == null || indexFilter.test(index)) indexes.add(index);
       }
-
       return Collections.unmodifiableList(indexes);
     }
 
     private final void initKeys() {
       if (uniqueKeys == null) {
         uniqueKeys = new ArrayList<>();
-
         for (UniqueKey<R> uk : delegate.getUniqueKeys())
           if (uniqueKeyFilter == null || uniqueKeyFilter.test(uk)) uniqueKeys.add(key(uk));
-
         UniqueKey<R> pk = delegate.getPrimaryKey();
         if (pk != null)
           if (primaryKeyFilter == null || primaryKeyFilter.test(pk)) primaryKey = key(pk);
@@ -419,22 +421,18 @@ final class FilteredMeta extends AbstractMeta {
     public final List<ForeignKey<R, ?>> getReferences() {
       if (references == null) {
         references = new ArrayList<>();
-
         fkLoop:
         for (ForeignKey<R, ?> fk : delegate.getReferences()) {
           if (foreignKeyFilter != null && !foreignKeyFilter.test(fk)) continue fkLoop;
-
           UniqueKey<?> uk = lookupUniqueKey(fk);
           if (uk == null) continue fkLoop;
           else if (uk.isPrimary() && primaryKeyFilter != null && !primaryKeyFilter.test(uk))
             continue fkLoop;
           else if (!uk.isPrimary() && uniqueKeyFilter != null && !uniqueKeyFilter.test(uk))
             continue fkLoop;
-
           references.add(copyFK(this, uk, fk));
         }
       }
-
       return Collections.unmodifiableList(references);
     }
 

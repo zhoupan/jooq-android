@@ -42,5 +42,5 @@ import org.jooq.*;
 /** The <code>JSONOnNull</code>. */
 enum JSONOnNull {
   NULL_ON_NULL,
-  ABSENT_ON_NULL,
+  ABSENT_ON_NULL
 }

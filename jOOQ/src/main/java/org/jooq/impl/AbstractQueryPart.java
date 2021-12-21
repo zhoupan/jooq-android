@@ -61,7 +61,6 @@ abstract class AbstractQueryPart implements QueryPartInternal {
   // -------------------------------------------------------------------------
   // [#1544] The deprecated Attachable and Attachable internal API
   // -------------------------------------------------------------------------
-
   Configuration configuration() {
     return CTX.configuration();
   }
@@ -69,9 +68,7 @@ abstract class AbstractQueryPart implements QueryPartInternal {
   // -------------------------------------------------------------------------
   // Deprecated API
   // -------------------------------------------------------------------------
-
   /** @deprecated - 3.11.0 - [#8179] - This functionality will be removed in the future. */
-  @Deprecated
   @Override
   public Clause[] clauses(Context<?> ctx) {
     return null;
@@ -80,7 +77,6 @@ abstract class AbstractQueryPart implements QueryPartInternal {
   // -------------------------------------------------------------------------
   // The QueryPart and QueryPart internal API
   // -------------------------------------------------------------------------
-
   /** Subclasses may override this */
   @Override
   public boolean rendersContent(Context<?> ctx) {
@@ -120,28 +116,22 @@ abstract class AbstractQueryPart implements QueryPartInternal {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (this == that) return true;
-
     // This is a working default implementation. It should be overridden by
     // concrete subclasses, to improve performance
     if (that instanceof QueryPart) {
-
       // [#10635] The two QueryParts may have different Settings attached.
       DSLContext dsl1 = Tools.configuration(configuration()).dsl();
       DSLContext dsl2 =
           that instanceof AbstractQueryPart
               ? Tools.configuration(((AbstractQueryPart) that).configuration()).dsl()
               : dsl1;
-
       String sql1 = dsl1.renderInlined(this);
       String sql2 = dsl2.renderInlined((QueryPart) that);
-
       return sql1.equals(sql2);
     }
-
     return false;
   }
 
@@ -149,14 +139,12 @@ abstract class AbstractQueryPart implements QueryPartInternal {
   public int hashCode() {
     // This is a working default implementation. It should be overridden by
     // concrete subclasses, to improve performance
-
     return create().renderInlined(this).hashCode();
   }
 
   @Override
   public String toString() {
     try {
-
       // [#8355] Subtypes may have null configuration
       Configuration configuration = Tools.configuration(configuration());
       return create(configuration.deriveSettings(s -> s.withRenderFormatted(true)))
@@ -169,14 +157,12 @@ abstract class AbstractQueryPart implements QueryPartInternal {
   // -------------------------------------------------------------------------
   // Internal convenience methods
   // -------------------------------------------------------------------------
-
   /**
    * Internal convenience method
    *
    * @deprecated - 3.11.0 - [#6722] - Use {@link Attachable#configuration()} and {@link
    *     Configuration#dsl()} instead.
    */
-  @Deprecated
   protected final DSLContext create() {
     return create(configuration());
   }
@@ -187,7 +173,6 @@ abstract class AbstractQueryPart implements QueryPartInternal {
    * @deprecated - 3.11.0 - [#6722] - Use {@link Attachable#configuration()} and {@link
    *     Configuration#dsl()} instead.
    */
-  @Deprecated
   protected final DSLContext create(Configuration configuration) {
     return DSL.using(configuration);
   }
@@ -198,7 +183,6 @@ abstract class AbstractQueryPart implements QueryPartInternal {
    * @deprecated - 3.11.0 - [#6722] - Use {@link Attachable#configuration()} and {@link
    *     Configuration#dsl()} instead.
    */
-  @Deprecated
   protected final DSLContext create(Context<?> ctx) {
     return DSL.using(ctx.configuration());
   }
@@ -211,12 +195,13 @@ abstract class AbstractQueryPart implements QueryPartInternal {
   private static class SerializationDeprecation {}
 
   private static final JooqLogger log = JooqLogger.getLogger(SerializationDeprecation.class);
+
   private static final AtomicInteger warnCount = new AtomicInteger(0);
+
   private static final int maxWarnings = 100;
 
   private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
     ois.defaultReadObject();
-
     if (log.isWarnEnabled()
         && warnCount.getAndUpdate(i -> Math.min(i + 1, maxWarnings)) < maxWarnings)
       log.warn(
@@ -228,7 +213,6 @@ abstract class AbstractQueryPart implements QueryPartInternal {
 
   private void writeObject(ObjectOutputStream oos) throws IOException {
     oos.defaultWriteObject();
-
     if (log.isWarnEnabled()
         && warnCount.getAndUpdate(i -> Math.min(i + 1, maxWarnings)) < maxWarnings)
       log.warn(

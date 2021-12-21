@@ -61,13 +61,13 @@ import org.jooq.Row;
 final class MultisetDataType<R extends Record> extends DefaultDataType<Result<R>> {
 
   final AbstractRow<R> row;
+
   final Class<? extends R> recordType;
 
   @SuppressWarnings("unchecked")
   public MultisetDataType(AbstractRow<R> row, Class<? extends R> recordType) {
     // [#11829] TODO: Implement this correctly for ArrayRecord
     super(null, (Class) Result.class, "multiset", "multiset");
-
     this.row = row;
     this.recordType = recordType != null ? recordType : (Class<? extends R>) Record.class;
   }
@@ -87,7 +87,6 @@ final class MultisetDataType<R extends Record> extends DefaultDataType<Result<R>
       Field<Result<R>> defaultValue) {
     super(
         t, precision, scale, length, nullability, collation, characterSet, identity, defaultValue);
-
     this.row = row;
     this.recordType = recordType;
   }
@@ -130,24 +129,20 @@ final class MultisetDataType<R extends Record> extends DefaultDataType<Result<R>
   @SuppressWarnings({"unchecked", "rawtypes"})
   @Override
   public Result<R> convert(Object object) {
-
     // [#3884] TODO: Move this logic into JSONReader to make it more generally useful
     if (object instanceof List) {
       ResultImpl<R> result = new ResultImpl<>(CTX.configuration(), row);
-
       for (Object record : (List) object)
         result.add(
             newRecord(true, recordType, row, CTX.configuration())
                 .operate(
                     r -> {
-
                       // [#12014] TODO: Fix this and remove workaround
                       if (record instanceof Record)
                         ((AbstractRecord) r).fromArray(((Record) record).intoArray());
-
-                      // This sort is required if we use the JSONFormat.RecordFormat.OBJECT encoding
-                      // (e.g. in SQL Server)
-                      else if (record instanceof Map)
+                      else // This sort is required if we use the JSONFormat.RecordFormat.OBJECT
+                      // encoding (e.g. in SQL Server)
+                      if (record instanceof Map)
                         r.from(
                             ((Map<String, ?>) record)
                                 .entrySet().stream()
@@ -155,10 +150,8 @@ final class MultisetDataType<R extends Record> extends DefaultDataType<Result<R>
                                     .map(Entry::getValue)
                                     .collect(toList()));
                       else r.from(record);
-
                       return r;
                     }));
-
       return result;
     } else if (object == null) return new ResultImpl<>(CTX.configuration(), row);
     else return super.convert(object);

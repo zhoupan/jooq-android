@@ -48,12 +48,12 @@ class DefaultBindingSetSQLOutputContext<U> extends AbstractResourceManagingScope
     implements BindingSetSQLOutputContext<U> {
 
   private final SQLOutput output;
+
   private final U value;
 
   DefaultBindingSetSQLOutputContext(
       Configuration configuration, Map<Object, Object> data, SQLOutput output, U value) {
     super(configuration, data);
-
     this.output = output;
     this.value = value;
   }

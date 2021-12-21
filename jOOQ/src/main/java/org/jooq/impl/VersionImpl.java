@@ -62,12 +62,13 @@ import org.jooq.exception.DataDefinitionException;
 final class VersionImpl extends AbstractNode<Version> implements Version {
 
   private final DSLContext ctx;
+
   private final Meta meta;
+
   private final List<Parent> parents;
 
   private VersionImpl(DSLContext ctx, String id, Meta meta, List<Parent> parents) {
     super(id, null);
-
     this.ctx = ctx;
     this.meta = meta != null ? meta : init(ctx);
     this.parents = parents;
@@ -75,14 +76,12 @@ final class VersionImpl extends AbstractNode<Version> implements Version {
 
   private static final Meta init(DSLContext ctx) {
     Meta result = ctx.meta("");
-
     // TODO: Instead of reusing interpreter search path, we should have some dedicated
-    //       configuration for this.
+    // configuration for this.
     // TODO: Should this be moved in DSLContext.meta()?
     List<InterpreterSearchSchema> searchPath = ctx.settings().getInterpreterSearchPath();
     for (InterpreterSearchSchema schema : searchPath)
       result = result.apply(createSchema(schema(name(schema.getCatalog(), schema.getSchema()))));
-
     return result;
   }
 
@@ -106,6 +105,7 @@ final class VersionImpl extends AbstractNode<Version> implements Version {
   @Override
   public final List<Version> parents() {
     return new AbstractList<Version>() {
+
       @Override
       public Version get(int index) {
         return parents.get(index).version;
@@ -141,9 +141,7 @@ final class VersionImpl extends AbstractNode<Version> implements Version {
   @Override
   public final Queries migrateTo(Version version) {
     if (equals(version)) return ctx.queries();
-
     VersionImpl subgraph = ((VersionImpl) version).subgraphTo(this);
-
     if (subgraph == null)
       throw new DataDefinitionException(
           "No forward path available between versions "
@@ -151,45 +149,36 @@ final class VersionImpl extends AbstractNode<Version> implements Version {
               + " and "
               + version.id()
               + ". Use Settings.migrationAllowsUndo to enable this feature.");
-
     return migrateTo(subgraph, ctx.queries());
   }
 
   private final VersionImpl subgraphTo(VersionImpl ancestor) {
     List<Parent> list = null;
-
     for (Parent parent : parents) {
       if (parent.version.equals(ancestor)) {
         if (list == null) list = new ArrayList<>();
-
         list.add(
             new Parent(
                 new VersionImpl(ctx, parent.version.id(), parent.version.meta, emptyList()),
                 parent.queries));
       } else {
         VersionImpl p = parent.version.subgraphTo(ancestor);
-
         if (p != null) {
           if (list == null) list = new ArrayList<>();
-
           list.add(new Parent(p, parent.queries));
         }
       }
     }
-
     return list == null ? null : new VersionImpl(ctx, id(), meta, list);
   }
 
   private final Queries migrateTo(VersionImpl target, Queries result) {
     if (!target.forceApply()) return meta().migrateTo(target.meta());
-
     for (Parent parent : target.parents) {
       result = migrateTo(parent.version, result);
-
       if (parent.queries != null) result = result.concat(parent.queries);
       else result = result.concat(parent.version.meta().migrateTo(target.meta()));
     }
-
     return result;
   }
 
@@ -247,8 +236,10 @@ final class VersionImpl extends AbstractNode<Version> implements Version {
     return "-- Version: " + id() + "\n" + meta();
   }
 
-  private static final /* record */ class Parent {
+  private static final class /* record */ Parent {
+
     private final VersionImpl version;
+
     private final Queries queries;
 
     public Parent(VersionImpl version, Queries queries) {

@@ -58,12 +58,13 @@ import org.jooq.tools.*;
 final class SubstringIndex extends AbstractField<String> {
 
   private final Field<String> string;
+
   private final Field<String> delimiter;
+
   private final Field<? extends Number> n;
 
   SubstringIndex(Field<String> string, Field<String> delimiter, Field<? extends Number> n) {
     super(N_SUBSTRING_INDEX, allNotNull(VARCHAR, string, delimiter, n));
-
     this.string = nullSafeNotNull(string, VARCHAR);
     this.delimiter = nullSafeNotNull(delimiter, VARCHAR);
     this.n = nullSafeNotNull(n, INTEGER);
@@ -72,7 +73,6 @@ final class SubstringIndex extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -85,7 +85,6 @@ final class SubstringIndex extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof SubstringIndex) {

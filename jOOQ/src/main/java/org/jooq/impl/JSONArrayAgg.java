@@ -80,6 +80,7 @@ final class JSONArrayAgg<J> extends AbstractAggregateFunction<J>
   static final Set<SQLDialect> EMULATE_WITH_GROUP_CONCAT = SQLDialect.supportedBy(MARIADB, MYSQL);
 
   private JSONOnNull onNull;
+
   private DataType<?> returning;
 
   JSONArrayAgg(DataType<J> type, Field<?> arg) {
@@ -97,21 +98,17 @@ final class JSONArrayAgg<J> extends AbstractAggregateFunction<J>
           ctx.visit(jsonMerge(ctx, "[]", groupConcatEmulation(ctx)));
           break;
         }
-
       case POSTGRES:
         ctx.visit(getDataType() == JSON ? N_JSON_AGG : N_JSONB_AGG).sql('(');
         ctx.visit(arguments.get(0));
         acceptOrderBy(ctx);
         ctx.sql(')');
-
         if (onNull == ABSENT_ON_NULL)
           acceptFilterClause(
               ctx, (filter == null ? noCondition() : filter).and(arguments.get(0).isNotNull()));
         else acceptFilterClause(ctx);
-
         acceptOverClause(ctx);
         break;
-
       default:
         acceptStandard(ctx);
         break;
@@ -121,7 +118,6 @@ final class JSONArrayAgg<J> extends AbstractAggregateFunction<J>
   @SuppressWarnings("unchecked")
   private final Field<?> groupConcatEmulation(Context<?> ctx) {
     Field<?> arg1 = arguments.get(0);
-
     if (arg1.getDataType().isString()) {
       switch (ctx.family()) {
         case MARIADB:
@@ -130,7 +126,6 @@ final class JSONArrayAgg<J> extends AbstractAggregateFunction<J>
           break;
       }
     }
-
     Field<?> arg2 = arg1;
     return DSL.concat(
         inline('['),
@@ -158,22 +153,17 @@ final class JSONArrayAgg<J> extends AbstractAggregateFunction<J>
 
   private final void acceptStandard(Context<?> ctx) {
     ctx.visit(N_JSON_ARRAYAGG).sql('(');
-
     switch (ctx.family()) {
       default:
         acceptArguments3(ctx, arguments, jsonCastMapper(ctx));
         break;
     }
     acceptOrderBy(ctx);
-
     JSONNull jsonNull = new JSONNull(onNull);
     if (jsonNull.rendersContent(ctx)) ctx.sql(' ').visit(jsonNull);
-
     JSONReturning jsonReturning = new JSONReturning(returning);
     if (jsonReturning.rendersContent(ctx)) ctx.sql(' ').visit(jsonReturning);
-
     ctx.sql(')');
-
     acceptFilterClause(ctx);
     acceptOverClause(ctx);
   }
@@ -208,7 +198,6 @@ final class JSONArrayAgg<J> extends AbstractAggregateFunction<J>
 
   static final <R extends Record> Select<R> patchOracleArrayAggBug(
       Scope scope, SelectHavingStep<R> select) {
-
     return select;
   }
 }

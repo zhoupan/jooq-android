@@ -81,17 +81,23 @@ import org.jooq.Table;
 final class QuantifiedComparisonCondition extends AbstractCondition implements LikeEscapeStep {
 
   private static final Clause[] CLAUSES = {CONDITION, CONDITION_BETWEEN};
+
   private static final Set<SQLDialect> NO_SUPPORT_QUANTIFIED_LIKE =
       SQLDialect.supportedBy(CUBRID, DERBY, FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, SQLITE);
+
   private static final Set<SQLDialect> NO_SUPPORT_QUANTIFIED_SIMILAR_TO =
       SQLDialect.supportedBy(
           CUBRID, DERBY, FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, POSTGRES, SQLITE);
+
   private static final Set<SQLDialect> SUPPORTS_QUANTIFIED_ARRAYS =
       SQLDialect.supportedBy(POSTGRES);
 
   private final QuantifiedSelectImpl<?> query;
+
   private final Field<?> field;
+
   private final Comparator comparator;
+
   private Character escape;
 
   QuantifiedComparisonCondition(QuantifiedSelect<?> query, Field<?> field, Comparator comparator) {
@@ -110,13 +116,11 @@ final class QuantifiedComparisonCondition extends AbstractCondition implements L
   @Override
   public final void accept(Context<?> ctx) {
     SelectQueryImpl<?> s;
-
     if (field.getDataType().isEmbeddable()) {
       ctx.visit(row(embeddedFields(field)).compare(comparator, query));
     } else if ((comparator == EQUALS || comparator == NOT_EQUALS)
         && (s = subqueryWithLimit(query.query)) != null
         && transformInConditionSubqueryWithLimitToDerivedTable(ctx.configuration())) {
-
     } else accept0(ctx);
   }
 
@@ -124,7 +128,6 @@ final class QuantifiedComparisonCondition extends AbstractCondition implements L
   private final void accept0(Context<?> ctx) {
     boolean quantifiedArray = query.array instanceof Param<?>;
     boolean emulateOperator;
-
     switch (comparator) {
       case LIKE:
       case NOT_LIKE:
@@ -141,9 +144,8 @@ final class QuantifiedComparisonCondition extends AbstractCondition implements L
         emulateOperator = false;
         break;
     }
-
     // [#9224] Special case when a SQL dialect actually supports quantified
-    //         arrays, such as x = any(?::int[]) in PostgreSQL
+    // arrays, such as x = any(?::int[]) in PostgreSQL
     if (quantifiedArray && SUPPORTS_QUANTIFIED_ARRAYS.contains(ctx.dialect()) && !emulateOperator) {
       accept1(ctx);
     } else if (query.values != null || quantifiedArray) {
@@ -178,7 +180,6 @@ final class QuantifiedComparisonCondition extends AbstractCondition implements L
         default:
           throw new IllegalStateException();
       }
-
       Table<?> t =
           query.array != null
               ? new ArrayTable(query.array).asTable("t", "pattern")
@@ -194,7 +195,6 @@ final class QuantifiedComparisonCondition extends AbstractCondition implements L
     switch (ctx.family()) {
       default:
         ctx.visit(field).sql(' ').visit(comparator.toKeyword()).sql(' ').visit(query);
-
         break;
     }
   }
@@ -243,24 +243,18 @@ final class QuantifiedComparisonCondition extends AbstractCondition implements L
     switch (operator) {
       case LIKE:
         return escape != null ? field.like(value, escape) : field.like(value);
-
       case NOT_LIKE:
         return escape != null ? field.notLike(value, escape) : field.notLike(value);
-
       case SIMILAR_TO:
         return escape != null ? field.similarTo(value, escape) : field.similarTo(value);
-
       case NOT_SIMILAR_TO:
         return escape != null ? field.notSimilarTo(value, escape) : field.notSimilarTo(value);
-
       case LIKE_IGNORE_CASE:
         return escape != null ? field.likeIgnoreCase(value, escape) : field.likeIgnoreCase(value);
-
       case NOT_LIKE_IGNORE_CASE:
         return escape != null
             ? field.notLikeIgnoreCase(value, escape)
             : field.notLikeIgnoreCase(value);
-
       default:
         return ((Field) field).compare(operator, value);
     }
@@ -273,32 +267,26 @@ final class QuantifiedComparisonCondition extends AbstractCondition implements L
         return escape != null
             ? field.like(convert(value, String.class), escape)
             : field.like(convert(value, String.class));
-
       case NOT_LIKE:
         return escape != null
             ? field.notLike(convert(value, String.class), escape)
             : field.notLike(convert(value, String.class));
-
       case SIMILAR_TO:
         return escape != null
             ? field.similarTo(convert(value, String.class), escape)
             : field.similarTo(convert(value, String.class));
-
       case NOT_SIMILAR_TO:
         return escape != null
             ? field.notSimilarTo(convert(value, String.class), escape)
             : field.notSimilarTo(convert(value, String.class));
-
       case LIKE_IGNORE_CASE:
         return escape != null
             ? field.likeIgnoreCase(convert(value, String.class), escape)
             : field.likeIgnoreCase(convert(value, String.class));
-
       case NOT_LIKE_IGNORE_CASE:
         return escape != null
             ? field.notLikeIgnoreCase(convert(value, String.class), escape)
             : field.notLikeIgnoreCase(convert(value, String.class));
-
       default:
         return ((Field) field).compare(operator, value);
     }

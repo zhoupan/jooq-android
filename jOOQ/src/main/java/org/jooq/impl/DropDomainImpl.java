@@ -59,7 +59,9 @@ final class DropDomainImpl extends AbstractDDLQuery
     implements DropDomainCascadeStep, DropDomainFinalStep {
 
   private final Domain<?> domain;
+
   private final boolean dropDomainIfExists;
+
   private Cascade cascade;
 
   DropDomainImpl(Configuration configuration, Domain<?> domain, boolean dropDomainIfExists) {
@@ -69,7 +71,6 @@ final class DropDomainImpl extends AbstractDDLQuery
   DropDomainImpl(
       Configuration configuration, Domain<?> domain, boolean dropDomainIfExists, Cascade cascade) {
     super(configuration);
-
     this.domain = domain;
     this.dropDomainIfExists = dropDomainIfExists;
     this.cascade = cascade;
@@ -90,7 +91,6 @@ final class DropDomainImpl extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: DSL API
   // -------------------------------------------------------------------------
-
   @Override
   public final DropDomainImpl cascade() {
     this.cascade = Cascade.CASCADE;
@@ -106,7 +106,6 @@ final class DropDomainImpl extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Set<SQLDialect> NO_SUPPORT_IF_EXISTS = SQLDialect.supportedBy(FIREBIRD);
 
   private final boolean supportsIfExists(Context<?> ctx) {
@@ -126,9 +125,7 @@ final class DropDomainImpl extends AbstractDDLQuery
         ctx.visit(K_DROP).sql(' ').visit(K_DOMAIN);
         break;
     }
-
     if (dropDomainIfExists && supportsIfExists(ctx)) ctx.sql(' ').visit(K_IF_EXISTS);
-
     ctx.sql(' ').visit(domain);
     acceptCascade(ctx, cascade);
   }

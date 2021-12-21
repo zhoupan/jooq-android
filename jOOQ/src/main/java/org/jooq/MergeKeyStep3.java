@@ -58,7 +58,6 @@ import org.jetbrains.annotations.NotNull;
  * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
  *     DSLContext#mergeInto(Table)}
  */
-@Deprecated(forRemoval = true, since = "3.14")
 public interface MergeKeyStep3<R extends Record, T1, T2, T3>
     extends MergeValuesStep3<R, T1, T2, T3> {
 
@@ -70,7 +69,6 @@ public interface MergeKeyStep3<R extends Record, T1, T2, T3>
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     DSLContext#mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, POSTGRES})
@@ -84,7 +82,6 @@ public interface MergeKeyStep3<R extends Record, T1, T2, T3>
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     DSLContext#mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, POSTGRES})

@@ -57,46 +57,38 @@ public class JSONValue {
       out.write("null");
       return;
     }
-
     if (value instanceof String) {
       out.write('\"');
       out.write(escape((String) value));
       out.write('\"');
       return;
     }
-
     if (value instanceof Double) {
       if (((Double) value).isInfinite() || ((Double) value).isNaN()) out.write("null");
       else out.write(value.toString());
       return;
     }
-
     if (value instanceof Float) {
       if (((Float) value).isInfinite() || ((Float) value).isNaN()) out.write("null");
       else out.write(value.toString());
       return;
     }
-
     if (value instanceof Number) {
       out.write(value.toString());
       return;
     }
-
     if (value instanceof Boolean) {
       out.write(value.toString());
       return;
     }
-
     if (value instanceof Map) {
       JSONObject.writeJSONString((Map<?, ?>) value, out);
       return;
     }
-
     if (value instanceof List) {
       JSONArray.writeJSONString((List<?>) value, out);
       return;
     }
-
     // Patched original according to issue 27 of JSON-simple
     // http://code.google.com/p/json-simple/issues/detail?id=27
     out.write('\"');
@@ -113,27 +105,19 @@ public class JSONValue {
    */
   public static String toJSONString(Object value) {
     if (value == null) return "null";
-
     if (value instanceof String) return "\"" + escape((String) value) + "\"";
-
     if (value instanceof Double) {
       if (((Double) value).isInfinite() || ((Double) value).isNaN()) return "null";
       else return value.toString();
     }
-
     if (value instanceof Float) {
       if (((Float) value).isInfinite() || ((Float) value).isNaN()) return "null";
       else return value.toString();
     }
-
     if (value instanceof Number) return value.toString();
-
     if (value instanceof Boolean) return value.toString();
-
     if (value instanceof Map) return JSONObject.toJSONString((Map<?, ?>) value);
-
     if (value instanceof List) return JSONArray.toJSONString((List<?>) value);
-
     // Patched original according to issue 27 of JSON-simple
     // http://code.google.com/p/json-simple/issues/detail?id=27
     return "\"" + escape(value.toString()) + "\"";
@@ -193,7 +177,8 @@ public class JSONValue {
             sb.append(ch);
           }
       }
-    } // for
+    }
+    // for
   }
 
   /**

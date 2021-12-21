@@ -58,12 +58,13 @@ import org.jooq.tools.*;
 final class Substring extends AbstractField<String> {
 
   private final Field<String> string;
+
   private final Field<? extends Number> startingPosition;
+
   private final Field<? extends Number> length;
 
   Substring(Field<String> string, Field<? extends Number> startingPosition) {
     super(N_SUBSTRING, allNotNull(VARCHAR, string, startingPosition));
-
     this.string = nullSafeNotNull(string, VARCHAR);
     this.startingPosition = nullSafeNotNull(startingPosition, INTEGER);
     this.length = null;
@@ -74,7 +75,6 @@ final class Substring extends AbstractField<String> {
       Field<? extends Number> startingPosition,
       Field<? extends Number> length) {
     super(N_SUBSTRING, allNotNull(VARCHAR, string, startingPosition, length));
-
     this.string = nullSafeNotNull(string, VARCHAR);
     this.startingPosition = nullSafeNotNull(startingPosition, INTEGER);
     this.length = nullSafeNotNull(length, INTEGER);
@@ -83,15 +83,11 @@ final class Substring extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     Name functionName = N_SUBSTRING;
-
     switch (ctx.family()) {
-
         // [#430] These databases use SQL standard syntax
-
       case FIREBIRD:
         {
           if (length == null)
@@ -116,16 +112,13 @@ final class Substring extends AbstractField<String> {
                 .sql(' ')
                 .visit(length)
                 .sql(')');
-
           return;
         }
-
       case DERBY:
       case SQLITE:
         functionName = N_SUBSTR;
         break;
     }
-
     if (length == null) ctx.visit(function(functionName, getDataType(), string, startingPosition));
     else ctx.visit(function(functionName, getDataType(), string, startingPosition, length));
   }
@@ -133,7 +126,6 @@ final class Substring extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Substring) {

@@ -60,14 +60,12 @@ abstract class AbstractQualifiedRecord<R extends QualifiedRecord<R>> extends Abs
 
   public AbstractQualifiedRecord(RecordQualifier<R> qualifier) {
     super((AbstractRow) qualifier.fieldsRow());
-
     this.qualifier = qualifier;
   }
 
   // -------------------------------------------------------------------------
   // XXX: QualifiedRecord API
   // -------------------------------------------------------------------------
-
   @Override
   public final RecordQualifier<R> getQualifier() {
     return qualifier;
@@ -104,10 +102,8 @@ abstract class AbstractQualifiedRecord<R extends QualifiedRecord<R>> extends Abs
   // -------------------------------------------------------------------------
   // XXX: SQLData API
   // -------------------------------------------------------------------------
-
   @Override
   public final String getSQLTypeName() throws SQLException {
-
     // [#1693] This needs to return the fully qualified SQL type name, in
     // case the connected user is not the owner of the UDT
     return getMappedUDTName(localScope(), this);
@@ -118,7 +114,6 @@ abstract class AbstractQualifiedRecord<R extends QualifiedRecord<R>> extends Abs
   public final void readSQL(SQLInput stream, String typeName) throws SQLException {
     Scope scope = localScope();
     Field<?>[] f = getQualifier().fields();
-
     for (int i = 0; i < f.length; i++) {
       Field field = f[i];
       DefaultBindingGetSQLInputContext out =
@@ -133,7 +128,6 @@ abstract class AbstractQualifiedRecord<R extends QualifiedRecord<R>> extends Abs
   public final void writeSQL(SQLOutput stream) throws SQLException {
     Scope scope = localScope();
     Field<?>[] f = getQualifier().fields();
-
     for (int i = 0; i < f.length; i++)
       f[i].getBinding()
           .set(

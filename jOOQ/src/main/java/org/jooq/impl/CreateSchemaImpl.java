@@ -58,11 +58,11 @@ import org.jooq.tools.*;
 final class CreateSchemaImpl extends AbstractDDLQuery implements CreateSchemaFinalStep {
 
   private final Schema schema;
+
   private final boolean createSchemaIfNotExists;
 
   CreateSchemaImpl(Configuration configuration, Schema schema, boolean createSchemaIfNotExists) {
     super(configuration);
-
     this.schema = schema;
     this.createSchemaIfNotExists = createSchemaIfNotExists;
   }
@@ -78,8 +78,8 @@ final class CreateSchemaImpl extends AbstractDDLQuery implements CreateSchemaFin
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Clause[] CLAUSES = {Clause.CREATE_SCHEMA};
+
   private static final Set<SQLDialect> NO_SUPPORT_IF_NOT_EXISTS =
       SQLDialect.supportedBy(DERBY, FIREBIRD);
 
@@ -89,7 +89,6 @@ final class CreateSchemaImpl extends AbstractDDLQuery implements CreateSchemaFin
 
   @Override
   public final void accept(Context<?> ctx) {
-
     accept0(ctx);
   }
 
@@ -100,17 +99,13 @@ final class CreateSchemaImpl extends AbstractDDLQuery implements CreateSchemaFin
   }
 
   private final void accept1(Context<?> ctx) {
-
     accept2(ctx);
   }
 
   private final void accept2(Context<?> ctx) {
     ctx.start(Clause.CREATE_SCHEMA_NAME).visit(K_CREATE);
-
     ctx.sql(' ').visit(K_SCHEMA);
-
     if (createSchemaIfNotExists && supportsIfNotExists(ctx)) ctx.sql(' ').visit(K_IF_NOT_EXISTS);
-
     ctx.sql(' ').visit(schema).end(Clause.CREATE_SCHEMA_NAME);
   }
 

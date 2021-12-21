@@ -73,9 +73,13 @@ import org.jooq.exception.MappingException;
 public class DefaultRecordUnmapper<E, R extends Record> implements RecordUnmapper<E, R> {
 
   private final Class<? extends E> type;
+
   private final RecordType<R> rowType;
+
   private final Field<?>[] fields;
+
   private final Configuration configuration;
+
   private RecordUnmapper<E, R> delegate;
 
   public DefaultRecordUnmapper(
@@ -84,7 +88,6 @@ public class DefaultRecordUnmapper<E, R extends Record> implements RecordUnmappe
     this.rowType = rowType;
     this.fields = rowType.fields();
     this.configuration = configuration;
-
     init();
   }
 
@@ -107,9 +110,7 @@ public class DefaultRecordUnmapper<E, R extends Record> implements RecordUnmappe
   private static final void setValue(
       Record record, Object source, java.lang.reflect.Field member, Field<?> field)
       throws IllegalAccessException {
-
     Class<?> mType = member.getType();
-
     if (mType.isPrimitive()) {
       if (mType == byte.class) Tools.setValue(record, field, member.getByte(source));
       else if (mType == short.class) Tools.setValue(record, field, member.getShort(source));
@@ -128,21 +129,16 @@ public class DefaultRecordUnmapper<E, R extends Record> implements RecordUnmappe
     @Override
     public final R unmap(E source) {
       if (source == null) return null;
-
       if (source instanceof Object[]) {
         Object[] array = (Object[]) source;
         int size = rowType.size();
         Record record = newRecord();
-
         for (int i = 0; i < size && i < array.length; i++) {
           Field field = rowType.field(i);
-
           if (rowType.field(field) != null) Tools.setValue(record, field, array[i]);
         }
-
         return (R) record;
       }
-
       throw new MappingException("Object[] expected. Got: " + source.getClass());
     }
   }
@@ -153,21 +149,16 @@ public class DefaultRecordUnmapper<E, R extends Record> implements RecordUnmappe
     @Override
     public final R unmap(E source) {
       if (source == null) return null;
-
       if (source instanceof Iterable) {
         Iterator<?> it = ((Iterable<?>) source).iterator();
         int size = rowType.size();
         Record record = newRecord();
-
         for (int i = 0; i < size && it.hasNext(); i++) {
           Field field = rowType.field(i);
-
           if (rowType.field(field) != null) Tools.setValue(record, field, it.next());
         }
-
         return (R) record;
       }
-
       throw new MappingException("Iterable expected. Got: " + source.getClass());
     }
   }
@@ -178,23 +169,18 @@ public class DefaultRecordUnmapper<E, R extends Record> implements RecordUnmappe
     @Override
     public R unmap(E source) {
       if (source == null) return null;
-
       // [#1987] Distinguish between various types to load data from
       // Maps are loaded using a {field-name -> value} convention
       if (source instanceof Map) {
         Map<?, ?> map = (Map<?, ?>) source;
         Record record = newRecord();
-
         for (int i = 0; i < fields.length; i++) {
           String name = fields[i].getName();
-
           // Set only those values contained in the map
           if (map.containsKey(name)) Tools.setValue(record, fields[i], map.get(name));
         }
-
         return (R) record;
       }
-
       throw new MappingException("Map expected. Got: " + source.getClass());
     }
   }
@@ -205,37 +191,27 @@ public class DefaultRecordUnmapper<E, R extends Record> implements RecordUnmappe
     @Override
     public R unmap(E source) {
       if (source == null) return null;
-
       Record record = newRecord();
-
       try {
         boolean useAnnotations = hasColumnAnnotations(configuration, type);
-
         for (Field<?> field : fields) {
           List<java.lang.reflect.Field> members;
           Method method;
-
           // Annotations are available and present
           if (useAnnotations) {
             members = getAnnotatedMembers(configuration, type, field.getName(), true);
             method = getAnnotatedGetter(configuration, type, field.getName(), true);
-          }
-
-          // No annotations are present
-          else {
+          } else // No annotations are present
+          {
             members = getMatchingMembers(configuration, type, field.getName(), true);
             method = getMatchingGetter(configuration, type, field.getName(), true);
           }
-
           // Use only the first applicable method or member
           if (method != null) Tools.setValue(record, field, method.invoke(source));
           else if (members.size() > 0) setValue(record, source, members.get(0), field);
         }
-
         return (R) record;
-      }
-
-      // All reflection exceptions are intercepted
+      } // All reflection exceptions are intercepted
       catch (Exception e) {
         throw new MappingException("An error ocurred when mapping record from " + type, e);
       }

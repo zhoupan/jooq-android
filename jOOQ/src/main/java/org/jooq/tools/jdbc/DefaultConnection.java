@@ -332,7 +332,6 @@ public class DefaultConnection extends JDBC41Connection implements Connection {
   // ------------------------------------------------------------------------
   // JDBC 4.1
   // ------------------------------------------------------------------------
-
   @Override
   public void setSchema(String s) throws SQLException {
     getDelegate().setSchema(s);
@@ -361,7 +360,6 @@ public class DefaultConnection extends JDBC41Connection implements Connection {
   // ------------------------------------------------------------------------
   // JDBC 4.3
   // ------------------------------------------------------------------------
-
   @Override
   public void beginRequest() throws SQLException {
     getDelegate().beginRequest();

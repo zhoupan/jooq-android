@@ -60,7 +60,9 @@ import org.jooq.SQLDialect;
 
 /** @author Lukas Eder */
 final class RowInCondition extends AbstractCondition {
+
   private static final Clause[] CLAUSES_IN = {CONDITION, CONDITION_IN};
+
   private static final Clause[] CLAUSES_IN_NOT = {CONDITION, CONDITION_NOT_IN};
 
   // Currently not yet supported in SQLite:
@@ -68,7 +70,9 @@ final class RowInCondition extends AbstractCondition {
   private static final Set<SQLDialect> EMULATE_IN = SQLDialect.supportedBy(DERBY, FIREBIRD, SQLITE);
 
   private final Row left;
+
   private final QueryPartList<? extends Row> right;
+
   private final boolean not;
 
   RowInCondition(Row left, QueryPartList<? extends Row> right, boolean not) {
@@ -81,9 +85,7 @@ final class RowInCondition extends AbstractCondition {
   public final void accept(Context<?> ctx) {
     if (EMULATE_IN.contains(ctx.dialect())) {
       Condition result = DSL.or(map(right, r -> new RowCondition(left, r, EQUALS)));
-
       if (not) result = result.not();
-
       ctx.visit(result);
     } else {
       if (right.size() == 0) {
@@ -100,7 +102,8 @@ final class RowInCondition extends AbstractCondition {
     }
   }
 
-  @Override // Avoid AbstractCondition implementation
+  // Avoid AbstractCondition implementation
+  @Override
   public final Clause[] clauses(Context<?> ctx) {
     return null;
   }

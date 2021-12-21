@@ -61,24 +61,20 @@ final class Xmlcomment extends AbstractField<XML> {
 
   Xmlcomment(Field<String> comment) {
     super(N_XMLCOMMENT, allNotNull(XML, comment));
-
     this.comment = nullSafeNotNull(comment, VARCHAR);
   }
 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
-
     ctx.visit(N_XMLCOMMENT).sql('(').visit(comment).sql(')');
   }
 
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Xmlcomment) {

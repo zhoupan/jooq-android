@@ -347,7 +347,6 @@ public interface SelectSeekStep4<R extends Record, T1, T2, T3, T4> extends Selec
    *     href="http://blog.jooq.org/2013/10/26/faster-sql-paging-with-jooq-using-the-seek-method/">http://blog.jooq.org/2013/10/26/faster-sql-paging-with-jooq-using-the-seek-method</a>
    * @deprecated - [#7461] - SEEK BEFORE is not implemented correctly
    */
-  @Deprecated
   @NotNull
   @CheckReturnValue
   @Support
@@ -402,7 +401,6 @@ public interface SelectSeekStep4<R extends Record, T1, T2, T3, T4> extends Selec
    *     href="http://blog.jooq.org/2013/10/26/faster-sql-paging-with-jooq-using-the-seek-method/">http://blog.jooq.org/2013/10/26/faster-sql-paging-with-jooq-using-the-seek-method</a>
    * @deprecated - [#7461] - SEEK BEFORE is not implemented correctly
    */
-  @Deprecated
   @NotNull
   @CheckReturnValue
   @Support

@@ -58,7 +58,9 @@ import org.jooq.tools.LoggerListener;
  * @author Lukas Eder
  */
 final class ExecuteListeners implements ExecuteListener {
+
   private static final ExecuteListener EMPTY_LISTENER = new DefaultExecuteListener();
+
   private static final JooqLogger LOGGER_LISTENER_LOGGER =
       JooqLogger.getLogger(LoggerListener.class);
 
@@ -68,12 +70,12 @@ final class ExecuteListeners implements ExecuteListener {
   // Cursor. Postpone fetchEnd event until after resultEnd event, if there is
   // an open Result
   private boolean resultStart;
+
   private boolean fetchEnd;
 
   /** Initialise the provided {@link ExecuteListener} set and return a wrapper. */
   static ExecuteListener get(ExecuteContext ctx) {
     ExecuteListener[][] listeners = listeners(ctx);
-
     if (listeners == null) return EMPTY_LISTENER;
     else return new ExecuteListeners(listeners);
   }
@@ -93,34 +95,25 @@ final class ExecuteListeners implements ExecuteListener {
   /** Provide delegate listeners from an <code>ExecuteContext</code> */
   private static final ExecuteListener[][] listeners(ExecuteContext ctx) {
     List<ExecuteListener> list = null;
-
     // jOOQ-internal listeners are added first, so their results are available to user-defined
     // listeners
     // -------------------------------------------------------------------------------------------------
-
     // [#6580] Fetching server output may require some pre / post actions around the actual
     // statement
     if (SettingsTools.getFetchServerOutputSize(0, ctx.settings()) > 0)
       (list = init(list)).add(new FetchServerOutputListener());
-
     // [#6051] The previously used StopWatchListener is no longer included by default
     if (!FALSE.equals(ctx.settings().isExecuteLogging())) {
-
       // [#6747] Avoid allocating the listener (and by consequence, the ExecuteListeners) if
-      //         we do not DEBUG log anyway.
+      // we do not DEBUG log anyway.
       if (LOGGER_LISTENER_LOGGER.isDebugEnabled()) (list = init(list)).add(new LoggerListener());
     }
-
-    for (ExecuteListenerProvider provider : ctx.configuration().executeListenerProviders())
-
-      // Could be null after deserialisation
-      if (provider != null) (list = init(list)).add(provider.provide());
-
+    for (ExecuteListenerProvider provider :
+        ctx.configuration().executeListenerProviders()) // Could be null after deserialisation
+    if (provider != null) (list = init(list)).add(provider.provide());
     if (list == null) return null;
-
     ExecuteListener[] def = list.toArray(EMPTY_EXECUTE_LISTENER);
     ExecuteListener[] rev = null;
-
     return new ExecuteListener[][] {
       ctx.settings().getExecuteListenerStartInvocationOrder() != REVERSE
           ? def
@@ -178,7 +171,6 @@ final class ExecuteListeners implements ExecuteListener {
   public final void executeStart(ExecuteContext ctx) {
     if (ctx instanceof DefaultExecuteContext)
       ((DefaultExecuteContext) ctx).incrementStatementExecutionCount();
-
     for (ExecuteListener listener : listeners[0]) listener.executeStart(ctx);
   }
 
@@ -205,7 +197,6 @@ final class ExecuteListeners implements ExecuteListener {
   @Override
   public final void resultStart(ExecuteContext ctx) {
     resultStart = true;
-
     for (ExecuteListener listener : listeners[0]) listener.resultStart(ctx);
   }
 
@@ -222,9 +213,7 @@ final class ExecuteListeners implements ExecuteListener {
   @Override
   public final void resultEnd(ExecuteContext ctx) {
     resultStart = false;
-
     for (ExecuteListener listener : listeners[1]) listener.resultEnd(ctx);
-
     if (fetchEnd) fetchEnd(ctx);
   }
 

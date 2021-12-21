@@ -618,7 +618,6 @@ public class Settings extends SettingsBase implements Serializable, Cloneable, X
    * @deprecated - 3.12.0 - [#5909] - Use {@link RenderQuotedNames} and {@link RenderNameCase}
    *     instead.
    */
-  @Deprecated
   public RenderNameStyle getRenderNameStyle() {
     return renderNameStyle;
   }
@@ -634,7 +633,6 @@ public class Settings extends SettingsBase implements Serializable, Cloneable, X
    * @deprecated - 3.12.0 - [#5909] - Use {@link RenderQuotedNames} and {@link RenderNameCase}
    *     instead.
    */
-  @Deprecated
   public void setRenderNameStyle(RenderNameStyle value) {
     this.renderNameStyle = value;
   }
@@ -688,7 +686,6 @@ public class Settings extends SettingsBase implements Serializable, Cloneable, X
    *
    * @deprecated - 3.12.0 - [#5909] - Use {@link RenderKeywordCase} instead.
    */
-  @Deprecated
   public RenderKeywordStyle getRenderKeywordStyle() {
     return renderKeywordStyle;
   }
@@ -700,7 +697,6 @@ public class Settings extends SettingsBase implements Serializable, Cloneable, X
    *
    * @deprecated - 3.12.0 - [#5909] - Use {@link RenderKeywordCase} instead.
    */
-  @Deprecated
   public void setRenderKeywordStyle(RenderKeywordStyle value) {
     this.renderKeywordStyle = value;
   }
@@ -2792,7 +2788,6 @@ public class Settings extends SettingsBase implements Serializable, Cloneable, X
    * @deprecated - 3.12.0 - [#5909] - Use {@link RenderQuotedNames} and {@link RenderNameCase}
    *     instead.
    */
-  @Deprecated
   public Settings withRenderNameStyle(RenderNameStyle value) {
     setRenderNameStyle(value);
     return this;
@@ -2828,7 +2823,6 @@ public class Settings extends SettingsBase implements Serializable, Cloneable, X
    *
    * @deprecated - 3.12.0 - [#5909] - Use {@link RenderKeywordCase} instead.
    */
-  @Deprecated
   public Settings withRenderKeywordStyle(RenderKeywordStyle value) {
     setRenderKeywordStyle(value);
     return this;

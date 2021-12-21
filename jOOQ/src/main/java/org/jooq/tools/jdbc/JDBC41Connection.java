@@ -51,7 +51,6 @@ import java.util.concurrent.Executor;
  * @deprecated - 3.15.0 - [#11618] - This type is no longer used by jOOQ and will be removed in the
  *     future.
  */
-@Deprecated
 public abstract class JDBC41Connection {
 
   // JDBC 4.1 compliance: @Override

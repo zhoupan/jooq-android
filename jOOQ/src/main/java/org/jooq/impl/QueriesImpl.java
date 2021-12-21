@@ -62,14 +62,12 @@ final class QueriesImpl extends AbstractAttachableQueryPart implements Queries {
 
   QueriesImpl(Configuration configuration, Collection<? extends Query> queries) {
     super(configuration);
-
     this.queries = queries;
   }
 
   // ------------------------------------------------------------------------
   // Access API
   // ------------------------------------------------------------------------
-
   @Override
   public final Queries concat(Queries other) {
     Query[] array = other.queries();
@@ -109,18 +107,15 @@ final class QueriesImpl extends AbstractAttachableQueryPart implements Queries {
   // ------------------------------------------------------------------------
   // Execution API
   // ------------------------------------------------------------------------
-
   @Override
   public final Results fetchMany() {
     Configuration c = configurationOrThrow();
     ResultsImpl results = new ResultsImpl(c);
     DSLContext ctx = c.dsl();
-
     for (Query query : this)
       if (query instanceof ResultQuery)
         results.resultsOrRows.addAll(ctx.fetchMany((ResultQuery<?>) query).resultsOrRows());
       else results.resultsOrRows.add(new ResultOrRowsImpl(ctx.execute(query)));
-
     return results;
   }
 
@@ -132,15 +127,12 @@ final class QueriesImpl extends AbstractAttachableQueryPart implements Queries {
   // ------------------------------------------------------------------------
   // QueryPart API
   // ------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     boolean first = true;
-
     for (Query query : this) {
       if (first) first = false;
       else ctx.formatSeparator();
-
       ctx.visit(query).sql(';');
     }
   }
@@ -148,7 +140,6 @@ final class QueriesImpl extends AbstractAttachableQueryPart implements Queries {
   // ------------------------------------------------------------------------
   // Object API
   // ------------------------------------------------------------------------
-
   @Override
   public int hashCode() {
     return queries.hashCode();
@@ -157,9 +148,7 @@ final class QueriesImpl extends AbstractAttachableQueryPart implements Queries {
   @Override
   public boolean equals(Object obj) {
     if (this == obj) return true;
-
     if (!(obj instanceof QueriesImpl)) return false;
-
     return queries.equals(((QueriesImpl) obj).queries);
   }
 }

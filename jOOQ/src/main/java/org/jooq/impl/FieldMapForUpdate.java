@@ -58,11 +58,14 @@ import org.jooq.Table;
 
 /** @author Lukas Eder */
 final class FieldMapForUpdate extends AbstractQueryPartMap<Field<?>, Field<?>> {
+
   private static final Set<SQLDialect> CASTS_NEEDED = SQLDialect.supportedBy(POSTGRES);
+
   private static final Set<SQLDialect> NO_SUPPORT_QUALIFY =
       SQLDialect.supportedBy(POSTGRES, SQLITE);
 
   private final Table<?> table;
+
   private final Clause assignmentClause;
 
   FieldMapForUpdate(Table<?> table, Clause assignmentClause) {
@@ -75,39 +78,30 @@ final class FieldMapForUpdate extends AbstractQueryPartMap<Field<?>, Field<?>> {
   public final void accept(Context<?> ctx) {
     if (size() > 0) {
       String separator = "";
-
       // [#989] Some dialects do not support qualified column references
       // in the UPDATE statement's SET clause
-
       // [#2055] Other dialects require qualified column references to
       // disambiguated columns in queries like
       // UPDATE t1 JOIN t2 .. SET t1.val = ..., t2.val = ...
       boolean supportsQualify = !NO_SUPPORT_QUALIFY.contains(ctx.dialect()) && ctx.qualify();
-
       // [#2823] [#10034] Few dialects need bind value casts for UPDATE .. SET
-      //                  Some regressions have been observed e.g. in PostgreSQL with JSON types, so
-      // let's be careful.
+      // Some regressions have been observed e.g. in PostgreSQL with JSON types, so let's be
+      // careful.
       CastMode previous = ctx.castMode();
       if (!CASTS_NEEDED.contains(ctx.dialect())) ctx.castMode(CastMode.NEVER);
-
       for (Entry<Field<?>, Field<?>> entry : flattenEntrySet(entrySet(), true)) {
         if (!"".equals(separator)) ctx.sql(separator).formatSeparator();
-
         ctx.start(assignmentClause)
             .qualify(supportsQualify, c -> c.visit(entry.getKey()))
             .sql(" = ");
-
         // [#8479] Emulate WHERE clause using CASE
         Condition condition = (Condition) ctx.data(DATA_ON_DUPLICATE_KEY_WHERE);
         if (condition != null)
           ctx.visit(when(condition, (Field) entry.getValue()).else_(entry.getKey()));
         else ctx.visit(entry.getValue());
-
         ctx.end(assignmentClause);
-
         separator = ",";
       }
-
       if (!CASTS_NEEDED.contains(ctx.dialect())) ctx.castMode(previous);
     } else {
       ctx.sql("[ no fields are updated ]");

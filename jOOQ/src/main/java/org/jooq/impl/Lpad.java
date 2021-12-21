@@ -58,12 +58,13 @@ import org.jooq.tools.*;
 final class Lpad extends AbstractField<String> {
 
   private final Field<String> string;
+
   private final Field<? extends Number> length;
+
   private final Field<String> character;
 
   Lpad(Field<String> string, Field<? extends Number> length) {
     super(N_LPAD, allNotNull(VARCHAR, string, length));
-
     this.string = nullSafeNotNull(string, VARCHAR);
     this.length = nullSafeNotNull(length, INTEGER);
     this.character = null;
@@ -71,7 +72,6 @@ final class Lpad extends AbstractField<String> {
 
   Lpad(Field<String> string, Field<? extends Number> length, Field<String> character) {
     super(N_LPAD, allNotNull(VARCHAR, string, length, character));
-
     this.string = nullSafeNotNull(string, VARCHAR);
     this.length = nullSafeNotNull(length, INTEGER);
     this.character = nullSafeNotNull(character, VARCHAR);
@@ -80,7 +80,6 @@ final class Lpad extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private final Field<String> character() {
     return character == null ? inline(" ") : character;
   }
@@ -88,7 +87,6 @@ final class Lpad extends AbstractField<String> {
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
-
         // This beautiful expression was contributed by "Ludo", here:
         // http://stackoverflow.com/questions/6576343/how-to-simulate-lpad-rpad-with-sqlite
       case SQLITE:
@@ -112,7 +110,6 @@ final class Lpad extends AbstractField<String> {
             .sql(")) || ")
             .visit(string);
         break;
-
       default:
         ctx.visit(function(N_LPAD, getDataType(), string, length, character()));
         break;
@@ -122,7 +119,6 @@ final class Lpad extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Lpad) {

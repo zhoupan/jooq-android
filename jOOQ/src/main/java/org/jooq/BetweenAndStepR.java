@@ -69,11 +69,10 @@ public interface BetweenAndStepR<R extends Record> {
   @NotNull
   @Support
   Condition and(R value);
-
-  //    TODO: Support this
-  //    /**
-  //     * Create a condition to check this field against some bounds.
-  //     */
-  //    @Support
-  //    Condition and(Select<? extends R> query);
+  // TODO: Support this
+  // /**
+  // * Create a condition to check this field against some bounds.
+  // */
+  // @Support
+  // Condition and(Select<? extends R> query);
 }

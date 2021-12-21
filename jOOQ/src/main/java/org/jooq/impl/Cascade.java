@@ -42,5 +42,5 @@ import org.jooq.*;
 /** The <code>Cascade</code>. */
 enum Cascade {
   CASCADE,
-  RESTRICT,
+  RESTRICT
 }

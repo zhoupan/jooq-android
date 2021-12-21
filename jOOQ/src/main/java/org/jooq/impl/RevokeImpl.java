@@ -59,9 +59,13 @@ final class RevokeImpl extends AbstractDDLQuery
     implements RevokeOnStep, RevokeFromStep, RevokeFinalStep {
 
   private final Collection<? extends Privilege> privileges;
+
   private final boolean revokeGrantOptionFor;
+
   private Table<?> on;
+
   private Role from;
+
   private Boolean fromPublic;
 
   RevokeImpl(
@@ -79,7 +83,6 @@ final class RevokeImpl extends AbstractDDLQuery
       Role from,
       Boolean fromPublic) {
     super(configuration);
-
     this.privileges = privileges;
     this.revokeGrantOptionFor = revokeGrantOptionFor;
     this.on = on;
@@ -110,7 +113,6 @@ final class RevokeImpl extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: DSL API
   // -------------------------------------------------------------------------
-
   @Override
   public final RevokeImpl on(String on) {
     return on(DSL.table(DSL.name(on)));
@@ -147,15 +149,12 @@ final class RevokeImpl extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Clause[] CLAUSE = {Clause.REVOKE};
 
   @Override
   public final void accept(Context<?> ctx) {
     ctx.start(Clause.REVOKE_PRIVILEGE).visit(K_REVOKE).sql(' ');
-
     if (revokeGrantOptionFor) ctx.visit(K_GRANT_OPTION_FOR).sql(' ');
-
     ctx.visit(QueryPartCollectionView.wrap(privileges))
         .end(Clause.REVOKE_PRIVILEGE)
         .sql(' ')
@@ -168,12 +167,9 @@ final class RevokeImpl extends AbstractDDLQuery
         .start(Clause.REVOKE_FROM)
         .visit(K_FROM)
         .sql(' ');
-
     if (from != null) ctx.visit(from);
     else if (Boolean.TRUE.equals(fromPublic)) ctx.visit(K_PUBLIC);
-
     if (ctx.family() == HSQLDB) ctx.sql(' ').visit(K_RESTRICT);
-
     ctx.end(Clause.REVOKE_FROM);
   }
 

@@ -72,7 +72,6 @@ public class Converters<T, U> extends AbstractConverter<T, U> {
    * @deprecated - [#10689] - 3.14.0 - This converter does not work. Do not use this method, use
    *     {@link #identity(Class)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   public static <T, U> Converter<T, U> of() {
     return new Converters();
@@ -84,7 +83,6 @@ public class Converters<T, U> extends AbstractConverter<T, U> {
    * @deprecated - [#10689] - 3.14.0 - This method does not provide any useful functionality and
    *     will be removed in the future.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   public static <T, U> Converter<T, U> of(Converter<T, U> converter) {
     return new Converters(converter);
@@ -118,7 +116,6 @@ public class Converters<T, U> extends AbstractConverter<T, U> {
 
   /** Inverse a converter. */
   public static <T, U> Converter<U, T> inverse(final Converter<T, U> converter) {
-
     // [#11099] Allow instanceof checks on IdentityConverter for performance reasons
     if (converter instanceof IdentityConverter) return (Converter<U, T>) converter;
     else
@@ -161,25 +158,20 @@ public class Converters<T, U> extends AbstractConverter<T, U> {
 
   Converters(Converter... chain) {
     super(chain[0].fromType(), chain[chain.length - 1].toType());
-
     this.chain = chain;
   }
 
   @Override
   public final U from(T t) {
     Object result = t;
-
     for (int i = 0; i < chain.length; i++) result = chain[i].from(result);
-
     return (U) result;
   }
 
   @Override
   public final T to(U u) {
     Object result = u;
-
     for (int i = chain.length - 1; i >= 0; i--) result = chain[i].to(result);
-
     return (T) result;
   }
 
@@ -187,15 +179,12 @@ public class Converters<T, U> extends AbstractConverter<T, U> {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     String separator = " -> ";
-
     sb.append("Converters [ ");
     sb.append(fromType().getName());
-
     for (Converter<?, ?> converter : chain) {
       sb.append(separator);
       sb.append(converter.toType().getName());
     }
-
     sb.append(" ]");
     return sb.toString();
   }
@@ -219,6 +208,7 @@ public class Converters<T, U> extends AbstractConverter<T, U> {
    */
   @Internal
   public static final class UnknownType {
+
     private UnknownType() {}
   }
 }

@@ -53,6 +53,7 @@ import org.jooq.Table;
 public class TableMetaProvider implements MetaProvider {
 
   private final Configuration configuration;
+
   private final Table<?>[] tables;
 
   public TableMetaProvider(Configuration configuration, Table<?>... tables) {

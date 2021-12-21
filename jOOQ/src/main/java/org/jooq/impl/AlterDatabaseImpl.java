@@ -59,7 +59,9 @@ final class AlterDatabaseImpl extends AbstractDDLQuery
     implements AlterDatabaseStep, AlterDatabaseFinalStep {
 
   private final Catalog database;
+
   private final boolean alterDatabaseIfExists;
+
   private Catalog renameTo;
 
   AlterDatabaseImpl(Configuration configuration, Catalog database, boolean alterDatabaseIfExists) {
@@ -72,7 +74,6 @@ final class AlterDatabaseImpl extends AbstractDDLQuery
       boolean alterDatabaseIfExists,
       Catalog renameTo) {
     super(configuration);
-
     this.database = database;
     this.alterDatabaseIfExists = alterDatabaseIfExists;
     this.renameTo = renameTo;
@@ -93,7 +94,6 @@ final class AlterDatabaseImpl extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: DSL API
   // -------------------------------------------------------------------------
-
   @Override
   public final AlterDatabaseImpl renameTo(String renameTo) {
     return renameTo(DSL.catalog(DSL.name(renameTo)));
@@ -113,7 +113,6 @@ final class AlterDatabaseImpl extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Set<SQLDialect> NO_SUPPORT_IF_EXISTS = SQLDialect.supportedBy(POSTGRES);
 
   private final boolean supportsIfExists(Context<?> ctx) {
@@ -129,16 +128,11 @@ final class AlterDatabaseImpl extends AbstractDDLQuery
 
   private final void accept0(Context<?> ctx) {
     boolean supportRename = false;
-
     if (supportRename) ctx.visit(K_RENAME);
     else ctx.visit(K_ALTER);
-
     ctx.sql(' ').visit(K_DATABASE);
-
     if (alterDatabaseIfExists && supportsIfExists(ctx)) ctx.sql(' ').visit(K_IF_EXISTS);
-
     ctx.sql(' ').visit(database);
-
     if (renameTo != null)
       ctx.sql(' ')
           .visit(supportRename ? K_TO : K_RENAME_TO)

@@ -59,8 +59,11 @@ final class JSONObject<T> extends AbstractField<T>
     implements JSONObjectNullStep<T>, JSONObjectReturningStep<T> {
 
   private final DataType<T> type;
+
   private final Collection<? extends JSONEntry<?>> entries;
+
   private JSONOnNull onNull;
+
   private DataType<?> returning;
 
   JSONObject(DataType<T> type, Collection<? extends JSONEntry<?>> entries) {
@@ -73,7 +76,6 @@ final class JSONObject<T> extends AbstractField<T>
       JSONOnNull onNull,
       DataType<?> returning) {
     super(N_JSON_OBJECT, type);
-
     this.type = type;
     this.entries = entries;
     this.onNull = onNull;
@@ -83,7 +85,6 @@ final class JSONObject<T> extends AbstractField<T>
   // -------------------------------------------------------------------------
   // XXX: DSL API
   // -------------------------------------------------------------------------
-
   @Override
   public final JSONObject<T> nullOnNull() {
     this.onNull = JSONOnNull.NULL_ON_NULL;
@@ -105,7 +106,6 @@ final class JSONObject<T> extends AbstractField<T>
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -117,7 +117,6 @@ final class JSONObject<T> extends AbstractField<T>
                           ? "jsonb_strip_nulls"
                           : "json_strip_nulls"))
               .sql('(');
-
         ctx.visit(
                 unquotedName(
                     getDataType().getType() == JSONB.class
@@ -126,15 +125,11 @@ final class JSONObject<T> extends AbstractField<T>
             .sql('(')
             .visit(QueryPartCollectionView.wrap(entries))
             .sql(')');
-
         if (onNull == JSONOnNull.ABSENT_ON_NULL) ctx.sql(')');
-
         break;
-
       case MARIADB:
         {
           JSONEntry<?> first;
-
           // Workaround for https://jira.mariadb.org/browse/MDEV-13701
           if (entries.size() > 1) {
             ctx.visit(
@@ -146,10 +141,8 @@ final class JSONObject<T> extends AbstractField<T>
                 jsonObject(
                     key(first.key()).value(JSONEntryImpl.jsonMerge(ctx, "[]", first.value()))));
           } else acceptStandard(ctx);
-
           break;
         }
-
       default:
         acceptStandard(ctx);
         break;
@@ -166,11 +159,9 @@ final class JSONObject<T> extends AbstractField<T>
   private final void acceptStandard(Context<?> ctx) {
     JSONNull jsonNull;
     JSONReturning jsonReturning = new JSONReturning(returning);
-
     // Workaround for https://github.com/h2database/h2database/issues/2496
     if (entries.isEmpty() && ctx.family() == H2) jsonNull = new JSONNull(JSONOnNull.NULL_ON_NULL);
     else jsonNull = new JSONNull(onNull);
-
     ctx.visit(N_JSON_OBJECT)
         .sql('(')
         .visit(
@@ -182,7 +173,6 @@ final class JSONObject<T> extends AbstractField<T>
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof JSONObject) {

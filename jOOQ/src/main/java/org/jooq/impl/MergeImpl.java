@@ -186,9 +186,7 @@ final class MergeImpl<
         T21,
         T22>
     extends AbstractRowCountQuery
-    implements
-
-        // Cascading interface implementations for Merge behaviour
+    implements // Cascading interface implementations for Merge behaviour
         MergeUsingStep<R>,
         MergeKeyStep1<R, T1>,
         MergeKeyStep2<R, T1, T2>,
@@ -418,30 +416,44 @@ final class MergeImpl<
             T21,
             T22>,
         MergeNotMatchedValuesStepN<R> {
+
   private static final Clause[] CLAUSES = {MERGE};
 
   private static final Set<SQLDialect> NO_SUPPORT_MULTI = SQLDialect.supportedBy(HSQLDB);
+
   private static final Set<SQLDialect> REQUIRE_NEGATION = SQLDialect.supportedBy(H2, HSQLDB);
+
   private static final Set<SQLDialect> NO_SUPPORT_CONDITION_AFTER_NO_CONDITION =
       SQLDialect.supportedBy(FIREBIRD);
 
   private final WithImpl with;
+
   private final Table<R> table;
+
   private final ConditionProviderImpl on;
+
   private TableLike<?> using;
+
   private boolean usingDual;
 
   // Flags to keep track of DSL object creation state
   private boolean matchedClause;
+
   private final List<MatchedClause> matched;
+
   private boolean notMatchedClause;
+
   private final List<NotMatchedClause> notMatched;
 
   // Objects for the UPSERT syntax (including H2 MERGE, HANA UPSERT, etc.)
   private boolean upsertStyle;
+
   private QueryPartList<Field<?>> upsertFields;
+
   private QueryPartList<Field<?>> upsertKeys;
+
   private QueryPartList<Field<?>> upsertValues;
+
   private Select<?> upsertSelect;
 
   MergeImpl(Configuration configuration, WithImpl with, Table<R> table) {
@@ -454,35 +466,29 @@ final class MergeImpl<
       Table<R> table,
       Collection<? extends Field<?>> fields) {
     super(configuration);
-
     this.with = with;
     this.table = table;
     this.on = new ConditionProviderImpl();
     this.matched = new ArrayList<>();
     this.notMatched = new ArrayList<>();
-
     if (fields != null) columns(fields);
   }
 
   // -------------------------------------------------------------------------
   // UPSERT API
   // -------------------------------------------------------------------------
-
   QueryPartList<Field<?>> getUpsertFields() {
     if (upsertFields == null) upsertFields = new QueryPartList<>(table.fields());
-
     return upsertFields;
   }
 
   QueryPartList<Field<?>> getUpsertKeys() {
     if (upsertKeys == null) upsertKeys = new QueryPartList<>();
-
     return upsertKeys;
   }
 
   QueryPartList<Field<?>> getUpsertValues() {
     if (upsertValues == null) upsertValues = new QueryPartList<>();
-
     return upsertValues;
   }
 
@@ -503,7 +509,6 @@ final class MergeImpl<
   public final MergeImpl columns(Collection<? extends Field<?>> fields) {
     upsertStyle = true;
     upsertFields = new QueryPartList<>(fields);
-
     return this;
   }
 
@@ -992,7 +997,6 @@ final class MergeImpl<
   // -------------------------------------------------------------------------
   // Shared MERGE API
   // -------------------------------------------------------------------------
-
   @Override
   public final MergeImpl values(T1 value1) {
     return values(new Object[] {value1});
@@ -1778,7 +1782,6 @@ final class MergeImpl<
 
   @Override
   public final MergeImpl values(Object... values) {
-
     // [#1541] The VALUES() clause is also supported in the H2-specific
     // syntax, in case of which, the USING() was not added
     if (using == null && !usingDual) {
@@ -1789,7 +1792,6 @@ final class MergeImpl<
           .insertMap
           .set(Tools.fields(values, getLastNotMatched().insertMap.fields().toArray(EMPTY_FIELD)));
     }
-
     return this;
   }
 
@@ -1806,7 +1808,6 @@ final class MergeImpl<
   // -------------------------------------------------------------------------
   // Merge API
   // -------------------------------------------------------------------------
-
   @Override
   public final MergeImpl using(TableLike<?> u) {
     this.using = u;
@@ -1972,7 +1973,6 @@ final class MergeImpl<
   public final MergeImpl whenMatchedAnd(Condition condition) {
     matchedClause = true;
     matched.add(new MatchedClause(condition));
-
     notMatchedClause = false;
     return this;
   }
@@ -2025,7 +2025,6 @@ final class MergeImpl<
     else
       throw new IllegalStateException(
           "Cannot call where() on the current state of the MERGE statement");
-
     return this;
   }
 
@@ -2047,7 +2046,6 @@ final class MergeImpl<
     else
       throw new IllegalStateException(
           "Cannot call where() on the current state of the MERGE statement");
-
     return this;
   }
 
@@ -2554,7 +2552,6 @@ final class MergeImpl<
     notMatchedClause = true;
     notMatched.add(new NotMatchedClause(noCondition()));
     getLastNotMatched().insertMap.addFields(fields);
-
     matchedClause = false;
     return this;
   }
@@ -2566,7 +2563,6 @@ final class MergeImpl<
     else
       throw new IllegalStateException(
           "Cannot call where() on the current state of the MERGE statement");
-
     return this;
   }
 
@@ -2584,7 +2580,6 @@ final class MergeImpl<
     else
       throw new IllegalStateException(
           "Cannot call where() on the current state of the MERGE statement");
-
     return this;
   }
 
@@ -2596,18 +2591,14 @@ final class MergeImpl<
   // -------------------------------------------------------------------------
   // QueryPart API
   // -------------------------------------------------------------------------
-
   /** Return a standard MERGE statement emulating the H2-specific syntax */
   private final QueryPart getStandardMerge(boolean usingSubqueries) {
-
     // The SRC for the USING() clause:
     // ------------------------------
     Table<?> src;
     List<Field<?>> srcFields;
-
     // [#5110] This is not yet supported by Derby
     if (upsertSelect != null) {
-
       // [#579] TODO: Currently, this syntax may require aliasing
       // on the call-site
       src =
@@ -2622,27 +2613,21 @@ final class MergeImpl<
       src = new Dual();
       srcFields = map(getUpsertValues(), f -> f);
     }
-
     // The condition for the ON clause:
     // --------------------------------
     Set<Field<?>> onFields = new HashSet<>();
     Condition condition = null;
     if (getUpsertKeys().isEmpty()) {
       UniqueKey<?> key = table.getPrimaryKey();
-
       if (key != null) {
         onFields.addAll(key.getFields());
-
         for (int i = 0; i < key.getFields().size(); i++) {
           Condition rhs = key.getFields().get(i).equal((Field) srcFields.get(i));
-
           if (condition == null) condition = rhs;
           else condition = condition.and(rhs);
         }
-      }
-
-      // This should probably execute an INSERT statement
-      else {
+      } else // This should probably execute an INSERT statement
+      {
         throw new IllegalStateException("Cannot omit KEY() clause on a non-Updatable Table");
       }
     } else {
@@ -2651,29 +2636,22 @@ final class MergeImpl<
         if (matchIndex == -1)
           throw new IllegalStateException(
               "Fields in KEY() clause must be part of the fields specified in MERGE INTO table (...)");
-
         onFields.addAll(getUpsertKeys());
         Condition rhs = getUpsertKeys().get(i).equal((Field) srcFields.get(matchIndex));
-
         if (condition == null) condition = rhs;
         else condition = condition.and(rhs);
       }
     }
-
     // INSERT and UPDATE clauses
     // -------------------------
     Map<Field<?>, Field<?>> update = new LinkedHashMap<>();
     Map<Field<?>, Field<?>> insert = new LinkedHashMap<>();
-
     for (int i = 0; i < srcFields.size(); i++) {
-
       // Oracle does not allow to update fields from the ON clause
       if (!onFields.contains(getUpsertFields().get(i)))
         update.put(getUpsertFields().get(i), srcFields.get(i));
-
       insert.put(getUpsertFields().get(i), srcFields.get(i));
     }
-
     return DSL.mergeInto(table)
         .using(src)
         .on(condition)
@@ -2686,26 +2664,21 @@ final class MergeImpl<
   @Override
   public final void accept(Context<?> ctx) {
     if (with != null) ctx.visit(with);
-
     if (upsertStyle) {
       switch (ctx.family()) {
         case H2:
           toSQLH2Merge(ctx);
           break;
-
         case MARIADB:
         case MYSQL:
           toSQLMySQLOnDuplicateKeyUpdate(ctx);
           break;
-
         case POSTGRES:
           toPostgresInsertOnConflict(ctx);
           break;
-
         case DERBY:
           ctx.visit(getStandardMerge(false));
           break;
-
         default:
           ctx.visit(getStandardMerge(true));
           break;
@@ -2720,7 +2693,6 @@ final class MergeImpl<
     Map<Field<?>, Field<?>> map = new LinkedHashMap<>();
     for (Field<?> field : fields.fields)
       map.put(field, getUpsertValues().get(fields.indexOf(field)));
-
     if (upsertSelect != null) {
       ctx.sql("[ merge with select is not supported in MySQL / MariaDB ]");
     } else {
@@ -2738,13 +2710,10 @@ final class MergeImpl<
     } else {
       FieldsImpl<?> fields = new FieldsImpl<>(getUpsertFields());
       Map<Field<?>, Field<?>> map = new LinkedHashMap<>();
-
       for (Field<?> field : fields.fields) {
         int i = fields.indexOf(field);
-
         if (i > -1 && i < getUpsertValues().size()) map.put(field, getUpsertValues().get(i));
       }
-
       ctx.visit(
           insertInto(table, getUpsertFields())
               .values(getUpsertValues())
@@ -2756,16 +2725,13 @@ final class MergeImpl<
 
   private final void toSQLH2Merge(Context<?> ctx) {
     ctx.visit(K_MERGE_INTO).sql(' ').declareTables(true, c -> c.visit(table)).formatSeparator();
-
     ctx.sql('(').visit(wrap(getUpsertFields()).qualify(false)).sql(')');
-
     if (!getUpsertKeys().isEmpty())
       ctx.formatSeparator()
           .visit(K_KEY)
           .sql(" (")
           .visit(wrap(getUpsertKeys()).qualify(false))
           .sql(')');
-
     if (upsertSelect != null) ctx.formatSeparator().visit(upsertSelect);
     else ctx.formatSeparator().visit(K_VALUES).sql(" (").visit(getUpsertValues()).sql(')');
   }
@@ -2780,7 +2746,6 @@ final class MergeImpl<
         .start(MERGE_USING)
         .visit(K_USING)
         .sql(' ');
-
     ctx.declareTables(
         true,
         c1 ->
@@ -2788,9 +2753,8 @@ final class MergeImpl<
                 DATA_WRAP_DERIVED_TABLES_IN_PARENTHESES,
                 true,
                 c2 -> {
-
                   // [#5110] As of version 10.14, Derby only supports direct table references
-                  //         in its MERGE statement.
+                  // in its MERGE statement.
                   if (usingDual) {
                     switch (c2.family()) {
                       case DERBY:
@@ -2802,103 +2766,79 @@ final class MergeImpl<
                     }
                   } else c2.visit(using);
                 }));
-
     boolean onParentheses = false;
     ctx.end(MERGE_USING)
         .formatSeparator()
         .start(MERGE_ON)
-        // Oracle ON ( ... ) parentheses are a mandatory syntax element
-        .visit(K_ON)
+        . // Oracle ON ( ... ) parentheses are a mandatory syntax element
+        visit(K_ON)
         .sql(onParentheses ? " (" : " ")
         .visit(on)
         .sql(onParentheses ? ")" : "")
         .end(MERGE_ON)
         .start(MERGE_WHEN_MATCHED_THEN_UPDATE)
         .start(MERGE_SET);
-
     // [#7291] Multi MATCHED emulation
     boolean emulate = false;
     boolean requireMatchedConditions = false;
-
     // Prevent error 5324 "In a MERGE statement, a 'WHEN MATCHED' clause with a search condition
     // cannot appear after a 'WHEN MATCHED' clause with no search condition."
     // This can also happen in Firebird: http://tracker.firebirdsql.org/browse/JDBC-621
-
     // [#10054] TODO: Skip all WHEN MATCHED clauses after a WHEN MATCHED clause with no search
     // condition
     if (NO_SUPPORT_CONDITION_AFTER_NO_CONDITION.contains(ctx.dialect())) {
       boolean withoutMatchedConditionFound = false;
-
       for (MatchedClause m : matched) {
         if (requireMatchedConditions |= withoutMatchedConditionFound) break;
-
         withoutMatchedConditionFound |= m.condition instanceof NoCondition;
       }
     }
-
     emulateCheck:
     if ((NO_SUPPORT_MULTI.contains(ctx.dialect()) && matched.size() > 1)) {
       boolean matchUpdate = false;
       boolean matchDelete = false;
-
       for (MatchedClause m : matched) {
         if (m.delete) {
           if (emulate |= matchDelete) break emulateCheck;
-
           matchDelete = true;
         } else {
           if (emulate |= matchUpdate) break emulateCheck;
-
           matchUpdate = true;
         }
       }
     }
-
     if (emulate) {
       MatchedClause update = null;
       MatchedClause delete = null;
-
       Condition negate = noCondition();
-
       for (MatchedClause m : matched) {
         Condition condition = negate.and(m.condition);
-
         if (m.delete) {
           if (delete == null) delete = new MatchedClause(noCondition(), true);
-
           delete.condition = delete.condition.or(condition);
         } else {
           if (update == null) update = new MatchedClause(noCondition());
-
           for (Entry<Field<?>, Field<?>> e : m.updateMap.entrySet()) {
             Field<?> exp = update.updateMap.get(e.getKey());
-
             if (exp instanceof CaseConditionStepImpl)
               ((CaseConditionStepImpl) exp).when(negate.and(condition), e.getValue());
             else
               update.updateMap.put(
                   e.getKey(), when(negate.and(condition), (Field) e.getValue()).else_(e.getKey()));
           }
-
           update.condition = update.condition.or(condition);
         }
-
         if (REQUIRE_NEGATION.contains(ctx.dialect()))
           negate =
               negate.andNot(m.condition instanceof NoCondition ? trueCondition() : m.condition);
       }
-
       {
         if (delete != null) toSQLMatched(ctx, delete, requireMatchedConditions);
-
         if (update != null) toSQLMatched(ctx, update, requireMatchedConditions);
       }
-    }
-
-    // [#7291] Workaround for https://github.com/h2database/h2database/issues/2552
-    else if (REQUIRE_NEGATION.contains(ctx.dialect())) {
+    } else // [#7291] Workaround for https://github.com/h2database/h2database/issues/2552
+    if (REQUIRE_NEGATION.contains(ctx.dialect())) {
       Condition negate = noCondition();
-
       for (MatchedClause m : matched) {
         toSQLMatched(
             ctx,
@@ -2909,13 +2849,10 @@ final class MergeImpl<
     } else {
       for (MatchedClause m : matched) toSQLMatched(ctx, m, requireMatchedConditions);
     }
-
     ctx.end(MERGE_SET)
         .end(MERGE_WHEN_MATCHED_THEN_UPDATE)
         .start(MERGE_WHEN_NOT_MATCHED_THEN_INSERT);
-
     for (NotMatchedClause m : notMatched) toSQLNotMatched(ctx, m);
-
     ctx.end(MERGE_WHEN_NOT_MATCHED_THEN_INSERT);
   }
 
@@ -2931,15 +2868,11 @@ final class MergeImpl<
       MatchedClause delete,
       boolean requireMatchedConditions) {
     ctx.formatSeparator().visit(K_WHEN).sql(' ').visit(K_MATCHED);
-
     MatchedClause m = update != null ? update : delete;
-
     // [#7291] Standard SQL AND clause in updates
     if ((requireMatchedConditions || !(m.condition instanceof NoCondition)))
       ctx.sql(' ').visit(K_AND).sql(' ').visit(m.condition);
-
     ctx.sql(' ').visit(K_THEN);
-
     if (update != null) {
       ctx.sql(' ')
           .visit(K_UPDATE)
@@ -2950,19 +2883,15 @@ final class MergeImpl<
           .visit(update.updateMap)
           .formatIndentEnd();
     }
-
     if (delete != null) {
-
       ctx.sql(' ').visit(K_DELETE);
     }
   }
 
   private final void toSQLNotMatched(Context<?> ctx, NotMatchedClause m) {
     ctx.formatSeparator().visit(K_WHEN).sql(' ').visit(K_NOT).sql(' ').visit(K_MATCHED).sql(' ');
-
     if (!(m.condition instanceof NoCondition))
       ctx.visit(K_AND).sql(' ').visit(m.condition).sql(' ');
-
     ctx.visit(K_THEN).sql(' ').visit(K_INSERT);
     m.insertMap.toSQLReferenceKeys(ctx);
     ctx.formatSeparator().start(MERGE_VALUES).visit(K_VALUES).sql(' ');
@@ -2978,7 +2907,9 @@ final class MergeImpl<
   private final class MatchedClause implements Serializable {
 
     FieldMapForUpdate updateMap;
+
     boolean delete;
+
     Condition condition;
 
     MatchedClause(Condition condition) {
@@ -2999,6 +2930,7 @@ final class MergeImpl<
   private final class NotMatchedClause implements Serializable {
 
     FieldMapsForInsert insertMap;
+
     Condition condition;
 
     NotMatchedClause(Condition condition) {

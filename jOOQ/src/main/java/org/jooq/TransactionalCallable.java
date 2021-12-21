@@ -88,10 +88,8 @@ public interface TransactionalCallable<T> {
   static <T> TransactionalCallable<T> of(Collection<? extends TransactionalCallable<T>> callables) {
     return configuration -> {
       T result = null;
-
       for (TransactionalCallable<T> callable : callables)
         result = configuration.dsl().transactionResult(callable);
-
       return result;
     };
   }

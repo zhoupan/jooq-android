@@ -129,39 +129,40 @@ final class JoinTable extends AbstractTable<Record>
         TableOptionalOnStep<Record>,
         TablePartitionByStep<Record>,
         TableOnConditionStep<Record> {
+
   private static final Clause[] CLAUSES = {TABLE, TABLE_JOIN};
 
   private static final Set<SQLDialect> EMULATE_NATURAL_JOIN = SQLDialect.supportedBy(CUBRID);
+
   private static final Set<SQLDialect> EMULATE_NATURAL_OUTER_JOIN =
       SQLDialect.supportedBy(CUBRID, H2, IGNITE);
+
   private static final Set<SQLDialect> EMULATE_JOIN_USING = SQLDialect.supportedBy(CUBRID, IGNITE);
+
   private static final Set<SQLDialect> EMULATE_APPLY = SQLDialect.supportedBy(POSTGRES);
 
   final Table<?> lhs;
+
   final Table<?> rhs;
 
   final JoinType type;
+
   final ConditionProviderImpl condition;
+
   final QueryPartList<Field<?>> using;
 
   JoinTable(TableLike<?> lhs, TableLike<?> rhs, JoinType type) {
-
     super(TableOptions.expression(), N_JOIN);
-
     this.lhs = lhs.asTable();
     this.rhs = rhs.asTable();
-
     this.type = type;
-
     this.condition = new ConditionProviderImpl();
     this.using = new QueryPartList<>();
   }
 
   final JoinTable transform(Table<?> newLhs, Table<?> newRhs) {
     if (lhs == newLhs && rhs == newRhs) return this;
-
     JoinTable result = new JoinTable(newLhs, newRhs, type);
-
     // TODO: Retain partitionBy clause
     return !using.isEmpty() ? result.using(using) : result.on(condition);
   }
@@ -169,7 +170,6 @@ final class JoinTable extends AbstractTable<Record>
   // ------------------------------------------------------------------------
   // Table API
   // ------------------------------------------------------------------------
-
   @SuppressWarnings({"unchecked", "rawtypes"})
   @Override
   public final List<ForeignKey<Record, ?>> getReferences() {
@@ -183,46 +183,35 @@ final class JoinTable extends AbstractTable<Record>
 
   @Override
   public final void accept(Context<?> ctx) {
-
     JoinType translatedType = translateType(ctx);
     Clause translatedClause = translateClause(translatedType);
     Keyword keyword = translateKeyword(ctx, translatedType);
-
     toSQLTable(ctx, lhs);
-
     switch (translatedType) {
       case LEFT_SEMI_JOIN:
       case LEFT_ANTI_JOIN:
         if (TRUE.equals(ctx.data(DATA_COLLECT_SEMI_ANTI_JOIN))) {
-
           @SuppressWarnings("unchecked")
           List<Condition> semiAntiJoinPredicates =
               (List<Condition>) ctx.data(DATA_COLLECTED_SEMI_ANTI_JOIN);
-
           if (semiAntiJoinPredicates == null) {
             semiAntiJoinPredicates = new ArrayList<>();
             ctx.data(DATA_COLLECTED_SEMI_ANTI_JOIN, semiAntiJoinPredicates);
           }
-
           Condition c = !using.isEmpty() ? usingCondition() : condition;
           switch (translatedType) {
             case LEFT_SEMI_JOIN:
               semiAntiJoinPredicates.add(exists(selectOne().from(rhs).where(c)));
               break;
-
             case LEFT_ANTI_JOIN:
               semiAntiJoinPredicates.add(notExists(selectOne().from(rhs).where(c)));
               break;
           }
-
           return;
         }
     }
-
     ctx.formatIndentStart().formatSeparator().start(translatedClause).visit(keyword).sql(' ');
-
     toSQLTable(ctx, rhs);
-
     // CROSS JOIN and NATURAL JOIN do not have any condition clauses
     if (translatedType.qualified()) {
       ctx.formatIndentStart();
@@ -237,22 +226,18 @@ final class JoinTable extends AbstractTable<Record>
           .end(TABLE_JOIN_ON)
           .formatIndentEnd();
     }
-
     ctx.end(translatedClause).formatIndentEnd();
   }
 
   private final Keyword translateKeyword(Context<?> ctx, JoinType translatedType) {
     Keyword keyword;
-
     switch (translatedType) {
       case JOIN:
       case NATURAL_JOIN:
         if (ctx.settings().getRenderOptionalInnerKeyword() == RenderOptionalKeyword.ON)
           keyword = translatedType.toKeyword(true);
         else keyword = translatedType.toKeyword();
-
         break;
-
       case LEFT_OUTER_JOIN:
       case NATURAL_LEFT_OUTER_JOIN:
       case RIGHT_OUTER_JOIN:
@@ -262,35 +247,27 @@ final class JoinTable extends AbstractTable<Record>
         if (ctx.settings().getRenderOptionalOuterKeyword() == RenderOptionalKeyword.OFF)
           keyword = translatedType.toKeyword(false);
         else keyword = translatedType.toKeyword();
-
         break;
-
       default:
         keyword = translatedType.toKeyword();
         break;
     }
-
     if (translatedType == CROSS_APPLY && EMULATE_APPLY.contains(ctx.dialect()))
       keyword = K_CROSS_JOIN_LATERAL;
     else if (translatedType == OUTER_APPLY && EMULATE_APPLY.contains(ctx.dialect()))
       if (ctx.settings().getRenderOptionalOuterKeyword() == RenderOptionalKeyword.OFF)
         keyword = K_LEFT_JOIN_LATERAL;
       else keyword = K_LEFT_OUTER_JOIN_LATERAL;
-
     return keyword;
   }
 
   private void toSQLTable(Context<?> ctx, Table<?> table) {
-
     // [#671] Some databases formally require nested JOINS on the right hand
     // side of the join expression to be wrapped in parentheses (e.g. MySQL).
     // In other databases, it's a good idea to wrap them all
     boolean wrap = table instanceof JoinTable && (table == rhs);
-
     if (wrap) ctx.sqlIndentStart('(');
-
     ctx.visit(table);
-
     if (wrap) ctx.sqlIndentEnd(')');
   }
 
@@ -362,13 +339,11 @@ final class JoinTable extends AbstractTable<Record>
 
   private final void toSQLJoinCondition(Context<?> ctx) {
     if (!using.isEmpty()) {
-
       // [#582] Some dialects don't explicitly support a JOIN .. USING
       // syntax. This can be emulated with JOIN .. ON
       if (EMULATE_JOIN_USING.contains(ctx.dialect())) toSQLJoinCondition(ctx, usingCondition());
-
-      // Native supporters of JOIN .. USING
       else
+        // Native supporters of JOIN .. USING
         ctx.formatSeparator()
             .start(TABLE_JOIN_USING)
             .visit(K_USING)
@@ -376,20 +351,15 @@ final class JoinTable extends AbstractTable<Record>
             .visit(wrap(using).qualify(false))
             .sql(')')
             .end(TABLE_JOIN_USING);
-    }
-
-    // [#577] If any NATURAL JOIN syntax needs to be emulated, find out
+    } else // [#577] If any NATURAL JOIN syntax needs to be emulated, find out
     // common fields in lhs and rhs of the JOIN clause
-    else if (emulateNaturalJoin(ctx)
+    if (emulateNaturalJoin(ctx)
         || emulateNaturalLeftOuterJoin(ctx)
         || emulateNaturalRightOuterJoin(ctx)
         || emulateNaturalFullOuterJoin(ctx)) {
-
       toSQLJoinCondition(ctx, naturalCondition());
-    }
-
-    // Regular JOIN condition
-    else {
+    } else // Regular JOIN condition
+    {
       toSQLJoinCondition(ctx, condition);
     }
   }
@@ -397,13 +367,10 @@ final class JoinTable extends AbstractTable<Record>
   @SuppressWarnings({"rawtypes", "unchecked"})
   final Condition naturalCondition() {
     List<Condition> conditions = new ArrayList<>(using.size());
-
     for (Field<?> field : lhs.fields()) {
       Field<?> other = rhs.field(field);
-
       if (other != null) conditions.add(field.eq((Field) other));
     }
-
     return DSL.and(conditions);
   }
 
@@ -433,10 +400,8 @@ final class JoinTable extends AbstractTable<Record>
 
   @Override
   public final Class<? extends Record> getRecordType() {
-
     // [#10183] The RHS does not contribute to the projection in these cases
     if (type == LEFT_SEMI_JOIN || type == LEFT_ANTI_JOIN) return lhs.getRecordType();
-
     // TODO: [#4695] Calculate the correct Record[B] type
     return RecordImplN.class;
   }
@@ -449,10 +414,8 @@ final class JoinTable extends AbstractTable<Record>
       Field<?>[] l = lhs.asTable().fields();
       Field<?>[] r = rhs.asTable().fields();
       Field<?>[] all = new Field[l.length + r.length];
-
       System.arraycopy(l, 0, all, 0, l.length);
       System.arraycopy(r, 0, all, l.length, r.length);
-
       return new FieldsImpl<>(all);
     }
   }
@@ -465,7 +428,6 @@ final class JoinTable extends AbstractTable<Record>
   // ------------------------------------------------------------------------
   // Join API
   // ------------------------------------------------------------------------
-
   @Override
   public final JoinTable on(Condition conditions) {
     condition.addConditions(conditions);
@@ -511,12 +473,10 @@ final class JoinTable extends AbstractTable<Record>
   public final JoinTable onKey() throws DataAccessException {
     List<?> leftToRight = lhs.getReferencesTo(rhs);
     List<?> rightToLeft = rhs.getReferencesTo(lhs);
-
     if (leftToRight.size() == 1 && rightToLeft.size() == 0)
       return onKey((ForeignKey<?, ?>) leftToRight.get(0), lhs, rhs);
     else if (rightToLeft.size() == 1 && leftToRight.size() == 0)
       return onKey((ForeignKey<?, ?>) rightToLeft.get(0), rhs, lhs);
-
     if (rightToLeft.isEmpty() && leftToRight.isEmpty())
       throw onKeyException(OnKeyExceptionReason.NOT_FOUND, leftToRight, rightToLeft);
     else throw onKeyException(OnKeyExceptionReason.AMBIGUOUS, null, null);
@@ -525,33 +485,27 @@ final class JoinTable extends AbstractTable<Record>
   @Override
   public final JoinTable onKey(TableField<?, ?>... keyFields) throws DataAccessException {
     if (keyFields != null && keyFields.length > 0) {
-
       // [#7626] Make sure this works with aliased columns as well
       List<TableField<?, ?>> unaliased = new ArrayList<>(asList(keyFields));
       for (int i = 0; i < unaliased.size(); i++) {
         TableField<?, ?> f = unaliased.get(i);
         Alias<? extends Table<?>> alias = Tools.alias(f.getTable());
-
         if (alias != null) unaliased.set(i, (TableField<?, ?>) alias.wrapped().field(f));
       }
-
       if (containsUnaliasedTable(lhs, keyFields[0].getTable())) {
         for (ForeignKey<?, ?> key : lhs.getReferences())
           if (key.getFields().containsAll(unaliased) && unaliased.containsAll(key.getFields()))
             return onKey(key);
-
         for (ForeignKey<?, ?> key : lhs.getReferences())
           if (key.getFields().containsAll(unaliased)) return onKey(key);
       } else if (containsUnaliasedTable(rhs, keyFields[0].getTable())) {
         for (ForeignKey<?, ?> key : rhs.getReferences())
           if (key.getFields().containsAll(unaliased) && unaliased.containsAll(key.getFields()))
             return onKey(key);
-
         for (ForeignKey<?, ?> key : rhs.getReferences())
           if (key.getFields().containsAll(unaliased)) return onKey(key);
       }
     }
-
     throw onKeyException(OnKeyExceptionReason.NOT_FOUND, null, null);
   }
 
@@ -559,25 +513,20 @@ final class JoinTable extends AbstractTable<Record>
   public final JoinTable onKey(ForeignKey<?, ?> key) {
     if (containsUnaliasedTable(lhs, key.getTable())) return onKey(key, lhs, rhs);
     else if (containsUnaliasedTable(rhs, key.getTable())) return onKey(key, rhs, lhs);
-
     throw onKeyException(OnKeyExceptionReason.NOT_FOUND, null, null);
   }
 
   @SuppressWarnings({"unchecked", "rawtypes"})
   private final JoinTable onKey(ForeignKey<?, ?> key, Table<?> fk, Table<?> pk) {
     JoinTable result = this;
-
     TableField<?, ?>[] references = key.getFieldsArray();
     TableField<?, ?>[] referenced = key.getKeyFieldsArray();
-
     for (int i = 0; i < references.length; i++) {
       Field f1 = fk.field(references[i]);
       Field f2 = pk.field(referenced[i]);
-
       // [#2870] TODO: If lhs or rhs are aliased tables, extract the appropriate fields from them
       result.and(f1.equal(f2));
     }
-
     return result;
   }
 

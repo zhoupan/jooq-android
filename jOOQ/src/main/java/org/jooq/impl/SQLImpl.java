@@ -49,7 +49,9 @@ import org.jooq.SQL;
 final class SQLImpl extends AbstractQueryPart implements SQL {
 
   private static final Clause[] CLAUSES = {TEMPLATE};
+
   private final String sql;
+
   private final List<QueryPart> substitutes;
 
   SQLImpl(String sql, Object... input) {

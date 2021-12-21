@@ -55,19 +55,33 @@ import org.jooq.RecordListener;
 public final class CallbackRecordListener implements RecordListener {
 
   private final Consumer<? super RecordContext> onStoreStart;
+
   private final Consumer<? super RecordContext> onStoreEnd;
+
   private final Consumer<? super RecordContext> onInsertStart;
+
   private final Consumer<? super RecordContext> onInsertEnd;
+
   private final Consumer<? super RecordContext> onUpdateStart;
+
   private final Consumer<? super RecordContext> onUpdateEnd;
+
   private final Consumer<? super RecordContext> onMergeStart;
+
   private final Consumer<? super RecordContext> onMergeEnd;
+
   private final Consumer<? super RecordContext> onDeleteStart;
+
   private final Consumer<? super RecordContext> onDeleteEnd;
+
   private final Consumer<? super RecordContext> onLoadStart;
+
   private final Consumer<? super RecordContext> onLoadEnd;
+
   private final Consumer<? super RecordContext> onRefreshStart;
+
   private final Consumer<? super RecordContext> onRefreshEnd;
+
   private final Consumer<? super RecordContext> onException;
 
   public CallbackRecordListener() {

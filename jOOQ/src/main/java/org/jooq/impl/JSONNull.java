@@ -51,6 +51,7 @@ import org.jooq.SQLDialect;
 
 /** @author Lukas Eder */
 final class JSONNull extends AbstractQueryPart implements SimpleQueryPart {
+
   static final Set<SQLDialect> NO_SUPPORT_ABSENT_ON_NULL = SQLDialect.supportedBy(MARIADB, MYSQL);
 
   final JSONOnNull type;
@@ -72,7 +73,6 @@ final class JSONNull extends AbstractQueryPart implements SimpleQueryPart {
           if (type == NULL_ON_NULL) ctx.visit(K_NULL).sql(' ').visit(K_ON).sql(' ').visit(K_NULL);
           else if (type == ABSENT_ON_NULL)
             ctx.visit(K_ABSENT).sql(' ').visit(K_ON).sql(' ').visit(K_NULL);
-
         break;
     }
   }

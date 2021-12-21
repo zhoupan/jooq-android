@@ -64,8 +64,11 @@ class QueryPartCollectionView<T extends QueryPart> extends AbstractQueryPart
     implements Collection<T>, SimpleQueryPart, SeparatedQueryPart {
 
   final Collection<T> wrapped;
+
   Boolean qualify;
+
   String separator;
+
   Function<? super T, ? extends T> mapper;
 
   static final <T extends QueryPart> QueryPartCollectionView<T> wrap(Collection<T> wrapped) {
@@ -74,10 +77,8 @@ class QueryPartCollectionView<T extends QueryPart> extends AbstractQueryPart
 
   QueryPartCollectionView(Collection<T> wrapped) {
     this.wrapped = wrapped != null ? wrapped : Collections.emptyList();
-
     if (wrapped instanceof QueryPartCollectionView) {
       QueryPartCollectionView<T> v = (QueryPartCollectionView<T>) wrapped;
-
       this.qualify = v.qualify;
       this.separator = v.separator;
       this.mapper = v.mapper;
@@ -123,25 +124,18 @@ class QueryPartCollectionView<T extends QueryPart> extends AbstractQueryPart
   public /* non-final */ void accept(Context<?> ctx) {
     BitSet rendersContent = new BitSet(size());
     int i = 0;
-
     for (T e : this) rendersContent.set(i++, ((QueryPartInternal) e).rendersContent(ctx));
-
     int size = rendersContent.cardinality();
     boolean format = ctx.format() && (size >= 2 && !isSimple() || size > 4);
     boolean previousQualify = ctx.qualify();
     boolean previousAlreadyIndented = TRUE.equals(ctx.data(DATA_LIST_ALREADY_INDENTED));
     boolean indent = format && !previousAlreadyIndented;
-
     if (previousAlreadyIndented) ctx.data(DATA_LIST_ALREADY_INDENTED, false);
-
     if (qualify != null) ctx.qualify(qualify);
-
     if (indent) ctx.formatIndentStart();
-
     if (ctx.separatorRequired())
       if (format) ctx.formatSeparator();
       else ctx.sql(' ');
-
     // Some lists render different SQL when empty
     if (size == 0) {
       toSQLEmptyList(ctx);
@@ -149,26 +143,19 @@ class QueryPartCollectionView<T extends QueryPart> extends AbstractQueryPart
       int j = 0;
       int k = 0;
       T prev = null;
-
       for (T part : this) {
         try {
           if (!rendersContent.get(j++)) continue;
-
           if (mapper != null) part = mapper.apply(part);
-
           if (k++ > 0) {
-
             // [#3607] Procedures and functions are not separated by comma
             if (!(prev instanceof SeparatedQueryPart
                 && ((SeparatedQueryPart) prev).rendersSeparator())) ctx.sql(separator);
-
             if (format) ctx.formatSeparator();
             else ctx.sql(' ');
           } else if (indent) ctx.formatNewLine();
-
           if (indent) {
             T t = part;
-
             ctx.data(
                 DATA_LIST_ALREADY_INDENTED,
                 t instanceof QueryPartCollectionView && ((QueryPartCollectionView<?>) t).size() > 1,
@@ -179,11 +166,8 @@ class QueryPartCollectionView<T extends QueryPart> extends AbstractQueryPart
         }
       }
     }
-
     if (indent) ctx.formatIndentEnd().formatNewLine();
-
     if (qualify != null) ctx.qualify(previousQualify);
-
     if (previousAlreadyIndented) ctx.data(DATA_LIST_ALREADY_INDENTED, previousAlreadyIndented);
   }
 
@@ -199,7 +183,6 @@ class QueryPartCollectionView<T extends QueryPart> extends AbstractQueryPart
   // -------------------------------------------------------------------------
   // Implementations from the List API
   // -------------------------------------------------------------------------
-
   @Override
   public final int size() {
     return wrapped.size();
@@ -235,7 +218,6 @@ class QueryPartCollectionView<T extends QueryPart> extends AbstractQueryPart
     if (e != null) {
       return wrapped.add(e);
     }
-
     return false;
   }
 
@@ -259,20 +241,15 @@ class QueryPartCollectionView<T extends QueryPart> extends AbstractQueryPart
   }
 
   final Collection<? extends T> removeNulls(Collection<? extends T> c) {
-
     // [#2145] Collections that contain nulls are quite rare, so it is wise
     // to add a relatively cheap defender check to avoid unnecessary loops
     boolean containsNulls;
-
     try {
       containsNulls = c.contains(null);
-    }
-
-    // [#7991] Some immutable collections do not allow for nulls to be contained
+    } // [#7991] Some immutable collections do not allow for nulls to be contained
     catch (NullPointerException ignore) {
       containsNulls = false;
     }
-
     if (containsNulls) {
       List<T> list = new ArrayList<>(c);
       list.removeIf(Objects::isNull);
@@ -298,7 +275,6 @@ class QueryPartCollectionView<T extends QueryPart> extends AbstractQueryPart
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public int hashCode() {
     return wrapped.hashCode();
@@ -306,7 +282,6 @@ class QueryPartCollectionView<T extends QueryPart> extends AbstractQueryPart
 
   @Override
   public boolean equals(Object that) {
-
     // [#11126] Speed up comparisons of two QueryPartCollectionViews of the same type
     if (that instanceof QueryPartCollectionView && getClass() == that.getClass())
       return wrapped.equals(((QueryPartCollectionView<?>) that).wrapped);

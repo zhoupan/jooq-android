@@ -65,7 +65,6 @@ final class CovarSamp extends DefaultAggregateFunction<BigDecimal> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Set<SQLDialect> NO_SUPPORT_NATIVE =
       SQLDialect.supportedUntil(CUBRID, DERBY, H2, HSQLDB, IGNITE, MARIADB, MYSQL, SQLITE);
 
@@ -79,7 +78,6 @@ final class CovarSamp extends DefaultAggregateFunction<BigDecimal> {
   private void acceptEmulation(Context<?> ctx) {
     Field<? extends Number> x = (Field) getArguments().get(0);
     Field<? extends Number> y = (Field) getArguments().get(1);
-
     ctx.visit(
         fo(DSL.sum(x.times(y)))
             .minus(

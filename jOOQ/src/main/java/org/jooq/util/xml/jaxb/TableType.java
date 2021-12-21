@@ -64,6 +64,7 @@ public enum TableType {
   VIEW("VIEW"),
   @XmlEnumValue("GLOBAL TEMPORARY")
   GLOBAL_TEMPORARY("GLOBAL TEMPORARY");
+
   private final String value;
 
   TableType(String v) {

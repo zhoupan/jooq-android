@@ -51,7 +51,6 @@ import org.jetbrains.annotations.*;
 public interface LoaderJSONOptionsStep<R extends Record> extends LoaderListenerStep<R> {
 
   /** @deprecated - [#4859] - This is not supported for JSON loading. */
-  @Deprecated
   @NotNull
   @CheckReturnValue
   @Support

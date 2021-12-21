@@ -50,7 +50,6 @@ import java.sql.SQLException;
  * @deprecated - 3.15.0 - [#11618] - This type is no longer used by jOOQ and will be removed in the
  *     future.
  */
-@Deprecated
 public abstract class JDBC41ResultSet {
 
   // JDBC 4.1 compliance: @Override

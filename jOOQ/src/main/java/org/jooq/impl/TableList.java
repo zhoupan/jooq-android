@@ -78,7 +78,6 @@ final class TableList extends QueryPartList<Table<?>> {
   @Override
   protected void acceptElement(Context<?> ctx, Table<?> part) {
     Table<?> alternative;
-
     if (ctx.declareTables()
         && part instanceof AutoAliasTable
         && (alternative = ((AutoAliasTable<?>) part).autoAlias(ctx)) != null)
@@ -102,19 +101,16 @@ final class TableList extends QueryPartList<Table<?>> {
 
   /** Get a list of names of the <code>NamedQueryParts</code> contained in this list. */
   final void toSQLFields(Context<?> ctx) {
-
     // [#4151] [#6117] Some databases don't allow for qualifying column
     // names here. Copy also to SelectQueryImpl
     ctx.qualify(
         !UNQUALIFY_FIELDS.contains(ctx.dialect()) && ctx.qualify(),
         c -> {
           String sep = "";
-
           for (Table<?> table : this) {
             for (Field<?> field : table.fieldsRow().fields()) {
               ctx.sql(sep);
               ctx.visit(field);
-
               sep = ", ";
             }
           }

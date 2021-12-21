@@ -62,14 +62,12 @@ final class Asin extends AbstractField<BigDecimal> {
 
   Asin(Field<? extends Number> number) {
     super(N_ASIN, allNotNull(NUMERIC, number));
-
     this.number = nullSafeNotNull(number, INTEGER);
   }
 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -82,7 +80,6 @@ final class Asin extends AbstractField<BigDecimal> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Asin) {

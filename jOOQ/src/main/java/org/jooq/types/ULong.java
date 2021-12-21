@@ -138,29 +138,22 @@ public final class ULong extends UNumber implements Comparable<ULong> {
    */
   private ULong(String value) throws NumberFormatException {
     if (value == null) throw new NumberFormatException("null");
-
     int length = value.length();
-
     if (length == 0) throw new NumberFormatException("Empty input string");
-
     if (value.charAt(0) == '-')
       throw new NumberFormatException(
           String.format("Illegal leading minus sign on unsigned string %s", value));
-
     if (length <= 18) {
       this.value = Long.parseLong(value, 10);
       return;
     }
-
     final long first = Long.parseLong(value.substring(0, length - 1), 10);
     final int second = Character.digit(value.charAt(length - 1), 10);
     if (second < 0) throw new NumberFormatException("Bad digit at end of " + value);
-
     long result = first * 10 + second;
     if (compare(result, first) < 0)
       throw new NumberFormatException(
           String.format("String value %s exceeds range of unsigned long", value));
-
     this.value = result;
   }
 
@@ -194,7 +187,6 @@ public final class ULong extends UNumber implements Comparable<ULong> {
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof ULong) return value == ((ULong) obj).value;
-
     return false;
   }
 
@@ -211,10 +203,8 @@ public final class ULong extends UNumber implements Comparable<ULong> {
 
   public ULong add(ULong val) throws NumberFormatException {
     if (value < 0 && val.value < 0) throw new NumberFormatException();
-
     final long result = value + val.value;
     if ((value < 0 || val.value < 0) && result >= 0) throw new NumberFormatException();
-
     return valueOf(result);
   }
 
@@ -224,19 +214,15 @@ public final class ULong extends UNumber implements Comparable<ULong> {
 
   public ULong add(long val) throws NumberFormatException {
     if (val < 0) return subtract(Math.abs(val));
-
     final long result = value + val;
     if (value < 0 && result >= 0) throw new NumberFormatException();
-
     return valueOf(result);
   }
 
   public ULong subtract(final ULong val) {
     if (this.compareTo(val) < 0) throw new NumberFormatException();
-
     final long result = value - val.value;
     if (value < 0 && result >= 0) throw new NumberFormatException();
-
     return valueOf(result);
   }
 
@@ -246,12 +232,9 @@ public final class ULong extends UNumber implements Comparable<ULong> {
 
   public ULong subtract(final long val) {
     if (val < 0) return add(-val);
-
     if (compare(value, val) < 0) throw new NumberFormatException();
-
     final long result = value - val;
     if (value < 0 && result >= 0) throw new NumberFormatException();
-
     return valueOf(result);
   }
 }

@@ -55,8 +55,11 @@ final class ContainsIgnoreCase extends AbstractCondition {
   private static final Clause[] CLAUSES = {CONDITION, CONDITION_COMPARISON};
 
   private final Field<?> lhs;
+
   private final Field<?> rhs;
+
   private final boolean leftWildcard;
+
   private final boolean rightWildcard;
 
   ContainsIgnoreCase(Field<?> field, Field<?> rhs, boolean leftWildcard, boolean rightWildcard) {
@@ -71,14 +74,10 @@ final class ContainsIgnoreCase extends AbstractCondition {
     switch (ctx.family()) {
       default:
         Field<?>[] array = new Field[1 + (leftWildcard ? 1 : 0) + (rightWildcard ? 1 : 0)];
-
         int i = 0;
         if (leftWildcard) array[i++] = inline("%");
-
         array[i++] = Tools.escapeForLike(rhs, ctx.configuration());
-
         if (rightWildcard) array[i++] = inline("%");
-
         ctx.visit(lhs.likeIgnoreCase(DSL.concat(array), Tools.ESCAPE));
         break;
     }

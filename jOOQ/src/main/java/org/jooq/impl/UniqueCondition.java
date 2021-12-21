@@ -57,6 +57,7 @@ import org.jooq.Table;
 final class UniqueCondition extends AbstractCondition {
 
   private final Select<?> query;
+
   private final boolean unique;
 
   UniqueCondition(Select<?> query, boolean unique) {
@@ -74,11 +75,9 @@ final class UniqueCondition extends AbstractCondition {
     switch (ctx.family()) {
       case H2:
         if (!unique) ctx.visit(K_NOT).sql(' ');
-
         ctx.visit(K_UNIQUE).sql(' ');
         visitSubquery(ctx, query);
         break;
-
       default:
         Table<?> queryTable = query.asTable("t");
         Field<?>[] queryFields = queryTable.fields();
@@ -88,7 +87,6 @@ final class UniqueCondition extends AbstractCondition {
                 .where(row(queryFields).isNotNull())
                 .groupBy(queryFields)
                 .having(count().gt(one()));
-
         ctx.visit(unique ? notExists(subquery) : exists(subquery));
         break;
     }
@@ -96,7 +94,6 @@ final class UniqueCondition extends AbstractCondition {
 
   @Override
   public final Condition not() {
-
     // TODO: [#7362] [#10304] Find a better way to prevent double negation and unnecessary
     // parentheses
     return unique ? new UniqueCondition(query, false) : super.not();

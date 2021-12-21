@@ -95,11 +95,11 @@ import org.jooq.util.mariadb.MariaDBDataType;
 import org.jooq.util.mysql.MySQLDataType;
 import org.jooq.util.postgres.PostgresDataType;
 import org.jooq.util.sqlite.SQLiteDataType;
-// ...
-// ...
-// ...
-// ...
 
+// ...
+// ...
+// ...
+// ...
 /**
  * The SQL standard data types, as described in {@link Types}.
  *
@@ -115,7 +115,6 @@ public final class SQLDataType {
   // -------------------------------------------------------------------------
   // String types
   // -------------------------------------------------------------------------
-
   /** The {@link Types#VARCHAR} type. */
   public static final DataType<String> VARCHAR =
       new DefaultDataType<>(null, String.class, "varchar(l)");
@@ -188,7 +187,6 @@ public final class SQLDataType {
   // -------------------------------------------------------------------------
   // Boolean types
   // -------------------------------------------------------------------------
-
   /** The {@link Types#BOOLEAN} type. */
   public static final DataType<Boolean> BOOLEAN =
       new DefaultDataType<>(null, Boolean.class, "boolean");
@@ -199,7 +197,6 @@ public final class SQLDataType {
   // -------------------------------------------------------------------------
   // Integer types
   // -------------------------------------------------------------------------
-
   /** The {@link Types#TINYINT} type. */
   public static final DataType<Byte> TINYINT = new DefaultDataType<>(null, Byte.class, "tinyint");
 
@@ -226,7 +223,6 @@ public final class SQLDataType {
   // -------------------------------------------------------------------------
   // Unsigned integer types
   // -------------------------------------------------------------------------
-
   /** The unsigned {@link Types#TINYINT} type. */
   public static final DataType<UByte> TINYINTUNSIGNED =
       new DefaultDataType<>(null, UByte.class, "tinyint unsigned");
@@ -246,7 +242,6 @@ public final class SQLDataType {
   // -------------------------------------------------------------------------
   // Floating point types
   // -------------------------------------------------------------------------
-
   /** The {@link Types#DOUBLE} type. */
   public static final DataType<Double> DOUBLE = new DefaultDataType<>(null, Double.class, "double");
 
@@ -259,7 +254,6 @@ public final class SQLDataType {
   // -------------------------------------------------------------------------
   // Numeric types
   // -------------------------------------------------------------------------
-
   /** The {@link Types#NUMERIC} type. */
   public static final DataType<BigDecimal> NUMERIC =
       new DefaultDataType<>(null, BigDecimal.class, "numeric(p, s)");
@@ -291,7 +285,6 @@ public final class SQLDataType {
   // -------------------------------------------------------------------------
   // Datetime types
   // -------------------------------------------------------------------------
-
   /** The {@link Types#DATE} type. */
   public static final DataType<Date> DATE = new DefaultDataType<>(null, Date.class, "date");
 
@@ -330,7 +323,6 @@ public final class SQLDataType {
   // -------------------------------------------------------------------------
   // JSR310 types
   // -------------------------------------------------------------------------
-
   /** The {@link Types#DATE} type. */
   public static final DataType<LocalDate> LOCALDATE =
       new DefaultDataType<>(null, LocalDate.class, "date");
@@ -473,7 +465,6 @@ public final class SQLDataType {
   // -------------------------------------------------------------------------
   // Binary types
   // -------------------------------------------------------------------------
-
   /** The {@link Types#BINARY} type. */
   public static final DataType<byte[]> BINARY =
       new DefaultDataType<>(null, byte[].class, "binary(l)");
@@ -512,7 +503,6 @@ public final class SQLDataType {
   // -------------------------------------------------------------------------
   // Other types
   // -------------------------------------------------------------------------
-
   /** The {@link Types#OTHER} type. */
   public static final DataType<Object> OTHER = new DefaultDataType<>(null, Object.class, "other");
 
@@ -563,52 +553,38 @@ public final class SQLDataType {
   // -------------------------------------------------------------------------
   // Static initialisation of dialect-specific data types
   // -------------------------------------------------------------------------
-
   static {
     // Load all dialect-specific data types
     // TODO [#5713] Make this more reliable using a data type registry
-
     try {
-
       Class.forName(CUBRIDDataType.class.getName());
       initJSR310Types(CUBRID);
-
       Class.forName(DerbyDataType.class.getName());
       initJSR310Types(DERBY);
-
       Class.forName(FirebirdDataType.class.getName());
       initJSR310Types(FIREBIRD);
-
       Class.forName(H2DataType.class.getName());
       initJSR310Types(H2);
-
       Class.forName(HSQLDBDataType.class.getName());
       initJSR310Types(HSQLDB);
-
       Class.forName(IgniteDataType.class.getName());
       initJSR310Types(IGNITE);
-
       Class.forName(MariaDBDataType.class.getName());
       initJSR310Types(MARIADB);
-
       Class.forName(MySQLDataType.class.getName());
       initJSR310Types(MYSQL);
-
       Class.forName(PostgresDataType.class.getName());
       initJSR310Types(POSTGRES);
-
       Class.forName(SQLiteDataType.class.getName());
       initJSR310Types(SQLITE);
-
     } catch (Exception ignore) {
     }
   }
 
   private static final void initJSR310Types(SQLDialect family) {
     Configuration configuration = new DefaultConfiguration(family);
-
     // [#8561] Register JSR-310 types according to their matching JDBC
-    //         type configuration
+    // type configuration
     new DefaultDataType<>(
         family,
         SQLDataType.LOCALDATE,

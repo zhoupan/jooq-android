@@ -195,59 +195,92 @@ import org.jooq.tools.StringUtils;
  */
 final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
     implements SelectQuery<R> {
+
   private static final JooqLogger log = JooqLogger.getLogger(SelectQueryImpl.class);
+
   private static final Clause[] CLAUSES = {SELECT};
+
   static final Set<SQLDialect> EMULATE_SELECT_INTO_AS_CTAS =
       SQLDialect.supportedBy(CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE);
+
   private static final Set<SQLDialect> SUPPORT_SELECT_INTO_TABLE =
       SQLDialect.supportedBy(HSQLDB, POSTGRES);
 
   static final Set<SQLDialect> NO_SUPPORT_WINDOW_CLAUSE =
       SQLDialect.supportedUntil(CUBRID, DERBY, FIREBIRD, HSQLDB, IGNITE, MARIADB);
+
   private static final Set<SQLDialect> OPTIONAL_FROM_CLAUSE =
       SQLDialect.supportedBy(DEFAULT, H2, IGNITE, MARIADB, MYSQL, POSTGRES, SQLITE);
+
   private static final Set<SQLDialect> REQUIRES_DERIVED_TABLE_DML =
       SQLDialect.supportedBy(MARIADB, MYSQL);
+
   private static final Set<SQLDialect> EMULATE_EMPTY_GROUP_BY_CONSTANT =
       SQLDialect.supportedUntil(DERBY, HSQLDB, IGNITE);
+
   private static final Set<SQLDialect> EMULATE_EMPTY_GROUP_BY_OTHER =
       SQLDialect.supportedUntil(FIREBIRD, MARIADB, MYSQL, SQLITE);
 
   private static final Set<SQLDialect> SUPPORT_FULL_WITH_TIES =
       SQLDialect.supportedBy(H2, POSTGRES);
+
   private static final Set<SQLDialect> EMULATE_DISTINCT_ON =
       SQLDialect.supportedBy(DERBY, FIREBIRD, HSQLDB, MARIADB, MYSQL, SQLITE);
+
   static final Set<SQLDialect> NO_SUPPORT_FOR_UPDATE_OF_FIELDS =
       SQLDialect.supportedBy(MYSQL, POSTGRES);
 
   final WithImpl with;
+
   private final SelectFieldList<SelectFieldOrAsterisk> select;
+
   private Table<?> intoTable;
+
   private String hint;
+
   private String option;
+
   private boolean distinct;
+
   private QueryPartList<SelectFieldOrAsterisk> distinctOn;
+
   private ForLock forLock;
 
   private final TableList from;
+
   private final ConditionProviderImpl condition;
+
   private boolean grouping;
+
   private QueryPartList<GroupField> groupBy;
+
   private final ConditionProviderImpl having;
+
   private WindowList window;
+
   private final ConditionProviderImpl qualify;
+
   private final SortFieldList orderBy;
 
   private final QueryPartList<Field<?>> seek;
+
   private boolean seekBefore;
+
   private final Limit limit;
+
   private final List<CombineOperator> unionOp;
+
   private final List<QueryPartList<Select<?>>> union;
+
   private final SortFieldList unionOrderBy;
 
   private final QueryPartList<Field<?>> unionSeek;
-  private boolean unionSeekBefore; // [#3579] TODO
+
+  // [#3579] TODO
+  private boolean unionSeekBefore;
+
   private final Limit unionLimit;
+
   private final Map<QueryPart, QueryPart> localQueryPartMapping;
 
   SelectQueryImpl(Configuration configuration, WithImpl with) {
@@ -265,13 +298,11 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
   SelectQueryImpl(
       Configuration configuration, WithImpl with, TableLike<? extends R> from, boolean distinct) {
     super(configuration);
-
     this.with = with;
     this.distinct = distinct;
     this.select = new SelectFieldList<>();
     this.from = new TableList();
     this.condition = new ConditionProviderImpl();
-
     this.having = new ConditionProviderImpl();
     this.qualify = new ConditionProviderImpl();
     this.orderBy = new SortFieldList();
@@ -282,9 +313,7 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
     this.unionOrderBy = new SortFieldList();
     this.unionSeek = new QueryPartList<>();
     this.unionLimit = new Limit();
-
     if (from != null) this.from.add(from.asTable());
-
     this.localQueryPartMapping = new LinkedHashMap<>();
   }
 
@@ -314,44 +343,34 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
     if (CopyClause.START.between(start, end)) {
       result.from.addAll(from);
       result.condition.setWhere(condition.getWhere());
-
       if (scalarSelect) result.select.addAll(select);
     }
-
     if (CopyClause.WHERE.between(start, end)) {
-
       result.grouping = grouping;
       result.groupBy = groupBy;
       result.having.setWhere(having.getWhere());
       if (window != null) result.addWindow(window);
       result.qualify.setWhere(qualify.getWhere());
     }
-
     if (CopyClause.QUALIFY.between(start, end)) {
       if (!scalarSelect) result.select.addAll(select);
-
       result.hint = hint;
       result.distinct = distinct;
       result.distinctOn = distinctOn;
       result.orderBy.addAll(orderBy);
-
       result.seek.addAll(seek);
       result.limit.from(limit);
       result.forLock = forLock;
-
       result.option = option;
       result.intoTable = intoTable;
-
       // TODO: Should the remaining union subqueries also be copied?
       result.union.addAll(union);
       result.unionOp.addAll(unionOp);
       result.unionOrderBy.addAll(unionOrderBy);
-
       result.unionSeek.addAll(unionSeek);
       result.unionSeekBefore = unionSeekBefore;
       result.unionLimit.from(unionLimit);
     }
-
     return result;
   }
 
@@ -434,22 +453,18 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
   @Override
   public final Field<?>[] getFields(ResultSetMetaData meta) {
     Field<?>[] fields = getFields();
-
     // If no projection was specified explicitly, create fields from result
     // set meta data instead. This is typically the case for SELECT * ...
     if (fields.length == 0) return new MetaDataFieldProvider(configuration(), meta).getFields();
-
     return fields;
   }
 
   @Override
   public final Field<?>[] getFields() {
     Collection<? extends Field<?>> fields = coerce();
-
     // [#1808] TODO: Restrict this field list, in case a restricting fetch()
     // method was called to get here
     if (fields == null || fields.isEmpty()) fields = getSelect();
-
     return fieldArray(fields);
   }
 
@@ -460,27 +475,21 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
 
   @SuppressWarnings({"rawtypes", "unchecked"})
   private final Select<?> distinctOnEmulation() {
-
     // [#3564] TODO: Extract and merge this with getSelectResolveSomeAsterisks0()
     List<Field<?>> partitionBy = new ArrayList<>(distinctOn.size());
-
     for (SelectFieldOrAsterisk f : distinctOn)
       if (f instanceof Field) partitionBy.add((Field<?>) f);
-
     Field<Integer> rn = rowNumber().over(partitionBy(partitionBy).orderBy(orderBy)).as("rn");
-
     SelectQueryImpl<R> copy = copy(identity());
     copy.distinctOn = null;
     copy.select.add(rn);
     copy.orderBy.clear();
     copy.limit.clear();
-
     SelectLimitStep<?> s1 =
         DSL.select(qualify(table(name("t")), select))
             .from(copy.asTable("t"))
             .where(rn.eq(one()))
             .orderBy(map(orderBy, o -> unqualified(o)));
-
     if (limit.numberOfRows != null) {
       SelectLimitPercentStep<?> s2 = s1.limit((Param) limit.numberOfRows);
       SelectWithTiesStep<?> s3 = limit.percent ? s2.percent() : s2;
@@ -492,7 +501,6 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
   @Override
   public final void accept(Context<?> ctx) {
     Table<?> dmlTable;
-
     // [#6583] Work around MySQL's self-reference-in-DML-subquery restriction
     if (ctx.subqueryLevel() == 1
         && REQUIRES_DERIVED_TABLE_DML.contains(ctx.dialect())
@@ -500,43 +508,31 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
         && (dmlTable = (Table<?>) ctx.data(DATA_DML_TARGET_TABLE)) != null
         && containsUnaliasedTable(getFrom(), dmlTable)) {
       ctx.visit(DSL.select(asterisk()).from(asTable("t")));
-    }
-
-    // [#3564] Emulate DISTINCT ON queries at the top level
-    else if (Tools.isNotEmpty(distinctOn) && EMULATE_DISTINCT_ON.contains(ctx.dialect())) {
+    } else // [#3564] Emulate DISTINCT ON queries at the top level
+    if (Tools.isNotEmpty(distinctOn) && EMULATE_DISTINCT_ON.contains(ctx.dialect())) {
       ctx.visit(distinctOnEmulation());
-    }
-
-    // [#5810] Emulate the Teradata QUALIFY clause
-    else if (qualify.hasWhere() && transformQualify(ctx.configuration())) {
-
+    } else // [#5810] Emulate the Teradata QUALIFY clause
+    if (qualify.hasWhere() && transformQualify(ctx.configuration())) {
     } else accept0(ctx);
   }
 
   final void accept0(Context<?> context) {
-
     boolean topLevelCte = false;
-
     // Subquery scopes are started in AbstractContext
     if (context.subqueryLevel() == 0) {
       context.scopeStart();
-
       if (topLevelCte |= (context.data(DATA_TOP_LEVEL_CTE) == null))
         context.data(DATA_TOP_LEVEL_CTE, new TopLevelCte());
     }
-
     SQLDialect dialect = context.dialect();
-
     // [#2791] TODO: Instead of explicitly manipulating these data() objects, future versions
     // of jOOQ should implement a push / pop semantics to clearly delimit such scope.
     Object renderTrailingLimit = context.data(DATA_RENDER_TRAILING_LIMIT_IF_APPLICABLE);
     Object localWindowDefinitions = context.data(DATA_WINDOW_DEFINITIONS);
     Name[] selectAliases = (Name[]) context.data(DATA_SELECT_ALIASES);
-
     try {
       List<Field<?>> originalFields = null;
       List<Field<?>> alternativeFields = null;
-
       if (selectAliases != null) {
         context.data().remove(DATA_SELECT_ALIASES);
         alternativeFields =
@@ -544,31 +540,23 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
                 originalFields = getSelect(),
                 (f, i) -> i < selectAliases.length ? f.as(selectAliases[i]) : f);
       }
-
       if (TRUE.equals(renderTrailingLimit))
         context.data().remove(DATA_RENDER_TRAILING_LIMIT_IF_APPLICABLE);
-
       // [#5127] Lazy initialise this map
       if (localWindowDefinitions != null) context.data(DATA_WINDOW_DEFINITIONS, null);
-
       if (intoTable != null
           && !TRUE.equals(context.data(DATA_OMIT_INTO_CLAUSE))
           && EMULATE_SELECT_INTO_AS_CTAS.contains(dialect)) {
-
         context.data(DATA_OMIT_INTO_CLAUSE, true, c -> c.visit(createTable(intoTable).as(this)));
         return;
       }
-
       if (with != null) context.visit(with);
       else if (topLevelCte) markTopLevelCteAndAccept(context, c -> {});
-
       pushWindow(context);
-
       Boolean wrapDerivedTables = (Boolean) context.data(DATA_WRAP_DERIVED_TABLES_IN_PARENTHESES);
       if (TRUE.equals(wrapDerivedTables)) {
         context.sqlIndentStart('(').data().remove(DATA_WRAP_DERIVED_TABLES_IN_PARENTHESES);
       }
-
       switch (dialect) {
         case CUBRID:
         case FIREBIRD:
@@ -578,36 +566,28 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
             if (getLimit().isApplicable() && getLimit().withTies())
               toSQLReferenceLimitWithWindowFunctions(context);
             else toSQLReferenceLimitDefault(context, originalFields, alternativeFields);
-
             break;
           }
-
           // By default, render the dialect's limit clause
         default:
           {
             toSQLReferenceLimitDefault(context, originalFields, alternativeFields);
-
             break;
           }
       }
-
       // [#1296] [#7328] FOR UPDATE is emulated in some dialects using hints
       if (forLock != null) context.visit(forLock);
-
       // [#1952] SQL Server OPTION() clauses as well as many other optional
       // end-of-query clauses are appended to the end of a query
       if (!StringUtils.isBlank(option)) context.formatSeparator().sql(option);
-
       if (TRUE.equals(wrapDerivedTables))
         context.sqlIndentEnd(')').data(DATA_WRAP_DERIVED_TABLES_IN_PARENTHESES, true);
-
     } finally {
       context.data(DATA_WINDOW_DEFINITIONS, localWindowDefinitions);
       if (renderTrailingLimit != null)
         context.data(DATA_RENDER_TRAILING_LIMIT_IF_APPLICABLE, renderTrailingLimit);
       if (selectAliases != null) context.data(DATA_SELECT_ALIASES, selectAliases);
     }
-
     if (context.subqueryLevel() == 0) context.scopeEnd();
   }
 
@@ -632,18 +612,14 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
    * clause is specified.
    */
   private final void toSQLReferenceLimitWithWindowFunctions(Context<?> ctx) {
-
     // AUTHOR.ID, BOOK.ID, BOOK.TITLE
     final List<Field<?>> originalFields = getSelect();
-
     // AUTHOR.ID as v1, BOOK.ID as v2, BOOK.TITLE as v3
     // Enforce x.* or just * if we have no known field names (e.g. when plain SQL tables are
     // involved)
     final List<Field<?>> alternativeFields = new ArrayList<>(originalFields.size());
-
     if (originalFields.isEmpty()) alternativeFields.add(DSL.field("*"));
     else alternativeFields.addAll(aliasedFields(originalFields));
-
     alternativeFields.add(
         CustomField.of(
                 "rn",
@@ -651,18 +627,14 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
                 c -> {
                   boolean wrapQueryExpressionBodyInDerivedTable =
                       wrapQueryExpressionBodyInDerivedTable(c);
-
                   // [#3575] Ensure that no column aliases from the surrounding SELECT clause
                   // are referenced from the below ranking functions' ORDER BY clause.
                   c.data(DATA_UNALIAS_ALIASED_EXPRESSIONS, !wrapQueryExpressionBodyInDerivedTable);
-
                   boolean q = c.qualify();
-
                   c.data(
                       DATA_OVERRIDE_ALIASES_IN_ORDER_BY,
                       new Object[] {originalFields, alternativeFields});
                   if (wrapQueryExpressionBodyInDerivedTable) c.qualify(false);
-
                   // [#2580] FETCH NEXT n ROWS ONLY emulation:
                   // -----------------------------------------
                   // When DISTINCT is applied, we mustn't use ROW_NUMBER() OVER(),
@@ -673,7 +645,6 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
                   // [#6197] FETCH NEXT n ROWS WITH TIES emulation:
                   // ----------------------------------------------
                   // DISTINCT seems irrelevant here (to be proven)
-
                   c.visit(
                       distinct
                           ? DSL.denseRank()
@@ -682,16 +653,13 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
                               ? DSL.rank().over(orderBy(getNonEmptyOrderBy(c.configuration())))
                               : DSL.rowNumber()
                                   .over(orderBy(getNonEmptyOrderBy(c.configuration()))));
-
                   c.data().remove(DATA_UNALIAS_ALIASED_EXPRESSIONS);
                   c.data().remove(DATA_OVERRIDE_ALIASES_IN_ORDER_BY);
                   if (wrapQueryExpressionBodyInDerivedTable) c.qualify(q);
                 })
             .as("rn"));
-
     // v1 as ID, v2 as ID, v3 as TITLE
     final List<Field<?>> unaliasedFields = Tools.unaliasedFields(originalFields);
-
     ctx.visit(K_SELECT)
         .separatorRequired(true)
         .declareFields(true, c -> c.visit(new SelectFieldList<>(unaliasedFields)))
@@ -699,9 +667,7 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
         .visit(K_FROM)
         .sqlIndentStart(" (")
         .subquery(true);
-
     toSQLReference0(ctx, originalFields, alternativeFields);
-
     ctx.subquery(false)
         .sqlIndentEnd(") ")
         .visit(name("x"))
@@ -711,7 +677,6 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
         .visit(name("rn"))
         .sql(" > ")
         .visit(getLimit().getLowerRownum());
-
     if (!getLimit().limitZero())
       ctx.formatSeparator()
           .visit(K_AND)
@@ -719,9 +684,8 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
           .visit(name("rn"))
           .sql(" <= ")
           .visit(getLimit().getUpperRownum());
-
     // [#5068] Don't rely on nested query's ordering in case an operation
-    //         like DISTINCT or JOIN produces hashing.
+    // like DISTINCT or JOIN produces hashing.
     // [#7427] Don't order if not strictly required.
     // [#7609] Don't order if users prefer not to
     if (!ctx.subquery()
@@ -739,16 +703,14 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
       Context<?> context, List<Field<?>> originalFields, List<Field<?>> alternativeFields) {
     SQLDialect family = context.family();
     boolean qualify = context.qualify();
-
     int unionOpSize = unionOp.size();
     boolean unionParensRequired = false;
     boolean unionOpNesting = false;
-
     // The SQL standard specifies:
     //
     // <query expression> ::=
-    //    [ <with clause> ] <query expression body>
-    //    [ <order by clause> ] [ <result offset clause> ] [ <fetch first clause> ]
+    // [ <with clause> ] <query expression body>
+    // [ <order by clause> ] [ <result offset clause> ] [ <fetch first clause> ]
     //
     // Depending on the dialect and on various syntax elements, parts of the above must be wrapped
     // in
@@ -756,16 +718,7 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
     boolean wrapQueryExpressionInDerivedTable;
     boolean wrapQueryExpressionBodyInDerivedTable;
     boolean applySeekOnDerivedTable = applySeekOnDerivedTable();
-
-    wrapQueryExpressionInDerivedTable = false
-
-    //        // [#2995] Prevent the generation of wrapping parentheses around the
-    //        //         INSERT .. SELECT statement's SELECT because they would be
-    //        //         interpreted as the (missing) INSERT column list's parens.
-    //         || (context.data(DATA_INSERT_SELECT_WITHOUT_INSERT_COLUMN_LIST) != null &&
-    // unionOpSize > 0)
-    ;
-
+    wrapQueryExpressionInDerivedTable = false;
     if (wrapQueryExpressionInDerivedTable)
       context
           .visit(K_SELECT)
@@ -775,26 +728,19 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
           .sql(" (")
           .formatIndentStart()
           .formatNewLine();
-
     wrapQueryExpressionBodyInDerivedTable =
         false
-
-            // [#7459] In the presence of UNIONs and other set operations, the SEEK
-            //         predicate must be applied on a derived table, not on the individual
-            // subqueries
-            || applySeekOnDerivedTable;
-
+            || // [#7459] In the presence of UNIONs and other set operations, the SEEK
+            // predicate must be applied on a derived table, not on the individual subqueries
+            applySeekOnDerivedTable;
     if (wrapQueryExpressionBodyInDerivedTable) {
       context.visit(K_SELECT).sql(' ');
-
       context.formatIndentStart().formatNewLine().sql("t.*");
-
       if (alternativeFields != null && originalFields.size() < alternativeFields.size())
         context
             .sql(", ")
             .formatSeparator()
             .declareFields(true, c -> c.visit(alternativeFields.get(alternativeFields.size() - 1)));
-
       context
           .formatIndentEnd()
           .formatSeparator()
@@ -803,13 +749,11 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
           .formatIndentStart()
           .formatNewLine();
     }
-
     // [#1658] jOOQ applies left-associativity to set operators. In order to enforce that across
     // all databases, we need to wrap relevant subqueries in parentheses.
     if (unionOpSize > 0) {
       if (!TRUE.equals(context.data(DATA_NESTED_SET_OPERATIONS)))
         context.data(DATA_NESTED_SET_OPERATIONS, unionOpNesting = unionOpNesting());
-
       for (int i = unionOpSize - 1; i >= 0; i--) {
         switch (unionOp.get(i)) {
           case EXCEPT:
@@ -831,10 +775,9 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
             context.start(SELECT_UNION_ALL);
             break;
         }
-
         // [#3676] There might be cases where nested set operations do not
-        //         imply required parentheses in some dialects, but better
-        //         play safe than sorry
+        // imply required parentheses in some dialects, but better
+        // play safe than sorry
         unionParenthesis(
             context,
             '(',
@@ -843,170 +786,125 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
             unionParensRequired = unionOpNesting || unionParensRequired(context));
       }
     }
-
     traverseJoins(
         getFrom(),
         t -> {
           if (t instanceof TableImpl) context.scopeRegister(t, true);
         });
-
     for (Entry<QueryPart, QueryPart> entry : localQueryPartMapping.entrySet())
       context.scopeRegister(entry.getKey(), true, entry.getValue());
-
     // SELECT clause
     // -------------
     context.start(SELECT_SELECT).visit(K_SELECT).separatorRequired(true);
-
     // [#1493] Oracle hints come directly after the SELECT keyword
     if (!StringUtils.isBlank(hint)) context.sql(' ').sql(hint).separatorRequired(true);
-
     if (Tools.isNotEmpty(distinctOn))
       context.visit(K_DISTINCT_ON).sql(" (").visit(distinctOn).sql(')').separatorRequired(true);
     else if (distinct) context.visit(K_DISTINCT).separatorRequired(true);
-
     context.declareFields(true);
-
     // [#2335] When emulating LIMIT .. OFFSET, the SELECT clause needs to generate
     // non-ambiguous column names as ambiguous column names are not allowed in subqueries
     if (alternativeFields != null)
       if (wrapQueryExpressionBodyInDerivedTable && originalFields.size() < alternativeFields.size())
         context.visit(new SelectFieldList<>(alternativeFields.subList(0, originalFields.size())));
       else context.visit(new SelectFieldList<>(alternativeFields));
-
-    // The default behaviour
-    else context.visit(getSelectResolveUnsupportedAsterisks(context.configuration()));
-
+    else
+      // The default behaviour
+      context.visit(getSelectResolveUnsupportedAsterisks(context.configuration()));
     context.declareFields(false).end(SELECT_SELECT);
-
     // INTO clauses
     // ------------
     // [#4910] This clause (and the Clause.SELECT_INTO signal) must be emitted
-    //         only in top level SELECTs
+    // only in top level SELECTs
     if (!context.subquery()) {
       context.start(SELECT_INTO);
-
       QueryPart actualIntoTable = (QueryPart) context.data(DATA_SELECT_INTO_TABLE);
-
       if (actualIntoTable == null) actualIntoTable = intoTable;
-
       if (actualIntoTable != null
           && !TRUE.equals(context.data(DATA_OMIT_INTO_CLAUSE))
           && (SUPPORT_SELECT_INTO_TABLE.contains(context.dialect())
               || !(actualIntoTable instanceof Table))) {
-
         context.formatSeparator().visit(K_INTO).sql(' ').visit(actualIntoTable);
       }
-
       context.end(SELECT_INTO);
     }
-
     // FROM and JOIN clauses
     // ---------------------
     context.start(SELECT_FROM).declareTables(true);
-
     // [#....] Some SQL dialects do not require a FROM clause. Others do and
-    //         jOOQ generates a "DUAL" table or something equivalent.
-    //         See also org.jooq.impl.Dual for details.
+    // jOOQ generates a "DUAL" table or something equivalent.
+    // See also org.jooq.impl.Dual for details.
     boolean hasFrom = !getFrom().isEmpty() || !OPTIONAL_FROM_CLAUSE.contains(context.dialect());
-
     List<Condition> semiAntiJoinPredicates = null;
     ConditionProviderImpl where = getWhere(context);
-
     if (hasFrom) {
       Object previousCollect = context.data(DATA_COLLECT_SEMI_ANTI_JOIN, true);
       Object previousCollected = context.data(DATA_COLLECTED_SEMI_ANTI_JOIN, null);
-
       TableList tablelist = getFrom();
-
       tablelist = transformInlineDerivedTables(tablelist, where);
-
       context.formatSeparator().visit(K_FROM).separatorRequired(true).visit(tablelist);
-
       semiAntiJoinPredicates =
           (List<Condition>) context.data(DATA_COLLECTED_SEMI_ANTI_JOIN, previousCollected);
       context.data(DATA_COLLECT_SEMI_ANTI_JOIN, previousCollect);
     }
-
     context.declareTables(false).end(SELECT_FROM);
-
     // WHERE clause
     // ------------
     context.start(SELECT_WHERE);
-
     if (TRUE.equals(context.data().get(BooleanDataKey.DATA_SELECT_NO_DATA)))
       context.formatSeparator().visit(K_WHERE).sql(' ').visit(falseCondition());
     else if (!where.hasWhere() && semiAntiJoinPredicates == null)
       ;
     else {
       ConditionProviderImpl actual = new ConditionProviderImpl();
-
       if (semiAntiJoinPredicates != null) actual.addConditions(semiAntiJoinPredicates);
-
       if (where.hasWhere()) actual.addConditions(where.getWhere());
-
       context.formatSeparator().visit(K_WHERE).sql(' ').visit(actual);
     }
-
     context.end(SELECT_WHERE);
-
     // GROUP BY and HAVING clause
     // --------------------------
     context.start(SELECT_GROUP_BY);
-
     if (grouping) {
       context.formatSeparator().visit(K_GROUP_BY).separatorRequired(true);
-
       // [#1665] Empty GROUP BY () clauses need parentheses
       if (Tools.isEmpty(groupBy)) {
         context.sql(' ');
-
         // [#4292] Some dialects accept constant expressions in GROUP BY
         // Note that dialects may consider constants as indexed field
         // references, as in the ORDER BY clause!
         if (EMULATE_EMPTY_GROUP_BY_CONSTANT.contains(context.dialect())) context.sql('0');
-
-        // [#4447] CUBRID can't handle subqueries in GROUP BY
-        else if (family == CUBRID) context.sql("1 + 0");
-
-        // [#4292] Some dialects don't support empty GROUP BY () clauses
-        else if (EMULATE_EMPTY_GROUP_BY_OTHER.contains(context.dialect()))
+        else // [#4447] CUBRID can't handle subqueries in GROUP BY
+        if (family == CUBRID) context.sql("1 + 0");
+        else // [#4292] Some dialects don't support empty GROUP BY () clauses
+        if (EMULATE_EMPTY_GROUP_BY_OTHER.contains(context.dialect()))
           context.sql('(').visit(DSL.select(one())).sql(')');
-
-        // Few dialects support the SQL standard "grand total" (i.e. empty grouping set)
-        else context.sql("()");
+        else
+          // Few dialects support the SQL standard "grand total" (i.e. empty grouping set)
+          context.sql("()");
       } else context.visit(groupBy);
     }
-
     context.end(SELECT_GROUP_BY);
-
     // HAVING clause
     // -------------
     context.start(SELECT_HAVING);
-
     if (getHaving().hasWhere())
       context.formatSeparator().visit(K_HAVING).sql(' ').visit(getHaving());
-
     context.end(SELECT_HAVING);
-
     // WINDOW clause
     // -------------
     context.start(SELECT_WINDOW);
-
     if (Tools.isNotEmpty(window) && !NO_SUPPORT_WINDOW_CLAUSE.contains(context.dialect()))
       context
           .formatSeparator()
           .visit(K_WINDOW)
           .separatorRequired(true)
           .declareWindows(true, c -> c.visit(window));
-
     context.end(SELECT_WINDOW);
-
     // QUALIFY clause
     // -------------
-
     if (getQualify().hasWhere())
       context.formatSeparator().visit(K_QUALIFY).sql(' ').visit(getQualify());
-
     // ORDER BY clause for local subselect
     // -----------------------------------
     toSQLOrderBy(
@@ -1017,35 +915,27 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
         wrapQueryExpressionBodyInDerivedTable,
         orderBy,
         limit);
-
     // SET operations like UNION, EXCEPT, INTERSECT
     // --------------------------------------------
     if (unionOpSize > 0) {
       unionParenthesis(
           context, ')', null, derivedTableRequired(context, this), unionParensRequired);
-
       for (int i = 0; i < unionOpSize; i++) {
         CombineOperator op = unionOp.get(i);
-
         for (Select<?> other : union.get(i)) {
           boolean derivedTableRequired = derivedTableRequired(context, other);
-
           context.formatSeparator().visit(op.toKeyword(family));
-
           if (unionParensRequired) context.sql(' ');
           else context.formatSeparator();
-
           unionParenthesis(
               context, '(', other.getSelect(), derivedTableRequired, unionParensRequired);
           context.visit(other);
           unionParenthesis(context, ')', null, derivedTableRequired, unionParensRequired);
         }
-
         // [#1658] Close parentheses opened previously
         if (i < unionOpSize - 1)
           unionParenthesis(
               context, ')', null, derivedTableRequired(context, this), unionParensRequired);
-
         switch (unionOp.get(i)) {
           case EXCEPT:
             context.end(SELECT_EXCEPT);
@@ -1067,13 +957,10 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
             break;
         }
       }
-
       if (unionOpNesting) context.data().remove(DATA_NESTED_SET_OPERATIONS);
     }
-
     if (wrapQueryExpressionBodyInDerivedTable) {
       context.formatIndentEnd().formatNewLine().sql(") t");
-
       if (applySeekOnDerivedTable) {
         context
             .formatSeparator()
@@ -1082,7 +969,6 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
             .qualify(false, c -> c.visit(getSeekCondition()));
       }
     }
-
     // ORDER BY clause for UNION
     // -------------------------
     context.qualify(
@@ -1116,11 +1002,8 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
   private final TableList transformInlineDerivedTables(
       TableList tablelist, ConditionProviderImpl where) {
     if (!hasInlineDerivedTables(tablelist)) return tablelist;
-
     TableList result = new TableList();
-
     for (Table<?> table : tablelist) transformInlineDerivedTable0(table, result, where);
-
     return result;
   }
 
@@ -1128,7 +1011,6 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
       Table<?> table, TableList result, ConditionProviderImpl where) {
     if (table instanceof InlineDerivedTable) {
       InlineDerivedTable<?> t = (InlineDerivedTable<?>) table;
-
       result.add(t.table());
       where.addConditions(t.condition());
     } else if (table instanceof JoinTable)
@@ -1140,16 +1022,13 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
       Table<?> table, ConditionProviderImpl where, boolean keepDerivedTable) {
     if (table instanceof InlineDerivedTable) {
       InlineDerivedTable<?> t = (InlineDerivedTable<?>) table;
-
       if (keepDerivedTable) return t.query().asTable(t.table());
-
       where.addConditions(t.condition());
       return t.table();
     } else if (table instanceof JoinTable) {
       JoinTable j = (JoinTable) table;
       Table<?> lhs;
       Table<?> rhs;
-
       switch (j.type) {
         case LEFT_OUTER_JOIN:
         case LEFT_ANTI_JOIN:
@@ -1161,25 +1040,21 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
           lhs = transformInlineDerivedTables0(j.lhs, where, keepDerivedTable);
           rhs = transformInlineDerivedTables0(j.rhs, where, true);
           break;
-
         case RIGHT_OUTER_JOIN:
         case NATURAL_RIGHT_OUTER_JOIN:
           lhs = transformInlineDerivedTables0(j.lhs, where, true);
           rhs = transformInlineDerivedTables0(j.rhs, where, keepDerivedTable);
           break;
-
         case FULL_OUTER_JOIN:
         case NATURAL_FULL_OUTER_JOIN:
           lhs = transformInlineDerivedTables0(j.lhs, where, true);
           rhs = transformInlineDerivedTables0(j.rhs, where, true);
           break;
-
         default:
           lhs = transformInlineDerivedTables0(j.lhs, where, keepDerivedTable);
           rhs = transformInlineDerivedTables0(j.rhs, where, keepDerivedTable);
           break;
       }
-
       return j.transform(lhs, rhs);
     } else return table;
   }
@@ -1192,34 +1067,27 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
       final boolean wrapQueryExpressionBodyInDerivedTable,
       QueryPartListView<SortField<?>> actualOrderBy,
       Limit actualLimit) {
-
     ctx.start(SELECT_ORDER_BY);
-
     // [#6197] When emulating WITH TIES using RANK() in a subquery, we must avoid rendering the
-    //         subquery's ORDER BY clause
+    // subquery's ORDER BY clause
     if (!getLimit().withTies()
-        // Dialects with native support
-        || SUPPORT_FULL_WITH_TIES.contains(ctx.dialect())) {
-
+        || // Dialects with native support
+        SUPPORT_FULL_WITH_TIES.contains(ctx.dialect())) {
       if (!actualOrderBy.isEmpty()) {
         ctx.formatSeparator().visit(K_ORDER);
-
         ctx.sql(' ').visit(K_BY).separatorRequired(true);
-
         // [#11904] Shift field indexes in ORDER BY <field index>, in
-        //          case we are projecting emulated nested records of some sort
+        // case we are projecting emulated nested records of some sort
         if (RowField.NO_NATIVE_SUPPORT.contains(ctx.dialect())
             && findAny(actualOrderBy, s -> ((SortFieldImpl<?>) s).getField() instanceof Val)
                 != null) {
           SelectFieldIndexes s = getSelectFieldIndexes(ctx);
-
           if (s.mapped) {
             actualOrderBy =
                 new QueryPartListView<>(actualOrderBy)
                     .map(
                         t1 -> {
                           Field<?> in = ((SortFieldImpl<?>) t1).getField();
-
                           if (in instanceof Val && in.getDataType().isNumeric()) {
                             Val<?> val = (Val<?>) in;
                             int x = Convert.convert(val.getValue(), int.class) - 1;
@@ -1238,17 +1106,13 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
                         });
           }
         }
-
         {
           ctx.visit(actualOrderBy);
         }
       }
     }
-
     ctx.end(SELECT_ORDER_BY);
-
     if (wrapQueryExpressionInDerivedTable) ctx.formatIndentEnd().formatNewLine().sql(") x");
-
     if (TRUE.equals(ctx.data().get(DATA_RENDER_TRAILING_LIMIT_IF_APPLICABLE))
         && actualLimit.isApplicable()) ctx.visit(actualLimit);
   }
@@ -1263,8 +1127,10 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
 
   private static final Set<SQLDialect> NO_SUPPORT_UNION_PARENTHESES =
       SQLDialect.supportedBy(SQLITE);
+
   private static final Set<SQLDialect> NO_SUPPORT_CTE_IN_UNION =
       SQLDialect.supportedBy(HSQLDB, MARIADB);
+
   private static final Set<SQLDialect> UNION_PARENTHESIS =
       SQLDialect.supportedBy(DERBY, MARIADB, MYSQL);
 
@@ -1274,18 +1140,15 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
 
   private final boolean unionOpNesting() {
     if (unionOp.size() > 1) return true;
-
     SelectQueryImpl<?> s;
     for (QueryPartList<Select<?>> s1 : union)
       for (Select<?> s2 : s1)
         if ((s = selectQueryImpl(s2)) != null && !s.unionOp.isEmpty()) return true;
-
     return false;
   }
 
   private final boolean derivedTableRequired(Context<?> context, Select<?> s1) {
     SelectQueryImpl<?> s;
-
     // [#10711] Some derived tables are needed if dialects don't support CTE in union subqueries
     return NO_SUPPORT_CTE_IN_UNION.contains(context.dialect())
         && (s = selectQueryImpl(s1)) != null
@@ -1295,18 +1158,14 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
   private final boolean unionParensRequired(Context<?> context) {
     if (unionParensRequired(this)
         || context.settings().isRenderParenthesisAroundSetOperationQueries()) return true;
-
     CombineOperator op = unionOp.get(0);
-
     // [#3676] EXCEPT and EXCEPT ALL are not associative
     if ((op == EXCEPT || op == EXCEPT_ALL) && union.get(0).size() > 1) return true;
-
     // [#3676] if a query has an ORDER BY or LIMIT clause parens are required
     SelectQueryImpl<?> s;
     for (QueryPartList<Select<?>> s1 : union)
       for (Select<?> s2 : s1)
         if ((s = selectQueryImpl(s2)) != null && unionParensRequired(s)) return true;
-
     return false;
   }
 
@@ -1322,64 +1181,49 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
       boolean parensRequired) {
     if ('(' == parenthesis) ((AbstractContext<?>) ctx).subquery0(true, true);
     else if (')' == parenthesis) ((AbstractContext<?>) ctx).subquery0(false, true);
-
     derivedTableRequired |=
         derivedTableRequired
-
-            // [#3579] [#6431] [#7222] [#11582]
+            || // [#3579] [#6431] [#7222] [#11582]
             // Some databases don't support nested set operations at all because
             // they do not allow wrapping set op subqueries in parentheses
-            || parensRequired && NO_SUPPORT_UNION_PARENTHESES.contains(ctx.dialect())
-
-            // [#3579] [#6431] [#7222]
+            parensRequired && NO_SUPPORT_UNION_PARENTHESES.contains(ctx.dialect())
+            || // [#3579] [#6431] [#7222]
             // Nested set operations aren't supported, but parenthesised set op
             // subqueries are.
-            || (TRUE.equals(ctx.data(DATA_NESTED_SET_OPERATIONS))
+            (TRUE.equals(ctx.data(DATA_NESTED_SET_OPERATIONS))
                 && UNION_PARENTHESIS.contains(ctx.dialect()))
-
-            // [#2995] Ambiguity may need to be resolved when parentheses could mean both:
-            //         Set op subqueries or insert column lists
-            || TRUE.equals(ctx.data(DATA_INSERT_SELECT_WITHOUT_INSERT_COLUMN_LIST));
-
+            || // [#2995] Ambiguity may need to be resolved when parentheses could mean both:
+            // Set op subqueries or insert column lists
+            TRUE.equals(ctx.data(DATA_INSERT_SELECT_WITHOUT_INSERT_COLUMN_LIST));
     parensRequired |= derivedTableRequired;
-
     if (parensRequired && ')' == parenthesis) {
       ctx.formatIndentEnd().formatNewLine();
-    }
-
-    // [#3579] Nested set operators aren't supported in some databases. Emulate them via derived
-    // tables...
+    } else // [#3579] Nested set operators aren't supported in some databases. Emulate them via
+    // derived tables...
     // [#7222] Do this only in the presence of actual nested set operators
-    else if (parensRequired && '(' == parenthesis) {
+    if (parensRequired && '(' == parenthesis) {
       if (derivedTableRequired) {
         ctx.formatNewLine().visit(K_SELECT).sql(' ');
-
         // [#7222] Workaround for https://issues.apache.org/jira/browse/DERBY-6983
         if (ctx.family() == DERBY)
           ctx.visit(new SelectFieldList<>(map(fields, f -> Tools.unqualified(f))));
         else ctx.sql('*');
-
         ctx.formatSeparator().visit(K_FROM).sql(' ');
       }
     }
-
     // [#3579] ... but don't use derived tables to emulate nested set operators for Firebird, as
     // that
     // only causes many more issues in various contexts where they are not allowed:
     // - Recursive CTE
     // - INSERT SELECT
     // - Derived tables with undefined column names (see also [#3679])
-
     switch (ctx.family()) {
       case FIREBIRD:
         break;
-
       default:
         if (parensRequired) ctx.sql(parenthesis);
-
         break;
     }
-
     if (parensRequired && '(' == parenthesis) {
       ctx.formatIndentStart().formatNewLine();
     } else if (parensRequired && ')' == parenthesis) {
@@ -1410,7 +1254,6 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
   @Override
   public final void addDistinctOn(Collection<? extends SelectFieldOrAsterisk> fields) {
     if (distinctOn == null) distinctOn = new QueryPartList<>();
-
     distinctOn.addAll(fields);
   }
 
@@ -1500,7 +1343,6 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
 
   final ForLock forLock() {
     if (forLock == null) forLock = new ForLock();
-
     return forLock;
   }
 
@@ -1609,13 +1451,10 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
   }
 
   private final Collection<? extends Field<?>> subtract(List<Field<?>> left, List<Field<?>> right) {
-
     // [#7921] TODO Make this functionality more generally reusable
     FieldsImpl<?> e = new FieldsImpl<>(right);
     List<Field<?>> result = new ArrayList<>();
-
     for (Field<?> f : left) if (e.field(f) == null) result.add(f);
-
     return result;
   }
 
@@ -1627,7 +1466,6 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
   /** The select list with resolved implicit asterisks. */
   final SelectFieldList<SelectFieldOrAsterisk> getSelectResolveImplicitAsterisks() {
     if (getSelectAsSpecified().isEmpty()) return resolveAsterisk(new SelectFieldList<>());
-
     return getSelectAsSpecified();
   }
 
@@ -1652,15 +1490,12 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
   private final SelectFieldList<SelectFieldOrAsterisk> getSelectResolveSomeAsterisks0(
       Configuration c, boolean resolveSupported) {
     SelectFieldList<SelectFieldOrAsterisk> result = new SelectFieldList<>();
-
     // [#7921] Only H2 supports the * EXCEPT (..) syntax
     boolean resolveExcept = resolveSupported || !SUPPORT_NATIVE_EXCEPT.contains(c.dialect());
     boolean resolveUnqualifiedCombined =
         resolveSupported || NO_SUPPORT_UNQUALIFIED_COMBINED.contains(c.dialect());
-
     // [#7921] TODO Find a better, more efficient way to resolve asterisks
     SelectFieldList<SelectFieldOrAsterisk> list = getSelectResolveImplicitAsterisks();
-
     for (SelectFieldOrAsterisk f : list)
       if (f instanceof Field<?>) result.add(getResolveProjection(c, (Field<?>) f));
       else if (f instanceof QualifiedAsterisk)
@@ -1685,12 +1520,10 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
       else if (f instanceof Row)
         result.add(getResolveProjection(c, new RowField<Row, Record>((Row) f)));
       else throw new AssertionError("Type not supported: " + f);
-
     return result;
   }
 
   private final Field<?> getResolveProjection(Configuration c, Field<?> f) {
-
     return f;
   }
 
@@ -1701,7 +1534,6 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
   private final <Q extends QueryPartList<? super Field<?>>> Q resolveAsterisk(
       Q result, QueryPartList<Field<?>> except) {
     FieldsImpl<?> e = except == null ? null : new FieldsImpl<>(except);
-
     // [#109] [#489] [#7231]: SELECT * is only applied when at least one
     // table from the table source is "unknown", i.e. not generated from a
     // physical table. Otherwise, the fields are selected explicitly
@@ -1713,17 +1545,18 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
         for (TableLike<?> table : getFrom())
           for (Field<?> field : table.asTable().fields())
             if (e.field(field) == null) result.add(field);
-
     // The default is SELECT 1, when projections and table sources are
     // both empty
     if (getFrom().isEmpty()) result.add(one());
-
     return result;
   }
 
-  private static final /* record */ class SelectFieldIndexes {
+  private static final class /* record */ SelectFieldIndexes {
+
     private final boolean mapped;
+
     private final int[] mapping;
+
     private final int[] projectionSizes;
 
     public SelectFieldIndexes(boolean mapped, int[] mapping, int[] projectionSizes) {
@@ -1779,16 +1612,13 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
     boolean mapped = false;
     int[] mapping = new int[s.size()];
     int[] projectionSizes = new int[s.size()];
-
     if (RowField.NO_NATIVE_SUPPORT.contains(ctx.dialect())) {
       for (int i = 0; i < mapping.length; i++) {
         projectionSizes[i] = ((AbstractField<?>) s.get(i)).projectionSize();
         mapped |= projectionSizes[i] > 1;
-
         if (i < mapping.length - 1) mapping[i + 1] = mapping[i] + projectionSizes[i];
       }
     } else for (int i = 0; i < mapping.length; i++) mapping[i] = i;
-
     return new SelectFieldIndexes(mapped, mapping, projectionSizes);
   }
 
@@ -1797,13 +1627,9 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
         getFrom(),
         true,
         r -> !r,
-        null,
-
-        // [#12328] Don't recurse into the RHS if the join does not affect the projection
+        null, // [#12328] Don't recurse into the RHS if the join does not affect the projection
         j -> j.type != JoinType.LEFT_ANTI_JOIN && j.type != JoinType.LEFT_SEMI_JOIN,
-        null,
-
-        // TODO: PostgreSQL supports tables without columns, see e.g.
+        null, // TODO: PostgreSQL supports tables without columns, see e.g.
         // https://blog.jooq.org/creating-tables-dum-and-dee-in-postgresql/
         (r, t) -> r && t.fieldsRow().size() > 0);
   }
@@ -1814,12 +1640,11 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
     // Generated record classes only come into play, when the select is
     // - on a single table
     // - a select *
-
     if (getFrom().size() == 1 && getSelectAsSpecified().isEmpty())
       return (Class<? extends R>) getFrom().get(0).asTable().getRecordType();
-
-    // [#4695] [#11521] Calculate the correct Record[B] type
-    else return (Class<? extends R>) recordType(getSelect().size());
+    else
+      // [#4695] [#11521] Calculate the correct Record[B] type
+      return (Class<? extends R>) recordType(getSelect().size());
   }
 
   final TableList getFrom() {
@@ -1832,17 +1657,14 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
 
   final ConditionProviderImpl getWhere(Context<?> ctx) {
     ConditionProviderImpl result = new ConditionProviderImpl();
-
     if (condition.hasWhere()) result.addConditions(condition.getWhere());
-
     // Apply SEEK predicates in the WHERE clause only if:
     // - There is an ORDER BY clause (SEEK is non-deterministic)
     // - There is a SEEK clause (obvious case)
     // - There are no unions (union is nested in derived table
-    //   and SEEK predicate is applied outside). See [#7459]
+    // and SEEK predicate is applied outside). See [#7459]
     if (!getOrderBy().isEmpty() && !getSeek().isEmpty() && unionOp.isEmpty())
       result.addConditions(getSeekCondition());
-
     return result;
   }
 
@@ -1850,43 +1672,33 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
   final Condition getSeekCondition() {
     SortFieldList o = getOrderBy();
     Condition c = null;
-
     // [#2786] TODO: Check if NULLS FIRST | NULLS LAST clauses are
     // contained in the SortFieldList, in case of which, the below
     // predicates will become a lot more complicated.
     if (o.nulls()) {}
-
     // If we have uniform sorting, more efficient row value expression
     // predicates can be applied, which can be heavily optimised on some
     // databases.
     if (o.size() > 1 && o.uniform()) {
       if (o.get(0).getOrder() != DESC ^ seekBefore) c = row(o.fields()).gt(row(getSeek()));
       else c = row(o.fields()).lt(row(getSeek()));
-    }
-
-    // With alternating sorting, the SEEK clause has to be explicitly
+    } else // With alternating sorting, the SEEK clause has to be explicitly
     // phrased for each ORDER BY field.
-    else {
+    {
       ConditionProviderImpl or = new ConditionProviderImpl();
-
       for (int i = 0; i < o.size(); i++) {
         ConditionProviderImpl and = new ConditionProviderImpl();
-
         for (int j = 0; j < i; j++)
           and.addConditions(
               ((Field) ((SortFieldImpl<?>) o.get(j)).getField()).eq(getSeek().get(j)));
-
         SortFieldImpl<?> s = (SortFieldImpl<?>) o.get(i);
         if (s.getOrder() != DESC ^ seekBefore)
           and.addConditions(((Field) s.getField()).gt(getSeek().get(i)));
         else and.addConditions(((Field) s.getField()).lt(getSeek().get(i)));
-
         or.addConditions(OR, and);
       }
-
       c = or;
     }
-
     return c;
   }
 
@@ -1913,7 +1725,6 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
   final SortFieldList getNonEmptyOrderBy(Configuration configuration) {
     if (getOrderBy().isEmpty()) {
       SortFieldList result = new SortFieldList();
-
       switch (configuration.family()) {
         default:
           result.add(DSL.field("({select} 0)").asc());
@@ -1921,16 +1732,13 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
       }
       return result;
     }
-
     return getOrderBy();
   }
 
   final SortFieldList getNonEmptyOrderByForDistinct(Configuration configuration) {
     SortFieldList order = new SortFieldList();
     order.addAll(getNonEmptyOrderBy(configuration));
-
     for (Field<?> field : getSelect()) order.add(field.asc());
-
     return order;
   }
 
@@ -1958,22 +1766,18 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
   public final void addSeekAfter(Collection<? extends Field<?>> fields) {
     if (unionOp.size() == 0) seekBefore = false;
     else unionSeekBefore = false;
-
     getSeek().addAll(fields);
   }
 
   @Override
-  @Deprecated
   public final void addSeekBefore(Field<?>... fields) {
     addSeekBefore(Arrays.asList(fields));
   }
 
   @Override
-  @Deprecated
   public final void addSeekBefore(Collection<? extends Field<?>> fields) {
     if (unionOp.size() == 0) seekBefore = true;
     else unionSeekBefore = true;
-
     getSeek().addAll(fields);
   }
 
@@ -2033,9 +1837,7 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
   @Override
   public final void addGroupBy(Collection<? extends GroupField> fields) {
     setGrouping();
-
     if (groupBy == null) groupBy = new QueryPartList<>();
-
     groupBy.addAll(fields);
   }
 
@@ -2082,7 +1884,6 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
   @Override
   public final void addWindow(Collection<? extends WindowDefinition> definitions) {
     if (window == null) window = new WindowList();
-
     window.addAll(definitions);
   }
 
@@ -2118,23 +1919,18 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
 
   @SuppressWarnings("rawtypes")
   private final SelectQueryImpl<R> combine(CombineOperator op, Select<? extends R> other) {
-
     // [#8557] Prevent StackOverflowError when using same query instance on
-    //         both sides of a set operation
+    // both sides of a set operation
     if (this == other
         || (other instanceof SelectImpl && this == ((SelectImpl) other).getDelegate()))
       throw new IllegalArgumentException(
           "In jOOQ 3.x's mutable DSL API, it is not possible to use the same instance of a Select query on both sides of a set operation like s.union(s)");
-
     int index = unionOp.size() - 1;
-
     if (index == -1 || unionOp.get(index) != op || op == EXCEPT || op == EXCEPT_ALL) {
       unionOp.add(op);
       union.add(new QueryPartList<>());
-
       index++;
     }
-
     union.get(index).add(other);
     return this;
   }
@@ -2191,11 +1987,9 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
 
   private final void addJoin0(
       TableLike<?> table, JoinType type, Object conditions, Field<?>[] partitionBy) {
-
     // TODO: This and similar methods should be refactored, patterns extracted...
     int index = getFrom().size() - 1;
     Table<?> joined = null;
-
     switch (type) {
       case JOIN:
       case STRAIGHT_JOIN:
@@ -2204,26 +1998,20 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
       case FULL_OUTER_JOIN:
         {
           TableOptionalOnStep<Record> o = getFrom().get(index).join(table, type);
-
           if (conditions instanceof Condition) joined = o.on((Condition) conditions);
           else joined = o.on((Condition[]) conditions);
-
           break;
         }
-
       case LEFT_OUTER_JOIN:
       case RIGHT_OUTER_JOIN:
         {
           TablePartitionByStep<?> p =
               (TablePartitionByStep<?>) getFrom().get(index).join(table, type);
           TableOnStep<?> o = p;
-
           if (conditions instanceof Condition) joined = o.on((Condition) conditions);
           else joined = o.on((Condition[]) conditions);
-
           break;
         }
-
         // These join types don't take any ON clause. Ignore conditions.
       case CROSS_JOIN:
       case NATURAL_JOIN:
@@ -2234,21 +2022,17 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
       case OUTER_APPLY:
         joined = getFrom().get(index).join(table, type);
         break;
-
       default:
         throw new IllegalArgumentException("Bad join type: " + type);
     }
-
     getFrom().set(index, joined);
   }
 
   @Override
   public final void addJoinOnKey(TableLike<?> table, JoinType type) throws DataAccessException {
     // TODO: This and similar methods should be refactored, patterns extracted...
-
     int index = getFrom().size() - 1;
     Table<?> joined = null;
-
     switch (type) {
       case JOIN:
       case LEFT_OUTER_JOIN:
@@ -2258,14 +2042,12 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
       case LEFT_ANTI_JOIN:
         joined = getFrom().get(index).join(table, type).onKey();
         break;
-
       default:
         throw new IllegalArgumentException(
             "JoinType "
                 + type
                 + " is not supported with the addJoinOnKey() method. Use INNER or OUTER JOINs only");
     }
-
     getFrom().set(index, joined);
   }
 
@@ -2273,10 +2055,8 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
   public final void addJoinOnKey(TableLike<?> table, JoinType type, TableField<?, ?>... keyFields)
       throws DataAccessException {
     // TODO: This and similar methods should be refactored, patterns extracted...
-
     int index = getFrom().size() - 1;
     Table<?> joined = null;
-
     switch (type) {
       case JOIN:
       case LEFT_OUTER_JOIN:
@@ -2286,24 +2066,20 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
       case LEFT_ANTI_JOIN:
         joined = getFrom().get(index).join(table, type).onKey(keyFields);
         break;
-
       default:
         throw new IllegalArgumentException(
             "JoinType "
                 + type
                 + " is not supported with the addJoinOnKey() method. Use INNER or OUTER JOINs only");
     }
-
     getFrom().set(index, joined);
   }
 
   @Override
   public final void addJoinOnKey(TableLike<?> table, JoinType type, ForeignKey<?, ?> key) {
     // TODO: This and similar methods should be refactored, patterns extracted...
-
     int index = getFrom().size() - 1;
     Table<?> joined = null;
-
     switch (type) {
       case JOIN:
       case LEFT_OUTER_JOIN:
@@ -2313,14 +2089,12 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
       case LEFT_ANTI_JOIN:
         joined = getFrom().get(index).join(table, type).onKey(key);
         break;
-
       default:
         throw new IllegalArgumentException(
             "JoinType "
                 + type
                 + " is not supported with the addJoinOnKey() method. Use INNER or OUTER JOINs only");
     }
-
     getFrom().set(index, joined);
   }
 
@@ -2333,10 +2107,8 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
   public final void addJoinUsing(
       TableLike<?> table, JoinType type, Collection<? extends Field<?>> fields) {
     // TODO: This and similar methods should be refactored, patterns extracted...
-
     int index = getFrom().size() - 1;
     Table<?> joined = null;
-
     switch (type) {
       case JOIN:
       case LEFT_OUTER_JOIN:
@@ -2346,14 +2118,12 @@ final class SelectQueryImpl<R extends Record> extends AbstractResultQuery<R>
       case LEFT_ANTI_JOIN:
         joined = getFrom().get(index).join(table, type).using(fields);
         break;
-
       default:
         throw new IllegalArgumentException(
             "JoinType "
                 + type
                 + " is not supported with the addJoinUsing() method. Use INNER or OUTER JOINs only");
     }
-
     getFrom().set(index, joined);
   }
 

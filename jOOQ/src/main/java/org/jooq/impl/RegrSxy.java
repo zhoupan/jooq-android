@@ -65,7 +65,6 @@ final class RegrSxy extends DefaultAggregateFunction<BigDecimal> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Set<SQLDialect> NO_SUPPORT_NATIVE =
       SQLDialect.supportedUntil(
           CUBRID, DERBY, FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, SQLITE);
@@ -78,18 +77,15 @@ final class RegrSxy extends DefaultAggregateFunction<BigDecimal> {
 
   @Override
   void acceptFunctionName(Context<?> ctx) {
-
     super.acceptFunctionName(ctx);
   }
 
   @SuppressWarnings("unchecked")
   private final void acceptEmulation(Context<?> ctx) {
-
     Field<? extends Number> x = (Field) getArguments().get(0);
     Field<? extends Number> y = (Field) getArguments().get(1);
-
     // [#11547] The formal emulation is REGR_COUNT(x, y) * COVAR_POP(x, y), but
-    //          COVAR_POP(x, y) can be expressed as REGR_SXY(x, y) / REGR_COUNT(x, y)
+    // COVAR_POP(x, y) can be expressed as REGR_SXY(x, y) / REGR_COUNT(x, y)
     // ctx.visit(fo(DSL.regrCount(x, y)).times(fo(DSL.covarPop(x, y))));
     ctx.visit(
         fo(DSL.sum(x.times(y)))

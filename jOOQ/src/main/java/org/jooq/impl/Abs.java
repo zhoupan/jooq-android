@@ -61,14 +61,12 @@ final class Abs<T extends Number> extends AbstractField<T> {
 
   Abs(Field<T> number) {
     super(N_ABS, allNotNull((DataType) dataType(INTEGER, number, false), number));
-
     this.number = nullSafeNotNull(number, INTEGER);
   }
 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -81,7 +79,6 @@ final class Abs<T extends Number> extends AbstractField<T> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Abs) {

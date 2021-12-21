@@ -61,17 +61,14 @@ final class Xmlforest extends AbstractField<XML> {
 
   Xmlforest(Collection<? extends Field<?>> fields) {
     super(N_XMLFOREST, allNotNull(XML));
-
     this.fields = fields;
   }
 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
-
     ctx.data(
         DATA_AS_REQUIRED,
         true,
@@ -85,7 +82,6 @@ final class Xmlforest extends AbstractField<XML> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Xmlforest) {

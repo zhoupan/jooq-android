@@ -58,7 +58,9 @@ import org.jooq.tools.*;
 final class DropSchemaImpl extends AbstractDDLQuery implements DropSchemaStep, DropSchemaFinalStep {
 
   private final Schema schema;
+
   private final boolean dropSchemaIfExists;
+
   private Cascade cascade;
 
   DropSchemaImpl(Configuration configuration, Schema schema, boolean dropSchemaIfExists) {
@@ -68,7 +70,6 @@ final class DropSchemaImpl extends AbstractDDLQuery implements DropSchemaStep, D
   DropSchemaImpl(
       Configuration configuration, Schema schema, boolean dropSchemaIfExists, Cascade cascade) {
     super(configuration);
-
     this.schema = schema;
     this.dropSchemaIfExists = dropSchemaIfExists;
     this.cascade = cascade;
@@ -89,7 +90,6 @@ final class DropSchemaImpl extends AbstractDDLQuery implements DropSchemaStep, D
   // -------------------------------------------------------------------------
   // XXX: DSL API
   // -------------------------------------------------------------------------
-
   @Override
   public final DropSchemaImpl cascade() {
     this.cascade = Cascade.CASCADE;
@@ -105,10 +105,11 @@ final class DropSchemaImpl extends AbstractDDLQuery implements DropSchemaStep, D
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Clause[] CLAUSES = {Clause.DROP_SCHEMA};
+
   private static final Set<SQLDialect> NO_SUPPORT_IF_EXISTS =
       SQLDialect.supportedBy(DERBY, FIREBIRD);
+
   private static final Set<SQLDialect> REQUIRES_RESTRICT = SQLDialect.supportedBy(DERBY);
 
   private final boolean supportsIfExists(Context<?> ctx) {
@@ -117,7 +118,6 @@ final class DropSchemaImpl extends AbstractDDLQuery implements DropSchemaStep, D
 
   @Override
   public final void accept(Context<?> ctx) {
-
     accept0(ctx);
   }
 
@@ -129,17 +129,12 @@ final class DropSchemaImpl extends AbstractDDLQuery implements DropSchemaStep, D
 
   private void accept1(Context<?> ctx) {
     ctx.start(Clause.DROP_SCHEMA_SCHEMA).visit(K_DROP);
-
     ctx.sql(' ').visit(K_SCHEMA);
-
     if (dropSchemaIfExists && supportsIfExists(ctx)) ctx.sql(' ').visit(K_IF_EXISTS);
-
     ctx.sql(' ').visit(schema);
-
     if (cascade == Cascade.CASCADE) ctx.sql(' ').visit(K_CASCADE);
     else if (cascade == Cascade.RESTRICT || REQUIRES_RESTRICT.contains(ctx.dialect()))
       ctx.sql(' ').visit(K_RESTRICT);
-
     ctx.end(Clause.DROP_SCHEMA_SCHEMA);
   }
 

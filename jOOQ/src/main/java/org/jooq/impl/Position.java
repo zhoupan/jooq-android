@@ -58,12 +58,13 @@ import org.jooq.tools.*;
 final class Position extends AbstractField<Integer> {
 
   private final Field<String> in;
+
   private final Field<String> search;
+
   private final Field<? extends Number> startIndex;
 
   Position(Field<String> in, Field<String> search) {
     super(N_POSITION, allNotNull(INTEGER, in, search));
-
     this.in = nullSafeNotNull(in, VARCHAR);
     this.search = nullSafeNotNull(search, VARCHAR);
     this.startIndex = null;
@@ -71,7 +72,6 @@ final class Position extends AbstractField<Integer> {
 
   Position(Field<String> in, Field<String> search, Field<? extends Number> startIndex) {
     super(N_POSITION, allNotNull(INTEGER, in, search, startIndex));
-
     this.in = nullSafeNotNull(in, VARCHAR);
     this.search = nullSafeNotNull(search, VARCHAR);
     this.startIndex = nullSafeNotNull(startIndex, INTEGER);
@@ -80,10 +80,8 @@ final class Position extends AbstractField<Integer> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
-
     if (startIndex != null) {
       switch (ctx.family()) {
         case DERBY:
@@ -97,7 +95,6 @@ final class Position extends AbstractField<Integer> {
               .visit(startIndex)
               .sql(')');
           break;
-
         default:
           ctx.visit(
               DSL.case_(DSL.position(DSL.substring(in, startIndex), search))
@@ -113,11 +110,9 @@ final class Position extends AbstractField<Integer> {
         case DERBY:
           ctx.visit(N_LOCATE).sql('(').visit(search).sql(", ").visit(in).sql(')');
           break;
-
         case SQLITE:
           ctx.visit(N_INSTR).sql('(').visit(in).sql(", ").visit(search).sql(')');
           break;
-
         default:
           ctx.visit(N_POSITION)
               .sql('(')
@@ -135,7 +130,6 @@ final class Position extends AbstractField<Integer> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Position) {

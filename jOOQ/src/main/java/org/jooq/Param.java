@@ -121,7 +121,6 @@ public interface Param<T> extends ParamOrVariable<T> {
    * @deprecated - 3.8.0 - [#4991] In jOOQ 4.0, {@link Param} will be made immutable. Modifying
    *     {@link Param} values is strongly discouraged.
    */
-  @Deprecated(forRemoval = true, since = "3.8")
   void setValue(T value);
 
   /**
@@ -133,7 +132,6 @@ public interface Param<T> extends ParamOrVariable<T> {
    * @deprecated - 3.8.0 - [#4991] In jOOQ 4.0, {@link Param} will be made immutable. Modifying
    *     {@link Param} values is strongly discouraged.
    */
-  @Deprecated(forRemoval = true, since = "3.8")
   void setConverted(Object value) throws DataTypeException;
 
   /**
@@ -142,7 +140,6 @@ public interface Param<T> extends ParamOrVariable<T> {
    * @deprecated - 3.8.0 - [#4991] In jOOQ 4.0, {@link Param} will be made immutable. Modifying
    *     {@link Param} values is strongly discouraged.
    */
-  @Deprecated(forRemoval = true, since = "3.8")
   void setInline(boolean inline);
 
   /** A flag on the bind value to force it to be inlined in rendered SQL */

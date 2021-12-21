@@ -60,7 +60,9 @@ import org.jooq.UniqueKey;
 abstract class AbstractKey<R extends Record> extends AbstractNamed implements Key<R> {
 
   private final Table<R> table;
+
   private final TableField<R, ?>[] fields;
+
   private final boolean enforced;
 
   AbstractKey(Table<R> table, TableField<R, ?>[] fields, boolean enforced) {
@@ -69,7 +71,6 @@ abstract class AbstractKey<R extends Record> extends AbstractNamed implements Ke
 
   AbstractKey(Table<R> table, Name name, TableField<R, ?>[] fields, boolean enforced) {
     super(qualify(table, name), null);
-
     this.table = table;
     this.fields = fields;
     this.enforced = enforced;

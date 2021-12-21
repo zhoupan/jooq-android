@@ -65,34 +65,28 @@ final class Uuid extends AbstractField<UUID> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
       case POSTGRES:
         ctx.visit(function(N_GEN_RANDOM_UUID, getDataType()));
         break;
-
       case FIREBIRD:
         ctx.visit(function(N_UUID_TO_CHAR, getDataType(), function(N_GEN_UUID, getDataType())));
         break;
-
       case H2:
         ctx.visit(function(N_RANDOM_UUID, getDataType()));
         break;
-
       case HSQLDB:
       case IGNITE:
       case MARIADB:
       case MYSQL:
         ctx.visit(function(N_UUID, getDataType()));
         break;
-
       case SQLITE:
         {
           // See https://stackoverflow.com/a/22725697/521799
           Field<String> u = DSL.field(name("u"), VARCHAR);
-
           ctx.visit(
               DSL.field(
                   select(
@@ -113,7 +107,6 @@ final class Uuid extends AbstractField<UUID> {
                               .asTable(unquotedName("t")))));
           break;
         }
-
       default:
         ctx.visit(function(N_UUID, getDataType()));
         break;
@@ -123,7 +116,6 @@ final class Uuid extends AbstractField<UUID> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Uuid) {

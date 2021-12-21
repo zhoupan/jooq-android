@@ -52,7 +52,9 @@ import java.util.function.Supplier;
 public class DefaultStatement extends JDBC41Statement implements Statement {
 
   private final Statement delegate;
+
   private final Connection creator;
+
   private final Supplier<? extends SQLException> errorIfUnsupported;
 
   public DefaultStatement(Statement delegate) {
@@ -82,19 +84,16 @@ public class DefaultStatement extends JDBC41Statement implements Statement {
   // ------------------------------------------------------------------------
   // XXX Auxiliary methods
   // ------------------------------------------------------------------------
-
   protected ResultSet wrap(ResultSet wrapped) {
-
     // [#8993] Some JDBC drivers produce null ResultSets where they shouldn't.
-    //         This method allows for passing along this null result value
-    //         rather than wrapping it, leading to unrelated NPEs later.
+    // This method allows for passing along this null result value
+    // rather than wrapping it, leading to unrelated NPEs later.
     return wrapped == null ? null : new DefaultResultSet(wrapped, this);
   }
 
   // ------------------------------------------------------------------------
   // XXX Executing the statement
   // ------------------------------------------------------------------------
-
   @Override
   public boolean execute(String sql) throws SQLException {
     return getDelegateStatement().execute(sql);
@@ -148,7 +147,6 @@ public class DefaultStatement extends JDBC41Statement implements Statement {
   // ------------------------------------------------------------------------
   // XXX Other methods
   // ------------------------------------------------------------------------
-
   @Override
   public <T> T unwrap(Class<T> iface) throws SQLException {
     return getDelegateStatement().unwrap(iface);
@@ -312,7 +310,6 @@ public class DefaultStatement extends JDBC41Statement implements Statement {
   // ------------------------------------------------------------------------
   // JDBC 4.1
   // ------------------------------------------------------------------------
-
   @Override
   public void closeOnCompletion() throws SQLException {
     getDelegate().closeOnCompletion();
@@ -326,7 +323,6 @@ public class DefaultStatement extends JDBC41Statement implements Statement {
   // ------------------------------------------------------------------------
   // JDBC 4.2
   // ------------------------------------------------------------------------
-
   @Override
   public long getLargeUpdateCount() throws SQLException {
     return getDelegate().getLargeUpdateCount();
@@ -370,7 +366,6 @@ public class DefaultStatement extends JDBC41Statement implements Statement {
   // ------------------------------------------------------------------------
   // JDBC 4.3
   // ------------------------------------------------------------------------
-
   @Override
   public String enquoteLiteral(String val) throws SQLException {
     return getDelegate().enquoteLiteral(val);

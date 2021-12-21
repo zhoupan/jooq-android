@@ -59,11 +59,11 @@ import org.jooq.tools.*;
 final class ToTimestamp extends AbstractField<Timestamp> {
 
   private final Field<String> value;
+
   private final Field<String> formatMask;
 
   ToTimestamp(Field<String> value, Field<String> formatMask) {
     super(N_TO_TIMESTAMP, allNotNull(TIMESTAMP, value, formatMask));
-
     this.value = nullSafeNotNull(value, VARCHAR);
     this.formatMask = nullSafeNotNull(formatMask, VARCHAR);
   }
@@ -71,7 +71,6 @@ final class ToTimestamp extends AbstractField<Timestamp> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -84,7 +83,6 @@ final class ToTimestamp extends AbstractField<Timestamp> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof ToTimestamp) {

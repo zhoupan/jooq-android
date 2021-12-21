@@ -57,13 +57,21 @@ import org.jooq.exception.IOException;
 public final class Source {
 
   private final String string;
+
   private final byte[] bytes;
+
   private final String charsetName;
+
   private final Charset charset;
+
   private final CharsetDecoder charsetDecoder;
+
   private final Reader reader;
+
   private final InputStream inputStream;
+
   private final File file;
+
   private final int length;
 
   private Source(
@@ -210,7 +218,9 @@ public final class Source {
   }
 
   static class LengthLimitedInputStream extends InputStream {
+
     final InputStream is;
+
     int length;
 
     LengthLimitedInputStream(InputStream is, int length) {
@@ -233,7 +243,9 @@ public final class Source {
   }
 
   static class LengthLimitedReader extends Reader {
+
     final Reader reader;
+
     int length;
 
     LengthLimitedReader(Reader reader, int length) {
@@ -264,7 +276,6 @@ public final class Source {
   public final String readString() throws IOException {
     StringWriter w = new StringWriter();
     Reader r = null;
-
     try {
       r = reader();
       char[] buffer = new char[8192];
@@ -275,7 +286,6 @@ public final class Source {
     } finally {
       safeClose(r);
     }
-
     return w.toString();
   }
 

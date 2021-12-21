@@ -65,7 +65,5 @@ package org.jooq;
  * @author Lukas Eder
  */
 public interface LoaderXMLStep<R extends Record> {
-
   // [...] This API is not yet defined
-
 }

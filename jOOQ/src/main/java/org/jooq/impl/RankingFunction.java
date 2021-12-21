@@ -54,13 +54,11 @@ final class RankingFunction<T> extends AbstractWindowFunction<T> {
 
   RankingFunction(RankingType rankingType, DataType<T> type) {
     super(rankingType.name, type.notNull());
-
     this.rankingType = rankingType;
   }
 
   @Override
   public final void accept(Context<?> ctx) {
-
     {
       ctx.visit(rankingType.name).sql("()");
       acceptOverClause(ctx);

@@ -44,8 +44,8 @@ import static org.jooq.SQLDialect.MYSQL;
 import static org.jooq.SQLDialect.POSTGRES;
 
 import org.jetbrains.annotations.*;
-// ...
 
+// ...
 /**
  * A {@link Query} that can create tables.
  *

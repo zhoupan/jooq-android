@@ -54,14 +54,12 @@ final class ProviderEnabledCallableStatement extends DefaultCallableStatement {
   ProviderEnabledCallableStatement(
       ProviderEnabledConnection connection, CallableStatement statement) {
     super(statement);
-
     this.connection = connection;
   }
 
   // ------------------------------------------------------------------------
   // XXX Closing the Statement
   // ------------------------------------------------------------------------
-
   @Override
   public final void close() throws SQLException {
     try {

@@ -59,12 +59,19 @@ final class CreateIndexImpl extends AbstractDDLQuery
     implements CreateIndexStep, CreateIndexIncludeStep, CreateIndexWhereStep, CreateIndexFinalStep {
 
   private final Boolean unique;
+
   private final Index index;
+
   private final boolean createIndexIfNotExists;
+
   private Table<?> table;
+
   private Collection<? extends OrderField<?>> on;
+
   private Collection<? extends Field<?>> include;
+
   private Condition where;
+
   private boolean excludeNullKeys;
 
   CreateIndexImpl(
@@ -87,7 +94,6 @@ final class CreateIndexImpl extends AbstractDDLQuery
       Condition where,
       boolean excludeNullKeys) {
     super(configuration);
-
     this.unique = unique;
     this.index = index;
     this.createIndexIfNotExists = createIndexIfNotExists;
@@ -133,7 +139,6 @@ final class CreateIndexImpl extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: DSL API
   // -------------------------------------------------------------------------
-
   @Override
   public final CreateIndexImpl on(String table, String... on) {
     return on(DSL.table(DSL.name(table)), Tools.fieldsByName(on));
@@ -237,12 +242,15 @@ final class CreateIndexImpl extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Clause[] CLAUSES = {Clause.CREATE_INDEX};
+
   private static final Set<SQLDialect> NO_SUPPORT_IF_NOT_EXISTS =
       SQLDialect.supportedBy(DERBY, FIREBIRD);
+
   private static final Set<SQLDialect> SUPPORT_UNNAMED_INDEX = SQLDialect.supportedBy(POSTGRES);
+
   private static final Set<SQLDialect> SUPPORT_INCLUDE = SQLDialect.supportedBy(POSTGRES);
+
   private static final Set<SQLDialect> SUPPORT_UNIQUE_INCLUDE = SQLDialect.supportedBy(POSTGRES);
 
   private final boolean supportsIfNotExists(Context<?> ctx) {
@@ -258,49 +266,35 @@ final class CreateIndexImpl extends AbstractDDLQuery
 
   private final void accept0(Context<?> ctx) {
     ctx.visit(K_CREATE);
-
     if (unique) ctx.sql(' ').visit(K_UNIQUE);
-
     ctx.sql(' ').visit(K_INDEX).sql(' ');
-
     if (createIndexIfNotExists && supportsIfNotExists(ctx)) ctx.visit(K_IF_NOT_EXISTS).sql(' ');
-
     if (index != null) ctx.visit(index).sql(' ');
     else if (!SUPPORT_UNNAMED_INDEX.contains(ctx.dialect())) ctx.visit(generatedName()).sql(' ');
-
     boolean supportsInclude =
         unique
             ? SUPPORT_UNIQUE_INCLUDE.contains(ctx.dialect())
             : SUPPORT_INCLUDE.contains(ctx.dialect());
     boolean supportsFieldsBeforeTable = false;
-
     QueryPartList<QueryPart> list = new QueryPartList<>().qualify(false);
     list.addAll(on);
-
     // [#11284] Don't emulate the clause for UNIQUE indexes
     if (!supportsInclude && !unique && include != null) list.addAll(include);
-
     ctx.visit(K_ON).sql(' ').visit(table);
-
     ctx.sql('(').visit(list).sql(')');
-
     if (supportsInclude && include != null) {
       Keyword keyword = K_INCLUDE;
-
       ctx.formatSeparator()
           .visit(keyword)
           .sql(" (")
           .visit(QueryPartCollectionView.wrap(include).qualify(false))
           .sql(')');
     }
-
     Condition condition;
-
     if (excludeNullKeys && where == null)
       condition =
           on.size() == 1 ? field(Tools.first(on)).isNotNull() : row(Tools.fields(on)).isNotNull();
     else condition = where;
-
     if (condition != null
         && ctx.configuration().data("org.jooq.ddl.ignore-storage-clauses") == null)
       ctx.formatSeparator().visit(K_WHERE).sql(' ').qualify(false, c -> c.visit(condition));
@@ -308,11 +302,9 @@ final class CreateIndexImpl extends AbstractDDLQuery
 
   private final Name generatedName() {
     Name t = table.getQualifiedName();
-
     StringBuilder sb = new StringBuilder(table.getName());
     for (OrderField<?> f : on) sb.append('_').append(Tools.field(f).getName());
     sb.append("_idx");
-
     if (t.qualified()) return t.qualifier().append(sb.toString());
     else return name(sb.toString());
   }

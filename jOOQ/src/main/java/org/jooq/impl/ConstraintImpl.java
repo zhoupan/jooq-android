@@ -128,20 +128,33 @@ final class ConstraintImpl extends AbstractNamed
         ConstraintForeignKeyReferencesStep20,
         ConstraintForeignKeyReferencesStep21,
         ConstraintForeignKeyReferencesStep22 {
+
   private static final Clause[] CLAUSES = {CONSTRAINT};
+
   private static final Set<SQLDialect> NO_SUPPORT_PK = SQLDialect.supportedBy();
+
   private static final Set<SQLDialect> NO_SUPPORT_UK = SQLDialect.supportedBy(IGNITE);
+
   private static final Set<SQLDialect> NO_SUPPORT_FK = SQLDialect.supportedBy(IGNITE);
+
   private static final Set<SQLDialect> NO_SUPPORT_CHECK = SQLDialect.supportedBy(IGNITE);
 
   private Field<?>[] unique;
+
   private Field<?>[] primaryKey;
+
   private Field<?>[] foreignKey;
+
   private Table<?> referencesTable;
+
   private Field<?>[] references;
+
   private Action onDelete;
+
   private Action onUpdate;
+
   private Condition check;
+
   private boolean enforced = true;
 
   ConstraintImpl() {
@@ -191,7 +204,6 @@ final class ConstraintImpl extends AbstractNamed
   // ------------------------------------------------------------------------
   // XXX: QueryPart API
   // ------------------------------------------------------------------------
-
   @Override
   public final Clause[] clauses(Context<?> ctx) {
     return CLAUSES;
@@ -200,12 +212,10 @@ final class ConstraintImpl extends AbstractNamed
   @Override
   public final void accept(Context<?> ctx) {
     boolean named = !getQualifiedName().equals(AbstractName.NO_NAME);
-
     if (named && TRUE.equals(ctx.data(DATA_CONSTRAINT_REFERENCE))) {
       ctx.visit(getQualifiedName());
     } else {
       boolean qualify = ctx.qualify();
-
       if (named) {
         ctx.visit(K_CONSTRAINT)
             .sql(' ')
@@ -213,15 +223,11 @@ final class ConstraintImpl extends AbstractNamed
             .formatIndentStart()
             .formatSeparator();
       }
-
       if (unique != null) {
         ctx.visit(K_UNIQUE).sql(" (").visit(wrap(unique).qualify(false)).sql(')');
-
       } else if (primaryKey != null) {
         ctx.visit(K_PRIMARY_KEY);
-
         ctx.sql(" (").visit(wrap(primaryKey).qualify(false)).sql(')');
-
       } else if (foreignKey != null) {
         ctx.visit(K_FOREIGN_KEY)
             .sql(" (")
@@ -231,21 +237,14 @@ final class ConstraintImpl extends AbstractNamed
             .visit(K_REFERENCES)
             .sql(' ')
             .visit(referencesTable);
-
         if (references.length > 0) ctx.sql(" (").visit(wrap(references).qualify(false)).sql(')');
-
         if (onDelete != null) ctx.sql(' ').visit(K_ON_DELETE).sql(' ').visit(onDelete.keyword);
-
         if (onUpdate != null) ctx.sql(' ').visit(K_ON_UPDATE).sql(' ').visit(onUpdate.keyword);
-
       } else if (check != null) {
         ctx.visit(K_CHECK).sql(" (").qualify(false, c -> c.visit(check)).sql(')');
       }
-
       if (!enforced) acceptEnforced(ctx, enforced);
-
       if (named) {
-
         ctx.formatIndentEnd();
       }
     }
@@ -256,7 +255,6 @@ final class ConstraintImpl extends AbstractNamed
       default:
         if (enforced) ctx.sql(' ').visit(K_ENFORCED);
         else ctx.sql(' ').visit(K_NOT).sql(' ').visit(K_ENFORCED);
-
         break;
     }
   }
@@ -264,7 +262,6 @@ final class ConstraintImpl extends AbstractNamed
   // ------------------------------------------------------------------------
   // XXX: Constraint API
   // ------------------------------------------------------------------------
-
   @Override
   public final ConstraintImpl unique(String... fields) {
     return unique(fieldsByName(fields));

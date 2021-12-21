@@ -60,7 +60,6 @@ abstract class AbstractAttachableQueryPart extends AbstractQueryPart
   // -------------------------------------------------------------------------
   // The Attachable and Attachable internal API
   // -------------------------------------------------------------------------
-
   @Override
   public final void attach(Configuration c) {
     configuration = c;
@@ -89,7 +88,6 @@ abstract class AbstractAttachableQueryPart extends AbstractQueryPart
   // -------------------------------------------------------------------------
   // The AttachableQueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final List<Object> getBindValues() {
     return create().extractBindValues(this);
@@ -124,7 +122,6 @@ abstract class AbstractAttachableQueryPart extends AbstractQueryPart
       case FORCE_INDEXED:
         return create().renderContext().paramType(paramType).visit(this).render();
     }
-
     throw new IllegalArgumentException("ParamType not supported: " + paramType);
   }
 }

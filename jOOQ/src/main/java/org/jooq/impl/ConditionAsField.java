@@ -45,11 +45,11 @@ import org.jooq.Context;
 
 /** @author Lukas Eder */
 final class ConditionAsField extends AbstractField<Boolean> {
+
   final Condition condition;
 
   ConditionAsField(Condition condition) {
     super(DSL.name(condition.toString()), SQLDataType.BOOLEAN);
-
     this.condition = condition;
   }
 
@@ -60,7 +60,6 @@ final class ConditionAsField extends AbstractField<Boolean> {
       case FIREBIRD:
         acceptCase(ctx);
         break;
-
         // Other dialects can inline predicates in column expression contexts
       default:
         ctx.sql('(').visit(condition).sql(')');
@@ -69,12 +68,11 @@ final class ConditionAsField extends AbstractField<Boolean> {
   }
 
   private final void acceptCase(Context<?> ctx) {
-
     // [#10179] Avoid 3VL when not necessary
     if (condition instanceof AbstractCondition && !((AbstractCondition) condition).isNullable())
       ctx.visit(DSL.when(condition, inline(true)).else_(inline(false)));
-
-    // [#3206] Implement 3VL if necessary or unknown
-    else ctx.visit(DSL.when(condition, inline(true)).when(not(condition), inline(false)));
+    else
+      // [#3206] Implement 3VL if necessary or unknown
+      ctx.visit(DSL.when(condition, inline(true)).when(not(condition), inline(false)));
   }
 }

@@ -60,12 +60,16 @@ import org.jooq.Table;
 
 /** @author Lukas Eder */
 class IndexImpl extends AbstractNamed implements Index {
+
   private static final Set<SQLDialect> NO_SUPPORT_INDEX_QUALIFICATION =
       SQLDialect.supportedBy(MARIADB, MYSQL, POSTGRES);
 
   private final Table<?> table;
+
   private final SortField<?>[] fields;
+
   private final Condition where;
+
   private final boolean unique;
 
   IndexImpl(Name name) {
@@ -74,7 +78,6 @@ class IndexImpl extends AbstractNamed implements Index {
 
   IndexImpl(Name name, Table<?> table, OrderField<?>[] fields, Condition where, boolean unique) {
     super(name.empty() ? name : qualify(table, name), CommentImpl.NO_COMMENT);
-
     this.table = table;
     this.fields = Tools.sortFields(fields);
     this.where = where;

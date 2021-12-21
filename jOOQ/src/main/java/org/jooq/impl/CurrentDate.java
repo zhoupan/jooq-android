@@ -58,7 +58,6 @@ final class CurrentDate<T> extends AbstractField<T> {
       case MYSQL:
         ctx.visit(N_CURRENT_DATE).sql("()");
         break;
-
       default:
         ctx.visit(K_CURRENT).sql('_').visit(K_DATE);
         break;

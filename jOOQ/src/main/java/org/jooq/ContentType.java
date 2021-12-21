@@ -60,7 +60,6 @@ public enum ContentType {
    * {@link Version} using {@link Meta#migrateTo(Meta)}.
    */
   SCHEMA,
-
   /**
    * The file contains increment information.
    *
@@ -70,7 +69,6 @@ public enum ContentType {
    * <p>Within the same {@link Commit}.
    */
   INCREMENT,
-
   /**
    * The file contains a script.
    *
@@ -78,12 +76,11 @@ public enum ContentType {
    * can contain vendor-specific SQL that jOOQ doesn't understand.
    */
   SCRIPT,
-
   /**
    * A snapshot (or tag?) is a file / set of files that describes the entire schema.
    *
    * <p>In order to restore a database, or install a new one, we don't have to go back any further
    * than the snapshot.
    */
-  SNAPSHOT,
+  SNAPSHOT
 }

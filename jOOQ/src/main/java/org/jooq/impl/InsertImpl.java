@@ -166,9 +166,7 @@ final class InsertImpl<
         T21,
         T22>
     extends AbstractDelegatingDMLQuery<R, InsertQueryImpl<R>>
-    implements
-
-        // Cascading interface implementations for Insert behaviour
+    implements // Cascading interface implementations for Insert behaviour
         InsertValuesStep1<R, T1>,
         InsertValuesStep2<R, T1, T2>,
         InsertValuesStep3<R, T1, T2, T3>,
@@ -288,8 +286,11 @@ final class InsertImpl<
         InsertOnConflictConditionStep<R> {
 
   private final Table<R> into;
+
   private Field<?>[] fields;
+
   private boolean onDuplicateKeyUpdate;
+
   private boolean returningResult;
 
   /**
@@ -307,7 +308,6 @@ final class InsertImpl<
       Table<R> into,
       Collection<? extends Field<?>> fields) {
     super(new InsertQueryImpl<>(configuration, with, into));
-
     this.into = into;
     columns(fields);
   }
@@ -315,7 +315,6 @@ final class InsertImpl<
   // -------------------------------------------------------------------------
   // The DSL API
   // -------------------------------------------------------------------------
-
   @Override
   public final InsertImpl select(Select select) {
     getDelegate().setSelect(fields, select);
@@ -1486,34 +1485,29 @@ final class InsertImpl<
   @Override
   public final InsertImpl valuesOfRows(Collection values) {
     for (Object row : values) values(((Row) row).fields());
-
     return this;
   }
 
   @Override
   public final InsertImpl valuesOfRecords(Collection values) {
     for (Object record : values) values(((Record) record).intoArray());
-
     return this;
   }
 
   @Override
   public final InsertImpl values(Object... values) {
-
     // [#10655] Empty INSERT INTO t VALUES () clause
     if (values.length == 0) return defaultValues();
-
-    // [#4629] Plain SQL INSERT INTO t VALUES (a, b, c) statements don't know the insert columns
-    else if (!Tools.isEmpty(fields) && fields.length != values.length)
+    else // [#4629] Plain SQL INSERT INTO t VALUES (a, b, c) statements don't know the insert
+    // columns
+    if (!Tools.isEmpty(fields) && fields.length != values.length)
       throw new IllegalArgumentException("The number of values must match the number of fields");
-
     getDelegate().newRecord();
     if (Tools.isEmpty(fields))
       for (int i = 0; i < values.length; i++) addValue(getDelegate(), null, i, values[i]);
     else
       for (int i = 0; i < fields.length; i++)
         addValue(getDelegate(), fields.length > 0 ? fields[i] : null, i, values[i]);
-
     return this;
   }
 
@@ -1524,10 +1518,9 @@ final class InsertImpl<
 
   private final <T> void addValue(
       InsertQuery<R> delegate, Field<T> field, int index, Object object) {
-
     // [#1343] Only convert non-jOOQ objects
     // [#8606] The column index is relevant when adding a value to a plain SQL multi row INSERT
-    //         statement that does not have any field list.
+    // statement that does not have any field list.
     if (object instanceof Field)
       ((AbstractStoreQuery<R>) delegate).addValue(field, index, (Field<T>) object);
     else if (object instanceof FieldLike)
@@ -1535,9 +1528,9 @@ final class InsertImpl<
     else if (field != null)
       ((AbstractStoreQuery<R>) delegate)
           .addValue(field, index, field.getDataType().convert(object));
-
-    // [#4629] Plain SQL INSERT INTO t VALUES (a, b, c) statements don't know the insert columns
-    else ((AbstractStoreQuery<R>) delegate).addValue(field, index, (T) object);
+    else
+      // [#4629] Plain SQL INSERT INTO t VALUES (a, b, c) statements don't know the insert columns
+      ((AbstractStoreQuery<R>) delegate).addValue(field, index, (T) object);
   }
 
   @Override
@@ -1944,16 +1937,13 @@ final class InsertImpl<
 
   @Override
   public final InsertImpl values(Field<?>... values) {
-
     // [#10655] Empty INSERT INTO t VALUES () clause
     if (values.length == 0) return defaultValues();
-
-    // [#4629] Plain SQL INSERT INTO t VALUES (a, b, c) statements don't know the insert columns
-    else if (!Tools.isEmpty(fields) && fields.length != values.length)
+    else // [#4629] Plain SQL INSERT INTO t VALUES (a, b, c) statements don't know the insert
+    // columns
+    if (!Tools.isEmpty(fields) && fields.length != values.length)
       throw new IllegalArgumentException("The number of values must match the number of fields");
-
     getDelegate().newRecord();
-
     // javac has trouble when inferring Object for T. Use Void instead
     if (Tools.isEmpty(fields))
       for (int i = 0; i < values.length; i++)
@@ -1961,7 +1951,6 @@ final class InsertImpl<
     else
       for (int i = 0; i < fields.length; i++)
         addValue(getDelegate(), (Field<Void>) fields[i], i, (Field<Void>) values[i]);
-
     return this;
   }
 
@@ -2528,7 +2517,6 @@ final class InsertImpl<
   public final <T> InsertImpl set(Field<T> field, T value) {
     if (onDuplicateKeyUpdate) getDelegate().addValueForUpdate(field, value);
     else getDelegate().addValue(field, value);
-
     return this;
   }
 
@@ -2536,7 +2524,6 @@ final class InsertImpl<
   public final <T> InsertImpl set(Field<T> field, Field<T> value) {
     if (onDuplicateKeyUpdate) getDelegate().addValueForUpdate(field, value);
     else getDelegate().addValue(field, value);
-
     return this;
   }
 
@@ -2554,7 +2541,6 @@ final class InsertImpl<
   public final InsertImpl set(Map<?, ?> map) {
     if (onDuplicateKeyUpdate) getDelegate().addValuesForUpdate(map);
     else getDelegate().addValues(map);
-
     return this;
   }
 
@@ -2669,7 +2655,6 @@ final class InsertImpl<
   public final InsertImpl where(Condition condition) {
     if (doUpdateWhere) getDelegate().addConditions(condition);
     else getDelegate().onConflictWhere(condition);
-
     return this;
   }
 
@@ -2677,7 +2662,6 @@ final class InsertImpl<
   public final InsertImpl where(Condition... conditions) {
     if (doUpdateWhere) getDelegate().addConditions(conditions);
     else getDelegate().onConflictWhere(DSL.and(conditions));
-
     return this;
   }
 
@@ -2685,7 +2669,6 @@ final class InsertImpl<
   public final InsertImpl where(Collection<? extends Condition> conditions) {
     if (doUpdateWhere) getDelegate().addConditions(conditions);
     else getDelegate().onConflictWhere(DSL.and(conditions));
-
     return this;
   }
 

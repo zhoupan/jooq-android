@@ -154,7 +154,6 @@ public final class Internal {
    *
    * @deprecated - 3.14.0 - [#9404] - Please re-generate your code.
    */
-  @Deprecated
   @NotNull
   @SafeVarargs
   public static final <R extends Record, U extends Record> ForeignKey<R, U> createForeignKey(
@@ -174,9 +173,7 @@ public final class Internal {
     ForeignKey<R, U> result =
         new ReferenceImpl<>(
             table, name, fkFields, uk, ukFields == null ? uk.getFieldsArray() : ukFields, enforced);
-
     if (uk instanceof UniqueKeyImpl) ((UniqueKeyImpl<U>) uk).references.add(result);
-
     return result;
   }
 
@@ -251,15 +248,12 @@ public final class Internal {
   @NotNull
   public static final Name createPathAlias(Table<?> child, ForeignKey<?, ?> path) {
     Name name = DSL.name(path.getName());
-
     if (child instanceof TableImpl) {
       Table<?> ancestor = ((TableImpl<?>) child).child;
-
       if (ancestor != null)
         name = createPathAlias(ancestor, ((TableImpl<?>) child).childPath).append(name);
       else name = child.getQualifiedName().append(name);
     }
-
     return DSL.name("alias_" + Tools.hash(name));
   }
 
@@ -307,7 +301,6 @@ public final class Internal {
         converter == null && binding == null
             ? (DataType<U>) type
             : type.asConvertedDataType(actualBinding);
-
     // TODO: [#11327] Get the ParamMode right
     return new ParameterImpl<>(ParamMode.IN, DSL.name(name), actualType, isDefaulted, isUnnamed);
   }
@@ -320,7 +313,6 @@ public final class Internal {
    * @deprecated - 3.14.0 - [#9404] - Please re-generate your code.
    */
   @NotNull
-  @Deprecated
   public static final Index createIndex(
       String name, Table<?> table, OrderField<?>[] sortFields, boolean unique) {
     return createIndex(DSL.name(name), table, sortFields, unique);
@@ -332,7 +324,6 @@ public final class Internal {
    * @deprecated - 3.14.0 - [#9404] - Please re-generate your code.
    */
   @NotNull
-  @Deprecated
   @SafeVarargs
   public static final <R extends Record> UniqueKey<R> createUniqueKey(
       Table<R> table, String name, TableField<R, ?>... fields) {
@@ -345,7 +336,6 @@ public final class Internal {
    * @deprecated - 3.14.0 - [#9404] - Please re-generate your code.
    */
   @NotNull
-  @Deprecated
   public static final <R extends Record> UniqueKey<R> createUniqueKey(
       Table<R> table, String name, TableField<R, ?>[] fields, boolean enforced) {
     return createUniqueKey(table, DSL.name(name), fields, enforced);
@@ -357,7 +347,6 @@ public final class Internal {
    * @deprecated - 3.14.0 - [#9404] - Please re-generate your code.
    */
   @NotNull
-  @Deprecated
   @SafeVarargs
   public static final <R extends Record, U extends Record> ForeignKey<R, U> createForeignKey(
       UniqueKey<U> key, Table<R> table, String name, TableField<R, ?>... fields) {
@@ -370,7 +359,6 @@ public final class Internal {
    * @deprecated - 3.14.0 - [#9404] - Please re-generate your code.
    */
   @NotNull
-  @Deprecated
   public static final <R extends Record, U extends Record> ForeignKey<R, U> createForeignKey(
       UniqueKey<U> key, Table<R> table, String name, TableField<R, ?>[] fields, boolean enforced) {
     return createForeignKey(table, DSL.name(name), fields, key, key.getFieldsArray(), enforced);
@@ -381,7 +369,6 @@ public final class Internal {
    *
    * @deprecated - [#11058] - 3.14.5 - Please re-generate your code.
    */
-  @Deprecated
   @NotNull
   public static final <R extends Record, ER extends EmbeddableRecord<ER>> TableField<R, ?>[] fields(
       TableField<R, ER> embeddableField) {
@@ -431,6 +418,7 @@ public final class Internal {
       Consumer<? super Throwable> onError,
       Runnable onComplete) {
     return new Subscriber<T>() {
+
       @Override
       public void onSubscribe(Subscription s) {
         subscription.accept(s);
@@ -459,7 +447,6 @@ public final class Internal {
    */
   @SuppressWarnings({"unchecked", "unused"})
   public static final <T> Class<T[]> arrayType(Class<T> type) {
-
     return (Class<T[]>) Array.newInstance(type, 0).getClass();
   }
 

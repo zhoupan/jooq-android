@@ -48,14 +48,12 @@ final class SQLFieldSimple<T> extends AbstractField<T> implements SimpleQueryPar
 
   SQLFieldSimple(DataType<T> type, SQL delegate) {
     super(DSL.unquotedName(delegate.toString()), type);
-
     this.delegate = delegate;
   }
 
   // ------------------------------------------------------------------------
   // Field API
   // ------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {

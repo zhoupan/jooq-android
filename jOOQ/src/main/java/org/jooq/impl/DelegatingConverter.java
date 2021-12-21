@@ -46,7 +46,6 @@ public class DelegatingConverter<T, U> extends AbstractConverter<T, U> {
 
   public DelegatingConverter(Converter<T, U> delegate) {
     super(delegate.fromType(), delegate.toType());
-
     this.delegate = delegate;
   }
 

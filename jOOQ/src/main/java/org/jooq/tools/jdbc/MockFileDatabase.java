@@ -127,11 +127,14 @@ public class MockFileDatabase implements MockDataProvider {
   private static final JooqLogger log = JooqLogger.getLogger(MockFileDatabase.class);
 
   private final MockFileDatabaseConfiguration configuration;
+
   private final Map<String, List<MockResult>> matchExactly;
+
   private final Map<Pattern, List<MockResult>> matchPattern;
+
   private final DSLContext create;
 
-  @Deprecated private String nullLiteral;
+  private String nullLiteral;
 
   public MockFileDatabase(File file) throws IOException {
     this(new MockFileDatabaseConfiguration().source(file));
@@ -168,7 +171,6 @@ public class MockFileDatabase implements MockDataProvider {
    * @see DSLContext#fetchFromTXT(String, String)
    * @deprecated - Use {@link MockFileDatabaseConfiguration#nullLiteral(String)} instead.
    */
-  @Deprecated
   public MockFileDatabase nullLiteral(String literal) {
     this.nullLiteral = literal;
     return this;
@@ -179,18 +181,19 @@ public class MockFileDatabase implements MockDataProvider {
     this.matchExactly = new LinkedHashMap<>();
     this.matchPattern = new LinkedHashMap<>();
     this.create = DSL.using(SQLDialect.DEFAULT);
-
     load();
   }
 
   private static final Pattern END_OF_STATEMENT = Pattern.compile("^(.*?);[ \t]*$");
 
   private void load() throws FileNotFoundException, IOException {
-
     // Wrap the below code in a local scope
     new Object() {
+
       private StringBuilder currentSQL = new StringBuilder();
+
       private StringBuilder currentResult = new StringBuilder();
+
       private String previousSQL = null;
 
       private void load() throws FileNotFoundException, IOException {
@@ -198,67 +201,46 @@ public class MockFileDatabase implements MockDataProvider {
           while (true) {
             Matcher matcher;
             String line = readLine();
-
             // End of file reached
             if (line == null) {
-
               // The file was ended, but the previous data was
               // not yet terminated
               if (currentResult.length() > 0) {
                 loadOneResult("");
                 currentResult = new StringBuilder();
               }
-
               break;
-            }
-
-            // Comments are ignored
-            else if (line.startsWith("#")) {
+            } else // Comments are ignored
+            if (line.startsWith("#")) {
               continue;
-            }
-
-            // A line of result data
-            else if (line.startsWith(">")) {
+            } else // A line of result data
+            if (line.startsWith(">")) {
               currentResult.append(line.substring(2));
               currentResult.append("\n");
-            }
-
-            // A result data termination literal
-            else if (line.startsWith("@")) {
+            } else // A result data termination literal
+            if (line.startsWith("@")) {
               loadOneResult(line);
               currentResult = new StringBuilder();
-            }
-
-            // A terminated line of SQL
-            else if ((matcher = END_OF_STATEMENT.matcher(line)).matches()) {
-
+            } else // A terminated line of SQL
+            if ((matcher = END_OF_STATEMENT.matcher(line)).matches()) {
               // [#5921] Preserve newlines
               if (currentSQL.length() > 0) currentSQL.append('\n');
-
               currentSQL.append(matcher.group(1));
-
               if (previousSQL != null)
                 if (!matchExactly.containsKey(previousSQL)) matchExactly.put(previousSQL, null);
-
               previousSQL = currentSQL.toString();
               currentSQL = new StringBuilder();
-
               if (log.isDebugEnabled()) log.debug("Loaded SQL", previousSQL);
-            }
-
-            // A non-terminated line of SQL
-            else {
-
+            } else // A non-terminated line of SQL
+            {
               // A new SQL statement is created, but the previous
               // data was not yet terminated
               if (currentResult.length() > 0) {
                 loadOneResult("");
                 currentResult = new StringBuilder();
               }
-
               // [#5921] Preserve newlines
               if (currentSQL.length() > 0) currentSQL.append('\n');
-
               currentSQL.append(line);
             }
           }
@@ -269,10 +251,8 @@ public class MockFileDatabase implements MockDataProvider {
 
       private void loadOneResult(String line) {
         List<MockResult> results = matchExactly.get(previousSQL);
-
         if (results == null) {
           results = new ArrayList<>();
-
           if (configuration.patterns) {
             try {
               Pattern p = Pattern.compile(previousSQL);
@@ -284,13 +264,10 @@ public class MockFileDatabase implements MockDataProvider {
             matchExactly.put(previousSQL, results);
           }
         }
-
         MockResult mock = parse(line);
         results.add(mock);
-
         if (mock.data != null && log.isDebugEnabled()) {
           String comment = "Loaded Result";
-
           for (String l : mock.data.format(5).split("\n")) {
             log.debug(comment, l);
             comment = "";
@@ -301,11 +278,9 @@ public class MockFileDatabase implements MockDataProvider {
       private MockResult parse(String rowString) {
         int rows = 0;
         SQLException exception = null;
-
         if (rowString.startsWith("@ rows:")) rows = Integer.parseInt(rowString.substring(7).trim());
         if (rowString.startsWith("@ exception:"))
           exception = new SQLException(rowString.substring(12).trim());
-
         String resultText = currentResult.toString();
         String trimmed = resultText.trim();
         MockResult result =
@@ -324,20 +299,16 @@ public class MockFileDatabase implements MockDataProvider {
                                     : configuration.nullLiteral != null
                                         ? create.fetchFromTXT(resultText, configuration.nullLiteral)
                                         : create.fetchFromTXT(resultText, nullLiteral));
-
         if (result.data != null && rows != result.data.size())
           throw new MockFileDatabaseException(
               "Rows mismatch. Declared: " + rows + ". Actual: " + result.data.size() + ".");
-
         return result;
       }
 
       private String readLine() throws IOException {
         while (true) {
           String line = configuration.in.readLine();
-
           if (line == null) return line;
-
           // Skip empty lines
           if (line.length() > 0 && line.trim().length() > 0) return line;
         }
@@ -346,7 +317,6 @@ public class MockFileDatabase implements MockDataProvider {
   }
 
   /** @deprecated - Experimental: Do not use. Subject to change. */
-  @Deprecated
   public Map<String, List<MockResult>> queries() {
     return matchExactly;
   }
@@ -358,19 +328,15 @@ public class MockFileDatabase implements MockDataProvider {
     } else {
       String sql = ctx.sql();
       String inlined = null;
-
       // Check for an exact match
       List<MockResult> list = matchExactly.get(sql);
-
       // Check again, with inlined bind values
       if (list == null) {
         inlined = create.query(sql, ctx.bindings()).toString();
         list = matchExactly.get(inlined);
       }
-
       // Check for the first pattern match
       if (list == null) {
-
         patternLoop:
         for (Entry<Pattern, List<MockResult>> entry : matchPattern.entrySet()) {
           if (entry.getKey().matcher(sql).matches() || entry.getKey().matcher(inlined).matches()) {
@@ -379,7 +345,6 @@ public class MockFileDatabase implements MockDataProvider {
           }
         }
       }
-
       // [#9078] Listing possible reasons for this to happen
       if (list == null)
         throw new SQLException(
@@ -390,7 +355,6 @@ public class MockFileDatabase implements MockDataProvider {
                 + "\n  Your regular expressions use constant literals (e.g. 'Hello'), but the above SQL string uses bind variable placeholders (e.g. ?)."
                 + "\n  Your regular expressions did not quote special characters (e.g. \\?)."
                 + "\n  Your regular expressions' whitespace doesn't match the input SQL's whitespace.");
-
       return list.toArray(new MockResult[list.size()]);
     }
   }

@@ -62,7 +62,9 @@ final class InterpreterMetaProvider implements MetaProvider {
   private static final JooqLogger log = JooqLogger.getLogger(InterpreterMetaProvider.class);
 
   private final Configuration configuration;
+
   private final Source[] sources;
+
   private final Query[] queries;
 
   public InterpreterMetaProvider(Configuration configuration, Source... sources) {
@@ -82,19 +84,15 @@ final class InterpreterMetaProvider implements MetaProvider {
     final Interpreter interpreter = new Interpreter(configuration);
     Configuration localConfiguration = configuration.derive();
     DSLContext ctx = DSL.using(localConfiguration);
-
     if (sources != null) for (Source source : sources) loadSource(ctx, source, interpreter);
     else for (Query query : queries) interpreter.accept(query);
-
     return interpreter.meta();
   }
 
   private final void loadSource(DSLContext ctx, Source source, Interpreter interpreter) {
     Reader reader = null;
-
     try {
       Scanner s = new Scanner(reader = source.reader()).useDelimiter("\\A");
-
       for (Query query : ctx.parser().parse(s.hasNext() ? s.next() : "")) interpreter.accept(query);
     } catch (ParserException e) {
       log.error(

@@ -80,9 +80,7 @@ import org.jooq.WindowSpecificationRowsAndStep;
 
 /** @author Lukas Eder */
 final class WindowSpecificationImpl extends AbstractQueryPart
-    implements
-
-        // Cascading interface implementations for window specification behaviour
+    implements // Cascading interface implementations for window specification behaviour
         WindowSpecificationPartitionByStep,
         WindowSpecificationRowsAndStep,
         WindowSpecificationExcludeStep {
@@ -92,19 +90,29 @@ final class WindowSpecificationImpl extends AbstractQueryPart
 
   private static final Set<SQLDialect> REQUIRES_ORDER_BY_IN_LEAD_LAG =
       SQLDialect.supportedBy(H2, MARIADB);
+
   private static final Set<SQLDialect> REQUIRES_ORDER_BY_IN_NTILE = SQLDialect.supportedBy(H2);
+
   private static final Set<SQLDialect> REQUIRES_ORDER_BY_IN_RANK_DENSE_RANK =
       SQLDialect.supportedBy(H2, MARIADB);
+
   private static final Set<SQLDialect> REQUIRES_ORDER_BY_IN_PERCENT_RANK_CUME_DIST =
       SQLDialect.supportedBy(MARIADB);
 
   private final WindowDefinitionImpl windowDefinition;
+
   private final QueryPartList<Field<?>> partitionBy;
+
   private final SortFieldList orderBy;
+
   private Integer frameStart;
+
   private Integer frameEnd;
+
   private FrameUnits frameUnits;
+
   private Exclude exclude;
+
   private boolean partitionByOne;
 
   WindowSpecificationImpl() {
@@ -131,12 +139,9 @@ final class WindowSpecificationImpl extends AbstractQueryPart
 
   @Override
   public final void accept(Context<?> ctx) {
-
     SortFieldList o = orderBy;
-
     // [#8414] [#8593] [#11021] [#11851] Some RDBMS require ORDER BY in some window functions
     AbstractWindowFunction<?> w = (AbstractWindowFunction<?>) ctx.data(DATA_WINDOW_FUNCTION);
-
     if (o.isEmpty()) {
       boolean ordered =
           w instanceof Ntile && REQUIRES_ORDER_BY_IN_NTILE.contains(ctx.dialect())
@@ -149,76 +154,55 @@ final class WindowSpecificationImpl extends AbstractQueryPart
               || w instanceof RankingFunction
                   && !((RankingFunction<?>) w).isRankOrDenseRank()
                   && REQUIRES_ORDER_BY_IN_PERCENT_RANK_CUME_DIST.contains(ctx.dialect());
-
       if (ordered) {
         Field<Integer> constant;
-
         constant = field(select(one()));
-
         o = new SortFieldList();
         o.add(constant.sortDefault());
       }
     }
-
     boolean hasWindowDefinitions = windowDefinition != null;
     boolean hasPartitionBy = !partitionBy.isEmpty();
     boolean hasOrderBy = !o.isEmpty();
     boolean hasFrame = frameStart != null;
-
     int clauses = 0;
-
     if (hasWindowDefinitions) clauses++;
     if (hasPartitionBy) clauses++;
     if (hasOrderBy) clauses++;
     if (hasFrame) clauses++;
-
     boolean indent = clauses > 1;
-
     if (indent) ctx.formatIndentStart().formatNewLine();
-
     if (windowDefinition != null) ctx.declareWindows(false, c -> c.visit(windowDefinition));
-
     if (hasPartitionBy) {
-
       // Ignore PARTITION BY 1 clause. These databases erroneously map the
       // 1 literal onto the column index (CUBRID, Sybase), or do not support
       // constant expressions in the PARTITION BY clause (HANA)
       if (partitionByOne && OMIT_PARTITION_BY_ONE.contains(ctx.dialect())) {
       } else {
         if (hasWindowDefinitions) ctx.formatSeparator();
-
         ctx.visit(K_PARTITION_BY).separatorRequired(true).visit(partitionBy);
       }
     }
-
     if (hasOrderBy) {
       if (hasWindowDefinitions || hasPartitionBy) ctx.formatSeparator();
-
       ctx.visit(K_ORDER_BY).separatorRequired(true).visit(o);
     }
-
     if (hasFrame) {
       if (hasWindowDefinitions || hasPartitionBy || hasOrderBy) ctx.formatSeparator();
-
       FrameUnits u = frameUnits;
       Integer s = frameStart;
       Integer e = frameEnd;
-
       ctx.visit(u.keyword).sql(' ');
-
       if (e != null) {
         ctx.visit(K_BETWEEN).sql(' ');
         toSQLRows(ctx, s);
-
         ctx.sql(' ').visit(K_AND).sql(' ');
         toSQLRows(ctx, e);
       } else {
         toSQLRows(ctx, s);
       }
-
       if (exclude != null) ctx.sql(' ').visit(K_EXCLUDE).sql(' ').visit(exclude.keyword);
     }
-
     if (indent) ctx.formatIndentEnd().formatNewLine();
   }
 
@@ -243,7 +227,6 @@ final class WindowSpecificationImpl extends AbstractQueryPart
   }
 
   @Override
-  @Deprecated
   public final WindowSpecificationOrderByStep partitionByOne() {
     partitionByOne = true;
     partitionBy.add(one());

@@ -194,7 +194,6 @@ public interface Configuration extends Serializable {
   // -------------------------------------------------------------------------
   // Wrap this Configuration
   // -------------------------------------------------------------------------
-
   /**
    * Wrap this <code>Configuration</code> in a {@link DSLContext}, providing access to the
    * configuration-contextual DSL to construct executable queries.
@@ -208,7 +207,6 @@ public interface Configuration extends Serializable {
   // -------------------------------------------------------------------------
   // Custom data
   // -------------------------------------------------------------------------
-
   /**
    * Get all custom data from this <code>Configuration</code>.
    *
@@ -265,7 +263,6 @@ public interface Configuration extends Serializable {
   // -------------------------------------------------------------------------
   // Getters
   // -------------------------------------------------------------------------
-
   /**
    * Get this configuration's {@link Clock}, which is used for optimistic locking, transaction time,
    * and other time-depending features.
@@ -490,7 +487,6 @@ public interface Configuration extends Serializable {
    * @deprecated - 2.0.5 - Use {@link #settings()} instead
    */
   @NotNull
-  @Deprecated(forRemoval = true, since = "2.0")
   SchemaMapping schemaMapping();
 
   /** Retrieve the configured dialect. */
@@ -508,7 +504,6 @@ public interface Configuration extends Serializable {
   // -------------------------------------------------------------------------
   // Setters
   // -------------------------------------------------------------------------
-
   /**
    * Change this configuration to hold a new {@link Clock}.
    *
@@ -1128,7 +1123,6 @@ public interface Configuration extends Serializable {
   // -------------------------------------------------------------------------
   // Derivation methods
   // -------------------------------------------------------------------------
-
   /**
    * Create a derived configuration from this one, without changing any properties.
    *

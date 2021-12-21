@@ -51,6 +51,7 @@ import org.jooq.tools.StringUtils;
  * @author Axel Fontaine
  */
 final class FlywayVersion implements Comparable<FlywayVersion> {
+
   /** Version for an empty schema. */
   public static final FlywayVersion EMPTY = new FlywayVersion(null);
 
@@ -93,9 +94,7 @@ final class FlywayVersion implements Comparable<FlywayVersion> {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-
     FlywayVersion version1 = (FlywayVersion) o;
-
     return compareTo(version1) == 0;
   }
 
@@ -109,16 +108,13 @@ final class FlywayVersion implements Comparable<FlywayVersion> {
     if (o == null) {
       return 1;
     }
-
     if (this == EMPTY) {
       if (o == EMPTY) return 0;
       else return Integer.MIN_VALUE;
     }
-
     if (o == EMPTY) {
       return Integer.MAX_VALUE;
     }
-
     final List<BigInteger> parts1 = versionParts;
     final List<BigInteger> parts2 = o.versionParts;
     int largestNumberOfParts = Math.max(parts1.size(), parts2.size());
@@ -146,14 +142,12 @@ final class FlywayVersion implements Comparable<FlywayVersion> {
     for (String part : SPLIT_REGEX.split(versionStr)) {
       parts.add(new BigInteger(part));
     }
-
     for (int i = parts.size() - 1; i > 0; i--) {
       if (!parts.get(i).equals(BigInteger.ZERO)) {
         break;
       }
       parts.remove(i);
     }
-
     return parts;
   }
 }

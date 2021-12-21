@@ -55,6 +55,7 @@ import org.jooq.migrations.xml.jaxb.MigrationsType;
 public class DefaultCommitProvider implements CommitProvider {
 
   private final DSLContext ctx;
+
   private final MigrationsType migrations;
 
   public DefaultCommitProvider(Configuration configuration, MigrationsType migrations) {

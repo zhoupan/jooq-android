@@ -60,14 +60,15 @@ import org.jooq.tools.StringUtils;
 final class ParamCollector extends AbstractBindContext {
 
   final Map<String, Param<?>> resultFlat = new LinkedHashMap<>();
+
   final Map<String, List<Param<?>>> result = new LinkedHashMap<>();
+
   final List<Entry<String, Param<?>>> resultList = new ArrayList<>();
 
   private final boolean includeInlinedParams;
 
   ParamCollector(Configuration configuration, boolean includeInlinedParams) {
     super(configuration, null);
-
     this.includeInlinedParams = includeInlinedParams;
   }
 
@@ -75,12 +76,10 @@ final class ParamCollector extends AbstractBindContext {
   protected final void bindInternal(QueryPartInternal internal) {
     if (internal instanceof Param) {
       Param<?> param = (Param<?>) internal;
-
       // [#3131] Inlined parameters should not be returned in some contexts
       if (includeInlinedParams || !param.isInline()) {
         String i = String.valueOf(nextIndex());
         String paramName = param.getParamName();
-
         if (StringUtils.isBlank(paramName)) {
           resultFlat.put(i, param);
           resultList.add(new SimpleImmutableEntry<>(i, param));

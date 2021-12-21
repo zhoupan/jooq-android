@@ -46,9 +46,7 @@ public class LocaleAdapter extends XmlAdapter<String, Locale> {
   @Override
   public Locale unmarshal(String v) throws Exception {
     Locale result = null;
-
     if (v == null) return result;
-
     result = Locale.forLanguageTag(v);
     return result;
   }
@@ -56,9 +54,7 @@ public class LocaleAdapter extends XmlAdapter<String, Locale> {
   @Override
   public String marshal(Locale v) throws Exception {
     String result = null;
-
     if (v == null) return result;
-
     result = v.toLanguageTag();
     return result;
   }

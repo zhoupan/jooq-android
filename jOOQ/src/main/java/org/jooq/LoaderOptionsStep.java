@@ -93,7 +93,6 @@ public interface LoaderOptionsStep<R extends Record> extends LoaderSourceStep<R>
   // -------------------------------------------------------------------------
   // Duplicate handling
   // -------------------------------------------------------------------------
-
   /**
    * Instruct the <code>Loader</code> to update duplicate records if any of the unique keys' values
    * are already in the database. This is only supported if {@link
@@ -144,7 +143,6 @@ public interface LoaderOptionsStep<R extends Record> extends LoaderSourceStep<R>
   // -------------------------------------------------------------------------
   // Error handling
   // -------------------------------------------------------------------------
-
   /**
    * Instruct the <code>Loader</code> to ignore any errors that might occur when inserting a record.
    * The <code>Loader</code> will then skip the record and try inserting the next one. After
@@ -176,7 +174,6 @@ public interface LoaderOptionsStep<R extends Record> extends LoaderSourceStep<R>
   // -------------------------------------------------------------------------
   // Commit strategy
   // -------------------------------------------------------------------------
-
   /**
    * Commit each batch.
    *
@@ -258,7 +255,6 @@ public interface LoaderOptionsStep<R extends Record> extends LoaderSourceStep<R>
   // -------------------------------------------------------------------------
   // Batch strategy
   // -------------------------------------------------------------------------
-
   /**
    * Batch all bulk statements in one JDBC batch statement.
    *
@@ -293,7 +289,6 @@ public interface LoaderOptionsStep<R extends Record> extends LoaderSourceStep<R>
   // -------------------------------------------------------------------------
   // Bulk strategy
   // -------------------------------------------------------------------------
-
   /**
    * Bulk-insert all rows in a single multi-row bulk statement.
    *

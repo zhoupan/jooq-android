@@ -44,6 +44,7 @@ import org.jooq.Context;
 
 /** @author Lukas Eder */
 final class NullStatement extends AbstractStatement {
+
   static final NullStatement INSTANCE = new NullStatement();
 
   @Override

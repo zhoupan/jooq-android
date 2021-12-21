@@ -58,8 +58,11 @@ import org.jooq.tools.*;
 final class DropTableImpl extends AbstractDDLQuery implements DropTableStep, DropTableFinalStep {
 
   private final Boolean temporary;
+
   private final Table<?> table;
+
   private final boolean dropTableIfExists;
+
   private Cascade cascade;
 
   DropTableImpl(
@@ -74,7 +77,6 @@ final class DropTableImpl extends AbstractDDLQuery implements DropTableStep, Dro
       boolean dropTableIfExists,
       Cascade cascade) {
     super(configuration);
-
     this.temporary = temporary;
     this.table = table;
     this.dropTableIfExists = dropTableIfExists;
@@ -100,7 +102,6 @@ final class DropTableImpl extends AbstractDDLQuery implements DropTableStep, Dro
   // -------------------------------------------------------------------------
   // XXX: DSL API
   // -------------------------------------------------------------------------
-
   @Override
   public final DropTableImpl cascade() {
     this.cascade = Cascade.CASCADE;
@@ -116,10 +117,11 @@ final class DropTableImpl extends AbstractDDLQuery implements DropTableStep, Dro
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Clause[] CLAUSES = {Clause.DROP_TABLE};
+
   private static final Set<SQLDialect> NO_SUPPORT_IF_EXISTS =
       SQLDialect.supportedBy(DERBY, FIREBIRD);
+
   private static final Set<SQLDialect> TEMPORARY_SEMANTIC = SQLDialect.supportedBy(MARIADB, MYSQL);
 
   private final boolean supportsIfExists(Context<?> ctx) {
@@ -135,16 +137,13 @@ final class DropTableImpl extends AbstractDDLQuery implements DropTableStep, Dro
 
   private void accept0(Context<?> ctx) {
     ctx.start(Clause.DROP_TABLE_TABLE);
-
     // [#6371] [#9019] While many dialects do not require this keyword, in
-    //                 some dialects (e.g. MySQL), there is a semantic
-    //                 difference, e.g. with respect to transactions.
+    // some dialects (e.g. MySQL), there is a semantic
+    // difference, e.g. with respect to transactions.
     if (temporary && TEMPORARY_SEMANTIC.contains(ctx.dialect()))
       ctx.visit(K_DROP).sql(' ').visit(K_TEMPORARY).sql(' ').visit(K_TABLE).sql(' ');
     else ctx.visit(K_DROP_TABLE).sql(' ');
-
     if (dropTableIfExists && supportsIfExists(ctx)) ctx.visit(K_IF_EXISTS).sql(' ');
-
     ctx.visit(table);
     acceptCascade(ctx, cascade);
     ctx.end(Clause.DROP_TABLE_TABLE);

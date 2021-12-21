@@ -58,12 +58,13 @@ import org.jooq.tools.*;
 final class Translate extends AbstractField<String> {
 
   private final Field<String> string;
+
   private final Field<String> from;
+
   private final Field<String> to;
 
   Translate(Field<String> string, Field<String> from, Field<String> to) {
     super(N_TRANSLATE, allNotNull(VARCHAR, string, from, to));
-
     this.string = nullSafeNotNull(string, VARCHAR);
     this.from = nullSafeNotNull(from, VARCHAR);
     this.to = nullSafeNotNull(to, VARCHAR);
@@ -72,7 +73,6 @@ final class Translate extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -85,7 +85,6 @@ final class Translate extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Translate) {

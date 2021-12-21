@@ -61,14 +61,12 @@ final class Space extends AbstractField<String> {
 
   Space(Field<? extends Number> count) {
     super(N_SPACE, allNotNull(VARCHAR, count));
-
     this.count = nullSafeNotNull(count, INTEGER);
   }
 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -79,13 +77,11 @@ final class Space extends AbstractField<String> {
           ctx.visit(DSL.rpad(DSL.inline(' '), count));
           break;
         }
-
       case DERBY:
       case HSQLDB:
       case POSTGRES:
         ctx.visit(DSL.repeat(DSL.inline(" "), count));
         break;
-
       default:
         ctx.visit(function(N_SPACE, getDataType(), count));
         break;
@@ -95,7 +91,6 @@ final class Space extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Space) {

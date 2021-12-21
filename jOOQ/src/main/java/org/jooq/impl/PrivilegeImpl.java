@@ -46,7 +46,9 @@ import org.jooq.Privilege;
 
 /** @author Timur Shaidullin */
 final class PrivilegeImpl extends AbstractQueryPart implements Privilege, SimpleQueryPart {
+
   private static final Clause[] CLAUSES = {PRIVILEGE};
+
   private final Keyword privilege;
 
   PrivilegeImpl(Keyword privilege) {
@@ -56,7 +58,6 @@ final class PrivilegeImpl extends AbstractQueryPart implements Privilege, Simple
   // ------------------------------------------------------------------------
   // XXX: QueryPart API
   // ------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     ctx.visit(privilege);

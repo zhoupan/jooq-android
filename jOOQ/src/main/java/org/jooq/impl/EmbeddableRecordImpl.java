@@ -58,13 +58,11 @@ public class EmbeddableRecordImpl<R extends EmbeddableRecord<R>> extends Abstrac
     implements EmbeddableRecord<R> {
 
   /** @deprecated - [#11058] - 3.14.5 - Please re-generate your code. */
-  @Deprecated
   public EmbeddableRecordImpl(Field<?>... fields) {
     super(fields);
   }
 
   /** @deprecated - [#11058] - 3.14.5 - Please re-generate your code. */
-  @Deprecated
   public EmbeddableRecordImpl(TableField<?, ?>... fields) {
     super(fields);
   }

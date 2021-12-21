@@ -54,16 +54,12 @@ public enum LanguageContext {
 
   /** A SQL query, including DDL to create procedural elements. */
   QUERY,
-
   /** The body of a stored procedure. */
   PROCEDURE,
-
   /** The body of a stored function. */
   FUNCTION,
-
   /** The body of a trigger. */
   TRIGGER,
-
   /** The body of an anonymous block. */
   BLOCK
 }

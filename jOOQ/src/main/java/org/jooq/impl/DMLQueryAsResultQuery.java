@@ -75,9 +75,13 @@ import org.jooq.exception.DataTypeException;
 final class DMLQueryAsResultQuery<R extends Record, Q extends AbstractDMLQuery<R>>
     extends AbstractQueryPart
     implements ResultQueryTrait<R>, DeleteResultStep<R>, UpdateResultStep<R>, InsertResultStep<R> {
+
   private final Q delegate;
+
   private final boolean returningResult;
+
   private Table<?> coerceTable;
+
   private Collection<? extends Field<?>> coerceFields;
 
   DMLQueryAsResultQuery(Q delegate, boolean returningResult) {
@@ -90,7 +94,6 @@ final class DMLQueryAsResultQuery<R extends Record, Q extends AbstractDMLQuery<R
   }
 
   // TODO: Refactor this coercion, share logic with AbstractResultQuery
-
   @Override
   public final Field<?>[] getFields(ResultSetMetaData rs) throws SQLException {
     Field<?>[] f = getFields();

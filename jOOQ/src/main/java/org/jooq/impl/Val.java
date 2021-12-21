@@ -66,6 +66,7 @@ import org.jooq.tools.StringUtils;
 final class Val<T> extends AbstractParam<T> {
 
   private static final JooqLogger log = JooqLogger.getLogger(Val.class);
+
   private static final ConcurrentHashMap<Class<?>, Object> legacyWarnings =
       new ConcurrentHashMap<>();
 
@@ -84,20 +85,16 @@ final class Val<T> extends AbstractParam<T> {
   // ------------------------------------------------------------------------
   // XXX: Field API
   // ------------------------------------------------------------------------
-
   /** [#10438] Convert this bind value to a new type. */
   @SuppressWarnings({"rawtypes", "unchecked"})
   final <U> Field<U> convertTo(DataType<U> type) {
-
     // [#10438] A user defined data type could was not provided explicitly,
-    //          when wrapping a bind value in DSL::val or DSL::inline
+    // when wrapping a bind value in DSL::val or DSL::inline
     if (getDataType() instanceof DataTypeProxy) {
-
       // [#9492] Maintain legacy static type registry behaviour for now
       if (((DataTypeProxy<?>) getDataType()).type() instanceof LegacyConvertedDataType
           && type == SQLDataType.OTHER) {
         type = (DataType) ((DataTypeProxy<?>) getDataType()).type();
-
         if (legacyWarnings.size() < 8 && legacyWarnings.put(type.getType(), "") == null)
           log.warn(
               "Deprecation",
@@ -106,18 +103,13 @@ final class Val<T> extends AbstractParam<T> {
                   + " was registered statically, which will be unsupported in the future, see https://github.com/jOOQ/jOOQ/issues/9492. Please use explicit data types in generated code, or e.g. with DSL.val(Object, DataType), or DSL.inline(Object, DataType).",
               new SQLWarning("Static type registry usage"));
       }
-
       return convertTo0(type);
-    }
-
-    // [#10438] A data type conversion between built in data types was made
-    else if (type instanceof ConvertedDataType) return convertTo0(type);
-
-    // [#11061] Infer bind value data types if they could not be defined eagerly, mostly from the
-    // parser.
-    //          Cannot use convertTo0() here as long as Param.setValue() is possible (mutable
-    // Params)
-    else if (OTHER.equals(getDataType())) return new ConvertedVal<>(this, type);
+    } else // [#10438] A data type conversion between built in data types was made
+    if (type instanceof ConvertedDataType) return convertTo0(type);
+    else // [#11061] Infer bind value data types if they could not be defined eagerly, mostly from
+    // the parser.
+    // Cannot use convertTo0() here as long as Param.setValue() is possible (mutable Params)
+    if (OTHER.equals(getDataType())) return new ConvertedVal<>(this, type);
     else return (Val) this;
   }
 
@@ -136,17 +128,14 @@ final class Val<T> extends AbstractParam<T> {
   @Override
   public void accept(Context<?> ctx) {
     if (getDataType().isEmbeddable()) {
-
       // [#12237] If a RowField is nested somewhere in MULTISET, we must apply
-      //          the MULTISET emulation as well, here
+      // the MULTISET emulation as well, here
       if (TRUE.equals(ctx.data(DATA_MULTISET_CONTENT)))
         acceptMultisetContent(ctx, row0(embeddedFields(this)), this, this::acceptDefaultEmbeddable);
       else acceptDefaultEmbeddable(ctx);
     } else if (ctx instanceof RenderContext) {
       ParamType paramType = ctx.paramType();
-
       if (isInline(ctx)) ctx.paramType(INLINED);
-
       try {
         getBinding()
             .sql(
@@ -159,10 +148,8 @@ final class Val<T> extends AbstractParam<T> {
       } catch (SQLException e) {
         throw new DataAccessException("Error while generating SQL for Binding", e);
       }
-
       ctx.paramType(paramType);
     } else {
-
       // [#1302] Bind value only if it was not explicitly forced to be inlined
       if (!isInline(ctx)) ctx.bindValue(value, this);
     }
@@ -177,7 +164,6 @@ final class Val<T> extends AbstractParam<T> {
     if (ctx.paramType() == NAMED || ctx.paramType() == NAMED_OR_INLINED) {
       int index = ctx.nextIndex();
       String prefix = defaultIfNull(ctx.settings().getRenderNamedParamPrefix(), ":");
-
       if (StringUtils.isBlank(getParamName())) return prefix + index;
       else return prefix + getParamName();
     } else {

@@ -58,7 +58,6 @@ final class CurrentTime<T> extends AbstractField<T> {
       case MYSQL:
         ctx.visit(N_CURRENT_TIME).sql("()");
         break;
-
       default:
         ctx.visit(K_CURRENT).sql('_').visit(K_TIME);
         break;

@@ -61,14 +61,12 @@ final class Reverse extends AbstractField<String> {
 
   Reverse(Field<String> string) {
     super(N_REVERSE, allNotNull(VARCHAR, string));
-
     this.string = nullSafeNotNull(string, VARCHAR);
   }
 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -81,7 +79,6 @@ final class Reverse extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Reverse) {

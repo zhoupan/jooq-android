@@ -61,8 +61,11 @@ import org.jooq.TableOptions;
 final class AliasedSelect<R extends Record> extends AbstractTable<R> {
 
   private final Select<R> query;
+
   private final boolean subquery;
+
   private final boolean ignoreOrderBy;
+
   private final Name[] aliases;
 
   AliasedSelect(Select<R> query, boolean subquery, boolean ignoreOrderBy) {
@@ -71,7 +74,6 @@ final class AliasedSelect<R extends Record> extends AbstractTable<R> {
 
   AliasedSelect(Select<R> query, boolean subquery, boolean ignoreOrderBy, Name... aliases) {
     super(TableOptions.expression(), N_SELECT);
-
     this.query = query;
     this.subquery = subquery;
     this.ignoreOrderBy = ignoreOrderBy;
@@ -85,9 +87,8 @@ final class AliasedSelect<R extends Record> extends AbstractTable<R> {
   @Override
   public final Table<R> as(Name alias) {
     SelectQueryImpl<R> q = selectQueryImpl(query);
-
     // [#11473] In the presence of ORDER BY, AliasedSelect tends not to work
-    //          correctly if ORDER BY references names available prior to the aliasing only
+    // correctly if ORDER BY references names available prior to the aliasing only
     if (q != null
         && (ignoreOrderBy && !q.getOrderBy().isEmpty() || Tools.hasEmbeddedFields(q.getSelect())))
       return query.asTable(alias, aliases);
@@ -112,11 +113,10 @@ final class AliasedSelect<R extends Record> extends AbstractTable<R> {
   @Override
   public final void accept(Context<?> ctx) {
     SelectQueryImpl<R> q = selectQueryImpl(query);
-
     // [#3679] [#10540] Without standardised UNION subquery column names,
-    //                  Derby projects column indexes 1, 2, 3 as names, but
-    //                  they cannot be referenced. In that case, revert to
-    //                  actual derived table usage.
+    // Derby projects column indexes 1, 2, 3 as names, but
+    // they cannot be referenced. In that case, revert to
+    // actual derived table usage.
     if (ctx.family() == DERBY && q != null && q.hasUnions())
       visitSubquery(ctx, selectFrom(query.asTable(DSL.name("t"), aliases)), false);
     else
@@ -126,7 +126,8 @@ final class AliasedSelect<R extends Record> extends AbstractTable<R> {
           subquery ? c -> visitSubquery(c, query, false) : c -> c.visit(query));
   }
 
-  @Override // Avoid AbstractTable implementation
+  // Avoid AbstractTable implementation
+  @Override
   public final Clause[] clauses(Context<?> ctx) {
     return null;
   }

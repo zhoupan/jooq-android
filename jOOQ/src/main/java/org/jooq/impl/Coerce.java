@@ -50,7 +50,6 @@ final class Coerce<T> extends AbstractField<T> {
 
   public Coerce(Field<?> field, DataType<T> type) {
     super(field.getQualifiedName(), type);
-
     this.field = (AbstractField<?>) Tools.uncoerce(field);
   }
 

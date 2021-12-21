@@ -58,7 +58,9 @@ import org.jooq.util.jaxb.tools.XMLBuilder;
 public class RenderMapping extends SettingsBase implements Serializable, Cloneable, XMLAppendable {
 
   private static final long serialVersionUID = 31500L;
+
   protected String defaultCatalog;
+
   protected String defaultSchema;
 
   @XmlElementWrapper(name = "catalogs")

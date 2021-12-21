@@ -48,12 +48,12 @@ class DefaultBindingGetSQLInputContext<U> extends AbstractScope
     implements BindingGetSQLInputContext<U> {
 
   private final SQLInput input;
+
   private U value;
 
   DefaultBindingGetSQLInputContext(
       Configuration configuration, Map<Object, Object> data, SQLInput input) {
     super(configuration, data);
-
     this.input = input;
   }
 
@@ -75,8 +75,8 @@ class DefaultBindingGetSQLInputContext<U> extends AbstractScope
   public final <T> BindingGetSQLInputContext<T> convert(
       final Converter<? super T, ? extends U> converter) {
     final DefaultBindingGetSQLInputContext<U> outer = this;
-
     return new DefaultBindingGetSQLInputContext<T>(configuration, data, input) {
+
       @Override
       public void value(T v) {
         outer.value(converter.from(v));

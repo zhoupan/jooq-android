@@ -46,11 +46,11 @@ import org.jooq.FieldOrRow;
 
 /** @author Lukas Eder */
 final class Rollup extends AbstractField<Object> {
+
   private QueryPartList<FieldOrRow> arguments;
 
   Rollup(FieldOrRow... arguments) {
     super(N_ROLLUP, OTHER);
-
     this.arguments = new QueryPartList<>(arguments);
   }
 
@@ -62,7 +62,6 @@ final class Rollup extends AbstractField<Object> {
       case MYSQL:
         ctx.visit(new MySQLWithRollup());
         break;
-
       default:
         ctx.visit(N_ROLLUP).sql('(').visit(arguments).sql(')');
         break;

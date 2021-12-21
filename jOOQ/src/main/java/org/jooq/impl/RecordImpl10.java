@@ -61,7 +61,6 @@ final class RecordImpl10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> extends Abstra
   // ------------------------------------------------------------------------
   // XXX: Type-safe Record APIs
   // ------------------------------------------------------------------------
-
   @Override
   public RowImpl10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> fieldsRow() {
     return new RowImpl10<>(

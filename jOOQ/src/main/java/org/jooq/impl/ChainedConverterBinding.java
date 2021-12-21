@@ -57,7 +57,9 @@ import org.jooq.Converters;
 class ChainedConverterBinding<T, U1, U2> implements Binding<T, U2> {
 
   private final Binding<T, U1> delegate;
+
   private final Converter<U1, U2> suffix;
+
   private final Converter<T, U2> chained;
 
   ChainedConverterBinding(Binding<T, U1> delegate, Converter<U1, U2> converter) {

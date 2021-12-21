@@ -62,6 +62,7 @@ import org.jooq.Converters;
 public class DateAsTimestampBinding implements Binding<Timestamp, Timestamp> {
 
   private final Converter<Timestamp, Timestamp> converter;
+
   private final Binding<Timestamp, Timestamp> delegate;
 
   public DateAsTimestampBinding() {
@@ -76,7 +77,6 @@ public class DateAsTimestampBinding implements Binding<Timestamp, Timestamp> {
 
   @Override
   public final void sql(BindingSQLContext<Timestamp> ctx) throws SQLException {
-
     delegate.sql(ctx);
   }
 

@@ -48,7 +48,6 @@ import org.jooq.Field;
  * @deprecated - 3.14.0 - [#9492] [#10312] - A compatibility implementation for converted data
  *     types, which registers itself in the static type registry for legacy reasons.
  */
-@Deprecated
 final class LegacyConvertedDataType<T, U> extends DefaultDataType<U> {
 
   private final DataType<T> delegate;
@@ -67,7 +66,6 @@ final class LegacyConvertedDataType<T, U> extends DefaultDataType<U> {
         delegate.lengthDefined() ? delegate.length() : null,
         delegate.nullability(),
         (Field<U>) delegate.defaultValue());
-
     this.delegate = delegate;
   }
 
@@ -90,9 +88,9 @@ final class LegacyConvertedDataType<T, U> extends DefaultDataType<U> {
   @Override
   public U convert(Object object) {
     if (getConverter().toType().isInstance(object)) return (U) object;
-
-    // [#3200] Try to convert arbitrary objects to T
-    else return ((Converter<T, U>) getConverter()).from(delegate.convert(object));
+    else
+      // [#3200] Try to convert arbitrary objects to T
+      return ((Converter<T, U>) getConverter()).from(delegate.convert(object));
   }
 
   @SuppressWarnings({"unchecked", "rawtypes"})

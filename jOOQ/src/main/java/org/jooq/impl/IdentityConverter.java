@@ -40,6 +40,7 @@ package org.jooq.impl;
 import org.jooq.Converter;
 
 public final class IdentityConverter<T> implements Converter<T, T> {
+
   private final Class<T> type;
 
   public IdentityConverter(Class<T> type) {

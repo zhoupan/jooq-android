@@ -46,11 +46,11 @@ import java.util.Map;
  * @author Lukas Eder
  */
 final class LRUCache<K, V> extends LinkedHashMap<K, V> {
+
   private final int size;
 
   LRUCache(int size) {
     super(size, 0.75f, true);
-
     this.size = size;
   }
 

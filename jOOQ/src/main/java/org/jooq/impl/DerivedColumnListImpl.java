@@ -97,7 +97,9 @@ final class DerivedColumnListImpl extends AbstractQueryPart
         DerivedColumnList {
 
   final Name name;
+
   final Name[] fieldNames;
+
   final BiFunction<? super Field<?>, ? super Integer, ? extends String> fieldNameFunction;
 
   DerivedColumnListImpl(Name name, Name[] fieldNames) {
@@ -116,7 +118,6 @@ final class DerivedColumnListImpl extends AbstractQueryPart
 
   final CommonTableExpression as0(ResultQuery query, Boolean materialized) {
     ResultQuery<?> q = query;
-
     if (fieldNameFunction != null)
       return new CommonTableExpressionImpl(
           new DerivedColumnListImpl(
@@ -145,16 +146,12 @@ final class DerivedColumnListImpl extends AbstractQueryPart
   @Override
   public final void accept(Context<?> ctx) {
     ctx.visit(name);
-
     if (fieldNames != null && fieldNames.length > 0) {
       ctx.sql('(');
-
       for (int i = 0; i < fieldNames.length; i++) {
         if (i > 0) ctx.sql(", ");
-
         ctx.visit(fieldNames[i]);
       }
-
       ctx.sql(')');
     }
   }

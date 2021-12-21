@@ -82,20 +82,30 @@ public final class DayToSecond extends Number implements Interval, Comparable<Da
 
   private static final Pattern PATTERN_DTS =
       Pattern.compile("^([+-])?(?:(\\d+) )?(\\d+):(\\d+):(\\d+)(?:\\.(\\d+))?$");
+
   private static final Pattern PATTERN_DTM =
       Pattern.compile("^([+-])?(?:(\\d+) )?(\\d+):(\\d+)()()$");
+
   private static final Pattern PATTERN_DTH = Pattern.compile("^([+-])?(?:(\\d+) )?(\\d+)()()()$");
+
   private static final Pattern PATTERN_HTS =
       Pattern.compile("^([+-])?()(\\d+):(\\d+):(\\d+)(?:\\.(\\d+))?$");
+
   private static final Pattern PATTERN_HTM = Pattern.compile("^([+-])?()(\\d+):(\\d+)()()$");
+
   private static final Pattern PATTERN_MTS =
       Pattern.compile("^([+-])?()()(\\d+):(\\d+)(?:\\.(\\d+))?$");
 
   private final boolean negative;
+
   private final int days;
+
   private final int hours;
+
   private final int minutes;
+
   private final int seconds;
+
   private final int nano;
 
   /** Create a new interval. */
@@ -129,7 +139,6 @@ public final class DayToSecond extends Number implements Interval, Comparable<Da
   }
 
   DayToSecond(int days, int hours, int minutes, int seconds, int nano, boolean negative) {
-
     // Perform normalisation. Specifically, Postgres may return intervals
     // such as 24:00:00, 25:13:15, etc...
     if (Math.abs(nano) >= 1000000000) {
@@ -148,7 +157,6 @@ public final class DayToSecond extends Number implements Interval, Comparable<Da
       days += (hours / 24);
       hours %= 24;
     }
-
     this.negative = negative;
     this.days = days;
     this.hours = hours;
@@ -167,13 +175,11 @@ public final class DayToSecond extends Number implements Interval, Comparable<Da
    */
   public static DayToSecond valueOf(String string) {
     if (string != null) {
-
       // Accept also doubles as the number of milliseconds
       try {
         return valueOf(Double.parseDouble(string));
       } catch (NumberFormatException e) {
         DayToSecond result = dayToSecond(string);
-
         if (result != null) return result;
         else {
           try {
@@ -183,7 +189,6 @@ public final class DayToSecond extends Number implements Interval, Comparable<Da
         }
       }
     }
-
     return null;
   }
 
@@ -212,10 +217,8 @@ public final class DayToSecond extends Number implements Interval, Comparable<Da
   public static DayToSecond dayToHour(String string) {
     if (string != null) {
       Matcher matcher = PATTERN_DTH.matcher(string);
-
       if (matcher.find()) return YearToSecond.parseDS(matcher, 0);
     }
-
     return null;
   }
 
@@ -229,10 +232,8 @@ public final class DayToSecond extends Number implements Interval, Comparable<Da
   public static DayToSecond dayToMinute(String string) {
     if (string != null) {
       Matcher matcher = PATTERN_DTM.matcher(string);
-
       if (matcher.find()) return YearToSecond.parseDS(matcher, 0);
     }
-
     return null;
   }
 
@@ -247,10 +248,8 @@ public final class DayToSecond extends Number implements Interval, Comparable<Da
   public static DayToSecond dayToSecond(String string) {
     if (string != null) {
       Matcher matcher = PATTERN_DTS.matcher(string);
-
       if (matcher.find()) return YearToSecond.parseDS(matcher, 0);
     }
-
     return null;
   }
 
@@ -279,10 +278,8 @@ public final class DayToSecond extends Number implements Interval, Comparable<Da
   public static DayToSecond hourToMinute(String string) {
     if (string != null) {
       Matcher matcher = PATTERN_HTM.matcher(string);
-
       if (matcher.find()) return YearToSecond.parseDS(matcher, 0);
     }
-
     return null;
   }
 
@@ -297,10 +294,8 @@ public final class DayToSecond extends Number implements Interval, Comparable<Da
   public static DayToSecond hourToSecond(String string) {
     if (string != null) {
       Matcher matcher = PATTERN_HTS.matcher(string);
-
       if (matcher.find()) return YearToSecond.parseDS(matcher, 0);
     }
-
     return null;
   }
 
@@ -330,10 +325,8 @@ public final class DayToSecond extends Number implements Interval, Comparable<Da
   public static DayToSecond minuteToSecond(String string) {
     if (string != null) {
       Matcher matcher = PATTERN_MTS.matcher(string);
-
       if (matcher.find()) return YearToSecond.parseDS(matcher, 0);
     }
-
     return null;
   }
 
@@ -362,7 +355,6 @@ public final class DayToSecond extends Number implements Interval, Comparable<Da
    */
   public static DayToSecond valueOf(double milli) {
     double abs = Math.abs(milli);
-
     int n = (int) ((abs % 1000) * 1000000.0);
     abs = Math.floor(abs / 1000);
     int s = (int) (abs % 60);
@@ -372,11 +364,8 @@ public final class DayToSecond extends Number implements Interval, Comparable<Da
     int h = (int) (abs % 24);
     abs = Math.floor(abs / 24);
     int d = (int) abs;
-
     DayToSecond result = new DayToSecond(d, h, m, s, n);
-
     if (milli < 0) result = result.neg();
-
     return result;
   }
 
@@ -390,7 +379,6 @@ public final class DayToSecond extends Number implements Interval, Comparable<Da
    */
   public static DayToSecond valueOf(long second, int nanos) {
     long abs = Math.abs(second);
-
     int s = (int) (abs % 60L);
     abs = abs / 60L;
     int m = (int) (abs % 60L);
@@ -398,11 +386,8 @@ public final class DayToSecond extends Number implements Interval, Comparable<Da
     int h = (int) (abs % 24L);
     abs = abs / 24L;
     int d = (int) abs;
-
     DayToSecond result = new DayToSecond(d, h, m, s, nanos);
-
     if (second < 0) result = result.neg();
-
     return result;
   }
 
@@ -412,15 +397,12 @@ public final class DayToSecond extends Number implements Interval, Comparable<Da
    */
   public static DayToSecond valueOf(Duration duration) {
     if (duration == null) return null;
-
     long s = duration.get(ChronoUnit.SECONDS);
     int n = (int) duration.get(ChronoUnit.NANOS);
-
     if (s < 0) {
       n = 1_000_000_000 - n;
       s++;
     }
-
     return valueOf(s, n);
   }
 
@@ -432,7 +414,6 @@ public final class DayToSecond extends Number implements Interval, Comparable<Da
   // -------------------------------------------------------------------------
   // XXX Number API
   // -------------------------------------------------------------------------
-
   @Override
   public final int intValue() {
     return (int) doubleValue();
@@ -456,7 +437,6 @@ public final class DayToSecond extends Number implements Interval, Comparable<Da
   // -------------------------------------------------------------------------
   // XXX Interval API
   // -------------------------------------------------------------------------
-
   @Override
   public final DayToSecond neg() {
     return new DayToSecond(days, hours, minutes, seconds, nano, !negative);
@@ -576,7 +556,6 @@ public final class DayToSecond extends Number implements Interval, Comparable<Da
   // -------------------------------------------------------------------------
   // XXX Comparable and Object API
   // -------------------------------------------------------------------------
-
   @Override
   public final int compareTo(DayToSecond that) {
     if (days < that.days) return -1;
@@ -622,24 +601,19 @@ public final class DayToSecond extends Number implements Interval, Comparable<Da
   @Override
   public final String toString() {
     StringBuilder sb = new StringBuilder();
-
     sb.append(negative ? "-" : "+");
     sb.append(days);
     sb.append(" ");
-
     if (hours < 10) sb.append("0");
     sb.append(hours);
     sb.append(":");
-
     if (minutes < 10) sb.append("0");
     sb.append(minutes);
     sb.append(":");
-
     if (seconds < 10) sb.append("0");
     sb.append(seconds);
     sb.append(".");
     sb.append(StringUtils.leftPad("" + nano, 9, "0"));
-
     return sb.toString();
   }
 }

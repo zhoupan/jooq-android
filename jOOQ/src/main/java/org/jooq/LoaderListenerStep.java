@@ -72,7 +72,6 @@ public interface LoaderListenerStep<R extends Record> extends LoaderLoadStep<R> 
    *
    * @deprecated - 3.14.0 - [#4941] - Use {@link #onRowEnd(LoaderRowListener)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support

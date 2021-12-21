@@ -61,14 +61,12 @@ final class Digits extends AbstractField<String> {
 
   Digits(Field<? extends Number> value) {
     super(N_DIGITS, allNotNull(VARCHAR, value));
-
     this.value = nullSafeNotNull(value, INTEGER);
   }
 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Set<SQLDialect> NO_SUPPORT_DIGITS =
       SQLDialect.supportedBy(CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE);
 
@@ -76,7 +74,6 @@ final class Digits extends AbstractField<String> {
   public final void accept(Context<?> ctx) {
     if (NO_SUPPORT_DIGITS.contains(ctx.dialect())) {
       DataType<?> t = value.getDataType();
-
       if (t.getType() == Byte.class)
         ctx.visit(
             DSL.lpad(
@@ -119,7 +116,6 @@ final class Digits extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Digits) {

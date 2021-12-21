@@ -56,7 +56,6 @@ final class ArrayDataType<T> extends DefaultDataType<T[]> {
   public ArrayDataType(DataType<T> elementType) {
     super(
         null, elementType.getArrayType(), elementType.getTypeName(), elementType.getCastTypeName());
-
     this.elementType = elementType;
   }
 
@@ -74,7 +73,6 @@ final class ArrayDataType<T> extends DefaultDataType<T[]> {
       Field<T[]> defaultValue) {
     super(
         t, precision, scale, length, nullability, collation, characterSet, identity, defaultValue);
-
     this.elementType = elementType;
   }
 
@@ -128,12 +126,10 @@ final class ArrayDataType<T> extends DefaultDataType<T[]> {
     switch (configuration.family()) {
       case HSQLDB:
         return dataType + " array";
-
       case POSTGRES:
         return dataType + "[]";
       case H2:
         return "array";
-
         // Default implementation is needed for hash-codes and toString()
       default:
         return dataType + "[]";

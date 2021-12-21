@@ -83,7 +83,6 @@ public interface Row extends Fields, FieldOrRow {
   // ------------------------------------------------------------------------
   // [NOT] NULL predicates
   // ------------------------------------------------------------------------
-
   /**
    * Check if this row value expression contains only <code>NULL</code> values.
    *

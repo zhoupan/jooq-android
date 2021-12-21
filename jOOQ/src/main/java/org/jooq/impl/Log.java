@@ -59,18 +59,17 @@ import org.jooq.tools.*;
 final class Log extends AbstractField<BigDecimal> {
 
   private final Field<? extends Number> value;
+
   private final Field<? extends Number> base;
 
   Log(Field<? extends Number> value) {
     super(N_LOG, allNotNull(NUMERIC, value));
-
     this.value = nullSafeNotNull(value, INTEGER);
     this.base = null;
   }
 
   Log(Field<? extends Number> value, Field<? extends Number> base) {
     super(N_LOG, allNotNull(NUMERIC, value, base));
-
     this.value = nullSafeNotNull(value, INTEGER);
     this.base = nullSafeNotNull(base, INTEGER);
   }
@@ -78,7 +77,6 @@ final class Log extends AbstractField<BigDecimal> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     if (base == null) {
@@ -94,7 +92,6 @@ final class Log extends AbstractField<BigDecimal> {
         case IGNITE:
           ctx.visit(idiv(DSL.ln(value), DSL.ln(base)));
           return;
-
         default:
           ctx.visit(function(N_LOG, NUMERIC, base, value));
           return;
@@ -105,7 +102,6 @@ final class Log extends AbstractField<BigDecimal> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Log) {

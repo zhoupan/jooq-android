@@ -71,12 +71,13 @@ import org.jooq.Name;
 final class DateDiff<T> extends AbstractField<Integer> {
 
   private final DatePart part;
+
   private final Field<T> startDate;
+
   private final Field<T> endDate;
 
   DateDiff(DatePart part, Field<T> startDate, Field<T> endDate) {
     super(N_DATEDIFF, SQLDataType.INTEGER);
-
     this.part = part;
     this.startDate = startDate;
     this.endDate = endDate;
@@ -85,7 +86,6 @@ final class DateDiff<T> extends AbstractField<Integer> {
   @Override
   public final void accept(Context<?> ctx) {
     DatePart p = part == null ? DAY : part;
-
     switch (ctx.family()) {
       case MARIADB:
       case MYSQL:
@@ -96,25 +96,20 @@ final class DateDiff<T> extends AbstractField<Integer> {
           case YEAR:
             ctx.visit(partDiff(p));
             return;
-
           case QUARTER:
           case MONTH:
             ctx.visit(monthDiff(p));
             return;
-
           case DAY:
             ctx.visit(N_DATEDIFF).sql('(').visit(endDate).sql(", ").visit(startDate).sql(')');
             return;
-
           case MILLISECOND:
             ctx.visit(new DateDiff<>(MICROSECOND, startDate, endDate).div(inline(1000)));
             return;
-
           case NANOSECOND:
             ctx.visit(new DateDiff<>(MICROSECOND, startDate, endDate).times(inline(1000)));
             return;
         }
-
         ctx.visit(N_TIMESTAMPDIFF)
             .sql('(')
             .visit(p.toName())
@@ -124,11 +119,9 @@ final class DateDiff<T> extends AbstractField<Integer> {
             .visit(endDate)
             .sql(')');
         return;
-
       case DERBY:
         {
           Name name = N_SQL_TSI_DAY;
-
           switch (p) {
             case MILLENNIUM:
             case CENTURY:
@@ -136,12 +129,10 @@ final class DateDiff<T> extends AbstractField<Integer> {
             case YEAR:
               ctx.visit(partDiff(p));
               return;
-
             case QUARTER:
             case MONTH:
               ctx.visit(monthDiff(p));
               return;
-
             case DAY:
               name = N_SQL_TSI_DAY;
               break;
@@ -157,16 +148,13 @@ final class DateDiff<T> extends AbstractField<Integer> {
             case NANOSECOND:
               name = N_SQL_TSI_FRAC_SECOND;
               break;
-
             case MILLISECOND:
               ctx.visit(new DateDiff<>(NANOSECOND, startDate, endDate).div(inline(1000000L)));
               return;
-
             case MICROSECOND:
               ctx.visit(new DateDiff<>(NANOSECOND, startDate, endDate).div(inline(1000L)));
               return;
           }
-
           ctx.sql("{fn ")
               .visit(N_TIMESTAMPDIFF)
               .sql('(')
@@ -178,7 +166,6 @@ final class DateDiff<T> extends AbstractField<Integer> {
               .sql(") }");
           return;
         }
-
       case FIREBIRD:
       case H2:
       case HSQLDB:
@@ -188,15 +175,12 @@ final class DateDiff<T> extends AbstractField<Integer> {
           case DECADE:
             ctx.visit(partDiff(p));
             return;
-
           case QUARTER:
             if (ctx.family() == FIREBIRD) {
               ctx.visit(monthDiff(QUARTER));
               return;
             }
-
             break;
-
           case HOUR:
           case MINUTE:
           case SECOND:
@@ -214,10 +198,8 @@ final class DateDiff<T> extends AbstractField<Integer> {
                   .sql(')');
               return;
             }
-
             break;
         }
-
         ctx.visit(N_DATEDIFF)
             .sql('(')
             .visit(p.toKeyword())
@@ -227,7 +209,6 @@ final class DateDiff<T> extends AbstractField<Integer> {
             .visit(endDate)
             .sql(')');
         return;
-
       case SQLITE:
         ctx.sql('(')
             .visit(N_STRFTIME)
@@ -239,7 +220,6 @@ final class DateDiff<T> extends AbstractField<Integer> {
             .visit(startDate)
             .sql(")) / 86400");
         return;
-
       case CUBRID:
       case POSTGRES:
         switch (p) {
@@ -249,12 +229,10 @@ final class DateDiff<T> extends AbstractField<Integer> {
           case YEAR:
             ctx.visit(partDiff(p));
             return;
-
           case QUARTER:
           case MONTH:
             ctx.visit(monthDiff(p));
             return;
-
           case DAY:
             switch (ctx.family()) {
               case POSTGRES:
@@ -271,26 +249,20 @@ final class DateDiff<T> extends AbstractField<Integer> {
                       .sql(" - ")
                       .visit(startDate)
                       .sql(')');
-
                 return;
-
               default:
-
                 // [#4481] Parentheses are important in case this expression is
-                //         placed in the context of other arithmetic
+                // placed in the context of other arithmetic
                 ctx.sql('(').visit(endDate).sql(" - ").visit(startDate).sql(')');
                 return;
             }
-
           case HOUR:
           case MINUTE:
             ctx.visit(partDiff(EPOCH).div(p == HOUR ? inline(3600) : inline(60)));
             return;
-
           case SECOND:
             ctx.visit(partDiff(EPOCH));
             return;
-
           case MILLISECOND:
           case MICROSECOND:
           case NANOSECOND:
@@ -302,10 +274,8 @@ final class DateDiff<T> extends AbstractField<Integer> {
                             : p == MICROSECOND ? inline(1000000) : inline(1000000000)));
             return;
         }
-
         break;
     }
-
     ctx.visit(castIfNeeded(endDate.minus(startDate), Integer.class));
   }
 

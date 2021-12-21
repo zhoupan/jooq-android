@@ -61,10 +61,13 @@ import org.jooq.tools.StringUtils;
  * @author Lukas Eder
  */
 abstract class AbstractParam<T> extends AbstractParamX<T> implements SimpleQueryPart {
+
   private static final Clause[] CLAUSES = {FIELD, FIELD_VALUE};
 
   private final String paramName;
+
   T value;
+
   private boolean inline;
 
   AbstractParam(T value, DataType<T> type) {
@@ -73,7 +76,6 @@ abstract class AbstractParam<T> extends AbstractParamX<T> implements SimpleQuery
 
   AbstractParam(T value, DataType<T> type, String paramName) {
     super(name(value, paramName), type);
-
     this.paramName = paramName;
     this.value = value;
   }
@@ -97,9 +99,8 @@ abstract class AbstractParam<T> extends AbstractParamX<T> implements SimpleQuery
     return DSL.name(
         paramName != null
             ? paramName
-
-            // [#3707] Protect value.toString call for certain jOOQ types.
-            : value instanceof QualifiedRecord
+            : // [#3707] Protect value.toString call for certain jOOQ types.
+            value instanceof QualifiedRecord
                 ? ((QualifiedRecord<?>) value).getQualifier().getName()
                 : String.valueOf(value));
   }
@@ -107,7 +108,6 @@ abstract class AbstractParam<T> extends AbstractParamX<T> implements SimpleQuery
   // ------------------------------------------------------------------------
   // XXX: QueryPart API
   // ------------------------------------------------------------------------
-
   @Override
   public final Clause[] clauses(Context<?> ctx) {
     return CLAUSES;
@@ -121,7 +121,6 @@ abstract class AbstractParam<T> extends AbstractParamX<T> implements SimpleQuery
   // ------------------------------------------------------------------------
   // XXX: Param API
   // ------------------------------------------------------------------------
-
   @Override
   final void setConverted0(Object value) {
     this.value = getDataType().convert(value);
@@ -169,14 +168,11 @@ abstract class AbstractParam<T> extends AbstractParamX<T> implements SimpleQuery
   // ------------------------------------------------------------------------
   // XXX: Object API
   // ------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (this == that) return true;
-
     if (that instanceof Param) {
       Object thatValue = ((Param<?>) that).getValue();
-
       if (value == null) return thatValue == null;
       else if (value instanceof byte[] && thatValue instanceof byte[])
         return Arrays.equals((byte[]) value, (byte[]) thatValue);

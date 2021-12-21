@@ -47,6 +47,7 @@ import org.jooq.Field;
 final class IsDocument extends AbstractCondition {
 
   private final Field<?> field;
+
   private final boolean isDocument;
 
   IsDocument(Field<?> field, boolean isDocument) {

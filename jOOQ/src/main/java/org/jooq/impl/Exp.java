@@ -62,14 +62,12 @@ final class Exp extends AbstractField<BigDecimal> {
 
   Exp(Field<? extends Number> value) {
     super(N_EXP, allNotNull(NUMERIC, value));
-
     this.value = nullSafeNotNull(value, INTEGER);
   }
 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -82,7 +80,6 @@ final class Exp extends AbstractField<BigDecimal> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Exp) {

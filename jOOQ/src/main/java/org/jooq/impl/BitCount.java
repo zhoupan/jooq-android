@@ -45,11 +45,11 @@ import org.jooq.Field;
 
 /** @author Lukas Eder */
 final class BitCount extends AbstractField<Integer> {
+
   private final Field<?> field;
 
   BitCount(Field<?> field) {
     super(N_BIT_COUNT, SQLDataType.INTEGER);
-
     this.field = field;
   }
 
@@ -60,21 +60,18 @@ final class BitCount extends AbstractField<Integer> {
       case MYSQL:
         ctx.visit(N_BIT_COUNT).sql('(').visit(field).sql(')');
         return;
-
         // [#3962] The databases listed here are the same ones that need to
         // emulate the SHR(a, b) function via a / POWER(2, b). BitCount is
         // expensive enough already, we shouldn't also introduce POWER()
         // Better solutions very welcome! See also:
         // See also
         // http://stackoverflow.com/questions/7946349/how-to-simulate-the-mysql-bit-count-function-in-sybase-sql-anywhere
-
       case H2:
       case HSQLDB:
         {
           if (field.getType() == Byte.class) {
             @SuppressWarnings("unchecked")
             Field<Byte> f = (Field<Byte>) field;
-
             ctx.visit(
                 DSL.bitAnd(f, inline((byte) 0x01))
                     .add(DSL.bitAnd(f, inline((byte) 0x02)).div(inline((byte) 0x02)))
@@ -89,7 +86,6 @@ final class BitCount extends AbstractField<Integer> {
           } else if (field.getType() == Short.class) {
             @SuppressWarnings("unchecked")
             Field<Short> f = (Field<Short>) field;
-
             ctx.visit(
                 DSL.bitAnd(f, inline((short) 0x0001))
                     .add(DSL.bitAnd(f, inline((short) 0x0002)).div(inline((short) 0x0002)))
@@ -112,7 +108,6 @@ final class BitCount extends AbstractField<Integer> {
           } else if (field.getType() == Integer.class) {
             @SuppressWarnings("unchecked")
             Field<Integer> f = (Field<Integer>) field;
-
             ctx.visit(
                 DSL.bitAnd(f, inline(0x00000001))
                     .add(DSL.bitAnd(f, inline(0x00000002)).div(inline(0x00000002)))
@@ -150,7 +145,6 @@ final class BitCount extends AbstractField<Integer> {
           } else if (field.getType() == Long.class) {
             @SuppressWarnings("unchecked")
             Field<Long> f = (Field<Long>) field;
-
             ctx.visit(
                 DSL.bitAnd(f, inline(0x0000000000000001L))
                     .add(
@@ -287,13 +281,11 @@ final class BitCount extends AbstractField<Integer> {
             return;
           }
         }
-
       default:
         {
           if (field.getType() == Byte.class) {
             @SuppressWarnings("unchecked")
             Field<Byte> f = (Field<Byte>) field;
-
             byte i = 0;
             ctx.visit(
                 DSL.bitAnd(f, inline((byte) 0x01))
@@ -309,7 +301,6 @@ final class BitCount extends AbstractField<Integer> {
           } else if (field.getType() == Short.class) {
             @SuppressWarnings("unchecked")
             Field<Short> f = (Field<Short>) field;
-
             short i = 0;
             ctx.visit(
                 DSL.bitAnd(f, inline((short) 0x0001))
@@ -333,7 +324,6 @@ final class BitCount extends AbstractField<Integer> {
           } else if (field.getType() == Integer.class) {
             @SuppressWarnings("unchecked")
             Field<Integer> f = (Field<Integer>) field;
-
             int i = 0;
             ctx.visit(
                 DSL.bitAnd(f, inline(0x00000001))
@@ -372,7 +362,6 @@ final class BitCount extends AbstractField<Integer> {
           } else if (field.getType() == Long.class) {
             @SuppressWarnings("unchecked")
             Field<Long> f = (Field<Long>) field;
-
             long i = 0;
             ctx.visit(
                 DSL.bitAnd(f, inline(0x0000000000000001L))

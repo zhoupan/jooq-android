@@ -79,6 +79,7 @@ public class SingleConnectionDataSource implements DataSource {
   @Override
   public Connection getConnection() throws SQLException {
     return new DefaultConnection(delegate) {
+
       @Override
       public void close() throws SQLException {
         // Ignore close calls

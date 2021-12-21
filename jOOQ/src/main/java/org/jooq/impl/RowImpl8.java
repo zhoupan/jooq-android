@@ -82,7 +82,6 @@ final class RowImpl8<T1, T2, T3, T4, T5, T6, T7, T8>
   // ------------------------------------------------------------------------
   // Mapping convenience methods
   // ------------------------------------------------------------------------
-
   @Override
   public final <U> SelectField<U> mapping(
       Function8<
@@ -119,7 +118,6 @@ final class RowImpl8<T1, T2, T3, T4, T5, T6, T7, T8>
   // ------------------------------------------------------------------------
   // XXX: Row accessor API
   // ------------------------------------------------------------------------
-
   @Override
   public final Field<T1> field1() {
     return (Field<T1>) fields.field(0);
@@ -163,7 +161,6 @@ final class RowImpl8<T1, T2, T3, T4, T5, T6, T7, T8>
   // ------------------------------------------------------------------------
   // Generic comparison predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition compare(Comparator comparator, Row8<T1, T2, T3, T4, T5, T6, T7, T8> row) {
     return new RowCondition(this, row, comparator);
@@ -221,7 +218,6 @@ final class RowImpl8<T1, T2, T3, T4, T5, T6, T7, T8>
   // ------------------------------------------------------------------------
   // Equal / Not equal comparison predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition equal(Row8<T1, T2, T3, T4, T5, T6, T7, T8> row) {
     return compare(Comparator.EQUALS, row);
@@ -337,7 +333,6 @@ final class RowImpl8<T1, T2, T3, T4, T5, T6, T7, T8>
   // ------------------------------------------------------------------------
   // Ordering comparison predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition lessThan(Row8<T1, T2, T3, T4, T5, T6, T7, T8> row) {
     return compare(Comparator.LESS, row);
@@ -565,7 +560,6 @@ final class RowImpl8<T1, T2, T3, T4, T5, T6, T7, T8>
   // ------------------------------------------------------------------------
   // [NOT] BETWEEN predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final BetweenAndStep8<T1, T2, T3, T4, T5, T6, T7, T8> between(
       T1 t1, T2 t2, T3 t3, T4 t4, T5 t5, T6 t6, T7 t7, T8 t8) {
@@ -785,7 +779,6 @@ final class RowImpl8<T1, T2, T3, T4, T5, T6, T7, T8>
   // ------------------------------------------------------------------------
   // [NOT] DISTINCT predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition isNotDistinctFrom(Row8<T1, T2, T3, T4, T5, T6, T7, T8> row) {
     return new RowIsDistinctFrom(this, row, true);
@@ -873,7 +866,6 @@ final class RowImpl8<T1, T2, T3, T4, T5, T6, T7, T8>
   // ------------------------------------------------------------------------
   // [NOT] IN predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition in(Row8<T1, T2, T3, T4, T5, T6, T7, T8>... rows) {
     return in(Arrays.asList(rows));
@@ -882,9 +874,7 @@ final class RowImpl8<T1, T2, T3, T4, T5, T6, T7, T8>
   @Override
   public final Condition in(Record8<T1, T2, T3, T4, T5, T6, T7, T8>... records) {
     QueryPartList<Row> rows = new QueryPartList<>();
-
     for (Record record : records) rows.add(record.valuesRow());
-
     return new RowInCondition(this, rows, false);
   }
 
@@ -896,9 +886,7 @@ final class RowImpl8<T1, T2, T3, T4, T5, T6, T7, T8>
   @Override
   public final Condition notIn(Record8<T1, T2, T3, T4, T5, T6, T7, T8>... records) {
     QueryPartList<Row> rows = new QueryPartList<>();
-
     for (Record record : records) rows.add(record.valuesRow());
-
     return new RowInCondition(this, rows, true);
   }
 
@@ -925,7 +913,6 @@ final class RowImpl8<T1, T2, T3, T4, T5, T6, T7, T8>
   // ------------------------------------------------------------------------
   // Predicates involving subqueries
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition equal(Select<? extends Record8<T1, T2, T3, T4, T5, T6, T7, T8>> select) {
     return compare(Comparator.EQUALS, select);

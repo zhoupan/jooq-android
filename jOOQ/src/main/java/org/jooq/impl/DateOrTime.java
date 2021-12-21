@@ -55,7 +55,6 @@ final class DateOrTime<T> extends AbstractField<T> {
 
   DateOrTime(Field<?> field, DataType<T> dataType) {
     super(DSL.name(name(dataType)), dataType);
-
     this.field = field;
   }
 
@@ -75,7 +74,6 @@ final class DateOrTime<T> extends AbstractField<T> {
       case MYSQL:
         ctx.visit(keyword(getDataType())).sql('(').visit(field).sql(')');
         break;
-
       case SQLITE:
         {
           if (getDataType().isDate()) ctx.visit(K_DATE).sql('(').visit(field).sql(')');
@@ -83,10 +81,8 @@ final class DateOrTime<T> extends AbstractField<T> {
             // [#8733] No fractional seconds for time literals
             ctx.visit(K_TIME).sql('(').visit(field).sql(')');
           else ctx.visit(N_STRFTIME).sql("('%Y-%m-%d %H:%M:%f', ").visit(field).sql(')');
-
           break;
         }
-
       default:
         ctx.visit(castIfNeeded(field, getDataType()));
         break;

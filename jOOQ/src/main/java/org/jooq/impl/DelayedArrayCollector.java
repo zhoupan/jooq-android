@@ -65,7 +65,9 @@ import org.jooq.ResultQuery;
 final class DelayedArrayCollector<R extends Record, E> implements Collector<R, List<E>, E[]> {
 
   private final Function<Fields, E[]> array;
+
   private final Collector<R, List<E>, List<E>> delegate;
+
   Fields fields;
 
   @SuppressWarnings("unchecked")
@@ -77,7 +79,6 @@ final class DelayedArrayCollector<R extends Record, E> implements Collector<R, L
   static final <F extends Fields> F patch(Collector<?, ?, ?> collector, F fields) {
     if (collector instanceof DelayedArrayCollector)
       ((DelayedArrayCollector<?, ?>) collector).fields = fields;
-
     return fields;
   }
 

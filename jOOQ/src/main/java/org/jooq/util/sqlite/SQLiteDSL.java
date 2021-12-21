@@ -48,7 +48,6 @@ import org.jooq.impl.DSL;
  * @deprecated - 3.15.0 - [#10796] - This class will be removed, soon, no more vendor specific DSL
  *     API will be added.
  */
-@Deprecated(forRemoval = true, since = "3.15")
 public class SQLiteDSL extends DSL {
 
   /** No instances */
@@ -57,7 +56,6 @@ public class SQLiteDSL extends DSL {
   // -------------------------------------------------------------------------
   // General pseudo-columns
   // -------------------------------------------------------------------------
-
   /**
    * Retrieve the SQLite-specific <code>_rowid_</code> pseudo-field. <code>_rowid_</code> was chosen
    * over <code>rowid</code> as it is less likely to be used as an actual table column in client

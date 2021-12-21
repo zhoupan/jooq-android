@@ -432,7 +432,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX Contextual factory methods
   // -------------------------------------------------------------------------
-
   /**
    * Create an executor with a dialect configured.
    *
@@ -792,7 +791,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX Static subselect factory methods
   // -------------------------------------------------------------------------
-
   /**
    * Create a <code>WITH</code> clause to supply subsequent <code>SELECT</code>, <code>UPDATE</code>
    * , <code>INSERT</code>, <code>DELETE</code>, and <code>MERGE</code> statements with {@link
@@ -907,7 +905,6 @@ public class DSL {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, POSTGRES, SQLITE})
   public static WithAsStep with(
@@ -2905,7 +2902,6 @@ public class DSL {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
   public static WithAsStep withRecursive(
@@ -9205,7 +9201,6 @@ public class DSL {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   public static <R extends Record, T1> MergeKeyStep1<R, T1> mergeInto(
@@ -9221,7 +9216,6 @@ public class DSL {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   public static <R extends Record, T1, T2> MergeKeyStep2<R, T1, T2> mergeInto(
@@ -9237,7 +9231,6 @@ public class DSL {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   public static <R extends Record, T1, T2, T3> MergeKeyStep3<R, T1, T2, T3> mergeInto(
@@ -9253,7 +9246,6 @@ public class DSL {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   public static <R extends Record, T1, T2, T3, T4> MergeKeyStep4<R, T1, T2, T3, T4> mergeInto(
@@ -9269,7 +9261,6 @@ public class DSL {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   public static <R extends Record, T1, T2, T3, T4, T5>
@@ -9292,7 +9283,6 @@ public class DSL {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   public static <R extends Record, T1, T2, T3, T4, T5, T6>
@@ -9316,7 +9306,6 @@ public class DSL {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   public static <R extends Record, T1, T2, T3, T4, T5, T6, T7>
@@ -9341,7 +9330,6 @@ public class DSL {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8>
@@ -9367,7 +9355,6 @@ public class DSL {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9>
@@ -9394,7 +9381,6 @@ public class DSL {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>
@@ -9423,7 +9409,6 @@ public class DSL {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>
@@ -9454,7 +9439,6 @@ public class DSL {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>
@@ -9486,7 +9470,6 @@ public class DSL {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>
@@ -9519,7 +9502,6 @@ public class DSL {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>
@@ -9553,7 +9535,6 @@ public class DSL {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   public static <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>
@@ -9588,7 +9569,6 @@ public class DSL {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   public static <
@@ -9626,7 +9606,6 @@ public class DSL {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   public static <
@@ -9682,7 +9661,6 @@ public class DSL {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   public static <
@@ -9741,7 +9719,6 @@ public class DSL {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   public static <
@@ -9821,7 +9798,6 @@ public class DSL {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   public static <
@@ -9905,7 +9881,6 @@ public class DSL {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   public static <
@@ -9992,7 +9967,6 @@ public class DSL {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   public static <
@@ -10102,7 +10076,6 @@ public class DSL {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({CUBRID, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   public static <R extends Record> MergeKeyStepN<R> mergeInto(Table<R> table, Field<?>... fields) {
@@ -10119,7 +10092,6 @@ public class DSL {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({CUBRID, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   public static <R extends Record> MergeKeyStepN<R> mergeInto(
@@ -10166,7 +10138,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX Comments
   // -------------------------------------------------------------------------
-
   /** Create a comment. */
   @NotNull
   @Support
@@ -10177,7 +10148,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX DDL Clauses
   // -------------------------------------------------------------------------
-
   /** Create an unnamed (system named) <code>CONSTRAINT</code> specification. */
   @NotNull
   @Support
@@ -11901,11 +11871,9 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX DDL Statements
   // -------------------------------------------------------------------------
-
   // -------------------------------------------------------------------------
   // DDL statements
   // -------------------------------------------------------------------------
-
   /**
    * The <code>ALTER DATABASE</code> statement.
    *
@@ -14669,7 +14637,6 @@ public class DSL {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
   public static CreateViewAsStep createView(
@@ -14689,7 +14656,6 @@ public class DSL {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
   public static CreateViewAsStep createView(
@@ -14709,7 +14675,6 @@ public class DSL {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
   public static CreateViewAsStep createView(
@@ -14762,7 +14727,6 @@ public class DSL {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({FIREBIRD, H2, MARIADB, MYSQL, POSTGRES})
   public static CreateViewAsStep createOrReplaceView(
@@ -14782,7 +14746,6 @@ public class DSL {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({FIREBIRD, H2, MARIADB, MYSQL, POSTGRES})
   public static CreateViewAsStep createOrReplaceView(
@@ -14802,7 +14765,6 @@ public class DSL {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({FIREBIRD, H2, MARIADB, MYSQL, POSTGRES})
   public static CreateViewAsStep createOrReplaceView(
@@ -14855,7 +14817,6 @@ public class DSL {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
   public static CreateViewAsStep createViewIfNotExists(
@@ -14875,7 +14836,6 @@ public class DSL {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
   public static CreateViewAsStep createViewIfNotExists(
@@ -14895,7 +14855,6 @@ public class DSL {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support({FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
   public static CreateViewAsStep createViewIfNotExists(
@@ -15104,7 +15063,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX Quantified comparison predicate expressions
   // -------------------------------------------------------------------------
-
   /**
    * Create an <code>ALL</code> quantified select to be used in quantified comparison predicate
    * expressions.
@@ -15276,7 +15234,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX Other objects
   // -------------------------------------------------------------------------
-
   /** Create a collation by its unqualified name. */
   @NotNull
   @Support({HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
@@ -15365,7 +15322,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX Conversion of objects into tables
   // -------------------------------------------------------------------------
-
   /**
    * A synonym for {@link Select#asTable()}, which might look a bit more fluent like this, to some
    * users.
@@ -15387,7 +15343,6 @@ public class DSL {
   @NotNull
   @Support
   public static <R extends Record> Table<R> table(Result<R> result) {
-
     // TODO [#2986] Coerce the record type upon the resulting table.
     return (Table<R>)
         values0(map(result, r -> r.valuesRow(), Row[]::new))
@@ -15406,11 +15361,9 @@ public class DSL {
   @Support
   public static <R extends Record> Table<R> table(R... records) {
     if (records == null || records.length == 0) return (Table<R>) new Dual();
-
     Result<R> result =
         new ResultImpl(configuration(records[0]), (AbstractRow) records[0].fieldsRow());
     result.addAll(Arrays.asList(records));
-
     return table(result);
   }
 
@@ -15511,15 +15464,12 @@ public class DSL {
 
   private static Table<?> unnest0(Field<?> cursor) {
     if (cursor == null) throw new IllegalArgumentException();
-
-    // The field is an actual CURSOR or REF CURSOR returned from a stored
+    else // The field is an actual CURSOR or REF CURSOR returned from a stored
     // procedure or from a NESTED TABLE
-    else if (cursor.getType() == Result.class) return new FunctionTable<Record>(cursor);
-
-    // The field is a regular array
-    else if (cursor.getType().isArray() && cursor.getType() != byte[].class)
+    if (cursor.getType() == Result.class) return new FunctionTable<Record>(cursor);
+    else // The field is a regular array
+    if (cursor.getType().isArray() && cursor.getType() != byte[].class)
       return new ArrayTable(cursor);
-
     // The field has any other type. Try to make it an array
     throw new SQLDialectNotSupportedException(
         "Converting arbitrary types into array tables is currently not supported");
@@ -15528,7 +15478,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX Table functions
   // -------------------------------------------------------------------------
-
   /**
    * The <code>DUAL</code> table to be used for syntactic completeness.
    *
@@ -15825,7 +15774,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX SQL keywords
   // -------------------------------------------------------------------------
-
   /**
    * Create a SQL keyword.
    *
@@ -15850,7 +15798,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX Names
   // -------------------------------------------------------------------------
-
   /**
    * Create a new SQL identifier using an unqualified name.
    *
@@ -16071,7 +16018,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX QueryPart composition
   // -------------------------------------------------------------------------
-
   /**
    * Compose a list of <code>QueryParts</code> into a new <code>QueryPart</code>, with individual
    * parts being comma-separated.
@@ -16095,7 +16041,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX SQL identifiers
   // -------------------------------------------------------------------------
-
   /**
    * Create a <code>DEFAULT</code> keyword for use with <code>INSERT</code>, <code>UPDATE</code>, or
    * <code>MERGE</code> statements.
@@ -16217,7 +16162,6 @@ public class DSL {
    * @return A schema referenced by <code>name</code>
    * @deprecated - [#3843] - 3.6.0 - use {@link #schema(Name)} instead
    */
-  @Deprecated(forRemoval = true, since = "3.6")
   @NotNull
   @Support
   public static Schema schemaByName(String name) {
@@ -16317,7 +16261,6 @@ public class DSL {
    * @return A sequence referenced by <code>sequenceName</code>
    * @deprecated - [#3843] - 3.6.0 - use {@link #sequence(Name)} instead
    */
-  @Deprecated(forRemoval = true, since = "3.6")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, POSTGRES})
   public static Sequence<BigInteger> sequenceByName(String... qualifiedName) {
@@ -16342,7 +16285,6 @@ public class DSL {
    * @return A sequence referenced by <code>sequenceName</code>
    * @deprecated - [#3843] - 3.6.0 - use {@link #sequence(Name, Class)} instead
    */
-  @Deprecated(forRemoval = true, since = "3.6")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, POSTGRES})
   public static <T extends Number> Sequence<T> sequenceByName(
@@ -16368,7 +16310,6 @@ public class DSL {
    * @return A sequence referenced by <code>sequenceName</code>
    * @deprecated - [#3843] - 3.6.0 - use {@link #sequence(Name, DataType)} instead
    */
-  @Deprecated(forRemoval = true, since = "3.6")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, POSTGRES})
   public static <T extends Number> Sequence<T> sequenceByName(
@@ -16454,7 +16395,6 @@ public class DSL {
    * @return A table referenced by <code>tableName</code>
    * @deprecated - [#3843] - 3.6.0 - use {@link #table(Name)} instead
    */
-  @Deprecated(forRemoval = true, since = "3.6")
   @NotNull
   @Support
   public static Table<Record> tableByName(String... qualifiedName) {
@@ -16531,7 +16471,6 @@ public class DSL {
    * @return A field referenced by <code>fieldName</code>
    * @deprecated - [#3843] - 3.6.0 - use {@link #field(Name)} instead
    */
-  @Deprecated(forRemoval = true, since = "3.6")
   @NotNull
   @Support
   public static Field<Object> fieldByName(String... qualifiedName) {
@@ -16565,7 +16504,6 @@ public class DSL {
    * @return A field referenced by <code>fieldName</code>
    * @deprecated - [#3843] - 3.6.0 - use {@link #field(Name, Class)} instead
    */
-  @Deprecated(forRemoval = true, since = "3.6")
   @NotNull
   @Support
   public static <T> Field<T> fieldByName(Class<T> type, String... qualifiedName) {
@@ -16599,7 +16537,6 @@ public class DSL {
    * @return A field referenced by <code>fieldName</code>
    * @deprecated - [#3843] - 3.6.0 - use {@link #field(Name, DataType)} instead
    */
-  @Deprecated(forRemoval = true, since = "3.6")
   @NotNull
   @Support
   public static <T> Field<T> fieldByName(DataType<T> type, String... qualifiedName) {
@@ -16731,7 +16668,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX: Routine parameter constructors
   // -------------------------------------------------------------------------
-
   /** Create an <code>IN</code> parameter. */
   @NotNull
   @Support
@@ -16777,7 +16713,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX: Queries
   // -------------------------------------------------------------------------
-
   /**
    * Wrap a collection of queries.
    *
@@ -16825,7 +16760,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX Plain SQL object factory
   // -------------------------------------------------------------------------
-
   /**
    * A custom SQL clause that can render arbitrary expressions.
    *
@@ -16927,7 +16861,6 @@ public class DSL {
    * @deprecated - 3.6.0 - [#3854] - Use {@link #sql(String)} instead
    * @see SQL
    */
-  @Deprecated(forRemoval = true, since = "3.6")
   @NotNull
   @Support
   @PlainSQL
@@ -16953,7 +16886,6 @@ public class DSL {
    * @see SQL
    * @see DSL#sql(String, QueryPart...)
    */
-  @Deprecated(forRemoval = true, since = "3.6")
   @NotNull
   @Support
   @PlainSQL
@@ -16978,7 +16910,6 @@ public class DSL {
    * @see SQL
    * @see DSL#sql(String, Object...)
    */
-  @Deprecated(forRemoval = true, since = "3.6")
   @NotNull
   @Support
   @PlainSQL
@@ -16989,7 +16920,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX Plain SQL API
   // -------------------------------------------------------------------------
-
   /**
    * Create a new query holding plain SQL. There must not be any binding variables contained in the
    * SQL.
@@ -17409,7 +17339,6 @@ public class DSL {
    * @see SQL
    * @deprecated - 3.10 - [#6162] - Use {@link #sequence(Name)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.10")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, POSTGRES})
   @PlainSQL
@@ -17430,7 +17359,6 @@ public class DSL {
    * @see SQL
    * @deprecated - 3.10 - [#6162] - Use {@link #sequence(Name, Class)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.10")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, POSTGRES})
   @PlainSQL
@@ -17451,7 +17379,6 @@ public class DSL {
    * @see SQL
    * @deprecated - 3.10 - [#6162] - Use {@link #sequence(Name, DataType)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.10")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, POSTGRES})
   @PlainSQL
@@ -18287,7 +18214,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX Global Condition factory
   // -------------------------------------------------------------------------
-
   /**
    * Return a <code>Condition</code> that behaves like no condition being present.
    *
@@ -18504,7 +18430,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX Global Field and Function factory
   // -------------------------------------------------------------------------
-
   /** Get the MySQL <code>FIELD(expr, expr1, expr2, ...)</code> function. */
   @NotNull
   @Support
@@ -18533,7 +18458,6 @@ public class DSL {
    */
   @NotNull
   @Support
-  @Deprecated(forRemoval = true, since = "3.15")
   public static Field<Record> rowField(RowN row) {
     return new RowField<>(row);
   }
@@ -18543,7 +18467,6 @@ public class DSL {
    */
   @NotNull
   @Support
-  @Deprecated(forRemoval = true, since = "3.15")
   public static <T1> Field<Record1<T1>> rowField(Row1<T1> row) {
     return new RowField<>(row);
   }
@@ -18553,7 +18476,6 @@ public class DSL {
    */
   @NotNull
   @Support
-  @Deprecated(forRemoval = true, since = "3.15")
   public static <T1, T2> Field<Record2<T1, T2>> rowField(Row2<T1, T2> row) {
     return new RowField<>(row);
   }
@@ -18563,7 +18485,6 @@ public class DSL {
    */
   @NotNull
   @Support
-  @Deprecated(forRemoval = true, since = "3.15")
   public static <T1, T2, T3> Field<Record3<T1, T2, T3>> rowField(Row3<T1, T2, T3> row) {
     return new RowField<>(row);
   }
@@ -18573,7 +18494,6 @@ public class DSL {
    */
   @NotNull
   @Support
-  @Deprecated(forRemoval = true, since = "3.15")
   public static <T1, T2, T3, T4> Field<Record4<T1, T2, T3, T4>> rowField(Row4<T1, T2, T3, T4> row) {
     return new RowField<>(row);
   }
@@ -18583,7 +18503,6 @@ public class DSL {
    */
   @NotNull
   @Support
-  @Deprecated(forRemoval = true, since = "3.15")
   public static <T1, T2, T3, T4, T5> Field<Record5<T1, T2, T3, T4, T5>> rowField(
       Row5<T1, T2, T3, T4, T5> row) {
     return new RowField<>(row);
@@ -18594,7 +18513,6 @@ public class DSL {
    */
   @NotNull
   @Support
-  @Deprecated(forRemoval = true, since = "3.15")
   public static <T1, T2, T3, T4, T5, T6> Field<Record6<T1, T2, T3, T4, T5, T6>> rowField(
       Row6<T1, T2, T3, T4, T5, T6> row) {
     return new RowField<>(row);
@@ -18605,7 +18523,6 @@ public class DSL {
    */
   @NotNull
   @Support
-  @Deprecated(forRemoval = true, since = "3.15")
   public static <T1, T2, T3, T4, T5, T6, T7> Field<Record7<T1, T2, T3, T4, T5, T6, T7>> rowField(
       Row7<T1, T2, T3, T4, T5, T6, T7> row) {
     return new RowField<>(row);
@@ -18616,7 +18533,6 @@ public class DSL {
    */
   @NotNull
   @Support
-  @Deprecated(forRemoval = true, since = "3.15")
   public static <T1, T2, T3, T4, T5, T6, T7, T8>
       Field<Record8<T1, T2, T3, T4, T5, T6, T7, T8>> rowField(
           Row8<T1, T2, T3, T4, T5, T6, T7, T8> row) {
@@ -18628,7 +18544,6 @@ public class DSL {
    */
   @NotNull
   @Support
-  @Deprecated(forRemoval = true, since = "3.15")
   public static <T1, T2, T3, T4, T5, T6, T7, T8, T9>
       Field<Record9<T1, T2, T3, T4, T5, T6, T7, T8, T9>> rowField(
           Row9<T1, T2, T3, T4, T5, T6, T7, T8, T9> row) {
@@ -18640,7 +18555,6 @@ public class DSL {
    */
   @NotNull
   @Support
-  @Deprecated(forRemoval = true, since = "3.15")
   public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>
       Field<Record10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>> rowField(
           Row10<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> row) {
@@ -18652,7 +18566,6 @@ public class DSL {
    */
   @NotNull
   @Support
-  @Deprecated(forRemoval = true, since = "3.15")
   public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>
       Field<Record11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>> rowField(
           Row11<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> row) {
@@ -18664,7 +18577,6 @@ public class DSL {
    */
   @NotNull
   @Support
-  @Deprecated(forRemoval = true, since = "3.15")
   public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>
       Field<Record12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>> rowField(
           Row12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> row) {
@@ -18676,7 +18588,6 @@ public class DSL {
    */
   @NotNull
   @Support
-  @Deprecated(forRemoval = true, since = "3.15")
   public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>
       Field<Record13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>> rowField(
           Row13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> row) {
@@ -18688,7 +18599,6 @@ public class DSL {
    */
   @NotNull
   @Support
-  @Deprecated(forRemoval = true, since = "3.15")
   public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>
       Field<Record14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>> rowField(
           Row14<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> row) {
@@ -18700,7 +18610,6 @@ public class DSL {
    */
   @NotNull
   @Support
-  @Deprecated(forRemoval = true, since = "3.15")
   public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>
       Field<Record15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>> rowField(
           Row15<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> row) {
@@ -18712,7 +18621,6 @@ public class DSL {
    */
   @NotNull
   @Support
-  @Deprecated(forRemoval = true, since = "3.15")
   public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>
       Field<Record16<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>>
           rowField(
@@ -18725,7 +18633,6 @@ public class DSL {
    */
   @NotNull
   @Support
-  @Deprecated(forRemoval = true, since = "3.15")
   public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17>
       Field<Record17<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17>>
           rowField(
@@ -18739,7 +18646,6 @@ public class DSL {
    */
   @NotNull
   @Support
-  @Deprecated(forRemoval = true, since = "3.15")
   public static <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18>
       Field<
               Record18<
@@ -18755,7 +18661,6 @@ public class DSL {
    */
   @NotNull
   @Support
-  @Deprecated(forRemoval = true, since = "3.15")
   public static <
           T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19>
       Field<
@@ -18809,7 +18714,6 @@ public class DSL {
    */
   @NotNull
   @Support
-  @Deprecated(forRemoval = true, since = "3.15")
   public static <
           T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20>
       Field<
@@ -18865,7 +18769,6 @@ public class DSL {
    */
   @NotNull
   @Support
-  @Deprecated(forRemoval = true, since = "3.15")
   public static <
           T1,
           T2,
@@ -18943,7 +18846,6 @@ public class DSL {
    */
   @NotNull
   @Support
-  @Deprecated(forRemoval = true, since = "3.15")
   public static <
           T1,
           T2,
@@ -20013,7 +19915,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // Numeric functions
   // -------------------------------------------------------------------------
-
   /**
    * The <code>ABS</code> function.
    *
@@ -20787,7 +20688,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // String functions
   // -------------------------------------------------------------------------
-
   /**
    * The <code>ASCII</code> function.
    *
@@ -22626,7 +22526,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // Date functions
   // -------------------------------------------------------------------------
-
   /**
    * The <code>DATE_ADD</code> function.
    *
@@ -23115,7 +23014,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // System functions
   // -------------------------------------------------------------------------
-
   /** The <code>CURRENT_CATALOG</code> function. */
   @NotNull
   @Support({FIREBIRD, POSTGRES, SQLITE})
@@ -23140,7 +23038,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XML functions
   // -------------------------------------------------------------------------
-
   /**
    * The <code>XMLCOMMENT</code> function.
    *
@@ -23212,7 +23109,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // JSON functions
   // -------------------------------------------------------------------------
-
   /** The <code>JSON_ARRAY</code> function. */
   @NotNull
   @Support({H2, MARIADB, MYSQL, POSTGRES})
@@ -23286,7 +23182,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // Aggregate functions
   // -------------------------------------------------------------------------
-
   /**
    * The <code>BIT_AND_AGG</code> function.
    *
@@ -23633,12 +23528,10 @@ public class DSL {
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
   public static Field<String> escape(Field<String> field, char escape) {
     Field<String> replace = field;
-
     String esc = "" + escape;
     replace = replace(replace, inline(esc), inline(esc + esc));
     replace = replace(replace, inline("%"), inline(esc + "%"));
     replace = replace(replace, inline("_"), inline(esc + "_"));
-
     return replace;
   }
 
@@ -23745,7 +23638,6 @@ public class DSL {
   // ------------------------------------------------------------------------
   // XXX Date and time functions
   // ------------------------------------------------------------------------
-
   /**
    * Get the current_date() function returning a SQL standard {@link SQLDataType#DATE} type.
    *
@@ -25766,7 +25658,6 @@ public class DSL {
   // ------------------------------------------------------------------------
   // XXX Construction of GROUPING SET functions
   // ------------------------------------------------------------------------
-
   /**
    * Create a ROLLUP(field1, field2, .., fieldn) grouping field.
    *
@@ -25926,10 +25817,8 @@ public class DSL {
   @Support({POSTGRES})
   public static GroupField groupingSets(Collection<? extends Field<?>>... fieldSets) {
     QueryPartList<WrappedList> arg = new QueryPartList<>();
-
     for (Collection<? extends Field<?>> fieldsSet : fieldSets)
       arg.add(new WrappedList(new QueryPartList<>(fieldsSet)));
-
     return field("{0} ({1})", SQLDataType.OTHER, K_GROUPING_SETS, arg);
   }
 
@@ -25961,7 +25850,6 @@ public class DSL {
   // ------------------------------------------------------------------------
   // XXX Bitwise operations
   // ------------------------------------------------------------------------
-
   /**
    * The MySQL <code>BIT_COUNT(field)</code> function, counting the number of bits that are set in
    * this number.
@@ -26181,6 +26069,7 @@ public class DSL {
   public static <T extends Number> Field<T> bitNor(T value1, T value2) {
     return bitNor(Tools.field(value1), Tools.field(value2));
   }
+
   /**
    * The bitwise not or operator.
    *
@@ -26192,6 +26081,7 @@ public class DSL {
   public static <T extends Number> Field<T> bitNor(T value1, Field<T> value2) {
     return bitNor(Tools.field(value1, value2), Tools.nullSafe(value2));
   }
+
   /**
    * The bitwise not or operator.
    *
@@ -26429,7 +26319,6 @@ public class DSL {
   // ------------------------------------------------------------------------
   // XXX Mathematical functions
   // ------------------------------------------------------------------------
-
   /**
    * Find the greatest among all values.
    *
@@ -26526,7 +26415,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX XML functions
   // -------------------------------------------------------------------------
-
   /** The XML parse function. */
   @NotNull
   @Support({POSTGRES})
@@ -26722,7 +26610,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX JSON functions
   // -------------------------------------------------------------------------
-
   /** The JSON value extractor function. */
   @NotNull
   @Support({MARIADB, MYSQL, POSTGRES})
@@ -27002,7 +26889,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX Array functions
   // -------------------------------------------------------------------------
-
   /**
    * Create an array literal.
    *
@@ -27183,7 +27069,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX Aggregate functions
   // -------------------------------------------------------------------------
-
   /**
    * The <code>ANY_VALUE</code> function.
    *
@@ -29100,7 +28985,6 @@ public class DSL {
    * @deprecated - [#7956] - 3.12.0 - Use {@link #groupConcat(Field)} and {@link
    *     GroupConcatSeparatorStep#separator(String)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.12")
   @NotNull
   @Support({CUBRID, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
   public static AggregateFunction<String> groupConcat(Field<?> field, String separator) {
@@ -29137,7 +29021,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX Ordered-set aggregate functions and hypothetical set functions
   // -------------------------------------------------------------------------
-
   /** The <code>mode() within group (oder by [order clause])</code> ordered aggregate function. */
   @NotNull
   @Support({H2, POSTGRES})
@@ -29287,7 +29170,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX Window clauses
   // -------------------------------------------------------------------------
-
   /** Create a {@link WindowSpecification} with a <code>PARTITION BY</code> clause. */
   @NotNull
   @Support({CUBRID, FIREBIRD, H2, MARIADB, MYSQL, POSTGRES, SQLITE})
@@ -29536,7 +29418,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX Window functions
   // -------------------------------------------------------------------------
-
   /**
    * The <code>row_number() over ([analytic clause])</code> function.
    *
@@ -29744,7 +29625,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX Bind values
   // -------------------------------------------------------------------------
-
   /**
    * Create an unnamed parameter with a generic type ({@link Object} / {@link SQLDataType#OTHER})
    * and no initial value.
@@ -31212,7 +31092,6 @@ public class DSL {
   @NotNull
   @Support
   public static Param<String> inline(CharSequence character) {
-
     // Delegate to inline(T)
     return (Param) inline((Object) ((character == null) ? null : ("" + character)));
   }
@@ -31750,14 +31629,11 @@ public class DSL {
   @NotNull
   @Support
   public static <T> Param<T> val(Object value, DataType<T> type) {
-
     // Advanced data types have dedicated constant types
     if (value instanceof QualifiedRecord) {
       return new QualifiedRecordConstant((QualifiedRecord<?>) value);
-    }
-
-    // The default behaviour
-    else {
+    } else // The default behaviour
+    {
       T converted = type.convert(value);
       return new Val<>(converted, mostSpecific(converted, type));
     }
@@ -31776,22 +31652,18 @@ public class DSL {
    * @return The most specific data type
    */
   private static <T> DataType<T> mostSpecific(T value, DataType<T> dataType) {
-
     // [#3888] With custom data type conversion, users may wish to
     // allow for a less specific data type than the actual value. Example:
-    //   data type: Serializable
-    //   value    : byte[]
+    // data type: Serializable
+    // value    : byte[]
     // [#3889] TODO: Improve this once DataType.getBinding() is available
-
     if (value != null && !(dataType instanceof ConvertedDataType)) {
       Class<T> valueType = (Class<T>) value.getClass();
       Class<T> coercionType = dataType.getType();
-
       if (valueType != coercionType && coercionType.isAssignableFrom(valueType)) {
         return DefaultDataType.getDataType(null, valueType, dataType);
       }
     }
-
     return dataType;
   }
 
@@ -33933,7 +33805,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX [#915] VALUES() table constructors
   // -------------------------------------------------------------------------
-
   /**
    * Create a <code>VALUES()</code> expression of arbitrary degree.
    *
@@ -33978,11 +33849,8 @@ public class DSL {
   static Table<Record> values0(Row... rows) {
     Values.assertNotEmpty(rows);
     int size = rows[0].size();
-
     String[] columns = new String[size];
-
     for (int i = 0; i < size; i++) columns[i] = "c" + (i + 1);
-
     return new Values<Record>(rows).as("v", columns);
   }
 
@@ -35170,7 +35038,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX Literals
   // -------------------------------------------------------------------------
-
   /** Get the null field. */
   static Field<?> NULL() {
     return field("null");
@@ -35192,43 +35059,36 @@ public class DSL {
   }
 
   /** @deprecated - [#11092] - 3.15.0 - This method will be removed without public replacement. */
-  @Deprecated(forRemoval = true, since = "3.15")
   protected static <T> Field<T> nullSafe(Field<T> field) {
     return Tools.nullSafe(field);
   }
 
   /** @deprecated - [#11092] - 3.15.0 - This method will be removed without public replacement. */
-  @Deprecated(forRemoval = true, since = "3.15")
   protected static <T> Field<T> nullSafe(Field<T> field, DataType<?> type) {
     return Tools.nullSafe(field, type);
   }
 
   /** @deprecated - [#11092] - 3.15.0 - This method will be removed without public replacement. */
-  @Deprecated(forRemoval = true, since = "3.15")
   protected static Field<?>[] nullSafe(Field<?>... fields) {
     return Tools.nullSafe(fields);
   }
 
   /** @deprecated - [#11092] - 3.15.0 - This method will be removed without public replacement. */
-  @Deprecated(forRemoval = true, since = "3.15")
   protected static Field<?>[] nullSafe(Field<?>[] fields, DataType<?> type) {
     return Tools.nullSafe(fields, type);
   }
 
   /** @deprecated - [#11092] - 3.15.0 - This method will be removed without public replacement. */
-  @Deprecated(forRemoval = true, since = "3.15")
   protected static List<Field<?>> nullSafeList(Field<?>... fields) {
     return Tools.nullSafeList(fields);
   }
 
   /** @deprecated - [#11092] - 3.15.0 - This method will be removed without public replacement. */
-  @Deprecated(forRemoval = true, since = "3.15")
   protected static List<Field<?>> nullSafeList(Field<?>[] fields, DataType<?> type) {
     return Tools.nullSafeList(fields, type);
   }
 
   /** @deprecated - [#11092] - 3.15.0 - This method will be removed without public replacement. */
-  @Deprecated(forRemoval = true, since = "3.15")
   protected static <T> DataType<T> nullSafeDataType(Field<T> field) {
     return Tools.nullSafeDataType(field);
   }
@@ -35295,7 +35155,6 @@ public class DSL {
   // -------------------------------------------------------------------------
   // XXX utility API
   // -------------------------------------------------------------------------
-
   /**
    * Get the default data type for the {@link DSLContext}'s underlying {@link SQLDialect} and a
    * given Java type.
@@ -35306,7 +35165,6 @@ public class DSL {
    * @deprecated - 3.11.0 - [#7483] - The (indirect) use of the internal static data type registry
    *     is not recommended.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support
   public static <T> DataType<T> getDataType(Class<T> type) {
@@ -35326,7 +35184,6 @@ public class DSL {
    */
   static <T> DataType<T> getDataType0(Class<T> type) {
     DataType t = DefaultDataType.getDataType(DEFAULT, type, (DataType) SQLDataType.OTHER);
-
     if (t instanceof LegacyConvertedDataType) return new DataTypeProxy((AbstractDataType) t);
     else if (t != SQLDataType.OTHER) return t;
     else

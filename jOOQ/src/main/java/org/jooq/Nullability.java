@@ -50,12 +50,10 @@ public enum Nullability {
   @NotNull
   @Support
   NULL,
-
   /** The data type is explicitly not nullable. */
   @NotNull
   @Support
   NOT_NULL,
-
   /**
    * Default behaviour for data types.
    *

@@ -59,7 +59,6 @@ final class RecordImplN extends AbstractRecord implements InternalRecord {
    * @deprecated - 3.14.0 - [#8495] - Prevent the array copy and call {@link #RecordImplN(Field...)}
    *     instead.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   RecordImplN(Collection<? extends Field<?>> fields) {
     super(fields);
   }
@@ -71,7 +70,6 @@ final class RecordImplN extends AbstractRecord implements InternalRecord {
   // ------------------------------------------------------------------------
   // XXX: Type-safe Record APIs
   // ------------------------------------------------------------------------
-
   @Override
   public RowImplN fieldsRow() {
     return new RowImplN(fields.fields);

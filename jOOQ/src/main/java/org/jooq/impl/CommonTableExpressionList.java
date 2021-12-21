@@ -58,9 +58,7 @@ final class CommonTableExpressionList extends QueryPartList<CommonTableExpressio
   static void markTopLevelCteAndAccept(Context<?> ctx, Consumer<? super Context<?>> consumer) {
     if (ctx.subqueryLevel() == 0)
       ctx.scopeMarkStart(TOP_LEVEL_CTE.beforeFirst).scopeMarkEnd(TOP_LEVEL_CTE.beforeFirst);
-
     consumer.accept(ctx);
-
     if (ctx.subqueryLevel() == 0)
       ctx.scopeMarkStart(TOP_LEVEL_CTE.afterLast).scopeMarkEnd(TOP_LEVEL_CTE.afterLast);
   }

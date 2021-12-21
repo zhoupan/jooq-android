@@ -50,13 +50,21 @@ public final class TXTFormat {
   public static final TXTFormat DEFAULT = new TXTFormat();
 
   final int maxRows;
+
   final int minColWidth;
+
   final int maxColWidth;
+
   final boolean horizontalTableBorder;
+
   final boolean horizontalHeaderBorder;
+
   final boolean horizontalCellBorder;
+
   final boolean verticalTableBorder;
+
   final boolean verticalCellBorder;
+
   final boolean intersectLines;
 
   public TXTFormat() {

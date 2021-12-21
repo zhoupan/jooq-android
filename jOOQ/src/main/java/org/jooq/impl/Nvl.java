@@ -49,11 +49,11 @@ import org.jooq.Field;
 final class Nvl<T> extends AbstractField<T> {
 
   private final Field<T> arg1;
+
   private final Field<T> arg2;
 
   Nvl(Field<T> arg1, Field<T> arg2) {
     super(N_NVL, anyNotNull(arg1.getDataType(), arg1, arg2));
-
     this.arg1 = arg1;
     this.arg2 = arg2;
   }
@@ -68,13 +68,11 @@ final class Nvl<T> extends AbstractField<T> {
       case POSTGRES:
         ctx.visit(DSL.coalesce(arg1, arg2));
         break;
-
       case MARIADB:
       case MYSQL:
       case SQLITE:
         ctx.visit(function(N_IFNULL, getDataType(), arg1, arg2));
         break;
-
       default:
         ctx.visit(function(N_NVL, getDataType(), arg1, arg2));
         break;

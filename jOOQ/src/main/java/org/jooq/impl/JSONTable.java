@@ -67,12 +67,17 @@ import org.jooq.TableOptions;
 
 /** @author Lukas Eder */
 final class JSONTable extends AbstractTable<Record> implements JSONTableColumnPathStep {
+
   private static final Set<SQLDialect> REQUIRES_COLUMN_PATH = SQLDialect.supportedBy(MYSQL);
 
   private final Field<String> path;
+
   private final Field<?> json;
+
   private final QueryPartList<JSONTableColumn> columns;
+
   private final boolean hasOrdinality;
+
   private transient FieldsImpl<Record> fields;
 
   JSONTable(Field<?> json, Field<String> path) {
@@ -85,7 +90,6 @@ final class JSONTable extends AbstractTable<Record> implements JSONTableColumnPa
       QueryPartList<JSONTableColumn> columns,
       boolean hasOrdinality) {
     super(TableOptions.expression(), N_JSON_TABLE);
-
     this.json = json;
     this.path = path;
     this.columns = columns == null ? new QueryPartList<>() : columns;
@@ -95,7 +99,6 @@ final class JSONTable extends AbstractTable<Record> implements JSONTableColumnPa
   // -------------------------------------------------------------------------
   // XXX: DSL API
   // -------------------------------------------------------------------------
-
   @Override
   public final JSONTable column(String name) {
     return column(DSL.name(name));
@@ -149,7 +152,6 @@ final class JSONTable extends AbstractTable<Record> implements JSONTableColumnPa
   // -------------------------------------------------------------------------
   // XXX: Table API
   // -------------------------------------------------------------------------
-
   @Override
   public final Class<? extends Record> getRecordType() {
     return RecordImplN.class;
@@ -166,21 +168,18 @@ final class JSONTable extends AbstractTable<Record> implements JSONTableColumnPa
                       c.field.getDataType() == c.type
                           ? c.field
                           : DSL.field(c.field.getQualifiedName(), c.type)));
-
     return fields;
   }
 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
       case POSTGRES:
         acceptPostgres(ctx);
         break;
-
       default:
         acceptStandard(ctx);
         break;
@@ -213,17 +212,13 @@ final class JSONTable extends AbstractTable<Record> implements JSONTableColumnPa
 
   private final void acceptStandard(Context<?> ctx) {
     ctx.visit(K_JSON_TABLE).sqlIndentStart('(');
-
     ctx.visit(json).sql(',').formatSeparator();
     acceptJSONPath(ctx);
-
     ctx.formatSeparator().visit(K_COLUMNS).sql(" (").visit(columns).sql(')');
-
     ctx.sqlIndentEnd(')');
   }
 
   private final void acceptJSONPath(Context<?> ctx) {
-
     ctx.visit(path);
   }
 
@@ -235,8 +230,11 @@ final class JSONTable extends AbstractTable<Record> implements JSONTableColumnPa
   private static class JSONTableColumn extends AbstractQueryPart {
 
     final Field<?> field;
+
     final DataType<?> type;
+
     final boolean forOrdinality;
+
     final String path;
 
     JSONTableColumn(Field<?> field, DataType<?> type, boolean forOrdinality, String path) {
@@ -249,17 +247,14 @@ final class JSONTable extends AbstractTable<Record> implements JSONTableColumnPa
     @Override
     public final void accept(Context<?> ctx) {
       ctx.qualify(false, c -> c.visit(field)).sql(' ');
-
       if (forOrdinality) ctx.visit(K_FOR).sql(' ').visit(K_ORDINALITY);
       else Tools.toSQLDDLTypeDeclaration(ctx, type);
-
       String p =
           path != null
               ? path
               : !forOrdinality && REQUIRES_COLUMN_PATH.contains(ctx.dialect())
                   ? "$." + field.getName()
                   : null;
-
       if (p != null) ctx.sql(' ').visit(K_PATH).sql(' ').visit(inline(p));
     }
   }

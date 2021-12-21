@@ -69,10 +69,8 @@ public class JSONObject extends HashMap {
       out.write("null");
       return;
     }
-
     boolean first = true;
     Iterator<?> iter = map.entrySet().iterator();
-
     out.write('{');
     while (iter.hasNext()) {
       if (first) first = false;
@@ -95,16 +93,13 @@ public class JSONObject extends HashMap {
    */
   public static String toJSONString(Map<?, ?> map) {
     if (map == null) return "null";
-
     StringBuffer sb = new StringBuffer();
     boolean first = true;
     Iterator<?> iter = map.entrySet().iterator();
-
     sb.append('{');
     while (iter.hasNext()) {
       if (first) first = false;
       else sb.append(',');
-
       Map.Entry<?, ?> entry = (Map.Entry<?, ?>) iter.next();
       toJSONString(String.valueOf(entry.getKey()), entry.getValue(), sb);
     }
@@ -117,9 +112,7 @@ public class JSONObject extends HashMap {
     if (key == null) sb.append("null");
     else JSONValue.escape(key, sb);
     sb.append('\"').append(':');
-
     sb.append(JSONValue.toJSONString(value));
-
     return sb.toString();
   }
 

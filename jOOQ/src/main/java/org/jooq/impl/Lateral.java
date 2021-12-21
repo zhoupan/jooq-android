@@ -47,11 +47,11 @@ import org.jooq.TableOptions;
 
 /** @author Lukas Eder */
 final class Lateral<R extends Record> extends AbstractTable<R> {
+
   private final Table<R> table;
 
   Lateral(Table<R> table) {
     super(TableOptions.expression(), table.getQualifiedName(), table.getSchema());
-
     this.table = table;
   }
 

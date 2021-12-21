@@ -89,7 +89,6 @@ final class RowImpl13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>
   // ------------------------------------------------------------------------
   // Mapping convenience methods
   // ------------------------------------------------------------------------
-
   @Override
   public final <U> SelectField<U> mapping(
       Function13<
@@ -136,7 +135,6 @@ final class RowImpl13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>
   // ------------------------------------------------------------------------
   // XXX: Row accessor API
   // ------------------------------------------------------------------------
-
   @Override
   public final Field<T1> field1() {
     return (Field<T1>) fields.field(0);
@@ -205,7 +203,6 @@ final class RowImpl13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>
   // ------------------------------------------------------------------------
   // Generic comparison predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition compare(
       Comparator comparator, Row13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> row) {
@@ -290,7 +287,6 @@ final class RowImpl13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>
   // ------------------------------------------------------------------------
   // Equal / Not equal comparison predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition equal(Row13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> row) {
     return compare(Comparator.EQUALS, row);
@@ -483,7 +479,6 @@ final class RowImpl13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>
   // ------------------------------------------------------------------------
   // Ordering comparison predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition lessThan(
       Row13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> row) {
@@ -871,7 +866,6 @@ final class RowImpl13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>
   // ------------------------------------------------------------------------
   // [NOT] BETWEEN predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final BetweenAndStep13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> between(
       T1 t1,
@@ -1183,7 +1177,6 @@ final class RowImpl13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>
   // ------------------------------------------------------------------------
   // [NOT] DISTINCT predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition isNotDistinctFrom(
       Row13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> row) {
@@ -1321,7 +1314,6 @@ final class RowImpl13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>
   // ------------------------------------------------------------------------
   // [NOT] IN predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition in(Row13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>... rows) {
     return in(Arrays.asList(rows));
@@ -1331,9 +1323,7 @@ final class RowImpl13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>
   public final Condition in(
       Record13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>... records) {
     QueryPartList<Row> rows = new QueryPartList<>();
-
     for (Record record : records) rows.add(record.valuesRow());
-
     return new RowInCondition(this, rows, false);
   }
 
@@ -1347,9 +1337,7 @@ final class RowImpl13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>
   public final Condition notIn(
       Record13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>... records) {
     QueryPartList<Row> rows = new QueryPartList<>();
-
     for (Record record : records) rows.add(record.valuesRow());
-
     return new RowInCondition(this, rows, true);
   }
 
@@ -1380,7 +1368,6 @@ final class RowImpl13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>
   // ------------------------------------------------------------------------
   // Predicates involving subqueries
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition equal(
       Select<? extends Record13<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>> select) {

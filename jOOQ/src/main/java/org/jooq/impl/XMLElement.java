@@ -56,13 +56,15 @@ import org.jooq.XMLAttributes;
 
 /** @author Lukas Eder */
 final class XMLElement extends AbstractField<XML> {
+
   private final Name elementName;
+
   private final XMLAttributes attributes;
+
   private final QueryPartList<Field<?>> content;
 
   XMLElement(Name elementName, XMLAttributes attributes, Collection<? extends Field<?>> content) {
     super(N_XMLELEMENT, SQLDataType.XML);
-
     this.elementName = elementName;
     this.attributes = attributes;
     this.content = new QueryPartList<>(content);
@@ -70,27 +72,21 @@ final class XMLElement extends AbstractField<XML> {
 
   @Override
   public final void accept(Context<?> ctx) {
-
     boolean hasAttributes =
         attributes != null && !((XMLAttributesImpl) attributes).attributes.isEmpty();
     boolean hasContent = !content.isEmpty();
     boolean format = hasAttributes || !content.isSimple();
-
     Consumer<Context<?>> accept0 =
         c -> {
           c.visit(K_NAME).sql(' ').visit(elementName);
-
           if (hasAttributes)
             if (format) c.sql(',').formatSeparator().visit(attributes);
             else c.sql(", ").visit(attributes);
-
           if (hasContent)
             if (format) c.sql(',').formatSeparator().visit(wrap(content).map(xmlCastMapper(ctx)));
             else c.sql(", ").visit(wrap(content).map(xmlCastMapper(ctx)));
         };
-
     ctx.visit(N_XMLELEMENT).sql('(');
-
     if (format) {
       ctx.formatIndentStart()
           .formatNewLine()
@@ -98,7 +94,6 @@ final class XMLElement extends AbstractField<XML> {
           .formatIndentEnd()
           .formatNewLine();
     } else accept0.accept(ctx);
-
     ctx.sql(')');
   }
 
@@ -109,12 +104,10 @@ final class XMLElement extends AbstractField<XML> {
   static final Field<?> xmlCast(Context<?> ctx, Field<?> field) {
     Field<?> result = field;
     DataType<?> type = field.getDataType();
-
     switch (ctx.family()) {
       default:
         break;
     }
-
     if (result != field && aliased(field) != null) return result.as(field);
     else return result;
   }

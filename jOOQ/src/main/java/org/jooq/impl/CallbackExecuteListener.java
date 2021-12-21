@@ -55,24 +55,43 @@ import org.jooq.ExecuteListener;
 public final class CallbackExecuteListener implements ExecuteListener {
 
   private final ExecuteEventHandler onStart;
+
   private final ExecuteEventHandler onEnd;
+
   private final ExecuteEventHandler onRenderStart;
+
   private final ExecuteEventHandler onRenderEnd;
+
   private final ExecuteEventHandler onPrepareStart;
+
   private final ExecuteEventHandler onPrepareEnd;
+
   private final ExecuteEventHandler onBindStart;
+
   private final ExecuteEventHandler onBindEnd;
+
   private final ExecuteEventHandler onExecuteStart;
+
   private final ExecuteEventHandler onExecuteEnd;
+
   private final ExecuteEventHandler onOutStart;
+
   private final ExecuteEventHandler onOutEnd;
+
   private final ExecuteEventHandler onFetchStart;
+
   private final ExecuteEventHandler onResultStart;
+
   private final ExecuteEventHandler onRecordStart;
+
   private final ExecuteEventHandler onRecordEnd;
+
   private final ExecuteEventHandler onResultEnd;
+
   private final ExecuteEventHandler onFetchEnd;
+
   private final ExecuteEventHandler onException;
+
   private final ExecuteEventHandler onWarning;
 
   public CallbackExecuteListener() {

@@ -64,28 +64,21 @@ final class Identifiers {
   static final EnumMap<SQLDialect, char[][][]> QUOTES;
 
   static final int QUOTE_START_DELIMITER = 0;
+
   static final int QUOTE_END_DELIMITER = 1;
+
   static final int QUOTE_END_DELIMITER_ESCAPED = 2;
 
   static {
     QUOTES = new EnumMap<>(SQLDialect.class);
-
     for (SQLDialect family : SQLDialect.families()) {
       switch (family) {
-
           // MySQL supports backticks and double quotes
-
         case MARIADB:
         case MYSQL:
           QUOTES.put(
-              family,
-              new char[][][] {
-                {{'`'}, {'"'}},
-                {{'`'}, {'"'}},
-                {{'`', '`'}, {'"', '"'}}
-              });
+              family, new char[][][] {{{'`'}, {'"'}}, {{'`'}, {'"'}}, {{'`', '`'}, {'"', '"'}}});
           break;
-
           // Most dialects implement the SQL standard, using double quotes
         default:
           QUOTES.put(family, new char[][][] {{{'"'}}, {{'"'}}, {{'"', '"'}}});

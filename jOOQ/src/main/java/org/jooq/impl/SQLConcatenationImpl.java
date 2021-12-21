@@ -45,7 +45,9 @@ import org.jooq.QueryPart;
 import org.jooq.SQL;
 
 final class SQLConcatenationImpl extends AbstractQueryPart implements SQL {
+
   private static final Clause[] CLAUSES = {TEMPLATE};
+
   private final QueryPart[] input;
 
   SQLConcatenationImpl(QueryPart... input) {
@@ -56,7 +58,6 @@ final class SQLConcatenationImpl extends AbstractQueryPart implements SQL {
   public final void accept(Context<?> ctx) {
     for (int i = 0; i < input.length; i++) {
       if (i > 0) ctx.formatSeparator();
-
       ctx.visit(input[i]);
     }
   }

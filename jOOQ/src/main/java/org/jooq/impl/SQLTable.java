@@ -49,14 +49,12 @@ final class SQLTable extends AbstractTable<Record> {
 
   SQLTable(SQL delegate) {
     super(TableOptions.expression(), DSL.name(delegate.toString()));
-
     this.delegate = delegate;
   }
 
   // ------------------------------------------------------------------------
   // SQLTable API
   // ------------------------------------------------------------------------
-
   @Override
   public final Class<? extends Record> getRecordType() {
     return RecordImplN.class;

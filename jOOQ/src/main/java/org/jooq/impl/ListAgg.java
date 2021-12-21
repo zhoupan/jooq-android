@@ -64,10 +64,13 @@ import org.jooq.SQLDialect;
 
 /** @author Lukas Eder */
 final class ListAgg extends DefaultAggregateFunction<String> {
+
   private static final Set<SQLDialect> SET_GROUP_CONCAT_MAX_LEN =
       SQLDialect.supportedBy(MARIADB, MYSQL);
+
   private static final Set<SQLDialect> SUPPORT_GROUP_CONCAT =
       SQLDialect.supportedBy(CUBRID, H2, HSQLDB, MARIADB, MYSQL, SQLITE);
+
   private static final Set<SQLDialect> SUPPORT_STRING_AGG = SQLDialect.supportedBy(POSTGRES);
 
   ListAgg(boolean distinct, Field<?> arg) {
@@ -81,17 +84,14 @@ final class ListAgg extends DefaultAggregateFunction<String> {
   // -------------------------------------------------------------------------
   // XXX QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     if (SUPPORT_GROUP_CONCAT.contains(ctx.dialect())) {
-
       // [#12092] Prevent silent truncation of GROUP_CONCAT max length
       if (SET_GROUP_CONCAT_MAX_LEN.contains(ctx.dialect())
           && !FALSE.equals(ctx.settings().isRenderGroupConcatMaxLenSessionVariable())
           && ctx.data(DATA_GROUP_CONCAT_MAX_LEN_SET) == null) {
         ctx.skipUpdateCounts(2).data(DATA_GROUP_CONCAT_MAX_LEN_SET, true);
-
         prependSQL(
             ctx,
             query("{set} @t = @@group_concat_max_len"),
@@ -102,14 +102,12 @@ final class ListAgg extends DefaultAggregateFunction<String> {
     } else if (SUPPORT_STRING_AGG.contains(ctx.dialect())) {
       acceptStringAgg(ctx);
       acceptFilterClause(ctx);
-
       acceptOverClause(ctx);
     } else super.accept(ctx);
   }
 
   @Override
   void acceptFunctionName(Context<?> ctx) {
-
     super.acceptFunctionName(ctx);
   }
 
@@ -118,11 +116,9 @@ final class ListAgg extends DefaultAggregateFunction<String> {
     ctx.visit(N_GROUP_CONCAT).sql('(');
     acceptArguments1(ctx, new QueryPartListView<>(arguments.get(0)));
     acceptOrderBy(ctx);
-
     if (arguments.size() > 1)
       if (ctx.family() == SQLITE) ctx.sql(", ").visit(arguments.get(1));
       else ctx.sql(' ').visit(K_SEPARATOR).sql(' ').visit(arguments.get(1));
-
     ctx.sql(')');
   }
 
@@ -133,17 +129,12 @@ final class ListAgg extends DefaultAggregateFunction<String> {
         ctx.visit(N_STRING_AGG);
         break;
     }
-
     ctx.sql('(');
-
     if (distinct) ctx.visit(K_DISTINCT).sql(' ');
-
     // The explicit cast is needed in Postgres
     ctx.visit(castIfNeeded((Field<?>) arguments.get(0), String.class));
-
     if (arguments.size() > 1) ctx.sql(", ").visit(arguments.get(1));
     else ctx.sql(", ''");
-
     acceptOrderBy(ctx);
     ctx.sql(')');
   }

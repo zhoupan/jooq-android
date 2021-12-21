@@ -81,15 +81,19 @@ abstract class AbstractWindowFunction<T> extends AbstractField<T>
         WindowRowsStep<T>,
         WindowRowsAndStep<T>,
         WindowExcludeStep<T> {
+
   private static final Set<SQLDialect> SUPPORT_NO_PARENS_WINDOW_REFERENCE =
       SQLDialect.supportedBy(MYSQL, POSTGRES, SQLITE);
 
   // Other attributes
   WindowSpecificationImpl windowSpecification;
+
   WindowDefinitionImpl windowDefinition;
+
   Name windowName;
 
   private Boolean ignoreNulls;
+
   private Boolean fromLast;
 
   AbstractWindowFunction(Name name, DataType<T> type) {
@@ -99,35 +103,28 @@ abstract class AbstractWindowFunction<T> extends AbstractField<T>
   // -------------------------------------------------------------------------
   // XXX QueryPart API
   // -------------------------------------------------------------------------
-
   @SuppressWarnings("unchecked")
   final QueryPart window(Context<?> ctx) {
     if (windowSpecification != null) return DSL.sql("({0})", windowSpecification);
-
     // [#3727] Referenced WindowDefinitions that contain a frame clause
     // shouldn't be referenced from within parentheses (in MySQL and PostgreSQL)
     if (windowDefinition != null)
       if (SUPPORT_NO_PARENS_WINDOW_REFERENCE.contains(ctx.dialect())) return windowDefinition;
       else return DSL.sql("({0})", windowDefinition);
-
     // [#531] Inline window specifications if the WINDOW clause is not supported
     if (windowName != null) {
       if (!NO_SUPPORT_WINDOW_CLAUSE.contains(ctx.dialect())) return windowName;
-
       QueryPartList<WindowDefinition> windows =
           (QueryPartList<WindowDefinition>) ctx.data(DATA_WINDOW_DEFINITIONS);
-
       if (windows != null) {
         for (WindowDefinition window : windows)
           if (((WindowDefinitionImpl) window).getName().equals(windowName))
             return DSL.sql("({0})", window);
-      }
-
-      // [#3162] If a window specification is missing from the query's WINDOW clause,
-      // jOOQ should just render the window name regardless of the SQL dialect
-      else return windowName;
+      } else
+        // [#3162] If a window specification is missing from the query's WINDOW clause,
+        // jOOQ should just render the window name regardless of the SQL dialect
+        return windowName;
     }
-
     return null;
   }
 
@@ -137,14 +134,11 @@ abstract class AbstractWindowFunction<T> extends AbstractField<T>
 
   final void acceptOverClause(Context<?> ctx) {
     QueryPart window = window(ctx);
-
     // Render this clause only if needed
     if (window == null) return;
-
     switch (ctx.family()) {
       default:
         ctx.sql(' ').visit(K_OVER).sql(' ');
-
         ctx.data(DataExtendedKey.DATA_WINDOW_FUNCTION, this, c -> c.visit(window));
         break;
     }
@@ -155,7 +149,6 @@ abstract class AbstractWindowFunction<T> extends AbstractField<T>
       default:
         if (TRUE.equals(ignoreNulls)) ctx.sql(' ').visit(K_IGNORE_NULLS);
         else if (FALSE.equals(ignoreNulls)) ctx.sql(' ').visit(K_RESPECT_NULLS);
-
         break;
     }
   }
@@ -165,7 +158,6 @@ abstract class AbstractWindowFunction<T> extends AbstractField<T>
       default:
         if (TRUE.equals(fromLast)) ctx.sql(' ').visit(K_FROM).sql(' ').visit(K_LAST);
         else if (FALSE.equals(fromLast)) ctx.sql(' ').visit(K_FROM).sql(' ').visit(K_FIRST);
-
         break;
     }
   }
@@ -173,7 +165,6 @@ abstract class AbstractWindowFunction<T> extends AbstractField<T>
   // -------------------------------------------------------------------------
   // XXX Window function fluent API methods
   // -------------------------------------------------------------------------
-
   @Override
   public final WindowOverStep<T> ignoreNulls() {
     ignoreNulls = true;
@@ -210,7 +201,6 @@ abstract class AbstractWindowFunction<T> extends AbstractField<T>
         specification instanceof WindowSpecificationImpl
             ? (WindowSpecificationImpl) specification
             : new WindowSpecificationImpl((WindowDefinitionImpl) specification);
-
     return this;
   }
 
@@ -244,7 +234,6 @@ abstract class AbstractWindowFunction<T> extends AbstractField<T>
   }
 
   @Override
-  @Deprecated
   public final WindowOrderByStep<T> partitionByOne() {
     windowSpecification.partitionByOne();
     return this;

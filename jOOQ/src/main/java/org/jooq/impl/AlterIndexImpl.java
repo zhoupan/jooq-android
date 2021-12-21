@@ -59,8 +59,11 @@ final class AlterIndexImpl extends AbstractDDLQuery
     implements AlterIndexOnStep, AlterIndexStep, AlterIndexFinalStep {
 
   private final Index index;
+
   private final boolean alterIndexIfExists;
+
   private Table<?> on;
+
   private Index renameTo;
 
   AlterIndexImpl(Configuration configuration, Index index, boolean alterIndexIfExists) {
@@ -74,7 +77,6 @@ final class AlterIndexImpl extends AbstractDDLQuery
       Table<?> on,
       Index renameTo) {
     super(configuration);
-
     this.index = index;
     this.alterIndexIfExists = alterIndexIfExists;
     this.on = on;
@@ -100,7 +102,6 @@ final class AlterIndexImpl extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: DSL API
   // -------------------------------------------------------------------------
-
   @Override
   public final AlterIndexImpl on(String on) {
     return on(DSL.table(DSL.name(on)));
@@ -136,10 +137,11 @@ final class AlterIndexImpl extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Clause[] CLAUSES = {Clause.ALTER_INDEX};
+
   private static final Set<SQLDialect> NO_SUPPORT_IF_EXISTS =
       SQLDialect.supportedBy(CUBRID, DERBY, FIREBIRD);
+
   private static final Set<SQLDialect> SUPPORT_RENAME_INDEX = SQLDialect.supportedBy(DERBY);
 
   private final boolean supportsIfExists(Context<?> ctx) {
@@ -155,7 +157,6 @@ final class AlterIndexImpl extends AbstractDDLQuery
 
   private final void accept0(Context<?> ctx) {
     boolean renameIndex = SUPPORT_RENAME_INDEX.contains(ctx.dialect());
-
     switch (ctx.family()) {
       case MARIADB:
       case MYSQL:
@@ -171,30 +172,22 @@ final class AlterIndexImpl extends AbstractDDLQuery
               .visit(K_TO)
               .sql(' ')
               .qualify(false, c -> c.visit(renameTo));
-
           break;
         }
-
       default:
         {
           ctx.start(Clause.ALTER_INDEX_INDEX).visit(renameIndex ? K_RENAME_INDEX : K_ALTER_INDEX);
-
           if (alterIndexIfExists && supportsIfExists(ctx)) ctx.sql(' ').visit(K_IF_EXISTS);
-
           ctx.sql(' ');
-
           if (on != null) ctx.visit(on).sql('.').visit(index.getUnqualifiedName());
           else ctx.visit(index);
-
           ctx.end(Clause.ALTER_INDEX_INDEX).formatIndentStart().formatSeparator();
-
           if (renameTo != null)
             ctx.start(Clause.ALTER_INDEX_RENAME)
                 .visit(renameIndex ? K_TO : K_RENAME_TO)
                 .sql(' ')
                 .qualify(false, c -> c.visit(renameTo))
                 .end(Clause.ALTER_INDEX_RENAME);
-
           ctx.formatIndentEnd();
           break;
         }

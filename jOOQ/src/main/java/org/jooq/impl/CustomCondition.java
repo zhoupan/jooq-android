@@ -56,6 +56,7 @@ import org.jooq.Context;
  * @author Lukas Eder
  */
 public abstract class CustomCondition extends AbstractCondition {
+
   private static final Clause[] CLAUSES = {CUSTOM};
 
   protected CustomCondition() {}
@@ -63,6 +64,7 @@ public abstract class CustomCondition extends AbstractCondition {
   /** Create a {@link CustomCondition} from a lambda expression. */
   public static final CustomCondition of(Consumer<? super Context<?>> consumer) {
     return new CustomCondition() {
+
       @Override
       public void accept(Context<?> ctx) {
         consumer.accept(ctx);
@@ -73,7 +75,6 @@ public abstract class CustomCondition extends AbstractCondition {
   // -------------------------------------------------------------------------
   // Implementation required
   // -------------------------------------------------------------------------
-
   /** Subclasses must implement this method. <hr/> {@inheritDoc} */
   @Override
   public abstract void accept(Context<?> ctx);
@@ -81,7 +82,6 @@ public abstract class CustomCondition extends AbstractCondition {
   // -------------------------------------------------------------------------
   // No further overrides allowed
   // -------------------------------------------------------------------------
-
   @Override
   public final Clause[] clauses(Context<?> ctx) {
     return CLAUSES;

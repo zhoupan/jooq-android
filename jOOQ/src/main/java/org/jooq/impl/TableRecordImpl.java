@@ -84,7 +84,9 @@ import org.jooq.tools.JooqLogger;
 @org.jooq.Internal
 public class TableRecordImpl<R extends TableRecord<R>> extends AbstractQualifiedRecord<R>
     implements TableRecord<R> {
+
   private static final JooqLogger log = JooqLogger.getLogger(TableRecordImpl.class);
+
   private static final Set<SQLDialect> REFRESH_GENERATED_KEYS =
       SQLDialect.supportedBy(DERBY, H2, MARIADB, MYSQL);
 
@@ -132,14 +134,12 @@ public class TableRecordImpl<R extends TableRecord<R>> extends AbstractQualified
 
   final int storeInsert(final Field<?>[] storeFields) {
     final int[] result = new int[1];
-
     delegate(configuration(), (Record) this, INSERT)
         .operate(
             record -> {
               result[0] = storeInsert0(storeFields);
               return record;
             });
-
     return result[0];
   }
 
@@ -147,56 +147,43 @@ public class TableRecordImpl<R extends TableRecord<R>> extends AbstractQualified
     DSLContext create = create();
     InsertQuery<R> insert = create.insertQuery(getTable());
     addChangedValues(storeFields, insert, false);
-
     if (!insert.isExecutable()) {
-
       // Don't store records if no value was set by client code
       if (FALSE.equals(create.settings().isInsertUnchangedRecords())) {
         if (log.isDebugEnabled()) log.debug("Query is not executable", insert);
-
         return 0;
       } else insert.setDefaultValues();
     }
-
     // [#1596] Set timestamp and/or version columns to appropriate values
     BigInteger version = addRecordVersion(insert, false);
     Timestamp timestamp = addRecordTimestamp(insert, false);
-
     // [#814] Refresh identity and/or main unique key values
     // [#1002] Consider also identity columns of non-updatable records
     // [#1537] Avoid refreshing identity columns on batch inserts
     Collection<Field<?>> key = setReturningIfNeeded(insert);
     int result = insert.execute();
-
     if (result > 0) {
       for (Field<?> storeField : storeFields) changed(storeField, false);
-
       // [#1596] If insert was successful, update timestamp and/or version columns
       setRecordVersionAndTimestamp(version, timestamp);
-
       // [#1859] If an insert was successful try fetching the generated values.
       getReturningIfNeeded(insert, key);
-
       fetched = true;
     }
-
     return result;
   }
 
   final void getReturningIfNeeded(StoreQuery<R> query, Collection<Field<?>> key) {
     if (key != null && !key.isEmpty()) {
       R record = query.getReturnedRecord();
-
       if (record != null) {
         for (Field<?> field : key) {
           int index = indexOrFail(fieldsRow(), field);
           Object value = record.get(field);
-
           values[index] = value;
           originals[index] = value;
         }
       }
-
       // [#1859] In some databases, not all fields can be fetched via getGeneratedKeys()
       if (TRUE.equals(configuration().settings().isReturnAllOnUpdatableRecord())
           && (REFRESH_GENERATED_KEYS.contains(configuration().dialect()))
@@ -207,23 +194,17 @@ public class TableRecordImpl<R extends TableRecord<R>> extends AbstractQualified
 
   final Collection<Field<?>> setReturningIfNeeded(StoreQuery<R> query) {
     Collection<Field<?>> key = null;
-
     if (configuration() != null)
-
       // [#7966] Allow users to turning off the returning clause entirely
       if (!FALSE.equals(configuration().settings().isReturnIdentityOnUpdatableRecord())
           && !TRUE.equals(configuration().data(DATA_OMIT_RETURNING_CLAUSE)))
-
         // [#1859] Return also non-key columns
         if (TRUE.equals(configuration().settings().isReturnAllOnUpdatableRecord()))
           key = Arrays.asList(fields());
-
-        // [#5940] Getting the primary key mostly doesn't make sense on UPDATE statements
-        else if (query instanceof InsertQuery || updatablePrimaryKeys(settings(this)))
+        else // [#5940] Getting the primary key mostly doesn't make sense on UPDATE statements
+        if (query instanceof InsertQuery || updatablePrimaryKeys(settings(this)))
           key = getReturning();
-
     if (key != null) query.setReturning(key);
-
     return key;
   }
 
@@ -236,7 +217,6 @@ public class TableRecordImpl<R extends TableRecord<R>> extends AbstractQualified
       TableField<R, ?> field = getTable().getRecordVersion();
       int fieldIndex = indexOrFail(fields, field);
       Object value = field.getDataType().convert(version);
-
       values[fieldIndex] = value;
       originals[fieldIndex] = value;
       changed.clear(fieldIndex);
@@ -245,7 +225,6 @@ public class TableRecordImpl<R extends TableRecord<R>> extends AbstractQualified
       TableField<R, ?> field = getTable().getRecordTimestamp();
       int fieldIndex = indexOrFail(fields, field);
       Object value = field.getDataType().convert(timestamp);
-
       values[fieldIndex] = value;
       originals[fieldIndex] = value;
       changed.clear(fieldIndex);
@@ -255,7 +234,6 @@ public class TableRecordImpl<R extends TableRecord<R>> extends AbstractQualified
   /** Set all changed values of this record to a store query. */
   final void addChangedValues(Field<?>[] storeFields, StoreQuery<R> query, boolean forUpdate) {
     FieldsImpl<Record> f = new FieldsImpl<>(storeFields);
-
     for (Field<?> field : fields.fields.fields)
       if (changed(field) && f.field(field) != null) addValue(query, field, forUpdate);
   }
@@ -263,7 +241,6 @@ public class TableRecordImpl<R extends TableRecord<R>> extends AbstractQualified
   /** Extracted method to ensure generic type safety. */
   final <T> void addValue(StoreQuery<?> store, Field<T> field, Object value, boolean forUpdate) {
     store.addValue(field, Tools.field(value, field));
-
     if (forUpdate) ((InsertQuery<?>) store).addValueForUpdate(field, Tools.field(value, field));
   }
 
@@ -276,16 +253,12 @@ public class TableRecordImpl<R extends TableRecord<R>> extends AbstractQualified
   final Timestamp addRecordTimestamp(StoreQuery<?> store, boolean forUpdate) {
     Timestamp result = null;
     TableField<R, ?> timestamp = getTable().getRecordTimestamp();
-
     if (timestamp != null && isUpdateRecordTimestamp()) {
-
       // Use Timestamp locally, to provide maximum precision
       result = new Timestamp(configuration().clock().millis());
-
       // [#9933] Truncate timestamp to column precision, if needed
       addValue(store, timestamp, result = truncate(result, timestamp.getDataType()), forUpdate);
     }
-
     return result;
   }
 
@@ -303,17 +276,13 @@ public class TableRecordImpl<R extends TableRecord<R>> extends AbstractQualified
   final BigInteger addRecordVersion(StoreQuery<?> store, boolean forUpdate) {
     BigInteger result = null;
     TableField<R, ?> version = getTable().getRecordVersion();
-
     if (version != null && isUpdateRecordVersion()) {
       Object value = get(version);
-
       // Use BigInteger locally to avoid arithmetic overflows
       if (value == null) result = BigInteger.ONE;
       else result = new BigInteger(value.toString()).add(BigInteger.ONE);
-
       addValue(store, version, result, forUpdate);
     }
-
     return result;
   }
 
@@ -329,7 +298,6 @@ public class TableRecordImpl<R extends TableRecord<R>> extends AbstractQualified
 
   final boolean isUpdateRecordVersion() {
     Configuration configuration = configuration();
-
     return configuration != null
         ? !FALSE.equals(configuration.settings().isUpdateRecordVersion())
         : true;
@@ -337,7 +305,6 @@ public class TableRecordImpl<R extends TableRecord<R>> extends AbstractQualified
 
   final boolean isUpdateRecordTimestamp() {
     Configuration configuration = configuration();
-
     return configuration != null
         ? !FALSE.equals(configuration.settings().isUpdateRecordTimestamp())
         : true;
@@ -350,13 +317,10 @@ public class TableRecordImpl<R extends TableRecord<R>> extends AbstractQualified
 
   final Collection<Field<?>> getReturning() {
     Collection<Field<?>> result = new LinkedHashSet<>();
-
     Identity<R, ?> identity = getTable().getIdentity();
     if (identity != null) result.add(identity.getField());
-
     UniqueKey<?> key = getPrimaryKey();
     if (key != null) result.addAll(key.getFields());
-
     return result;
   }
 }

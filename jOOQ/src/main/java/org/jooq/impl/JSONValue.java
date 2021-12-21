@@ -60,12 +60,19 @@ final class JSONValue<J> extends AbstractField<J>
     implements JSONValueOnStep<J>, JSONValueDefaultStep<J> {
 
   private final Field<?> json;
+
   private final Field<String> path;
+
   private final DataType<?> returning;
+
   private final Behaviour onError;
+
   private final Field<?> onErrorDefault;
+
   private final Behaviour onEmpty;
+
   private final Field<?> onEmptyDefault;
+
   private final Field<?> default_;
 
   JSONValue(DataType<J> type, Field<?> json, Field<String> path, DataType<?> returning) {
@@ -83,7 +90,6 @@ final class JSONValue<J> extends AbstractField<J>
       Field<?> onEmptyDefault,
       Field<?> default_) {
     super(N_JSON_VALUE, type);
-
     this.json = json;
     this.path = path;
     this.returning = returning;
@@ -97,7 +103,6 @@ final class JSONValue<J> extends AbstractField<J>
   // -------------------------------------------------------------------------
   // XXX: DSL API
   // -------------------------------------------------------------------------
-
   @Override
   public final JSONValue<J> returning(DataType<?> r) {
     return new JSONValue<>(
@@ -107,14 +112,12 @@ final class JSONValue<J> extends AbstractField<J>
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
       case MYSQL:
         ctx.visit(N_JSON_EXTRACT).sql('(').visit(json).sql(", ").visit(path).sql(')');
         break;
-
       case POSTGRES:
         ctx.visit(N_JSONB_PATH_QUERY_FIRST)
             .sql('(')
@@ -123,14 +126,10 @@ final class JSONValue<J> extends AbstractField<J>
             .visit(path)
             .sql("::jsonpath)");
         break;
-
       default:
         ctx.visit(N_JSON_VALUE).sql('(').visit(json).sql(", ");
-
         ctx.visit(path);
-
         if (returning != null) ctx.separatorRequired(true).visit(new JSONReturning(returning));
-
         ctx.sql(')');
         break;
     }

@@ -83,11 +83,17 @@ import org.jooq.tools.StringUtils;
 public class MockResultSet extends JDBC41ResultSet implements ResultSet, Serializable {
 
   private final int maxRows;
+
   Result<?> result;
+
   private final int size;
+
   private transient int index;
+
   private transient Record record;
+
   private transient boolean wasNull;
+
   private final Converter<?, ?>[] converters;
 
   public MockResultSet(Result<?> result) {
@@ -97,7 +103,6 @@ public class MockResultSet extends JDBC41ResultSet implements ResultSet, Seriali
   public MockResultSet(Result<?> result, int maxRows) {
     this.result = result;
     this.maxRows = maxRows;
-
     if (result != null) {
       size = result.size();
       int l = result.fieldsRow().size();
@@ -113,7 +118,6 @@ public class MockResultSet extends JDBC41ResultSet implements ResultSet, Seriali
   // -------------------------------------------------------------------------
   // XXX: Unwrapping
   // -------------------------------------------------------------------------
-
   @SuppressWarnings("unchecked")
   @Override
   public <T> T unwrap(Class<T> iface) throws SQLException {
@@ -129,7 +133,6 @@ public class MockResultSet extends JDBC41ResultSet implements ResultSet, Seriali
   // -------------------------------------------------------------------------
   // XXX: ResultSet operations
   // -------------------------------------------------------------------------
-
   private int size() {
     if (maxRows == 0) return size;
     else return Math.min(maxRows, size);
@@ -141,16 +144,13 @@ public class MockResultSet extends JDBC41ResultSet implements ResultSet, Seriali
 
   private void checkInRange() throws SQLException {
     checkNotClosed();
-
     if (index <= 0 || index > size)
       throw new SQLException("ResultSet index is at an illegal position : " + index);
   }
 
   private Field<?> field(String columnLabel) throws SQLException {
     Field<?> field = result.field(columnLabel);
-
     if (field == null) throw new SQLException("Unknown column label : " + columnLabel);
-
     return field;
   }
 
@@ -164,7 +164,6 @@ public class MockResultSet extends JDBC41ResultSet implements ResultSet, Seriali
     cal = (Calendar) cal.clone();
     cal.clear();
     cal.setLenient(true);
-
     if (year <= 0) {
       cal.set(Calendar.ERA, GregorianCalendar.BC);
       cal.set(Calendar.YEAR, 1 - year);
@@ -172,20 +171,17 @@ public class MockResultSet extends JDBC41ResultSet implements ResultSet, Seriali
       cal.set(Calendar.ERA, GregorianCalendar.AD);
       cal.set(Calendar.YEAR, year);
     }
-
     cal.set(Calendar.MONTH, month);
     cal.set(Calendar.DAY_OF_MONTH, day);
     cal.set(Calendar.HOUR_OF_DAY, hour);
     cal.set(Calendar.MINUTE, minute);
     cal.set(Calendar.SECOND, second);
     cal.set(Calendar.MILLISECOND, millis);
-
     return cal.getTimeInMillis();
   }
 
   private Timestamp withTZ(Timestamp timestamp, Calendar cal) {
     if (timestamp == null) return null;
-
     int year = timestamp.getYear() + 1900;
     int month = timestamp.getMonth();
     int day = timestamp.getDate();
@@ -195,7 +191,6 @@ public class MockResultSet extends JDBC41ResultSet implements ResultSet, Seriali
     int nanos = timestamp.getNanos();
     int millis = nanos / 1000000;
     nanos = nanos - millis * 1000000;
-
     Timestamp r = new Timestamp(getMillis(cal, year, month, day, hour, minute, second, millis));
     r.setNanos(nanos + millis * 1000000);
     return r;
@@ -203,22 +198,18 @@ public class MockResultSet extends JDBC41ResultSet implements ResultSet, Seriali
 
   private Time withTZ(Time time, Calendar cal) {
     if (time == null) return null;
-
     int hour = time.getHours();
     int minute = time.getMinutes();
     int second = time.getSeconds();
     int millis = (int) (time.getTime() % 1000);
-
     return new Time(getMillis(cal, 1970, 0, 1, hour, minute, second, millis));
   }
 
   private Date withTZ(Date date, Calendar cal) {
     if (date == null) return null;
-
     int year = date.getYear() + 1900;
     int month = date.getMonth();
     int day = date.getDate();
-
     return new Date(getMillis(cal, year, month, day, 0, 0, 0, 0));
   }
 
@@ -263,7 +254,6 @@ public class MockResultSet extends JDBC41ResultSet implements ResultSet, Seriali
   @Override
   public boolean relative(int rows) throws SQLException {
     checkNotClosed();
-
     return index(index + rows);
   }
 
@@ -349,16 +339,13 @@ public class MockResultSet extends JDBC41ResultSet implements ResultSet, Seriali
   @Override
   public int findColumn(String columnLabel) throws SQLException {
     checkNotClosed();
-
     Field<?> field = result.field(columnLabel);
     if (field == null) throw new SQLException("No such column : " + columnLabel);
-
     return result.fieldsRow().indexOf(field) + 1;
   }
 
   @Override
   public void setFetchDirection(int direction) throws SQLException {
-
     // Fetch direction is not supported
     if (direction != ResultSet.FETCH_FORWARD)
       throw new SQLException("Fetch direction can only be FETCH_FORWARD");
@@ -366,7 +353,6 @@ public class MockResultSet extends JDBC41ResultSet implements ResultSet, Seriali
 
   @Override
   public int getFetchDirection() throws SQLException {
-
     // Fetch direction is not supported
     return ResultSet.FETCH_FORWARD;
   }
@@ -399,11 +385,9 @@ public class MockResultSet extends JDBC41ResultSet implements ResultSet, Seriali
   // -------------------------------------------------------------------------
   // XXX: Getters
   // -------------------------------------------------------------------------
-
   @Override
   public boolean wasNull() throws SQLException {
     checkNotClosed();
-
     return wasNull;
   }
 
@@ -419,7 +403,6 @@ public class MockResultSet extends JDBC41ResultSet implements ResultSet, Seriali
 
   private <T> T get(String columnLabel, Class<T> type) throws SQLException {
     checkInRange();
-
     // [#11099] TODO: Possibly optimise this logic similar to that of MockResultSet.get(int, Class)
     Converter<?, ?> converter = Converters.inverse(field(columnLabel).getConverter());
     return get0(record.get(columnLabel, converter), type);
@@ -427,7 +410,6 @@ public class MockResultSet extends JDBC41ResultSet implements ResultSet, Seriali
 
   private <T> T get(int columnIndex, Class<T> type) throws SQLException {
     checkInRange();
-
     return get0(record.get(columnIndex - 1, converter(columnIndex)), type);
   }
 
@@ -437,7 +419,6 @@ public class MockResultSet extends JDBC41ResultSet implements ResultSet, Seriali
         (record.configuration() == null ? new DefaultConfiguration() : record.configuration())
             .converterProvider()
             .provide(value == null ? Object.class : (Class<Object>) value.getClass(), type);
-
     T converted = converter == null ? null : converter.from(value);
     wasNull = (converted == null);
     return converted;
@@ -561,7 +542,6 @@ public class MockResultSet extends JDBC41ResultSet implements ResultSet, Seriali
   }
 
   @Override
-  @Deprecated
   public BigDecimal getBigDecimal(int columnIndex, int scale) throws SQLException {
     return get(columnIndex, BigDecimal.class);
   }
@@ -572,7 +552,6 @@ public class MockResultSet extends JDBC41ResultSet implements ResultSet, Seriali
   }
 
   @Override
-  @Deprecated
   public BigDecimal getBigDecimal(String columnLabel, int scale) throws SQLException {
     return get(columnLabel, BigDecimal.class);
   }
@@ -660,14 +639,12 @@ public class MockResultSet extends JDBC41ResultSet implements ResultSet, Seriali
   }
 
   @Override
-  @Deprecated
   public InputStream getUnicodeStream(int columnIndex) throws SQLException {
     String string = getString(columnIndex);
     return wasNull ? null : new ByteArrayInputStream(string.getBytes());
   }
 
   @Override
-  @Deprecated
   public InputStream getUnicodeStream(String columnLabel) throws SQLException {
     String string = getString(columnLabel);
     return wasNull ? null : new ByteArrayInputStream(string.getBytes());
@@ -810,7 +787,6 @@ public class MockResultSet extends JDBC41ResultSet implements ResultSet, Seriali
   // ---------------------------------------------------------------------
   // XXX: JDBC 4.1 methods
   // ---------------------------------------------------------------------
-
   @Override
   public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
     return get(columnIndex, type);
@@ -824,7 +800,6 @@ public class MockResultSet extends JDBC41ResultSet implements ResultSet, Seriali
   // -------------------------------------------------------------------------
   // XXX: Setters and row update methods
   // -------------------------------------------------------------------------
-
   @Override
   public boolean rowUpdated() throws SQLException {
     return false;
@@ -1296,23 +1271,18 @@ public class MockResultSet extends JDBC41ResultSet implements ResultSet, Seriali
   // -------------------------------------------------------------------------
   // XXX: Object API
   // -------------------------------------------------------------------------
-
   @Override
   public String toString() {
     if (result == null) return "null";
     else if (result.size() == 0 || index == 0 || index > size()) return result.toString();
-
     String prefix = "row " + index + " -> ";
     String prefixEmpty = StringUtils.leftPad("", prefix.length());
-
     Result<Record> r = DSL.using(DEFAULT).newResult(result.fields());
     r.addAll(result.subList(Math.max(0, index - 3), Math.min(size, index + 2)));
-
     StringBuilder sb = new StringBuilder();
     String[] split = r.toString().split("\n");
     for (int i = 0; i < split.length; i++)
       sb.append(i - 2 == Math.min(3, index) ? prefix : prefixEmpty).append(split[i]).append('\n');
-
     return sb.toString();
   }
 }

@@ -61,14 +61,12 @@ final class Ceil<T extends Number> extends AbstractField<T> {
 
   Ceil(Field<T> value) {
     super(N_CEIL, allNotNull((DataType) dataType(INTEGER, value, false), value));
-
     this.value = nullSafeNotNull(value, INTEGER);
   }
 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -84,11 +82,9 @@ final class Ceil<T extends Number> extends AbstractField<T> {
               .sql("))");
           break;
         }
-
       case H2:
         ctx.visit(function(N_CEILING, getDataType(), value));
         break;
-
       default:
         ctx.visit(function(N_CEIL, getDataType(), value));
         break;
@@ -98,7 +94,6 @@ final class Ceil<T extends Number> extends AbstractField<T> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Ceil) {

@@ -71,9 +71,12 @@ import org.jooq.conf.Transformation;
 final class Transformations {
 
   private static final Set<SQLDialect> NO_SUPPORT_IN_LIMIT = SQLDialect.supportedBy(MARIADB, MYSQL);
+
   private static final Set<SQLDialect> SUPPORT_MISSING_TABLE_REFERENCES = SQLDialect.supportedBy();
+
   private static final Set<SQLDialect> EMULATE_QUALIFY =
       SQLDialect.supportedBy(CUBRID, FIREBIRD, MARIADB, MYSQL, POSTGRES, SQLITE);
+
   private static final Set<SQLDialect> EMULATE_ROWNUM =
       SQLDialect.supportedBy(
           CUBRID, DERBY, FIREBIRD, HSQLDB, IGNITE, MARIADB, MYSQL, POSTGRES, SQLITE);
@@ -123,7 +126,6 @@ final class Transformations {
       Transformation transformation,
       Predicate<? super Configuration> whenNeeded) {
     boolean result;
-
     switch (defaultIfNull(transformation, WHEN_NEEDED)) {
       case NEVER:
         result = false;
@@ -138,7 +140,6 @@ final class Transformations {
         throw new IllegalStateException(
             "Transformation configuration not supported: " + transformation);
     }
-
     return result
         && configuration.requireCommercial(
             () ->

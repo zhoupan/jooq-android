@@ -64,8 +64,11 @@ final class SortFieldImpl<T> extends AbstractQueryPart implements SortField<T>, 
       SQLDialect.supportedUntil(CUBRID, MARIADB, MYSQL);
 
   private final Field<T> field;
+
   private final SortOrder order;
+
   private boolean nullsFirst;
+
   private boolean nullsLast;
 
   SortFieldImpl(Field<T> field, SortOrder order) {
@@ -103,7 +106,6 @@ final class SortFieldImpl<T> extends AbstractQueryPart implements SortField<T>, 
   @SuppressWarnings("unchecked")
   final <U> SortField<U> transform(Field<U> newField) {
     if (newField == field) return (SortFieldImpl<U>) this;
-
     SortField<U> r = newField.sort(order);
     return nullsFirst ? r.nullsFirst() : nullsLast ? r.nullsLast() : r;
   }
@@ -124,14 +126,11 @@ final class SortFieldImpl<T> extends AbstractQueryPart implements SortField<T>, 
 
   @Override
   public final void accept(Context<?> ctx) {
-
     if (nullsFirst || nullsLast) {
       if (NO_SUPPORT_NULLS.contains(ctx.dialect())) {
         Field<Integer> ifNull = nullsFirst ? zero() : one();
         Field<Integer> ifNotNull = nullsFirst ? one() : zero();
-
         ctx.visit(nvl2(field, ifNotNull, ifNull)).sql(", ");
-
         acceptFieldAndOrder(ctx, false);
       } else acceptFieldAndOrder(ctx, true);
     } else acceptFieldAndOrder(ctx, false);
@@ -139,16 +138,12 @@ final class SortFieldImpl<T> extends AbstractQueryPart implements SortField<T>, 
 
   private final void acceptFieldAndOrder(Context<?> ctx, boolean includeNulls) {
     String separator = "";
-
     for (Field<?> f : Tools.flatten(field)) {
       ctx.sql(separator).visit(f);
-
       if (order != SortOrder.DEFAULT) ctx.sql(' ').visit(order.toKeyword());
-
       if (includeNulls)
         if (nullsFirst) ctx.sql(' ').visit(K_NULLS_FIRST);
         else ctx.sql(' ').visit(K_NULLS_LAST);
-
       separator = ", ";
     }
   }

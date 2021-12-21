@@ -55,10 +55,15 @@ import org.jooq.TransactionListener;
 public final class CallbackTransactionListener implements TransactionListener {
 
   private final Consumer<? super TransactionContext> onBeginStart;
+
   private final Consumer<? super TransactionContext> onBeginEnd;
+
   private final Consumer<? super TransactionContext> onCommitStart;
+
   private final Consumer<? super TransactionContext> onCommitEnd;
+
   private final Consumer<? super TransactionContext> onRollbackStart;
+
   private final Consumer<? super TransactionContext> onRollbackEnd;
 
   public CallbackTransactionListener() {

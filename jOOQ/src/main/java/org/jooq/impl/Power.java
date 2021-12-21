@@ -59,11 +59,11 @@ import org.jooq.tools.*;
 final class Power extends AbstractField<BigDecimal> {
 
   private final Field<? extends Number> value;
+
   private final Field<? extends Number> exponent;
 
   Power(Field<? extends Number> value, Field<? extends Number> exponent) {
     super(N_POWER, allNotNull(NUMERIC, value, exponent));
-
     this.value = nullSafeNotNull(value, INTEGER);
     this.exponent = nullSafeNotNull(exponent, INTEGER);
   }
@@ -71,7 +71,6 @@ final class Power extends AbstractField<BigDecimal> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -79,7 +78,6 @@ final class Power extends AbstractField<BigDecimal> {
       case SQLITE:
         ctx.visit(DSL.exp(imul(DSL.ln(value), exponent)));
         break;
-
       default:
         ctx.visit(function(N_POWER, getDataType(), value, exponent));
         break;
@@ -89,7 +87,6 @@ final class Power extends AbstractField<BigDecimal> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Power) {

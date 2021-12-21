@@ -58,12 +58,13 @@ import org.jooq.tools.*;
 final class DateAdd<T> extends AbstractField<T> {
 
   private final Field<T> date;
+
   private final Field<? extends Number> interval;
+
   private final DatePart datePart;
 
   DateAdd(Field<T> date, Field<? extends Number> interval) {
     super(N_DATE_ADD, allNotNull((DataType) dataType(date)));
-
     this.date = date;
     this.interval = interval;
     this.datePart = null;
@@ -71,7 +72,6 @@ final class DateAdd<T> extends AbstractField<T> {
 
   DateAdd(Field<T> date, Field<? extends Number> interval, DatePart datePart) {
     super(N_DATE_ADD, allNotNull((DataType) dataType(date)));
-
     this.date = date;
     this.interval = interval;
     this.datePart = datePart;
@@ -80,7 +80,6 @@ final class DateAdd<T> extends AbstractField<T> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     if (datePart == null) ctx.visit(date.add(interval));
@@ -91,7 +90,6 @@ final class DateAdd<T> extends AbstractField<T> {
     Keyword keyword = null;
     Name name = null;
     String string = null;
-
     switch (ctx.family()) {
       case CUBRID:
       case MARIADB:
@@ -109,7 +107,6 @@ final class DateAdd<T> extends AbstractField<T> {
               .sql(')');
           break;
         }
-
       case DERBY:
       case HSQLDB:
         {
@@ -135,7 +132,6 @@ final class DateAdd<T> extends AbstractField<T> {
             default:
               throw unsupported();
           }
-
           ctx.sql("{fn ")
               .visit(N_TIMESTAMPADD)
               .sql('(')
@@ -147,7 +143,6 @@ final class DateAdd<T> extends AbstractField<T> {
               .sql(") }");
           break;
         }
-
       case H2:
         {
           switch (datePart) {
@@ -172,7 +167,6 @@ final class DateAdd<T> extends AbstractField<T> {
             default:
               throw unsupported();
           }
-
           ctx.visit(N_DATEADD)
               .sql('(')
               .visit(inline(string))
@@ -183,7 +177,6 @@ final class DateAdd<T> extends AbstractField<T> {
               .sql(')');
           break;
         }
-
       case POSTGRES:
         {
           switch (datePart) {
@@ -208,19 +201,16 @@ final class DateAdd<T> extends AbstractField<T> {
             default:
               throw unsupported();
           }
-
           // [#10258] [#11954]
           if (((AbstractField<?>) interval).getExpressionDataType().isInterval())
             ctx.sql('(').visit(date).sql(" + ").visit(interval).sql(')');
           else if (getDataType().isDate())
-
             // [#10258] Special case for DATE + INTEGER arithmetic
             if (datePart == DatePart.DAY)
               ctx.sql('(').visit(date).sql(" + ").visit(interval).sql(')');
-
-            // [#3824] Ensure that the output for DATE arithmetic will also be of type DATE, not
-            // TIMESTAMP
             else
+              // [#3824] Ensure that the output for DATE arithmetic will also be of type DATE, not
+              // TIMESTAMP
               ctx.sql('(')
                   .visit(date)
                   .sql(" + ")
@@ -240,10 +230,8 @@ final class DateAdd<T> extends AbstractField<T> {
                 .sql(' ')
                 .visit(inline(string))
                 .sql(")");
-
           break;
         }
-
       case SQLITE:
         {
           switch (datePart) {
@@ -268,7 +256,6 @@ final class DateAdd<T> extends AbstractField<T> {
             default:
               throw unsupported();
           }
-
           ctx.visit(N_STRFTIME)
               .sql("('%Y-%m-%d %H:%M:%f', ")
               .visit(date)
@@ -277,7 +264,6 @@ final class DateAdd<T> extends AbstractField<T> {
               .sql(')');
           break;
         }
-
       default:
         {
           ctx.visit(N_DATEADD)
@@ -302,7 +288,6 @@ final class DateAdd<T> extends AbstractField<T> {
       case MINUTE:
       case SECOND:
         return datePart.toKeyword();
-
       default:
         throw unsupported();
     }
@@ -315,7 +300,6 @@ final class DateAdd<T> extends AbstractField<T> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof DateAdd) {

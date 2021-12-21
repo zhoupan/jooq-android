@@ -49,6 +49,7 @@ import org.jooq.Domain;
 final class DomainDataType<T> extends DefaultDataType<T> {
 
   private final Domain<T> domain;
+
   private final DataType<T> baseType;
 
   DomainDataType(Domain<T> domain, DataType<T> baseType) {
@@ -63,12 +64,11 @@ final class DomainDataType<T> extends DefaultDataType<T> {
         baseType.precisionDefined() ? baseType.precision() : null,
         baseType.scaleDefined() ? baseType.scale() : null,
         baseType.lengthDefined() ? baseType.length() : null,
-        baseType.nullability(),
-        null, // TODO: Collation
+        baseType.nullability(), // TODO: Collation
         null, // TODO: CharacterSet (?)
+        null,
         false,
         baseType.default_());
-
     this.domain = domain;
     this.baseType = baseType;
   }

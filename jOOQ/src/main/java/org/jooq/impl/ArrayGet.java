@@ -49,7 +49,9 @@ import org.jooq.Field;
 
 /** @author Lukas Eder */
 final class ArrayGet<T> extends AbstractField<T> {
+
   private final Field<T[]> field;
+
   private final Field<Integer> index;
 
   @SuppressWarnings("unchecked")
@@ -57,7 +59,6 @@ final class ArrayGet<T> extends AbstractField<T> {
     super(
         N_ARRAY_GET,
         (DataType<T>) defaultIfNull(field.getDataType().getArrayComponentDataType(), OTHER));
-
     this.field = field;
     this.index = index;
   }
@@ -68,11 +69,9 @@ final class ArrayGet<T> extends AbstractField<T> {
       case H2:
         ctx.visit(N_ARRAY_GET).sql('(').visit(field).sql(", ").visit(index).sql(')');
         break;
-
       case HSQLDB:
         ctx.visit(when(cardinality(field).ge(index), new Standard()));
         break;
-
       default:
         ctx.visit(new Standard());
         break;

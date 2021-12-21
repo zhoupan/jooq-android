@@ -54,14 +54,12 @@ final class ProviderEnabledPreparedStatement extends DefaultPreparedStatement {
   ProviderEnabledPreparedStatement(
       ProviderEnabledConnection connection, PreparedStatement statement) {
     super(statement);
-
     this.connection = connection;
   }
 
   // ------------------------------------------------------------------------
   // XXX Closing the Statement
   // ------------------------------------------------------------------------
-
   @Override
   public final void close() throws SQLException {
     try {

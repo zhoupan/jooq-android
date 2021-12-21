@@ -58,8 +58,8 @@ import org.jooq.Field;
 import org.jooq.JSON;
 import org.jooq.JSONEntry;
 import org.jooq.JSONObjectAggNullStep;
-// ...
 
+// ...
 /**
  * The JSON object constructor.
  *
@@ -69,12 +69,13 @@ final class JSONObjectAgg<J> extends AbstractAggregateFunction<J>
     implements JSONObjectAggNullStep<J> {
 
   private final JSONEntry<?> entry;
+
   private JSONOnNull onNull;
+
   private DataType<?> returning;
 
   JSONObjectAgg(DataType<J> type, JSONEntry<?> entry) {
     super(false, N_JSON_OBJECTAGG, type, entry.key(), entry.value());
-
     this.entry = entry;
   }
 
@@ -84,18 +85,14 @@ final class JSONObjectAgg<J> extends AbstractAggregateFunction<J>
       case POSTGRES:
         acceptPostgres(ctx);
         break;
-
         // [#10089] These dialects support non-standard JSON_OBJECTAGG without ABSENT ON NULL
         // support
       case MARIADB:
       case MYSQL:
-
         // [#11238] FILTER cannot be emulated with the standard syntax
         if (onNull == ABSENT_ON_NULL || filter != null) acceptGroupConcat(ctx);
         else acceptStandard(ctx);
-
         break;
-
       default:
         acceptStandard(ctx);
         break;
@@ -106,12 +103,10 @@ final class JSONObjectAgg<J> extends AbstractAggregateFunction<J>
     ctx.visit(getDataType() == JSON ? N_JSON_OBJECT_AGG : N_JSONB_OBJECT_AGG).sql('(');
     ctx.visit(entry);
     ctx.sql(')');
-
     if (onNull == ABSENT_ON_NULL)
       acceptFilterClause(
           ctx, (filter == null ? noCondition() : filter).and(entry.value().isNotNull()));
     else acceptFilterClause(ctx);
-
     acceptOverClause(ctx);
   }
 
@@ -122,10 +117,8 @@ final class JSONObjectAgg<J> extends AbstractAggregateFunction<J>
             VARCHAR,
             c1 -> {
               Field<JSON> o1 = jsonObject(entry.key(), entry.value());
-
               if (onNull == ABSENT_ON_NULL)
                 o1 = when(entry.value().isNull(), inline((JSON) null)).else_(o1);
-
               Field<JSON> o2 = o1;
               c1.visit(
                   groupConcat(
@@ -141,25 +134,19 @@ final class JSONObjectAgg<J> extends AbstractAggregateFunction<J>
                                               o2.cast(VARCHAR),
                                               inline("^\\{(.*)\\}$"),
                                               inline(RegexpReplace.replacement(ctx, 1)))))))));
-
               acceptFilterClause(c1);
               acceptOverClause(c1);
             });
-
     ctx.sql('(').visit(DSL.concat(inline('{'), listagg, inline('}'))).sql(')');
   }
 
   private final void acceptStandard(Context<?> ctx) {
     ctx.visit(N_JSON_OBJECTAGG).sql('(').visit(entry);
-
     JSONNull jsonNull = new JSONNull(onNull);
     if (jsonNull.rendersContent(ctx)) ctx.sql(' ').visit(jsonNull);
-
     JSONReturning jsonReturning = new JSONReturning(returning);
     if (jsonReturning.rendersContent(ctx)) ctx.sql(' ').visit(jsonReturning);
-
     ctx.sql(')');
-
     acceptFilterClause(ctx);
     acceptOverClause(ctx);
   }

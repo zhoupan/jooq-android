@@ -51,6 +51,7 @@ import org.jooq.User;
  * @author Timur Shaidullin
  */
 final class UserImpl extends AbstractNamed implements User {
+
   private static final Clause[] CLAUSES = {USER};
 
   UserImpl(Name name) {
@@ -60,7 +61,6 @@ final class UserImpl extends AbstractNamed implements User {
   // ------------------------------------------------------------------------
   // XXX: QueryPart API
   // ------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     ctx.visit(getQualifiedName());

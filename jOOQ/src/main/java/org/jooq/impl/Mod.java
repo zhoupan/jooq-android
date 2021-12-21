@@ -48,11 +48,11 @@ import org.jooq.Field;
 final class Mod<T> extends AbstractField<T> {
 
   private final Field<T> arg1;
+
   private final Field<? extends Number> arg2;
 
   Mod(Field<T> arg1, Field<? extends Number> arg2) {
     super(N_MOD, arg1.getDataType());
-
     this.arg1 = arg1;
     this.arg2 = arg2;
   }

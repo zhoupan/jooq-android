@@ -46,5 +46,4 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  * @author Lukas Eder
  * @deprecated - 3.8.0 - [#4550] Do not reference this type directly.
  */
-@Deprecated
 public class TrimAdapter extends StringAdapter {}

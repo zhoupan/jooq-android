@@ -56,7 +56,6 @@ final class RowsFrom extends AbstractTable<Record> {
 
   RowsFrom(Table<?>... tables) {
     super(TableOptions.expression(), N_ROWSFROM);
-
     this.tables = new TableList(Arrays.asList(tables));
   }
 
@@ -69,11 +68,9 @@ final class RowsFrom extends AbstractTable<Record> {
   @Override
   final FieldsImpl<Record> fields0() {
     List<Field<?>> fields = new ArrayList<>();
-
     for (Table<?> table : tables)
       for (Field<?> field : table.fields())
         fields.add(DSL.field(DSL.name(field.getName()), field.getDataType()));
-
     return new FieldsImpl<>(fields);
   }
 

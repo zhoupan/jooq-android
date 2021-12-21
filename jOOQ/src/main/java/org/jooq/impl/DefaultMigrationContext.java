@@ -54,9 +54,13 @@ import org.jooq.Schema;
 final class DefaultMigrationContext extends AbstractScope implements MigrationContext {
 
   final Set<Schema> migratedSchemas;
+
   final Commit migrationFrom;
+
   final Commit migrationTo;
+
   final Queries migrationQueries;
+
   final Queries revertUntrackedQueries;
 
   Query query;
@@ -69,7 +73,6 @@ final class DefaultMigrationContext extends AbstractScope implements MigrationCo
       Queries migrationQueries,
       Queries revertUntrackedQueries) {
     super(configuration);
-
     this.migratedSchemas = migratedSchemas;
     this.migrationFrom = migrationFrom;
     this.migrationTo = migrationTo;

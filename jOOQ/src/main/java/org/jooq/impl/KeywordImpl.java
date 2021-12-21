@@ -52,7 +52,9 @@ final class KeywordImpl extends AbstractQueryPart implements Keyword {
   private final String asIs;
 
   private String lower;
+
   private String upper;
+
   private String pascal;
 
   KeywordImpl(String keyword) {
@@ -62,13 +64,11 @@ final class KeywordImpl extends AbstractQueryPart implements Keyword {
   @Override
   public final void accept(Context<?> ctx) {
     if (ctx.separatorRequired()) ctx.sql(' ');
-
     ctx.sql(render(ctx), true);
   }
 
   private String render(Context<?> ctx) {
     RenderKeywordCase style = SettingsTools.getRenderKeywordCase(ctx.settings());
-
     switch (style) {
       case AS_IS:
         return asIs;
@@ -87,21 +87,15 @@ final class KeywordImpl extends AbstractQueryPart implements Keyword {
     if (keyword.isEmpty()) return keyword;
     else if (keyword.indexOf(' ') >= 0) {
       StringBuilder sb = new StringBuilder();
-
       int prev = 0;
       int next = 0;
-
       do {
         next = keyword.indexOf(' ', prev);
-
         if (prev > 0) sb.append(' ');
-
         sb.append(Character.toUpperCase(keyword.charAt(prev)));
         sb.append(keyword.substring(prev + 1, next == -1 ? keyword.length() : next).toLowerCase());
-
         prev = next + 1;
       } while (next != -1);
-
       return sb.toString();
     } else return Character.toUpperCase(keyword.charAt(0)) + keyword.substring(1).toLowerCase();
   }

@@ -40,7 +40,8 @@ package org.jooq.impl;
 import org.jooq.RowId;
 
 /** @author Lukas Eder */
-final /* record */ class RowIdImpl implements RowId {
+final class /* record */ RowIdImpl implements RowId {
+
   private final Object value;
 
   public RowIdImpl(Object value) {

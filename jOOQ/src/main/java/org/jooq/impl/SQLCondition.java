@@ -52,14 +52,12 @@ final class SQLCondition extends AbstractCondition {
   // ------------------------------------------------------------------------
   // QueryPart API
   // ------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
       default:
         // We have no control over the plain SQL content, hence we MUST put it
         // in parentheses to ensure correct semantics
-
         ctx.sql('(');
         ctx.visit(delegate);
         ctx.sql(')');
@@ -67,7 +65,8 @@ final class SQLCondition extends AbstractCondition {
     }
   }
 
-  @Override // Avoid AbstractCondition implementation
+  // Avoid AbstractCondition implementation
+  @Override
   public final Clause[] clauses(Context<?> ctx) {
     return null;
   }

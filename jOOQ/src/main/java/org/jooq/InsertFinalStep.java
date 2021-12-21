@@ -75,5 +75,4 @@ package org.jooq;
  *     directly
  * @author Lukas Eder
  */
-@Deprecated(forRemoval = true, since = "3.15")
 public interface InsertFinalStep<R extends Record> extends Insert<R> {}

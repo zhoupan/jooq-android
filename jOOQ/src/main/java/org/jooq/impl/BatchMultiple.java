@@ -57,7 +57,6 @@ final class BatchMultiple extends AbstractBatch {
 
   public BatchMultiple(Configuration configuration, Query... queries) {
     super(configuration);
-
     this.queries = queries;
   }
 
@@ -69,13 +68,12 @@ final class BatchMultiple extends AbstractBatch {
   @Override
   public final void subscribe(Subscriber<? super Integer> subscriber) {
     ConnectionFactory cf = configuration.connectionFactory();
-
     if (!(cf instanceof NoConnectionFactory))
       subscriber.onSubscribe(
           new BatchSubscription<>(this, subscriber, s -> new BatchMultipleSubscriber(this, s)));
-
-    // TODO: [#11700] Implement this
-    else throw new UnsupportedOperationException();
+    else
+      // TODO: [#11700] Implement this
+      throw new UnsupportedOperationException();
   }
 
   @Override
@@ -87,14 +85,10 @@ final class BatchMultiple extends AbstractBatch {
     ExecuteContext ctx = new DefaultExecuteContext(configuration, queries);
     ExecuteListener listener = ExecuteListeners.get(ctx);
     Connection connection = ctx.connection();
-
     try {
-
       // [#8968] Keep start() event inside of lifecycle management
       listener.start(ctx);
-
       if (ctx.statement() == null) ctx.statement(new SettingsEnabledPreparedStatement(connection));
-
       String[] batchSQL = ctx.batchSQL();
       for (int i = 0; i < queries.length; i++) {
         ctx.sql(null);
@@ -103,29 +97,22 @@ final class BatchMultiple extends AbstractBatch {
         ctx.sql(batchSQL[i]);
         listener.renderEnd(ctx);
       }
-
       for (int i = 0; i < queries.length; i++) {
         ctx.sql(batchSQL[i]);
         listener.prepareStart(ctx);
         ctx.statement().addBatch(batchSQL[i]);
         listener.prepareEnd(ctx);
       }
-
       // [#9295] use query timeout from settings
       int t = SettingsTools.getQueryTimeout(0, ctx.settings());
       if (t != 0) ctx.statement().setQueryTimeout(t);
-
       listener.executeStart(ctx);
-
       int[] result = ctx.statement().executeBatch();
       int[] batchRows = ctx.batchRows();
       for (int i = 0; i < batchRows.length && i < result.length; i++) batchRows[i] = result[i];
-
       listener.executeEnd(ctx);
       return result;
-    }
-
-    // [#3427] ControlFlowSignals must not be passed on to ExecuteListners
+    } // [#3427] ControlFlowSignals must not be passed on to ExecuteListners
     catch (ControlFlowSignal e) {
       throw e;
     } catch (RuntimeException e) {

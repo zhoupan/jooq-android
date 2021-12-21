@@ -473,7 +473,6 @@ public interface DataType<T> extends Named {
    * @deprecated - [#3852] - 3.8.0 - Use {@link #defaultValue(Field)} instead.
    */
   @NotNull
-  @Deprecated(forRemoval = true, since = "3.8")
   DataType<T> defaulted(boolean defaulted);
 
   /**

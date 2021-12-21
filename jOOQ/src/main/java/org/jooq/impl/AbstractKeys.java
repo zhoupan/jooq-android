@@ -54,7 +54,6 @@ import org.jooq.UniqueKey;
  * @author Lukas Eder
  * @deprecated - [#6875] [#7158] - 3.11.0 - Please re-generate your code
  */
-@Deprecated
 @org.jooq.Internal
 public abstract class AbstractKeys {
 
@@ -63,7 +62,6 @@ public abstract class AbstractKeys {
    *
    * @deprecated - [#6875] [#7158] - 3.11.0 - Please re-generate your code
    */
-  @Deprecated
   public static Index createIndex(
       String name, Table<?> table, OrderField<?>[] sortFields, boolean unique) {
     return Internal.createIndex(name, table, sortFields, unique);
@@ -74,7 +72,6 @@ public abstract class AbstractKeys {
    *
    * @deprecated - [#6875] [#7158] - 3.11.0 - Please re-generate your code
    */
-  @Deprecated
   public static <R extends Record, T> Identity<R, T> createIdentity(
       Table<R> table, TableField<R, T> field) {
     return Internal.createIdentity(table, field);
@@ -85,7 +82,6 @@ public abstract class AbstractKeys {
    *
    * @deprecated - [#6875] [#7158] - 3.11.0 - Please re-generate your code
    */
-  @Deprecated
   @SafeVarargs
   public static <R extends Record> UniqueKey<R> createUniqueKey(
       Table<R> table, TableField<R, ?>... fields) {
@@ -97,7 +93,6 @@ public abstract class AbstractKeys {
    *
    * @deprecated - [#6875] [#7158] - 3.11.0 - Please re-generate your code
    */
-  @Deprecated
   @SafeVarargs
   public static <R extends Record> UniqueKey<R> createUniqueKey(
       Table<R> table, String name, TableField<R, ?>... fields) {
@@ -109,7 +104,6 @@ public abstract class AbstractKeys {
    *
    * @deprecated - [#6875] [#7158] - 3.11.0 - Please re-generate your code
    */
-  @Deprecated
   @SafeVarargs
   public static <R extends Record, U extends Record> ForeignKey<R, U> createForeignKey(
       UniqueKey<U> key, Table<R> table, TableField<R, ?>... fields) {
@@ -121,7 +115,6 @@ public abstract class AbstractKeys {
    *
    * @deprecated - [#6875] [#7158] - 3.11.0 - Please re-generate your code
    */
-  @Deprecated
   @SafeVarargs
   public static <R extends Record, U extends Record> ForeignKey<R, U> createForeignKey(
       UniqueKey<U> key, Table<R> table, String name, TableField<R, ?>... fields) {

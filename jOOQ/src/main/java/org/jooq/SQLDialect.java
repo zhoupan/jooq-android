@@ -79,9 +79,7 @@ public enum SQLDialect {
    *
    * @deprecated - [#3844] - 3.6.0 - {@link #DEFAULT} will replace this pseudo-dialect.
    */
-  @Deprecated
   SQL99("", false, false),
-
   /**
    * The default SQL dialect.
    *
@@ -89,53 +87,42 @@ public enum SQLDialect {
    * used with any actual database as it may combined dialect-specific things from various dialects.
    */
   DEFAULT("", false, false),
-
   // -------------------------------------------------------------------------
   // SQL dialects for free usage
   // -------------------------------------------------------------------------
-
   /**
    * The CUBRID dialect family.
    *
    * @deprecated - [#9403] - 3.13.0 - This dialect is hardly used by anyone with jOOQ or without
    *     jOOQ and will be removed in the near future.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   CUBRID("CUBRID", false, true),
-
   /** The Apache Derby dialect family. */
   DERBY("Derby", false, true),
-
   /**
    * The Firebird dialect family.
    *
    * <p>This family behaves like the versioned dialect {@link #FIREBIRD_3_0}.
    */
   FIREBIRD("Firebird", false, true),
-
   /** The H2 dialect family. */
   H2("H2", false, true),
-
   /** The Hypersonic dialect family. */
   HSQLDB("HSQLDB", false, true),
-
   /** The Apache Ignite dialect family. */
   IGNITE("Ignite", false, true),
-
   /**
    * The MariaDB dialect family.
    *
    * <p>This family behaves like the versioned dialect {@link #MARIADB_10_5}.
    */
   MARIADB("MariaDB", false, true),
-
   /**
    * The MySQL dialect family.
    *
    * <p>This family behaves like the versioned dialect {@link #MYSQL_8_0_19}.
    */
   MYSQL("MySQL", false, true),
-
   /**
    * The PostgreSQL dialect family.
    *
@@ -145,38 +132,38 @@ public enum SQLDialect {
    * RedShift as well, we strongly suggest you use the official {@link #REDSHIFT} support, instead.
    */
   POSTGRES("Postgres", false, true),
-
   /**
    * The SQLite dialect family.
    *
    * <p>This family behaves like the versioned dialect {@link #SQLITE_3_30}.
    */
-  SQLITE("SQLite", false, true),
+  SQLITE("SQLite", false, true);
 
-// -------------------------------------------------------------------------
-// SQL dialects for commercial usage
-// -------------------------------------------------------------------------
-
-;
-
+  // -------------------------------------------------------------------------
+  // SQL dialects for commercial usage
+  // -------------------------------------------------------------------------
   private static final SQLDialect[] FAMILIES;
 
   static {
     Set<SQLDialect> set = EnumSet.noneOf(SQLDialect.class);
-
     for (SQLDialect dialect : values()) {
       set.add(dialect.family());
     }
-
     FAMILIES = set.toArray(new SQLDialect[0]);
   }
 
   private final String name;
+
   private final boolean commercial;
+
   private final boolean supported;
+
   private final SQLDialect family;
+
   private SQLDialect predecessor;
+
   private transient EnumSet<SQLDialect> predecessors;
+
   private final ThirdParty thirdParty;
 
   /** Get a list of all {@link SQLDialect#family()} values. */
@@ -194,9 +181,7 @@ public enum SQLDialect {
   @NotNull
   public static final Set<SQLDialect> predecessors(SQLDialect... dialects) {
     EnumSet<SQLDialect> result = EnumSet.noneOf(SQLDialect.class);
-
     for (SQLDialect dialect : dialects) result.addAll(dialect.predecessors());
-
     return Collections.unmodifiableSet(result);
   }
 
@@ -244,15 +229,12 @@ public enum SQLDialect {
   @NotNull
   public static final Set<SQLDialect> supportedBy(SQLDialect... dialects) {
     EnumSet<SQLDialect> result = EnumSet.noneOf(SQLDialect.class);
-
     for (SQLDialect dialect : dialects) addSupportedBy(dialect, result);
-
     return Collections.unmodifiableSet(result);
   }
 
   private static final void addSupportedBy(SQLDialect dialect, EnumSet<SQLDialect> supported) {
     supported.add(dialect);
-
     if (dialect.isFamily()) supported.addAll(dialect.predecessors());
     else
       for (SQLDialect candidate = dialect.family();
@@ -279,9 +261,7 @@ public enum SQLDialect {
     this.supported = supported;
     this.family = family == null ? this : family;
     this.predecessor = predecessor == null ? this : predecessor;
-
     if (family != null) family.predecessor = this;
-
     this.thirdParty = new ThirdParty();
   }
 
@@ -353,20 +333,15 @@ public enum SQLDialect {
   public final Set<SQLDialect> predecessors() {
     if (predecessors == null) {
       SQLDialect curr = this;
-
       EnumSet<SQLDialect> result = EnumSet.of(curr);
       for (; ; ) {
         SQLDialect pred = curr.predecessor();
         result.add(pred);
-
         if (curr == pred) break;
-
         curr = pred;
       }
-
       predecessors = result;
     }
-
     return Collections.unmodifiableSet(predecessors);
   }
 
@@ -404,7 +379,6 @@ public enum SQLDialect {
    */
   public final boolean precedes(SQLDialect other) {
     if (family != other.family) return false;
-
     return other.predecessors().contains(this);
   }
 
@@ -424,9 +398,7 @@ public enum SQLDialect {
    */
   public final boolean supports(SQLDialect other) {
     if (family != other.family) return false;
-
     if (isFamily() || other.isFamily()) return true;
-
     return other.precedes(this);
   }
 
@@ -435,16 +407,13 @@ public enum SQLDialect {
    *
    * @deprecated - [#9882] - 3.14.0 - Use {@link #supportedBy(SQLDialect...)} instead
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   public final boolean supports(Collection<SQLDialect> other) {
     if (other.contains(family)) return true;
-
     SQLDialect candidate = family.predecessor();
     boolean successor = this == family;
     for (; ; ) {
       successor = successor || this == candidate;
       if (other.contains(candidate)) return successor;
-
       if (candidate == (candidate = candidate.predecessor())) return false;
     }
   }
@@ -484,7 +453,6 @@ public enum SQLDialect {
      */
     @NotNull
     public final String driver() {
-
       // jOOQ build tools need this class without its dependencies, which
       // is why we are using reflection here.
       try {
@@ -511,12 +479,10 @@ public enum SQLDialect {
         case HSQLDB:
           return "HSQL";
         case MARIADB:
-
         case MYSQL:
           return "MySQL";
         case POSTGRES:
           return "PostgreSQL";
-
         default:
           return null;
       }
@@ -547,15 +513,12 @@ public enum SQLDialect {
         case HSQLDB:
           return "org.hibernate.dialect.HSQLDialect";
         case MARIADB:
-
         case MYSQL:
           return "org.hibernate.dialect.MySQL5Dialect";
-
         case POSTGRES:
           return "org.hibernate.dialect.PostgreSQL94Dialect";
         case SQLITE:
           return null;
-
         default:
           return null;
       }

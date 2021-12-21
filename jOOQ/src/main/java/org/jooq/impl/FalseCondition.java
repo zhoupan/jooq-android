@@ -50,6 +50,7 @@ import org.jooq.False;
 final class FalseCondition extends AbstractCondition implements False {
 
   private static final Clause[] CLAUSES = {CONDITION, CONDITION_COMPARISON};
+
   static final FalseCondition INSTANCE = new FalseCondition();
 
   @Override

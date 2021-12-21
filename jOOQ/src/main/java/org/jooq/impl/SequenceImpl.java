@@ -80,20 +80,29 @@ import org.jooq.exception.SQLDialectNotSupportedException;
  */
 @org.jooq.Internal
 public class SequenceImpl<T extends Number> extends AbstractTypedNamed<T> implements Sequence<T> {
+
   private static final Clause[] CLAUSES = {SEQUENCE, SEQUENCE_REFERENCE};
 
   private final boolean nameIsPlainSQL;
+
   private final Schema schema;
+
   private final Field<T> startWith;
+
   private final Field<T> incrementBy;
+
   private final Field<T> minvalue;
+
   private final Field<T> maxvalue;
+
   private final boolean cycle;
+
   private final Field<T> cache;
+
   private final SequenceFunction<T> currval;
+
   private final SequenceFunction<T> nextval;
 
-  @Deprecated
   public SequenceImpl(String name, Schema schema, DataType<T> type) {
     this(name, schema, type, false);
   }
@@ -118,10 +127,8 @@ public class SequenceImpl<T extends Number> extends AbstractTypedNamed<T> implem
       boolean cycle,
       Field<T> cache) {
     super(qualify(schema, name), CommentImpl.NO_COMMENT, type);
-
     this.schema = schema;
     this.nameIsPlainSQL = nameIsPlainSQL;
-
     this.startWith = startWith;
     this.incrementBy = incrementBy;
     this.minvalue = minvalue;
@@ -192,6 +199,7 @@ public class SequenceImpl<T extends Number> extends AbstractTypedNamed<T> implem
     NEXTVAL(K_NEXTVAL, N_NEXTVAL);
 
     final Keyword keyword;
+
     final Name name;
 
     private SequenceMethod(Keyword keyword, Name name) {
@@ -201,12 +209,13 @@ public class SequenceImpl<T extends Number> extends AbstractTypedNamed<T> implem
   }
 
   private static class SequenceFunction<T extends Number> extends AbstractField<T> {
+
     private final SequenceMethod method;
+
     private final SequenceImpl<T> sequence;
 
     SequenceFunction(SequenceMethod method, SequenceImpl<T> sequence) {
       super(method.name, sequence.getDataType());
-
       this.method = method;
       this.sequence = sequence;
     }
@@ -215,14 +224,12 @@ public class SequenceImpl<T extends Number> extends AbstractTypedNamed<T> implem
     public final void accept(Context<?> ctx) {
       Configuration configuration = ctx.configuration();
       SQLDialect family = configuration.family();
-
       switch (family) {
         case POSTGRES:
           ctx.visit(method.keyword).sql('(');
           ctx.sql('\'').stringLiteral(true).visit(sequence).stringLiteral(false).sql('\'');
           ctx.sql(')');
           break;
-
         case DERBY:
         case FIREBIRD:
         case H2:
@@ -241,15 +248,11 @@ public class SequenceImpl<T extends Number> extends AbstractTypedNamed<T> implem
                     + " dialect.");
           }
           break;
-
         case CUBRID:
           ctx.visit(sequence).sql('.');
-
           if (method == SequenceMethod.NEXTVAL) ctx.visit(DSL.keyword("next_value"));
           else ctx.visit(DSL.keyword("current_value"));
-
           break;
-
           // Default is needed for hashCode() and toString()
         default:
           ctx.visit(sequence).sql('.').visit(method.keyword);
@@ -260,7 +263,6 @@ public class SequenceImpl<T extends Number> extends AbstractTypedNamed<T> implem
     // -------------------------------------------------------------------------
     // The Object API
     // -------------------------------------------------------------------------
-
     @Override
     public boolean equals(Object that) {
       if (that instanceof SequenceFunction)
@@ -273,15 +275,11 @@ public class SequenceImpl<T extends Number> extends AbstractTypedNamed<T> implem
   // ------------------------------------------------------------------------
   // XXX: QueryPart API
   // ------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
-
     Schema mappedSchema = getMappedSchema(ctx, schema);
-
     if (mappedSchema != null && !"".equals(mappedSchema.getName()) && ctx.family() != CUBRID)
       ctx.visit(mappedSchema).sql('.');
-
     if (nameIsPlainSQL) ctx.sql(getName());
     else ctx.visit(getUnqualifiedName());
   }
@@ -294,7 +292,6 @@ public class SequenceImpl<T extends Number> extends AbstractTypedNamed<T> implem
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof SequenceImpl)

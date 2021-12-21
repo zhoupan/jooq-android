@@ -58,7 +58,6 @@ class QueryPartList<T extends QueryPart> extends QueryPartListView<T> {
 
   QueryPartList(Iterable<? extends T> wrappedList) {
     super(new ArrayList<>());
-
     addAll(wrappedList);
   }
 

@@ -50,16 +50,25 @@ import static org.jooq.tools.StringUtils.rightPad;
 public final class XMLFormat {
 
   public static final XMLFormat DEFAULT_FOR_RESULTS = new XMLFormat();
+
   public static final XMLFormat DEFAULT_FOR_RECORDS = new XMLFormat().header(false).xmlns(false);
 
   final boolean xmlns;
+
   final boolean format;
+
   final String newline;
+
   final int globalIndent;
+
   final int indent;
+
   final String[] indented;
+
   final boolean header;
+
   final RecordFormat recordFormat;
+
   final boolean quoteNested;
 
   public XMLFormat() {
@@ -178,7 +187,6 @@ public final class XMLFormat {
   /** Convenience method to get an indentation string at a given level. */
   public final String indentString(int level) {
     int i = level + globalIndent / indent;
-
     if (i < indented.length) return indented[i];
     else if (format) return rightPad("", globalIndent + indent * level);
     else return "";
@@ -266,11 +274,9 @@ public final class XMLFormat {
 
     /** The default: <code>/record/value[@field="colname"]/text()</code>. */
     VALUE_ELEMENTS_WITH_FIELD_ATTRIBUTE,
-
     /** Simplified: <code>/record/value/text()</code>. */
     VALUE_ELEMENTS,
-
     /** Simplified: <code>/record/colname/text()</code>. */
-    COLUMN_NAME_ELEMENTS,
+    COLUMN_NAME_ELEMENTS
   }
 }

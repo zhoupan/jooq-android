@@ -76,21 +76,37 @@ abstract class AbstractMeta extends AbstractScope implements Meta, Serializable 
 
   // [#9010] TODO: Allow for opting out of this cache
   private Map<Name, Catalog> cachedCatalogs;
+
   private Map<Name, Schema> cachedQualifiedSchemas;
+
   private Map<Name, Table<?>> cachedQualifiedTables;
+
   private Map<Name, Domain<?>> cachedQualifiedDomains;
+
   private Map<Name, Sequence<?>> cachedQualifiedSequences;
+
   private Map<Name, UniqueKey<?>> cachedQualifiedPrimaryKeys;
+
   private Map<Name, UniqueKey<?>> cachedQualifiedUniqueKeys;
+
   private Map<Name, ForeignKey<?, ?>> cachedQualifiedForeignKeys;
+
   private Map<Name, Index> cachedQualifiedIndexes;
+
   private Map<Name, List<Schema>> cachedUnqualifiedSchemas;
+
   private Map<Name, List<Table<?>>> cachedUnqualifiedTables;
+
   private Map<Name, List<Domain<?>>> cachedUnqualifiedDomains;
+
   private Map<Name, List<Sequence<?>>> cachedUnqualifiedSequences;
+
   private Map<Name, List<UniqueKey<?>>> cachedUnqualifiedPrimaryKeys;
+
   private Map<Name, List<UniqueKey<?>>> cachedUnqualifiedUniqueKeys;
+
   private Map<Name, List<ForeignKey<?, ?>>> cachedUnqualifiedForeignKeys;
+
   private Map<Name, List<Index>> cachedUnqualifiedIndexes;
 
   AbstractMeta(Configuration configuration) {
@@ -117,7 +133,6 @@ abstract class AbstractMeta extends AbstractScope implements Meta, Serializable 
   private final void initCatalogs() {
     if (cachedCatalogs == null) {
       cachedCatalogs = new LinkedHashMap<>();
-
       for (Catalog catalog : getCatalogs0())
         cachedCatalogs.put(catalog.getQualifiedName(), catalog);
     }
@@ -294,10 +309,8 @@ abstract class AbstractMeta extends AbstractScope implements Meta, Serializable 
 
   List<UniqueKey<?>> getPrimaryKeys0() {
     List<UniqueKey<?>> result = new ArrayList<>();
-
     for (Table<?> table : getTables())
       if (table.getPrimaryKey() != null) result.add(table.getPrimaryKey());
-
     return result;
   }
 
@@ -415,15 +428,12 @@ abstract class AbstractMeta extends AbstractScope implements Meta, Serializable 
       for (T object : i) {
         Name q = object.getQualifiedName();
         Name u = object.getUnqualifiedName();
-
         qualified.put(q, object);
         unqualified.computeIfAbsent(u, n -> new ArrayList<>()).add(object);
       }
     }
-
     T object = qualified.get(name);
     if (object != null) return Collections.singletonList(object);
-
     List<T> list = unqualified.get(name);
     if (list == null) return Collections.emptyList();
     else return Collections.unmodifiableList(list);
@@ -485,7 +495,7 @@ abstract class AbstractMeta extends AbstractScope implements Meta, Serializable 
   }
 
   // [#9396] TODO Fix this. Subclasses should not need to override this to get
-  //         correct results
+  // correct results
   @Override
   public /* non-final */ Queries ddl(DDLExportConfiguration exportConfiguration) {
     return new DDL(dsl(), exportConfiguration).queries(this);
@@ -522,28 +532,24 @@ abstract class AbstractMeta extends AbstractScope implements Meta, Serializable 
   }
 
   // [#9396] TODO Fix this. Subclasses should not need to override this to get
-  //         correct results
+  // correct results
   @Override
   public /* non-final */ InformationSchema informationSchema() {
     return InformationSchemaExport.exportCatalogs(configuration(), getCatalogs());
   }
 
   final Table<?> lookupTable(Table<?> table) {
-
     // TODO: This is a re-occurring pattern in Meta implementations. Should we have a more generic
     // way to look up objects in a Catalog/Schema?
     Catalog catalog = getCatalog(table.getCatalog().getName());
     if (catalog == null) return null;
-
     Schema schema = catalog.getSchema(table.getSchema().getName());
     if (schema == null) return null;
-
     return schema.getTable(table.getName());
   }
 
   final <R extends Record> UniqueKey<R> lookupKey(Table<R> in, UniqueKey<?> uk) {
     Set<?> ukFields = new HashSet<>(uk.getFields());
-
     // [#10279] [#10281] Cannot use Key::equals here, because that is
     // name-based. 1) The name is irrelevant for this lookup, 2) some
     // key implementations (e.g. MetaPrimaryKey for H2) don't produce
@@ -554,9 +560,7 @@ abstract class AbstractMeta extends AbstractScope implements Meta, Serializable 
 
   final UniqueKey<?> lookupUniqueKey(ForeignKey<?, ?> fk) {
     Table<?> table = lookupTable(fk.getKey().getTable());
-
     if (table == null) return null;
-
     return lookupKey(table, fk.getKey());
   }
 
@@ -564,7 +568,6 @@ abstract class AbstractMeta extends AbstractScope implements Meta, Serializable 
   static final <R extends Record> ForeignKey<R, ?> copyFK(
       Table<R> fkTable, UniqueKey<?> uk, ForeignKey<R, ?> oldFk) {
     Table<?> ukTable = uk.getTable();
-
     return Internal.createForeignKey(
         fkTable,
         oldFk.getQualifiedName(),
@@ -582,7 +585,6 @@ abstract class AbstractMeta extends AbstractScope implements Meta, Serializable 
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof Meta) return ddl().equals(((Meta) obj).ddl());
-
     return false;
   }
 

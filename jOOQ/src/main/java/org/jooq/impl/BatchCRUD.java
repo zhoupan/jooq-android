@@ -58,12 +58,13 @@ import org.jooq.tools.JooqLogger;
 final class BatchCRUD extends AbstractBatch {
 
   private static final JooqLogger log = JooqLogger.getLogger(BatchCRUD.class);
+
   private final TableRecord<?>[] records;
+
   private final Action action;
 
   BatchCRUD(Configuration configuration, Action action, TableRecord<?>[] records) {
     super(configuration);
-
     this.action = action;
     this.records = records;
   }
@@ -75,7 +76,6 @@ final class BatchCRUD extends AbstractBatch {
 
   @Override
   public final int[] execute() throws DataAccessException {
-
     // [#1180] Run batch queries with BatchMultiple, if no bind variables
     // should be used...
     if (executeStaticStatements(configuration.settings())) return executeStatic();
@@ -85,33 +85,26 @@ final class BatchCRUD extends AbstractBatch {
   private final int[] executePrepared() {
     Map<String, List<Query>> queries = new LinkedHashMap<>();
     QueryCollector collector = new QueryCollector();
-
     // Add the QueryCollector to intercept query execution after rendering
     Configuration local = configuration.deriveAppending(collector);
-
     // [#1537] Communicate with UpdatableRecordImpl
     local.data(DATA_OMIT_RETURNING_CLAUSE, true);
-
     // [#1529] Avoid DEBUG logging of single INSERT / UPDATE statements
     local.settings().setExecuteLogging(false);
-
     for (int i = 0; i < records.length; i++) {
       Configuration previous = records[i].configuration();
-
       try {
         records[i].attach(local);
         executeAction(i);
       } catch (QueryCollectorSignal e) {
         Query query = e.getQuery();
         String sql = e.getSQL();
-
         // Aggregate executable queries by identical SQL
         if (query.isExecutable()) queries.computeIfAbsent(sql, s -> new ArrayList<>()).add(query);
       } finally {
         records[i].attach(previous);
       }
     }
-
     if (log.isDebugEnabled())
       log.debug(
           "Batch "
@@ -123,7 +116,6 @@ final class BatchCRUD extends AbstractBatch {
               + " distinct queries (lower is better) with an average number of bind variable sets of "
               + queries.values().stream().mapToInt(List::size).average().orElse(0.0)
               + " (higher is better)");
-
     // Execute one batch statement for each identical SQL statement. Every
     // SQL statement may have several queries with different bind values.
     // The order is preserved as much as possible
@@ -131,16 +123,12 @@ final class BatchCRUD extends AbstractBatch {
     queries.forEach(
         (k, v) -> {
           BatchBindStep batch = dsl.batch(v.get(0));
-
           for (Query query : v) batch.bind(query.getBindValues().toArray());
-
           int[] array = batch.execute();
           for (int i : array) result.add(i);
         });
-
     int[] array = new int[result.size()];
     for (int i = 0; i < result.size(); i++) array[i] = result.get(i);
-
     updateChangedFlag();
     return array;
   }
@@ -149,22 +137,18 @@ final class BatchCRUD extends AbstractBatch {
     List<Query> queries = new ArrayList<>();
     QueryCollector collector = new QueryCollector();
     Configuration local = configuration.derive(collector);
-
     for (int i = 0; i < records.length; i++) {
       Configuration previous = records[i].configuration();
-
       try {
         records[i].attach(local);
         executeAction(i);
       } catch (QueryCollectorSignal e) {
         Query query = e.getQuery();
-
         if (query.isExecutable()) queries.add(query);
       } finally {
         records[i].attach(previous);
       }
     }
-
     // Resulting statements can be batch executed in their requested order
     int[] result = dsl.batch(queries).execute();
     updateChangedFlag();
@@ -193,11 +177,10 @@ final class BatchCRUD extends AbstractBatch {
 
   private final void updateChangedFlag() {
     // 1. Deleted records should be marked as changed, such that subsequent
-    //    calls to store() will insert them again
+    // calls to store() will insert them again
     // 2. Stored records should be marked as unchanged
     for (TableRecord<?> record : records) {
       record.changed(action == Action.DELETE);
-
       // [#3362] If new records (fetched = false) are batch-stored twice in a row, the second
       // batch-store needs to generate an UPDATE statement.
       if (record instanceof AbstractRecord)
@@ -210,16 +193,12 @@ final class BatchCRUD extends AbstractBatch {
 
     /** Corresponds to {@link UpdatableRecord#store()}. */
     STORE,
-
     /** Corresponds to {@link UpdatableRecord#insert()}. */
     INSERT,
-
     /** Corresponds to {@link UpdatableRecord#update()}. */
     UPDATE,
-
     /** Corresponds to {@link UpdatableRecord#merge()}. */
     MERGE,
-
     /** Corresponds to {@link UpdatableRecord#delete()}. */
     DELETE
   }
@@ -246,7 +225,9 @@ final class BatchCRUD extends AbstractBatch {
    * generated SQL back to batch execution.
    */
   private static class QueryCollectorSignal extends ControlFlowSignal {
+
     private final String sql;
+
     private final Query query;
 
     QueryCollectorSignal(String sql, Query query) {

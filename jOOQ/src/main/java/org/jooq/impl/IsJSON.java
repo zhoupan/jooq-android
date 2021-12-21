@@ -48,7 +48,9 @@ import org.jooq.Field;
 
 /** @author Lukas Eder */
 final class IsJSON extends AbstractCondition {
+
   private final Field<?> field;
+
   private final boolean isJSON;
 
   IsJSON(Field<?> field, boolean isJSON) {
@@ -58,12 +60,10 @@ final class IsJSON extends AbstractCondition {
 
   @Override
   public final void accept(Context<?> ctx) {
-
     switch (ctx.family()) {
       case MYSQL:
         ctx.visit(function(N_JSON_VALID, BOOLEAN, field));
         break;
-
       default:
         ctx.visit(field).sql(' ').visit(isJSON ? K_IS_JSON : K_IS_NOT_JSON);
         break;

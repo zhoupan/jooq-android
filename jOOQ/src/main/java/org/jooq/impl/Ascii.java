@@ -61,21 +61,18 @@ final class Ascii extends AbstractField<Integer> {
 
   Ascii(Field<String> string) {
     super(N_ASCII, allNotNull(INTEGER, string));
-
     this.string = nullSafeNotNull(string, VARCHAR);
   }
 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
       case FIREBIRD:
         ctx.visit(function(N_ASCII_VAL, getDataType(), string));
         break;
-
       default:
         ctx.visit(function(N_ASCII, getDataType(), string));
         break;
@@ -85,7 +82,6 @@ final class Ascii extends AbstractField<Integer> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Ascii) {

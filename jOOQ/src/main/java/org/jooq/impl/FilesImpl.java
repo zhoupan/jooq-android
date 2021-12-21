@@ -49,7 +49,9 @@ import org.jooq.Version;
 final class FilesImpl implements Files {
 
   private final Version from;
+
   private final Version to;
+
   private final List<File> files;
 
   FilesImpl(Version from, Version to, Collection<? extends File> f) {

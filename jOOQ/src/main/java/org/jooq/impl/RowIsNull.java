@@ -75,11 +75,14 @@ final class RowIsNull extends AbstractCondition {
   // https://www.sqlite.org/rowvalue.html
   private static final Set<SQLDialect> EMULATE_NULL_ROW =
       SQLDialect.supportedBy(CUBRID, DERBY, FIREBIRD, HSQLDB, MARIADB, MYSQL, SQLITE);
+
   private static final Set<SQLDialect> EMULATE_NULL_QUERY =
       SQLDialect.supportedBy(CUBRID, DERBY, FIREBIRD, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE);
 
   private final Row row;
+
   private final Select<?> select;
+
   private final boolean isNull;
 
   RowIsNull(Row row, boolean isNull) {
@@ -101,10 +104,8 @@ final class RowIsNull extends AbstractCondition {
 
   @Override
   public final void accept(Context<?> ctx) {
-
     if (row != null && EMULATE_NULL_ROW.contains(ctx.dialect())) ctx.visit(condition(row.fields()));
     else if (select != null && EMULATE_NULL_QUERY.contains(ctx.dialect())) {
-
       // [#11011] Avoid the RVE IS NULL emulation for queries of degree 1
       if (select.getSelect().size() == 1) {
         acceptStandard(ctx);
@@ -122,7 +123,6 @@ final class RowIsNull extends AbstractCondition {
   private final void acceptStandard(Context<?> ctx) {
     if (row != null) ctx.visit(row);
     else visitSubquery(ctx, select);
-
     switch (ctx.family()) {
       default:
         ctx.sql(' ').visit(isNull ? K_IS_NULL : K_IS_NOT_NULL);
@@ -130,7 +130,8 @@ final class RowIsNull extends AbstractCondition {
     }
   }
 
-  @Override // Avoid AbstractCondition implementation
+  // Avoid AbstractCondition implementation
+  @Override
   public final Clause[] clauses(Context<?> ctx) {
     return null;
   }

@@ -52,8 +52,8 @@ import static org.jooq.impl.SQLDataType.NUMERIC;
 import java.math.BigDecimal;
 import org.jooq.Context;
 import org.jooq.Field;
-// ...
 
+// ...
 /** @author Lukas Eder */
 final class Product extends AbstractAggregateFunction<BigDecimal> {
 
@@ -71,34 +71,28 @@ final class Product extends AbstractAggregateFunction<BigDecimal> {
   }
 
   private final void acceptEmulation(Context<?> ctx) {
-
     @SuppressWarnings({"unchecked", "rawtypes"})
     final Field<Integer> f =
         (Field) DSL.field("{0}", arguments.get(0).getDataType(), arguments.get(0));
     final Field<Integer> negatives = DSL.when(f.lt(zero()), inline(-1));
-
     Field<BigDecimal> negativesSum =
         CustomField.of(
             "sum",
             NUMERIC,
             c -> {
               c.visit(distinct ? DSL.sumDistinct(negatives) : DSL.sum(negatives));
-
               acceptFilterClause(c);
               acceptOverClause(c);
             });
-
     Field<BigDecimal> zerosSum =
         CustomField.of(
             "sum",
             NUMERIC,
             c -> {
               c.visit(DSL.sum(choose(f).when(zero(), one())));
-
               acceptFilterClause(c);
               acceptOverClause(c);
             });
-
     Field<BigDecimal> logarithmsSum =
         CustomField.of(
             "sum",
@@ -106,13 +100,10 @@ final class Product extends AbstractAggregateFunction<BigDecimal> {
             c -> {
               Field<Integer> abs = DSL.abs(DSL.nullif(f, zero()));
               Field<BigDecimal> ln = DSL.ln(abs);
-
               c.visit(distinct ? DSL.sumDistinct(ln) : DSL.sum(ln));
-
               acceptFilterClause(c);
               acceptOverClause(c);
             });
-
     ctx.visit(
         imul(
             when(zerosSum.gt(inline(BigDecimal.ZERO)), zero())

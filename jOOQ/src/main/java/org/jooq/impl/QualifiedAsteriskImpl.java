@@ -50,6 +50,7 @@ import org.jooq.Table;
 final class QualifiedAsteriskImpl extends AbstractQueryPart implements QualifiedAsterisk {
 
   private final Table<?> table;
+
   final QueryPartList<Field<?>> fields;
 
   QualifiedAsteriskImpl(Table<?> table) {
@@ -66,11 +67,9 @@ final class QualifiedAsteriskImpl extends AbstractQueryPart implements Qualified
     switch (ctx.family()) {
       default:
         ctx.visit(table).sql('.').visit(AsteriskImpl.INSTANCE);
-
         // [#7921] H2 has native support for EXCEPT. Emulations are implemented
-        //         in SelectQueryImpl
+        // in SelectQueryImpl
         if (!fields.isEmpty()) ctx.sql(' ').visit(K_EXCEPT).sql(" (").visit(fields).sql(')');
-
         break;
     }
   }
@@ -93,10 +92,8 @@ final class QualifiedAsteriskImpl extends AbstractQueryPart implements Qualified
   @Override
   public final QualifiedAsterisk except(Field<?>... f) {
     QueryPartList<Field<?>> list = new QueryPartList<>();
-
     list.addAll(fields);
     list.addAll(Arrays.asList(f));
-
     return new QualifiedAsteriskImpl(table, list);
   }
 }

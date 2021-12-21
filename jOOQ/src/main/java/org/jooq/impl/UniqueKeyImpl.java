@@ -59,7 +59,6 @@ final class UniqueKeyImpl<R extends Record> extends AbstractKey<R> implements Un
 
   UniqueKeyImpl(Table<R> table, Name name, TableField<R, ?>[] fields, boolean enforced) {
     super(table, name, fields, enforced);
-
     this.references = new ArrayList<>();
   }
 

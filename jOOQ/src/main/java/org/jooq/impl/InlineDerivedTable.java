@@ -47,11 +47,11 @@ import org.jooq.Table;
 final class InlineDerivedTable<R extends Record> extends DerivedTable<R> {
 
   private final Table<R> table;
+
   private final Condition where;
 
   InlineDerivedTable(Table<R> table, Condition where) {
     super(selectFrom(table).where(where));
-
     this.table = table;
     this.where = where;
   }

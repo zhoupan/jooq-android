@@ -100,6 +100,7 @@ import org.jooq.WindowPartitionByStep;
 
 /** @author Lukas Eder */
 abstract class AbstractField<T> extends AbstractTypedNamed<T> implements Field<T>, ScopeMappable {
+
   private static final Clause[] CLAUSES = {FIELD};
 
   AbstractField(Name name, DataType<T> type) {
@@ -118,7 +119,6 @@ abstract class AbstractField<T> extends AbstractTypedNamed<T> implements Field<T
   // ------------------------------------------------------------------------
   // XXX: API (not implemented)
   // ------------------------------------------------------------------------
-
   @Override
   public abstract void accept(Context<?> ctx);
 
@@ -127,18 +127,19 @@ abstract class AbstractField<T> extends AbstractTypedNamed<T> implements Field<T
     return CLAUSES;
   }
 
-  /* non-final */ boolean isPossiblyNullable() {
+  /* non-final */
+  boolean isPossiblyNullable() {
     return true;
   }
 
-  /* non-final */ int projectionSize() {
+  /* non-final */
+  int projectionSize() {
     return 1;
   }
 
   // ------------------------------------------------------------------------
   // [#5518] Record method inversions, e.g. for use as method references
   // ------------------------------------------------------------------------
-
   @Override
   public final Field<T> field(Record record) {
     return record.field(this);
@@ -177,7 +178,6 @@ abstract class AbstractField<T> extends AbstractTypedNamed<T> implements Field<T
   // ------------------------------------------------------------------------
   // XXX: API
   // ------------------------------------------------------------------------
-
   @Override
   public final <U> Field<U> convert(Binding<T, U> binding) {
     return coerce(getDataType().asConvertedDataType(binding));
@@ -237,7 +237,6 @@ abstract class AbstractField<T> extends AbstractTypedNamed<T> implements Field<T
   // ------------------------------------------------------------------------
   // XXX: Type casts
   // ------------------------------------------------------------------------
-
   @Override
   public final <Z> Field<Z> cast(Field<Z> field) {
     return cast(field.getDataType());
@@ -256,7 +255,6 @@ abstract class AbstractField<T> extends AbstractTypedNamed<T> implements Field<T
   // ------------------------------------------------------------------------
   // XXX: Type coercions
   // ------------------------------------------------------------------------
-
   @Override
   public final <Z> Field<Z> coerce(Field<Z> field) {
     return coerce(field.getDataType());
@@ -275,7 +273,6 @@ abstract class AbstractField<T> extends AbstractTypedNamed<T> implements Field<T
   // ------------------------------------------------------------------------
   // XXX: Conversion of field into a sort field
   // ------------------------------------------------------------------------
-
   @Override
   public final SortField<T> asc() {
     return sort(SortOrder.ASC);
@@ -337,7 +334,6 @@ abstract class AbstractField<T> extends AbstractTypedNamed<T> implements Field<T
   // ------------------------------------------------------------------------
   // XXX: Arithmetic operations
   // ------------------------------------------------------------------------
-
   @Override
   public final Field<T> neg() {
     return new Neg<>(this, false, ExpressionOperator.SUBTRACT);
@@ -414,7 +410,6 @@ abstract class AbstractField<T> extends AbstractTypedNamed<T> implements Field<T
   // ------------------------------------------------------------------------
   // XXX: Arithmetic operation aliases
   // ------------------------------------------------------------------------
-
   @Override
   public final Field<T> plus(Number value) {
     return add(value);
@@ -500,7 +495,6 @@ abstract class AbstractField<T> extends AbstractTypedNamed<T> implements Field<T
   // ------------------------------------------------------------------------
   // Unsafe casting is needed here, as bitwise operations only work on
   // numeric values...
-
   @SuppressWarnings({"unchecked", "rawtypes"})
   @Override
   public final Field<T> bitNot() {
@@ -614,7 +608,6 @@ abstract class AbstractField<T> extends AbstractTypedNamed<T> implements Field<T
   // ------------------------------------------------------------------------
   // XXX: Conditions created from this field
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition isDocument() {
     return new IsDocument(this, true);
@@ -677,8 +670,10 @@ abstract class AbstractField<T> extends AbstractTypedNamed<T> implements Field<T
 
   /** [#11200] Nest these constants to prevent initialisation deadlocks. */
   private static class BooleanValues {
+
     static final List<Field<String>> TRUE_VALUES =
         Tools.map(Convert.TRUE_VALUES, v -> DSL.inline(v));
+
     static final List<Field<String>> FALSE_VALUES =
         Tools.map(Convert.FALSE_VALUES, v -> DSL.inline(v));
   }
@@ -687,7 +682,6 @@ abstract class AbstractField<T> extends AbstractTypedNamed<T> implements Field<T
   @Override
   public final Condition isTrue() {
     Class<?> type = getType();
-
     if (type == String.class) return ((Field<String>) this).in(BooleanValues.TRUE_VALUES);
     else if (Number.class.isAssignableFrom(type))
       return ((Field<Number>) this).equal(inline((Number) getDataType().convert(1)));
@@ -700,7 +694,6 @@ abstract class AbstractField<T> extends AbstractTypedNamed<T> implements Field<T
   @Override
   public final Condition isFalse() {
     Class<?> type = getType();
-
     if (type == String.class) return ((Field<String>) this).in(BooleanValues.FALSE_VALUES);
     else if (Number.class.isAssignableFrom(type))
       return ((Field<Number>) this).equal(inline((Number) getDataType().convert(0)));
@@ -952,13 +945,10 @@ abstract class AbstractField<T> extends AbstractTypedNamed<T> implements Field<T
   @SuppressWarnings("unchecked")
   @Override
   public final Condition in(T... values) {
-
     // [#3362] Prevent "rogue" API usage when using Field<Object>.in(Object... values)
     if (isAccidentalSelect(values)) return in((Select<Record1<T>>) values[0]);
-
     // [#3347] Prevent "rogue" API usage when using Field<Object>.in(Object... values)
     if (isAccidentalCollection(values)) return in((Collection<?>) values[0]);
-
     return new InCondition<>(this, Tools.fields(values, this), IN);
   }
 
@@ -985,13 +975,10 @@ abstract class AbstractField<T> extends AbstractTypedNamed<T> implements Field<T
   @SuppressWarnings("unchecked")
   @Override
   public final Condition notIn(T... values) {
-
     // [#3362] Prevent "rogue" API usage when using Field<Object>.in(Object... values)
     if (isAccidentalSelect(values)) return notIn((Select<Record1<T>>) values[0]);
-
     // [#3347] Prevent "rogue" API usage when using Field<Object>.in(Object... values)
     if (isAccidentalCollection(values)) return notIn((Collection<?>) values[0]);
-
     return new InCondition<>(this, Tools.fields(values, this), NOT_IN);
   }
 
@@ -1368,7 +1355,6 @@ abstract class AbstractField<T> extends AbstractTypedNamed<T> implements Field<T
       case IS_DISTINCT_FROM:
       case IS_NOT_DISTINCT_FROM:
         return new IsDistinctFrom<>(this, nullSafe(field, getDataType()), comparator);
-
       default:
         return new CompareCondition(this, nullSafe(field, getDataType()), comparator);
     }
@@ -1390,7 +1376,6 @@ abstract class AbstractField<T> extends AbstractTypedNamed<T> implements Field<T
   // will be removed in the future. Consider using equivalent methods from
   // org.jooq.impl.DSL
   // ------------------------------------------------------------------------
-
   @SuppressWarnings("unchecked")
   private final <Z extends Number> Field<Z> numeric() {
     if (getDataType().isNumeric()) return (Field<Z>) this;
@@ -1410,66 +1395,56 @@ abstract class AbstractField<T> extends AbstractTypedNamed<T> implements Field<T
   }
 
   @Override
-  @Deprecated
   public final Field<Integer> sign() {
     return DSL.sign(numeric());
   }
 
   @SuppressWarnings("unchecked")
   @Override
-  @Deprecated
   public final Field<T> abs() {
     return (Field<T>) DSL.abs(numeric());
   }
 
   @SuppressWarnings("unchecked")
   @Override
-  @Deprecated
   public final Field<T> round() {
     return (Field<T>) DSL.round(numeric());
   }
 
   @SuppressWarnings("unchecked")
   @Override
-  @Deprecated
   public final Field<T> round(int decimals) {
     return (Field<T>) DSL.round(numeric(), decimals);
   }
 
   @SuppressWarnings("unchecked")
   @Override
-  @Deprecated
   public final Field<T> floor() {
     return (Field<T>) DSL.floor(numeric());
   }
 
   @SuppressWarnings("unchecked")
   @Override
-  @Deprecated
   public final Field<T> ceil() {
     return (Field<T>) DSL.ceil(numeric());
   }
 
   @Override
-  @Deprecated
   public final Field<BigDecimal> sqrt() {
     return DSL.sqrt(numeric());
   }
 
   @Override
-  @Deprecated
   public final Field<BigDecimal> exp() {
     return DSL.exp(numeric());
   }
 
   @Override
-  @Deprecated
   public final Field<BigDecimal> ln() {
     return DSL.ln(numeric());
   }
 
   @Override
-  @Deprecated
   public final Field<BigDecimal> log(int base) {
     return DSL.log(numeric(), base);
   }
@@ -1495,403 +1470,336 @@ abstract class AbstractField<T> extends AbstractTypedNamed<T> implements Field<T
   }
 
   @Override
-  @Deprecated
   public final Field<BigDecimal> acos() {
     return DSL.acos(numeric());
   }
 
   @Override
-  @Deprecated
   public final Field<BigDecimal> asin() {
     return DSL.asin(numeric());
   }
 
   @Override
-  @Deprecated
   public final Field<BigDecimal> atan() {
     return DSL.atan(numeric());
   }
 
   @Override
-  @Deprecated
   public final Field<BigDecimal> atan2(Number y) {
     return DSL.atan2(numeric(), y);
   }
 
   @Override
-  @Deprecated
   public final Field<BigDecimal> atan2(Field<? extends Number> y) {
     return DSL.atan2(numeric(), y);
   }
 
   @Override
-  @Deprecated
   public final Field<BigDecimal> cos() {
     return DSL.cos(numeric());
   }
 
   @Override
-  @Deprecated
   public final Field<BigDecimal> sin() {
     return DSL.sin(numeric());
   }
 
   @Override
-  @Deprecated
   public final Field<BigDecimal> tan() {
     return DSL.tan(numeric());
   }
 
   @Override
-  @Deprecated
   public final Field<BigDecimal> cot() {
     return DSL.cot(numeric());
   }
 
   @Override
-  @Deprecated
   public final Field<BigDecimal> sinh() {
     return DSL.sinh(numeric());
   }
 
   @Override
-  @Deprecated
   public final Field<BigDecimal> cosh() {
     return DSL.cosh(numeric());
   }
 
   @Override
-  @Deprecated
   public final Field<BigDecimal> tanh() {
     return DSL.tanh(numeric());
   }
 
   @Override
-  @Deprecated
   public final Field<BigDecimal> coth() {
     return DSL.coth(numeric());
   }
 
   @Override
-  @Deprecated
   public final Field<BigDecimal> deg() {
     return DSL.deg(numeric());
   }
 
   @Override
-  @Deprecated
   public final Field<BigDecimal> rad() {
     return DSL.rad(numeric());
   }
 
   @Override
-  @Deprecated
   public final Field<Integer> count() {
     return DSL.count(this);
   }
 
   @Override
-  @Deprecated
   public final Field<Integer> countDistinct() {
     return DSL.countDistinct(this);
   }
 
   @Override
-  @Deprecated
   public final Field<T> max() {
     return DSL.max(this);
   }
 
   @Override
-  @Deprecated
   public final Field<T> min() {
     return DSL.min(this);
   }
 
   @Override
-  @Deprecated
   public final Field<BigDecimal> sum() {
     return DSL.sum(numeric());
   }
 
   @Override
-  @Deprecated
   public final Field<BigDecimal> avg() {
     return DSL.avg(numeric());
   }
 
   @Override
-  @Deprecated
   public final Field<BigDecimal> median() {
     return DSL.median(numeric());
   }
 
   @Override
-  @Deprecated
   public final Field<BigDecimal> stddevPop() {
     return DSL.stddevPop(numeric());
   }
 
   @Override
-  @Deprecated
   public final Field<BigDecimal> stddevSamp() {
     return DSL.stddevSamp(numeric());
   }
 
   @Override
-  @Deprecated
   public final Field<BigDecimal> varPop() {
     return DSL.varPop(numeric());
   }
 
   @Override
-  @Deprecated
   public final Field<BigDecimal> varSamp() {
     return DSL.varSamp(numeric());
   }
 
   @Override
-  @Deprecated
   public final WindowPartitionByStep<Integer> countOver() {
     return DSL.count(this).over();
   }
 
   @Override
-  @Deprecated
   public final WindowPartitionByStep<T> maxOver() {
     return DSL.max(this).over();
   }
 
   @Override
-  @Deprecated
   public final WindowPartitionByStep<T> minOver() {
     return DSL.min(this).over();
   }
 
   @Override
-  @Deprecated
   public final WindowPartitionByStep<BigDecimal> sumOver() {
     return DSL.sum(numeric()).over();
   }
 
   @Override
-  @Deprecated
   public final WindowPartitionByStep<BigDecimal> avgOver() {
     return DSL.avg(numeric()).over();
   }
 
   @Override
-  @Deprecated
   public final WindowIgnoreNullsStep<T> firstValue() {
     return DSL.firstValue(this);
   }
 
   @Override
-  @Deprecated
   public final WindowIgnoreNullsStep<T> lastValue() {
     return DSL.lastValue(this);
   }
 
   @Override
-  @Deprecated
   public final WindowIgnoreNullsStep<T> lead() {
     return DSL.lead(this);
   }
 
   @Override
-  @Deprecated
   public final WindowIgnoreNullsStep<T> lead(int offset) {
     return DSL.lead(this, offset);
   }
 
   @Override
-  @Deprecated
   public final WindowIgnoreNullsStep<T> lead(int offset, T defaultValue) {
     return DSL.lead(this, offset, defaultValue);
   }
 
   @Override
-  @Deprecated
   public final WindowIgnoreNullsStep<T> lead(int offset, Field<T> defaultValue) {
     return DSL.lead(this, offset, defaultValue);
   }
 
   @Override
-  @Deprecated
   public final WindowIgnoreNullsStep<T> lag() {
     return DSL.lag(this);
   }
 
   @Override
-  @Deprecated
   public final WindowIgnoreNullsStep<T> lag(int offset) {
     return DSL.lag(this, offset);
   }
 
   @Override
-  @Deprecated
   public final WindowIgnoreNullsStep<T> lag(int offset, T defaultValue) {
     return DSL.lag(this, offset, defaultValue);
   }
 
   @Override
-  @Deprecated
   public final WindowIgnoreNullsStep<T> lag(int offset, Field<T> defaultValue) {
     return DSL.lag(this, offset, defaultValue);
   }
 
   @Override
-  @Deprecated
   public final WindowPartitionByStep<BigDecimal> stddevPopOver() {
     return DSL.stddevPop(numeric()).over();
   }
 
   @Override
-  @Deprecated
   public final WindowPartitionByStep<BigDecimal> stddevSampOver() {
     return DSL.stddevSamp(numeric()).over();
   }
 
   @Override
-  @Deprecated
   public final WindowPartitionByStep<BigDecimal> varPopOver() {
     return DSL.varPop(numeric()).over();
   }
 
   @Override
-  @Deprecated
   public final WindowPartitionByStep<BigDecimal> varSampOver() {
     return DSL.varSamp(numeric()).over();
   }
 
   @Override
-  @Deprecated
   public final Field<String> upper() {
     return DSL.upper(varchar());
   }
 
   @Override
-  @Deprecated
   public final Field<String> lower() {
     return DSL.lower(varchar());
   }
 
   @Override
-  @Deprecated
   public final Field<String> trim() {
     return DSL.trim(varchar());
   }
 
   @Override
-  @Deprecated
   public final Field<String> rtrim() {
     return DSL.rtrim(varchar());
   }
 
   @Override
-  @Deprecated
   public final Field<String> ltrim() {
     return DSL.ltrim(varchar());
   }
 
   @Override
-  @Deprecated
   public final Field<String> rpad(Field<? extends Number> length) {
     return DSL.rpad(varchar(), length);
   }
 
   @Override
-  @Deprecated
   public final Field<String> rpad(int length) {
     return DSL.rpad(varchar(), length);
   }
 
   @Override
-  @Deprecated
   public final Field<String> rpad(Field<? extends Number> length, Field<String> character) {
     return DSL.rpad(varchar(), length, character);
   }
 
   @Override
-  @Deprecated
   public final Field<String> rpad(int length, char character) {
     return DSL.rpad(varchar(), length, character);
   }
 
   @Override
-  @Deprecated
   public final Field<String> lpad(Field<? extends Number> length) {
     return DSL.lpad(varchar(), length);
   }
 
   @Override
-  @Deprecated
   public final Field<String> lpad(int length) {
     return DSL.lpad(varchar(), length);
   }
 
   @Override
-  @Deprecated
   public final Field<String> lpad(Field<? extends Number> length, Field<String> character) {
     return DSL.lpad(varchar(), length, character);
   }
 
   @Override
-  @Deprecated
   public final Field<String> lpad(int length, char character) {
     return DSL.lpad(varchar(), length, character);
   }
 
   @Override
-  @Deprecated
   public final Field<String> repeat(Number count) {
     return DSL.repeat(varchar(), count == null ? 0 : count.intValue());
   }
 
   @Override
-  @Deprecated
   public final Field<String> repeat(Field<? extends Number> count) {
     return DSL.repeat(varchar(), count);
   }
 
   @Override
-  @Deprecated
   public final Field<String> replace(Field<String> search) {
     return DSL.replace(varchar(), search);
   }
 
   @Override
-  @Deprecated
   public final Field<String> replace(String search) {
     return DSL.replace(varchar(), search);
   }
 
   @Override
-  @Deprecated
   public final Field<String> replace(Field<String> search, Field<String> replace) {
     return DSL.replace(varchar(), search, replace);
   }
 
   @Override
-  @Deprecated
   public final Field<String> replace(String search, String replace) {
     return DSL.replace(varchar(), search, replace);
   }
 
   @Override
-  @Deprecated
   public final Field<Integer> position(String search) {
     return DSL.position(varchar(), search);
   }
 
   @Override
-  @Deprecated
   public final Field<Integer> position(Field<String> search) {
     return DSL.position(varchar(), search);
   }
 
   @Override
-  @Deprecated
   public final Field<Integer> ascii() {
     return DSL.ascii(varchar());
   }
@@ -1912,13 +1820,11 @@ abstract class AbstractField<T> extends AbstractTypedNamed<T> implements Field<T
   }
 
   @Override
-  @Deprecated
   public final Field<String> concat(Field<?>... fields) {
     return DSL.concat(Tools.combine(this, fields));
   }
 
   @Override
-  @Deprecated
   public final Field<String> concat(String... values) {
     return DSL.concat(Tools.combine(this, Tools.fieldsArray(values)));
   }
@@ -1929,160 +1835,133 @@ abstract class AbstractField<T> extends AbstractTypedNamed<T> implements Field<T
   }
 
   @Override
-  @Deprecated
   public final Field<String> substring(int startingPosition) {
     return DSL.substring(varchar(), startingPosition);
   }
 
   @Override
-  @Deprecated
   public final Field<String> substring(Field<? extends Number> startingPosition) {
     return DSL.substring(varchar(), startingPosition);
   }
 
   @Override
-  @Deprecated
   public final Field<String> substring(int startingPosition, int length) {
     return DSL.substring(varchar(), startingPosition, length);
   }
 
   @Override
-  @Deprecated
   public final Field<String> substring(
       Field<? extends Number> startingPosition, Field<? extends Number> length) {
     return DSL.substring(varchar(), startingPosition, length);
   }
 
   @Override
-  @Deprecated
   public final Field<Integer> length() {
     return DSL.length(varchar());
   }
 
   @Override
-  @Deprecated
   public final Field<Integer> charLength() {
     return DSL.charLength(varchar());
   }
 
   @Override
-  @Deprecated
   public final Field<Integer> bitLength() {
     return DSL.bitLength(varchar());
   }
 
   @Override
-  @Deprecated
   public final Field<Integer> octetLength() {
     return DSL.octetLength(varchar());
   }
 
   @Override
-  @Deprecated
   public final Field<Integer> extract(DatePart datePart) {
     return DSL.extract(date(), datePart);
   }
 
   @Override
-  @Deprecated
   @SafeVarargs
   public final Field<T> greatest(T... others) {
     return DSL.greatest(this, Tools.fieldsArray(others));
   }
 
   @Override
-  @Deprecated
   public final Field<T> greatest(Field<?>... others) {
     return DSL.greatest(this, others);
   }
 
   @Override
-  @Deprecated
   @SafeVarargs
   public final Field<T> least(T... others) {
     return DSL.least(this, Tools.fieldsArray(others));
   }
 
   @Override
-  @Deprecated
   public final Field<T> least(Field<?>... others) {
     return DSL.least(this, others);
   }
 
   @Override
-  @Deprecated
   public final Field<T> nvl(T defaultValue) {
     return DSL.nvl(this, defaultValue);
   }
 
   @Override
-  @Deprecated
   public final Field<T> nvl(Field<T> defaultValue) {
     return DSL.nvl(this, defaultValue);
   }
 
   @Override
-  @Deprecated
   public final <Z> Field<Z> nvl2(Z valueIfNotNull, Z valueIfNull) {
     return DSL.nvl2(this, valueIfNotNull, valueIfNull);
   }
 
   @Override
-  @Deprecated
   public final <Z> Field<Z> nvl2(Field<Z> valueIfNotNull, Field<Z> valueIfNull) {
     return DSL.nvl2(this, valueIfNotNull, valueIfNull);
   }
 
   @Override
-  @Deprecated
   public final Field<T> nullif(T other) {
     return DSL.nullif(this, other);
   }
 
   @Override
-  @Deprecated
   public final Field<T> nullif(Field<T> other) {
     return DSL.nullif(this, other);
   }
 
   @Override
-  @Deprecated
   public final <Z> Field<Z> decode(T search, Z result) {
     return DSL.decode(this, Tools.field(search, this), Tools.field(result));
   }
 
   @Override
-  @Deprecated
   public final <Z> Field<Z> decode(T search, Z result, Object... more) {
     Field<Z> r = Tools.field(result);
     DataType<?>[] types = new DataType[more.length];
-
     for (int i = 0; i < types.length - 1; i = i + 2) {
       types[i] = getDataType();
       types[i + 1] = r.getDataType();
     }
-
     if (types.length % 2 == 1) {
       types[types.length - 1] = r.getDataType();
     }
-
     return DSL.decode(this, Tools.field(search, this), r, Tools.fieldsArray(more, types));
   }
 
   @Override
-  @Deprecated
   public final <Z> Field<Z> decode(Field<T> search, Field<Z> result) {
     return DSL.decode(this, search, result);
   }
 
   @Override
-  @Deprecated
   public final <Z> Field<Z> decode(Field<T> search, Field<Z> result, Field<?>... more) {
     return DSL.decode(this, search, result, more);
   }
 
   @Override
-  @Deprecated
   @SafeVarargs
   public final Field<T> coalesce(T option, T... options) {
     return DSL.coalesce(
@@ -2091,7 +1970,6 @@ abstract class AbstractField<T> extends AbstractTypedNamed<T> implements Field<T
   }
 
   @Override
-  @Deprecated
   public final Field<T> coalesce(Field<T> option, Field<?>... options) {
     return DSL.coalesce(this, Tools.combine(option, options));
   }

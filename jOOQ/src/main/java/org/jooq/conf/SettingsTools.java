@@ -64,17 +64,16 @@ import org.jooq.util.jaxb.tools.MiniJAXB;
 public final class SettingsTools {
 
   private static final Settings DEFAULT_SETTINGS;
+
   private static final JooqLogger log = JooqLogger.getLogger(SettingsTools.class);
 
   static {
     Settings settings = null;
     String property = System.getProperty("org.jooq.settings");
-
     if (property != null) {
       log.warn(
           "DEPRECATION",
           "Loading system wide default settings via org.jooq.settings system properties has been deprecated. Please use explicit Settings in your Configuration references, instead.");
-
       // Check classpath first
       InputStream in = SettingsTools.class.getResourceAsStream(property);
       if (in != null) {
@@ -85,10 +84,8 @@ public final class SettingsTools {
         }
       } else settings = MiniJAXB.unmarshal(new File(property), Settings.class);
     }
-
     if (settings == null) {
       InputStream in = SettingsTools.class.getResourceAsStream("/jooq-settings.xml");
-
       if (in != null) {
         try (InputStream i = in) {
           log.warn(
@@ -100,9 +97,7 @@ public final class SettingsTools {
         }
       }
     }
-
     if (settings == null) settings = new Settings();
-
     DEFAULT_SETTINGS = settings;
   }
 
@@ -118,10 +113,8 @@ public final class SettingsTools {
       return INLINED;
     } else if (settings != null) {
       ParamType result = settings.getParamType();
-
       if (result != null) return result;
     }
-
     return INDEXED;
   }
 
@@ -129,10 +122,8 @@ public final class SettingsTools {
   public static final StatementType getStatementType(Settings settings) {
     if (settings != null) {
       StatementType result = settings.getStatementType();
-
       if (result != null) return result;
     }
-
     return PREPARED_STATEMENT;
   }
 
@@ -140,10 +131,8 @@ public final class SettingsTools {
   public static final BackslashEscaping getBackslashEscaping(Settings settings) {
     if (settings != null) {
       BackslashEscaping result = settings.getBackslashEscaping();
-
       if (result != null) return result;
     }
-
     return BackslashEscaping.DEFAULT;
   }
 
@@ -209,7 +198,6 @@ public final class SettingsTools {
   /** Lazy access to {@link RenderMapping}. */
   public static final RenderMapping getRenderMapping(Settings settings) {
     if (settings.getRenderMapping() == null) settings.setRenderMapping(new RenderMapping());
-
     return settings.getRenderMapping();
   }
 
@@ -219,10 +207,8 @@ public final class SettingsTools {
    */
   public static final RenderKeywordCase getRenderKeywordCase(Settings settings) {
     RenderKeywordCase result = settings.getRenderKeywordCase();
-
     if (result == null || result == RenderKeywordCase.AS_IS) {
       RenderKeywordStyle style = settings.getRenderKeywordStyle();
-
       if (style != null) {
         switch (style) {
           case AS_IS:
@@ -244,7 +230,6 @@ public final class SettingsTools {
         result = RenderKeywordCase.AS_IS;
       }
     }
-
     return result;
   }
 
@@ -254,15 +239,12 @@ public final class SettingsTools {
    */
   public static final RenderNameCase getRenderNameCase(Settings settings) {
     RenderNameCase result = settings.getRenderNameCase();
-
     if (result == null || result == RenderNameCase.AS_IS) {
       RenderNameStyle style = settings.getRenderNameStyle();
-
       if (style == RenderNameStyle.LOWER) result = RenderNameCase.LOWER;
       else if (style == RenderNameStyle.UPPER) result = RenderNameCase.UPPER;
       else result = RenderNameCase.AS_IS;
     }
-
     return result;
   }
 
@@ -272,15 +254,12 @@ public final class SettingsTools {
    */
   public static final RenderQuotedNames getRenderQuotedNames(Settings settings) {
     RenderQuotedNames result = settings.getRenderQuotedNames();
-
     if (result == null || result == RenderQuotedNames.EXPLICIT_DEFAULT_QUOTED) {
       RenderNameStyle style = settings.getRenderNameStyle();
-
       if (style == null || style == RenderNameStyle.QUOTED)
         result = RenderQuotedNames.EXPLICIT_DEFAULT_QUOTED;
       else result = RenderQuotedNames.NEVER;
     }
-
     return result;
   }
 
@@ -320,7 +299,6 @@ public final class SettingsTools {
    * </ul>
    */
   public static final Settings defaultSettings() {
-
     // Clone the DEFAULT_SETTINGS to prevent modification
     return clone(DEFAULT_SETTINGS);
   }
@@ -328,14 +306,12 @@ public final class SettingsTools {
   /** Clone some settings. */
   public static final Settings clone(Settings settings) {
     Settings result = (Settings) settings.clone();
-
     if (result.renderFormatting != null)
       result.renderFormatting = (RenderFormatting) result.renderFormatting.clone();
     if (result.parseSearchPath != null)
       result.parseSearchPath = new ArrayList<>(result.parseSearchPath);
     if (result.migrationSchemata != null)
       result.migrationSchemata = new ArrayList<>(result.migrationSchemata);
-
     return result;
   }
 

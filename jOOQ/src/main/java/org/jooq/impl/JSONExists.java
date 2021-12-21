@@ -56,6 +56,7 @@ import org.jooq.Keyword;
 final class JSONExists extends AbstractCondition implements JSONExistsOnStep {
 
   private final Field<?> json;
+
   private final Field<String> path;
 
   JSONExists(Field<?> json, Field<String> path) {
@@ -63,7 +64,6 @@ final class JSONExists extends AbstractCondition implements JSONExistsOnStep {
   }
 
   private JSONExists(Field<?> json, Field<String> path, Behaviour onError) {
-
     this.json = json;
     this.path = path;
   }
@@ -71,18 +71,15 @@ final class JSONExists extends AbstractCondition implements JSONExistsOnStep {
   // -------------------------------------------------------------------------
   // XXX: DSL API
   // -------------------------------------------------------------------------
-
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
       case MYSQL:
         ctx.visit(N_JSON_CONTAINS_PATH).sql('(').visit(json).sql(", 'one', ").visit(path).sql(')');
         break;
-
       case POSTGRES:
         ctx.visit(N_JSONB_PATH_EXISTS)
             .sql('(')
@@ -91,12 +88,9 @@ final class JSONExists extends AbstractCondition implements JSONExistsOnStep {
             .visit(path)
             .sql("::jsonpath)");
         break;
-
       default:
         ctx.visit(K_JSON_EXISTS).sql('(').visit(json).sql(", ");
-
         ctx.visit(path);
-
         ctx.sql(')');
         break;
     }

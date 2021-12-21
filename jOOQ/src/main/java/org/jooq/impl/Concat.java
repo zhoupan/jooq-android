@@ -52,28 +52,23 @@ final class Concat extends AbstractField<String> {
 
   Concat(Field<?>... arguments) {
     super(N_CONCAT, SQLDataType.VARCHAR);
-
     this.arguments = arguments;
   }
 
   @Override
   public final void accept(Context<?> ctx) {
-
     // [#461] Type cast the concat expression, if this isn't a VARCHAR field
     Field<String>[] cast = castAllIfNeeded(arguments, String.class);
-
     if (Boolean.TRUE.equals(ctx.settings().isRenderCoalesceToEmptyStringInConcat())
         && ctx.configuration()
             .commercial(
                 () ->
                     "Auto-coalescing of CONCAT arguments is available in the jOOQ 3.15 Professional Edition and jOOQ Enterprise Edition, see https://github.com/jOOQ/jOOQ/issues/11757")) {}
-
     // If there is only one argument, return it immediately
     if (cast.length == 1) {
       ctx.visit(cast[0]);
       return;
     }
-
     ExpressionOperator op = CONCAT;
     switch (ctx.family()) {
       case MARIADB:
@@ -81,11 +76,9 @@ final class Concat extends AbstractField<String> {
         ctx.visit(function("concat", SQLDataType.VARCHAR, cast));
         return;
     }
-
     Field<?> expression = new Expression<>(op, false, cast[0], cast[1]);
     for (int i = 2; i < cast.length; i++)
       expression = new Expression<>(op, false, expression, cast[i]);
-
     ctx.visit(expression);
   }
 }

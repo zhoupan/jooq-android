@@ -56,14 +56,23 @@ import org.jooq.SQLDialect;
  * @author Lukas Eder
  */
 final class DataTypeProxy<T> extends AbstractDataType<T> {
+
   private AbstractDataType<T> type;
+
   private final Integer overridePrecision;
+
   private final Integer overrideScale;
+
   private final Integer overrideLength;
+
   private final Nullability overrideNullability;
+
   private final Collation overrideCollation;
+
   private final CharacterSet overrideCharacterSet;
+
   private final Boolean overrideIdentity;
+
   private final Field<T> overrideDefaultValue;
 
   DataTypeProxy(AbstractDataType<T> type) {
@@ -81,7 +90,6 @@ final class DataTypeProxy<T> extends AbstractDataType<T> {
       Boolean overrideIdentity,
       Field<T> overrideDefaultValue) {
     super(type.getQualifiedName(), type.getCommentPart());
-
     this.type = type;
     this.overridePrecision = overridePrecision;
     this.overrideScale = overrideScale;

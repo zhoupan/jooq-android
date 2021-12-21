@@ -2106,7 +2106,6 @@ public interface Result<R extends Record> extends Fields, List<R>, Attachable, F
 
   /** @deprecated - 3.6.0 - [#3879] - Use {@link #intoArrays()} instead. */
   @NotNull
-  @Deprecated(forRemoval = true, since = "3.6")
   Object[][] intoArray();
 
   /**
@@ -3094,7 +3093,6 @@ public interface Result<R extends Record> extends Fields, List<R>, Attachable, F
    * @deprecated - 3.15.0 - [#11902] - Use {@link Iterable#forEach(Consumer)} based methods,
    *     instead.
    */
-  @Deprecated(forRemoval = true, since = "3.15")
   @NotNull
   <H extends RecordHandler<? super R>> H into(H handler);
 
@@ -3374,7 +3372,6 @@ public interface Result<R extends Record> extends Fields, List<R>, Attachable, F
    *     4.0
    */
   @NotNull
-  @Deprecated(forRemoval = true, since = "3.10")
   Result<R> intern(Field<?>... fields);
 
   /**
@@ -3398,7 +3395,6 @@ public interface Result<R extends Record> extends Fields, List<R>, Attachable, F
    *     4.0
    */
   @NotNull
-  @Deprecated(forRemoval = true, since = "3.10")
   Result<R> intern(int... fieldIndexes);
 
   /**
@@ -3414,7 +3410,6 @@ public interface Result<R extends Record> extends Fields, List<R>, Attachable, F
    *     4.0
    */
   @NotNull
-  @Deprecated(forRemoval = true, since = "3.10")
   Result<R> intern(String... fieldNames);
 
   /**
@@ -3430,13 +3425,11 @@ public interface Result<R extends Record> extends Fields, List<R>, Attachable, F
    *     4.0
    */
   @NotNull
-  @Deprecated(forRemoval = true, since = "3.10")
   Result<R> intern(Name... fieldNames);
 
   // ------------------------------------------------------------------------
   // Fetching of new results based on records in this result
   // ------------------------------------------------------------------------
-
   /**
    * Fetch parent records of this record, given a foreign key, as if fetching from {@link
    * #parents(ForeignKey)}.
@@ -3480,7 +3473,6 @@ public interface Result<R extends Record> extends Fields, List<R>, Attachable, F
   // ------------------------------------------------------------------------
   // Specialisations of Attachable methods
   // ------------------------------------------------------------------------
-
   /**
    * Attach this result and all of its contained records to a new {@link Configuration}.
    *

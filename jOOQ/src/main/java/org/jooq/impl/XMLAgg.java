@@ -54,12 +54,10 @@ final class XMLAgg extends AbstractAggregateFunction<XML> implements XMLAggOrder
 
   @Override
   public void accept(Context<?> ctx) {
-
     ctx.visit(N_XMLAGG).sql('(');
     acceptArguments0(ctx);
     acceptOrderBy(ctx);
     ctx.sql(')');
-
     acceptFilterClause(ctx);
     acceptOverClause(ctx);
   }

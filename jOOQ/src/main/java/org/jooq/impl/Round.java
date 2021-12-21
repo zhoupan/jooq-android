@@ -58,18 +58,17 @@ import org.jooq.tools.*;
 final class Round<T extends Number> extends AbstractField<T> {
 
   private final Field<T> value;
+
   private final Field<Integer> decimals;
 
   Round(Field<T> value) {
     super(N_ROUND, allNotNull((DataType) dataType(INTEGER, value, false), value));
-
     this.value = nullSafeNotNull(value, INTEGER);
     this.decimals = null;
   }
 
   Round(Field<T> value, Field<Integer> decimals) {
     super(N_ROUND, allNotNull((DataType) dataType(INTEGER, value, false), value, decimals));
-
     this.value = nullSafeNotNull(value, INTEGER);
     this.decimals = nullSafeNotNull(decimals, INTEGER);
   }
@@ -77,11 +76,9 @@ final class Round<T extends Number> extends AbstractField<T> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
-
         // evaluate "round" if unavailable
       case DERBY:
         {
@@ -91,35 +88,28 @@ final class Round<T extends Number> extends AbstractField<T> {
                         isub(value, DSL.floor(value)).lessThan((T) Double.valueOf(0.5)),
                         DSL.floor(value))
                     .otherwise(DSL.ceil(value)));
-
             return;
           } else if (decimals instanceof Param) {
             Integer decimalsValue = ((Param<Integer>) decimals).getValue();
             Field<?> factor = DSL.val(java.math.BigDecimal.ONE.movePointRight(decimalsValue));
             Field<T> mul = imul(value, factor);
-
             ctx.visit(
                 DSL.when(
                         isub(mul, DSL.floor(mul)).lessThan((T) Double.valueOf(0.5)),
                         idiv(DSL.floor(mul), factor))
                     .otherwise(idiv(DSL.ceil(mul), factor)));
-
             return;
           }
           // fall-through
         }
-
         // There's no function round(double precision, integer) in Postgres
       case POSTGRES:
         if (decimals == null) ctx.visit(function(N_ROUND, getDataType(), value));
         else ctx.visit(function(N_ROUND, getDataType(), castIfNeeded(value, NUMERIC), decimals));
-
         return;
-
       default:
         if (decimals == null) ctx.visit(function(N_ROUND, getDataType(), value));
         else ctx.visit(function(N_ROUND, getDataType(), value, decimals));
-
         return;
     }
   }
@@ -127,7 +117,6 @@ final class Round<T extends Number> extends AbstractField<T> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Round) {

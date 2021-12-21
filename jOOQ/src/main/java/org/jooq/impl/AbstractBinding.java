@@ -116,7 +116,6 @@ public abstract class AbstractBinding<T, U> implements Binding<T, U> {
   // -------------------------------------------------------------------------
   // Empty base implementations for stored procedure OUT parameter support:
   // -------------------------------------------------------------------------
-
   @Override
   public void register(BindingRegisterContext<U> ctx) throws SQLException {
     throw new SQLFeatureNotSupportedException("AbstractBinding::register");
@@ -130,7 +129,6 @@ public abstract class AbstractBinding<T, U> implements Binding<T, U> {
   // -------------------------------------------------------------------------
   // Empty base implementations for SQLData serialisation support:
   // -------------------------------------------------------------------------
-
   @Override
   public void set(BindingSetSQLOutputContext<U> ctx) throws SQLException {
     throw new SQLFeatureNotSupportedException("AbstractBinding::set");

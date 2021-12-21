@@ -62,6 +62,7 @@ import org.jooq.tools.JooqLogger;
  * @author Lukas Eder
  */
 public abstract class AbstractConfiguration implements Configuration {
+
   private static final JooqLogger log = JooqLogger.getLogger(AbstractConfiguration.class);
 
   @Override
@@ -254,7 +255,6 @@ public abstract class AbstractConfiguration implements Configuration {
   @Override
   public boolean commercial(Supplier<String> logMessage) {
     if (commercial()) return true;
-
     log.warn(logMessage.get());
     return false;
   }
@@ -262,7 +262,6 @@ public abstract class AbstractConfiguration implements Configuration {
   @Override
   public boolean requireCommercial(Supplier<String> logMessage) throws DataAccessException {
     if (commercial()) return true;
-
     throw new DataAccessException(logMessage.get());
   }
 }

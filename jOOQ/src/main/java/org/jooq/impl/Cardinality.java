@@ -46,17 +46,16 @@ import org.jooq.Field;
 
 /** @author Lukas Eder */
 final class Cardinality extends AbstractField<Integer> {
+
   private final Field<?> arg;
 
   Cardinality(Field<? extends Object[]> arg) {
     super(N_CARDINALITY, INTEGER);
-
     this.arg = arg;
   }
 
   @Override
   public final void accept(Context<?> ctx) {
-
     ctx.visit(N_CARDINALITY).sql('(').visit(arg).sql(')');
   }
 }

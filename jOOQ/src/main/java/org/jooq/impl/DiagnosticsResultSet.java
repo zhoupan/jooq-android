@@ -65,29 +65,37 @@ import org.jooq.tools.jdbc.DefaultResultSet;
 final class DiagnosticsResultSet extends DefaultResultSet {
 
   final DiagnosticsConnection connection;
+
   final String sql;
+
   final ResultSetMetaData meta;
+
   final BitSet nullable;
+
   final BitSet read;
+
   final int columns;
+
   int current;
+
   int rows;
+
   int wasColumnIndex;
+
   boolean wasPrimitive;
+
   boolean wasNullable;
 
   DiagnosticsResultSet(
       ResultSet delegate, String sql, Statement creator, DiagnosticsConnection connection)
       throws SQLException {
     super(delegate, creator);
-
     this.connection = connection;
     this.sql = sql;
     this.meta = delegate.getMetaData();
     this.columns = meta.getColumnCount();
     this.read = new BitSet(columns);
     this.nullable = new BitSet(columns);
-
     for (int i = 0; i < columns; i++)
       nullable.set(i, meta.isNullable(i + 1) != ResultSetMetaData.columnNoNulls);
   }
@@ -95,7 +103,6 @@ final class DiagnosticsResultSet extends DefaultResultSet {
   // ------------------------------------------------------------------------
   // XXX Getter methods
   // ------------------------------------------------------------------------
-
   @Override
   public final String getString(int columnIndex) throws SQLException {
     checkPrimitive();
@@ -153,7 +160,6 @@ final class DiagnosticsResultSet extends DefaultResultSet {
   }
 
   @Override
-  @Deprecated
   public final BigDecimal getBigDecimal(int columnIndex, int scale) throws SQLException {
     checkPrimitive();
     read(columnIndex);
@@ -196,7 +202,6 @@ final class DiagnosticsResultSet extends DefaultResultSet {
   }
 
   @Override
-  @Deprecated
   public final InputStream getUnicodeStream(int columnIndex) throws SQLException {
     checkPrimitive();
     read(columnIndex);
@@ -267,7 +272,6 @@ final class DiagnosticsResultSet extends DefaultResultSet {
   }
 
   @Override
-  @Deprecated
   public final BigDecimal getBigDecimal(String columnLabel, int scale) throws SQLException {
     checkPrimitive();
     read(columnLabel);
@@ -310,7 +314,6 @@ final class DiagnosticsResultSet extends DefaultResultSet {
   }
 
   @Override
-  @Deprecated
   public final InputStream getUnicodeStream(String columnLabel) throws SQLException {
     checkPrimitive();
     read(columnLabel);
@@ -584,20 +587,16 @@ final class DiagnosticsResultSet extends DefaultResultSet {
       ctx.resultSetColumnIndex = wasColumnIndex;
       connection.listeners.unnecessaryWasNullCall(ctx);
     }
-
     wasPrimitive = false;
     wasNullable = false;
-
     return super.wasNull();
   }
 
   // ------------------------------------------------------------------------
   // XXX Utilities
   // ------------------------------------------------------------------------
-
   private final void wasPrimitive(int columnIndex) throws SQLException {
     checkPrimitive();
-
     wasColumnIndex = columnIndex;
     wasPrimitive = true;
     wasNullable = nullable.get(columnIndex - 1);
@@ -614,7 +613,6 @@ final class DiagnosticsResultSet extends DefaultResultSet {
       ctx.resultSetColumnIndex = wasColumnIndex;
       connection.listeners.missingWasNullCall(ctx);
     }
-
     wasPrimitive = false;
     wasNullable = false;
   }
@@ -629,21 +627,18 @@ final class DiagnosticsResultSet extends DefaultResultSet {
 
   private final DefaultDiagnosticsContext ctx() throws SQLException {
     DefaultDiagnosticsContext ctx = new DefaultDiagnosticsContext(sql);
-
     ctx.resultSet = super.getDelegate();
     ctx.resultSetWrapper = this;
     ctx.resultSetConsumedColumnCount = read.cardinality();
     ctx.resultSetFetchedColumnCount = columns;
     ctx.resultSetConsumedRows = current;
     ctx.resultSetFetchedRows = current + 1;
-
     return ctx;
   }
 
   // ------------------------------------------------------------------------
   // XXX Navigational methods
   // ------------------------------------------------------------------------
-
   @Override
   public final void beforeFirst() throws SQLException {
     checkPrimitive();
@@ -699,7 +694,6 @@ final class DiagnosticsResultSet extends DefaultResultSet {
       current = current + relative;
       rows = Math.max(rows, current);
     }
-
     return success;
   }
 
@@ -708,7 +702,6 @@ final class DiagnosticsResultSet extends DefaultResultSet {
       current = absolute;
       rows = Math.max(rows, current);
     }
-
     return success;
   }
 
@@ -739,26 +732,20 @@ final class DiagnosticsResultSet extends DefaultResultSet {
   @Override
   public final void close() throws SQLException {
     checkPrimitive();
-
     try {
       if (current < rows) super.absolute(current = rows);
-
       DefaultDiagnosticsContext ctx = ctx();
       ctx.resultSetClosing = true;
-
       if (super.next()) connection.listeners.tooManyRowsFetched(ctx);
-
       if (read.cardinality() != columns) connection.listeners.tooManyColumnsFetched(ctx);
     } catch (SQLException ignore) {
     }
-
     super.close();
   }
 
   // ------------------------------------------------------------------------
   // XXX Other methods
   // ------------------------------------------------------------------------
-
   @Override
   public void setFetchDirection(int direction) throws SQLException {
     checkPrimitive();

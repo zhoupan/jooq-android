@@ -86,7 +86,9 @@ import org.jooq.tools.StringUtils;
 @org.jooq.Internal
 public class UpdatableRecordImpl<R extends UpdatableRecord<R>> extends TableRecordImpl<R>
     implements UpdatableRecord<R> {
+
   private static final JooqLogger log = JooqLogger.getLogger(UpdatableRecordImpl.class);
+
   private static final Set<SQLDialect> NO_SUPPORT_FOR_UPDATE = SQLDialect.supportedBy(SQLITE);
 
   public UpdatableRecordImpl(Table<R> table) {
@@ -135,14 +137,12 @@ public class UpdatableRecordImpl<R extends UpdatableRecord<R>> extends TableReco
   @Override
   public final int store(final Field<?>... storeFields) {
     final int[] result = new int[1];
-
     delegate(configuration(), (Record) this, STORE)
         .operate(
             record -> {
               result[0] = store0(storeFields);
               return record;
             });
-
     return result[0];
   }
 
@@ -184,47 +184,37 @@ public class UpdatableRecordImpl<R extends UpdatableRecord<R>> extends TableReco
   private final int store0(Field<?>[] storeFields) {
     TableField<R, ?>[] keys = getPrimaryKey().getFieldsArray();
     boolean executeUpdate = false;
-
     // [#2764] If primary key values are allowed to be changed,
     // inserting is only possible without prior loading of pk values
     if (updatablePrimaryKeys(settings(this))) {
       executeUpdate = fetched;
     } else {
       for (TableField<R, ?> field : keys) {
-
         // If any primary key value is null or changed
         if (changed(field)
-            ||
-
-            // [#3237] or if a NOT NULL primary key value is null, then execute an INSERT
+            || // [#3237] or if a NOT NULL primary key value is null, then execute an INSERT
             (field.getDataType().nullable() == false && get(field) == null)) {
           executeUpdate = false;
           break;
         }
-
         // Otherwise, updates are possible
         executeUpdate = true;
       }
     }
-
     int result = 0;
-
     if (executeUpdate) result = storeUpdate(storeFields, keys);
     else result = storeInsert(storeFields);
-
     return result;
   }
 
   private final int storeUpdate(final Field<?>[] storeFields, final TableField<R, ?>[] keys) {
     final int[] result = new int[1];
-
     delegate(configuration(), (Record) this, UPDATE)
         .operate(
             record -> {
               result[0] = storeUpdate0(storeFields, keys);
               return record;
             });
-
     return result[0];
   }
 
@@ -234,21 +224,18 @@ public class UpdatableRecordImpl<R extends UpdatableRecord<R>> extends TableReco
 
   private final int storeMerge(final Field<?>[] storeFields, final TableField<R, ?>[] keys) {
     final int[] result = new int[1];
-
     delegate(configuration(), (Record) this, MERGE)
         .operate(
             record -> {
               result[0] = storeMerge0(storeFields, keys);
               return record;
             });
-
     // MySQL returns 0 when nothing was updated, 1 when something was inserted, and 2 if something
     // was updated
     return Math.min(result[0], 1);
   }
 
   private final int storeMerge0(Field<?>[] storeFields, TableField<R, ?>[] keys) {
-
     // [#10050] No need for MERGE with optimistic locking being active.
     if (lockingActive()) {
       if (lockValuePresent()) return storeUpdate0(storeFields, keys);
@@ -266,7 +253,6 @@ public class UpdatableRecordImpl<R extends UpdatableRecord<R>> extends TableReco
   }
 
   private final boolean lockValuePresent() {
-
     // [#10050] A lock value is present if we either have locking columns or if the record was
     // fetched from the database
     return getRecordVersion() != null
@@ -281,108 +267,82 @@ public class UpdatableRecordImpl<R extends UpdatableRecord<R>> extends TableReco
       Field<?>[] storeFields, TableField<R, ?>[] keys, Q query, boolean merge) {
     addChangedValues(storeFields, query, merge);
     Tools.addConditions(query, this, keys);
-
     if (!query.isExecutable()) {
       switch (StringUtils.defaultIfNull(
           create().settings().getUpdateUnchangedRecords(), UpdateUnchangedRecords.NEVER)) {
-
           // Don't store records if no value was set by client code
         case NEVER:
           if (log.isDebugEnabled()) log.debug("Query is not executable", query);
-
           return 0;
-
         case SET_PRIMARY_KEY_TO_ITSELF:
           for (TableField<R, ?> key : keys) query.addValue(key, (Field) key);
-
           break;
-
         case SET_NON_PRIMARY_KEY_TO_THEMSELVES:
           for (Field<?> field : storeFields)
             if (!asList(keys).contains(field)) query.addValue(field, (Field) field);
-
           break;
-
         case SET_NON_PRIMARY_KEY_TO_RECORD_VALUES:
           for (Field<?> field : storeFields)
             if (!asList(keys).contains(field)) changed(field, true);
-
           addChangedValues(storeFields, query, merge);
           break;
       }
     }
-
     // [#1596] Set timestamp and/or version columns to appropriate values
     // [#8924] Allow for overriding this using a setting
     BigInteger version = addRecordVersion(query, merge);
     Timestamp timestamp = addRecordTimestamp(query, merge);
-
     if (isExecuteWithOptimisticLocking())
-
       // [#1596] Add additional conditions for version and/or timestamp columns
       if (isTimestampOrVersionAvailable()) addConditionForVersionAndTimestamp(query);
-
-      // [#1547] Try fetching the Record again first, and compare this
+      else // [#1547] Try fetching the Record again first, and compare this
       // Record's original values with the ones in the database
       // [#5384] Do this only if the exclusion flag for unversioned records is off
-      else if (isExecuteWithOptimisticLockingIncludeUnversioned()) checkIfChanged(keys);
-
+      if (isExecuteWithOptimisticLockingIncludeUnversioned()) checkIfChanged(keys);
     // [#1596]  Check if the record was really changed in the database
     // [#1859]  Specify the returning clause if needed
     // [#10051] See if we can return keys also on MERGE
     Collection<Field<?>> key = merge ? null : setReturningIfNeeded(query);
     int result = query.execute();
     checkIfChanged(result, version, timestamp);
-
     if (result > 0) {
       for (Field<?> storeField : storeFields) changed(storeField, false);
-
       // [#1859] If an update was successful try fetching the generated
       getReturningIfNeeded(query, key);
     }
-
     return result;
   }
 
   @Override
   public final int delete() {
     final int[] result = new int[1];
-
     delegate(configuration(), (Record) this, DELETE)
         .operate(
             record -> {
               result[0] = delete0();
               return record;
             });
-
     return result[0];
   }
 
   private final int delete0() {
     TableField<R, ?>[] keys = getPrimaryKey().getFieldsArray();
-
     try {
       DeleteQuery<R> delete1 = create().deleteQuery(getTable());
       Tools.addConditions(delete1, this, keys);
-
       if (isExecuteWithOptimisticLocking())
-
         // [#1596] Add additional conditions for version and/or timestamp columns
         if (isTimestampOrVersionAvailable()) addConditionForVersionAndTimestamp(delete1);
-
-        // [#1547] Try fetching the Record again first, and compare this
+        else // [#1547] Try fetching the Record again first, and compare this
         // Record's original values with the ones in the database
         // [#5384] Do this only if the exclusion flag for unversioned records is off
-        else if (isExecuteWithOptimisticLockingIncludeUnversioned()) checkIfChanged(keys);
-
+        if (isExecuteWithOptimisticLockingIncludeUnversioned()) checkIfChanged(keys);
       int result = delete1.execute();
       checkIfChanged(result, null, null);
       return result;
-    }
-
-    // [#673] [#3363] If store() is called after delete(), a new INSERT should
+    } finally // [#673] [#3363] If store() is called after delete(), a new INSERT should
     // be executed and the record should be recreated
-    finally {
+    {
       changed(true);
       fetched = false;
     }
@@ -399,10 +359,8 @@ public class UpdatableRecordImpl<R extends UpdatableRecord<R>> extends TableReco
     select.addSelect(refreshFields);
     select.addFrom(getTable());
     Tools.addConditions(select, this, getPrimaryKey().getFieldsArray());
-
     if (select.execute() == 1) {
       final AbstractRecord source = (AbstractRecord) select.getResult().get(0);
-
       delegate(configuration(), (Record) this, REFRESH)
           .operate(
               record -> {
@@ -423,7 +381,6 @@ public class UpdatableRecordImpl<R extends UpdatableRecord<R>> extends TableReco
   @SuppressWarnings({"unchecked", "rawtypes"})
   @Override
   public final R copy() {
-
     // [#3359] The "fetched" flag must be set to false to enforce INSERT statements on
     // subsequent store() calls - when Settings.updatablePrimaryKeys is set.
     // R vs Record casting is needed in Java 8 it seems
@@ -431,14 +388,10 @@ public class UpdatableRecordImpl<R extends UpdatableRecord<R>> extends TableReco
         Tools.newRecord(false, (Table<Record>) (Table) getTable(), configuration())
             .operate(
                 (Record copy) -> {
-
                   // Copy all fields. This marks them all as isChanged, which is important
                   List<TableField<R, ?>> key = getPrimaryKey().getFields();
-                  for (Field<?> field : fields.fields.fields)
-
-                    // Don't copy key values
-                    if (!key.contains(field)) copy.set((Field) field, get(field));
-
+                  for (Field<?> field : fields.fields.fields) // Don't copy key values
+                  if (!key.contains(field)) copy.set((Field) field, get(field));
                   return copy;
                 });
   }
@@ -459,7 +412,6 @@ public class UpdatableRecordImpl<R extends UpdatableRecord<R>> extends TableReco
   private final void addConditionForVersionAndTimestamp(org.jooq.ConditionProvider query) {
     TableField<R, ?> v = getTable().getRecordVersion();
     TableField<R, ?> t = getTable().getRecordTimestamp();
-
     if (v != null) Tools.addCondition(query, this, v);
     if (t != null) Tools.addCondition(query, this, t);
   }
@@ -471,19 +423,14 @@ public class UpdatableRecordImpl<R extends UpdatableRecord<R>> extends TableReco
   private final void checkIfChanged(TableField<R, ?>[] keys) {
     SelectQuery<R> select = create().selectQuery(getTable());
     Tools.addConditions(select, this, keys);
-
     // [#1547] MS Access and SQLite doesn't support FOR UPDATE. CUBRID and SQL Server
     // can emulate it, though!
     if (!NO_SUPPORT_FOR_UPDATE.contains(create().dialect())) select.setForUpdate(true);
-
     R record = select.fetchOne();
-
     if (record == null) throw new DataChangedException("Database record no longer exists");
-
     for (Field<?> field : fields.fields.fields) {
       Object thisObject = original(field);
       Object thatObject = record.original(field);
-
       if (!StringUtils.equals(thisObject, thatObject))
         throw new DataChangedException("Database record has been changed");
     }
@@ -491,14 +438,12 @@ public class UpdatableRecordImpl<R extends UpdatableRecord<R>> extends TableReco
 
   /** Check if a database record was changed in the database. */
   private final void checkIfChanged(int result, BigInteger version, Timestamp timestamp) {
-
     // [#1596] If update/delete was successful, update version and/or
     // timestamp columns.
     // [#673] Do this also for deletions, in case a deleted record is re-added
     if (result > 0) setRecordVersionAndTimestamp(version, timestamp);
-
-    // [#1596] No records were updated due to version and/or timestamp change
-    else if (isExecuteWithOptimisticLocking())
+    else // [#1596] No records were updated due to version and/or timestamp change
+    if (isExecuteWithOptimisticLocking())
       throw new DataChangedException(
           "Database record has been changed or doesn't exist any longer");
   }

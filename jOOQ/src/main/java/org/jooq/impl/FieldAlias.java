@@ -49,7 +49,6 @@ final class FieldAlias<T> extends AbstractField<T> {
 
   FieldAlias(Field<T> field, Name alias) {
     super(alias, field.getDataType());
-
     this.alias = new Alias<>(field, this, alias);
   }
 
@@ -58,7 +57,8 @@ final class FieldAlias<T> extends AbstractField<T> {
     ctx.visit(alias);
   }
 
-  @Override // Avoid AbstractField implementation
+  // Avoid AbstractField implementation
+  @Override
   public final Clause[] clauses(Context<?> ctx) {
     return null;
   }
@@ -81,7 +81,6 @@ final class FieldAlias<T> extends AbstractField<T> {
   /** Get the aliased field wrapped by this field. */
   Field<T> getAliasedField() {
     if (alias != null) return alias.wrapped();
-
     return null;
   }
 }

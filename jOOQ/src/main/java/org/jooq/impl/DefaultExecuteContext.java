@@ -80,7 +80,6 @@ import org.jooq.tools.JooqLogger;
 import org.jooq.tools.jdbc.JDBCUtils;
 
 // ...
-
 /**
  * A default implementation for the {@link ExecuteContext}.
  *
@@ -92,36 +91,55 @@ class DefaultExecuteContext implements ExecuteContext {
 
   // Persistent attributes (repeatable)
   private final Configuration originalConfiguration;
+
   private final Configuration derivedConfiguration;
+
   private final Map<Object, Object> data;
+
   private final Query query;
+
   private final Routine<?> routine;
+
   private String sql;
 
   private final boolean batch;
+
   private final Query[] batchQueries;
+
   private final String[] batchSQL;
+
   private final int[] batchRows;
 
   // Transient attributes (created afresh per execution)
   transient ConnectionProvider connectionProvider;
+
   private transient Connection connection;
+
   private transient SettingsEnabledConnection wrappedConnection;
+
   private transient PreparedStatement statement;
+
   private transient int statementExecutionCount;
+
   private transient ResultSet resultSet;
+
   private transient Record record;
+
   private transient Result<?> result;
+
   private transient int rows = -1;
+
   private transient RuntimeException exception;
+
   private transient SQLException sqlException;
+
   private transient SQLWarning sqlWarning;
+
   private transient String[] serverOutput;
 
   // ------------------------------------------------------------------------
   // XXX: Static utility methods for handling blob / clob lifecycle
   // ------------------------------------------------------------------------
-
   private static final ThreadLocal<List<AutoCloseable>> RESOURCES = new ThreadLocal<>();
 
   /**
@@ -160,13 +178,10 @@ class DefaultExecuteContext implements ExecuteContext {
    */
   static final void clean() {
     List<AutoCloseable> resources = RESOURCES.get();
-
     if (resources != null) {
       for (AutoCloseable resource : resources) JDBCUtils.safeClose(resource);
-
       RESOURCES.remove();
     }
-
     LOCAL_SCOPE.remove();
     LOCAL_CONNECTION.remove();
   }
@@ -194,19 +209,16 @@ class DefaultExecuteContext implements ExecuteContext {
   /** Register a closeable for later cleanup with {@link #clean()} */
   static final void register(AutoCloseable closeable) {
     List<AutoCloseable> list = RESOURCES.get();
-
     if (list == null) {
       list = new ArrayList<>();
       RESOURCES.set(list);
     }
-
     list.add(closeable);
   }
 
   // ------------------------------------------------------------------------
   // XXX: Static utility methods for handling Configuration lifecycle
   // ------------------------------------------------------------------------
-
   private static final ThreadLocal<Scope> LOCAL_SCOPE = new ThreadLocal<>();
 
   /**
@@ -222,7 +234,6 @@ class DefaultExecuteContext implements ExecuteContext {
   // ------------------------------------------------------------------------
   // XXX: Static utility methods for handling Configuration lifecycle
   // ------------------------------------------------------------------------
-
   private static final ThreadLocal<Connection> LOCAL_CONNECTION = new ThreadLocal<>();
 
   /**
@@ -244,7 +255,6 @@ class DefaultExecuteContext implements ExecuteContext {
    */
   static final Connection localTargetConnection(Scope scope) {
     Connection result = localConnection();
-
     log.info(
         "Could not unwrap native Connection type. Consider implementing an org.jooq.UnwrapperProvider");
     return result;
@@ -253,7 +263,6 @@ class DefaultExecuteContext implements ExecuteContext {
   // ------------------------------------------------------------------------
   // XXX: Constructors
   // ------------------------------------------------------------------------
-
   DefaultExecuteContext(Configuration configuration) {
     this(configuration, null, null, null);
   }
@@ -272,9 +281,8 @@ class DefaultExecuteContext implements ExecuteContext {
 
   private DefaultExecuteContext(
       Configuration configuration, Query query, Query[] batchQueries, Routine<?> routine) {
-
     // [#4277] The ExecuteContext's Configuration will always return the same Connection,
-    //         e.g. when running statements from sub-ExecuteContexts
+    // e.g. when running statements from sub-ExecuteContexts
     // [#7569] The original configuration is attached to Record and Result instances
     this.connectionProvider = configuration.connectionProvider();
     this.originalConfiguration = configuration;
@@ -282,7 +290,6 @@ class DefaultExecuteContext implements ExecuteContext {
     this.data = new DataMap();
     this.query = query;
     this.routine = routine;
-
     if (routine != null) {
       this.batch = false;
       this.batchQueries = null;
@@ -293,7 +300,6 @@ class DefaultExecuteContext implements ExecuteContext {
       this.batchQueries = batchQueries;
       this.batchRows = new int[batchQueries.length];
       this.batchSQL = new String[batchQueries.length];
-
       Arrays.fill(this.batchRows, -1);
     } else if (query == null) {
       this.batch = false;
@@ -306,7 +312,6 @@ class DefaultExecuteContext implements ExecuteContext {
       this.batchRows = null;
       this.batchSQL = null;
     }
-
     clean();
     LOCAL_SCOPE.set(this);
   }
@@ -328,61 +333,45 @@ class DefaultExecuteContext implements ExecuteContext {
 
   @Override
   public final ExecuteType type() {
-
     // This can only be a routine
     if (routine != null) {
       return ExecuteType.ROUTINE;
-    }
-
-    // This can only be a BatchSingle or BatchMultiple execution
-    else if (batch) {
+    } else // This can only be a BatchSingle or BatchMultiple execution
+    if (batch) {
       return ExecuteType.BATCH;
-    }
-
-    // Any other type of query
-    else if (query != null) {
+    } else // Any other type of query
+    if (query != null) {
       if (query instanceof ResultQuery) {
         return ExecuteType.READ;
       } else if (query instanceof Insert
           || query instanceof Update
           || query instanceof Delete
           || query instanceof Merge) {
-
         return ExecuteType.WRITE;
       } else if (query instanceof DDLQuery) {
         return ExecuteType.DDL;
-      }
-
-      // Analyse SQL in plain SQL queries:
-      else {
+      } else // Analyse SQL in plain SQL queries:
+      {
         String s = query.getSQL().toLowerCase(renderLocale(configuration().settings()));
-
         // TODO: Use a simple lexer to parse SQL here. Potentially, the
         // SQL Console's SQL formatter could be used...?
         if (s.matches("^(with\\b.*?\\bselect|select|explain)\\b.*?")) return ExecuteType.READ;
-
-        // These are sample DML statements. There may be many more
-        else if (s.matches("^(insert|update|delete|merge|replace|upsert|lock)\\b.*?"))
+        else // These are sample DML statements. There may be many more
+        if (s.matches("^(insert|update|delete|merge|replace|upsert|lock)\\b.*?"))
           return ExecuteType.WRITE;
-
-        // These are only sample DDL statements. There may be many more
-        else if (s.matches(
+        else // These are only sample DDL statements. There may be many more
+        if (s.matches(
             "^(create|alter|drop|truncate|grant|revoke|analyze|comment|flashback|enable|disable)\\b.*?"))
           return ExecuteType.DDL;
-
-        // JDBC escape syntax for routines
-        else if (s.matches("^\\s*\\{\\s*(\\?\\s*=\\s*)call.*?")) return ExecuteType.ROUTINE;
-
-        // Vendor-specific calling of routines / procedural blocks
-        else if (s.matches("^(call|begin|declare)\\b.*?")) return ExecuteType.ROUTINE;
+        else // JDBC escape syntax for routines
+        if (s.matches("^\\s*\\{\\s*(\\?\\s*=\\s*)call.*?")) return ExecuteType.ROUTINE;
+        else // Vendor-specific calling of routines / procedural blocks
+        if (s.matches("^(call|begin|declare)\\b.*?")) return ExecuteType.ROUTINE;
       }
-    }
-
-    // Fetching JDBC result sets, e.g. with SQL.fetch(ResultSet)
-    else if (resultSet != null) {
+    } else // Fetching JDBC result sets, e.g. with SQL.fetch(ResultSet)
+    if (resultSet != null) {
       return ExecuteType.READ;
     }
-
     // No query available
     return ExecuteType.OTHER;
   }
@@ -405,7 +394,6 @@ class DefaultExecuteContext implements ExecuteContext {
   @Override
   public final void sql(String s) {
     this.sql = s;
-
     // If this isn't a BatchMultiple query
     if (batchSQL != null && batchSQL.length == 1) batchSQL[0] = s;
   }
@@ -451,7 +439,7 @@ class DefaultExecuteContext implements ExecuteContext {
   }
 
   // [#4277] [#7569] The original configuration that was used to create the
-  //                 derived configuration in this ExecuteContext
+  // derived configuration in this ExecuteContext
   final Configuration originalConfiguration() {
     return originalConfiguration;
   }
@@ -489,7 +477,6 @@ class DefaultExecuteContext implements ExecuteContext {
     // Settings.getStatementType() correctly.
     if (wrappedConnection == null && connectionProvider != null)
       connection(connectionProvider, connectionProvider.acquire());
-
     return wrappedConnection;
   }
 
@@ -539,7 +526,6 @@ class DefaultExecuteContext implements ExecuteContext {
   @Override
   public final void rows(int r) {
     this.rows = r;
-
     // If this isn't a BatchMultiple query
     if (batchRows != null && batchRows.length == 1) batchRows[0] = r;
   }
@@ -567,12 +553,10 @@ class DefaultExecuteContext implements ExecuteContext {
   @Override
   public final void exception(RuntimeException e) {
     this.exception = Tools.translate(sql(), e);
-
     if (Boolean.TRUE.equals(settings().isDebugInfoOnStackTrace())) {
-
       // [#5570] Add jOOQ version and SQL Dialect info on the stack trace
-      //         to help users write better bug reports.
-      //         See http://stackoverflow.com/q/39712695/521799
+      // to help users write better bug reports.
+      // See http://stackoverflow.com/q/39712695/521799
       StackTraceElement[] oldStack = exception.getStackTrace();
       if (oldStack != null) {
         StackTraceElement[] newStack = new StackTraceElement[oldStack.length + 1];
@@ -621,12 +605,10 @@ class DefaultExecuteContext implements ExecuteContext {
     @NotNull
     @Override
     public final Connection acquire() {
-
       // [#4277] Connections are acquired lazily in parent ExecuteContext. A child ExecuteContext
-      //         may well need a Connection earlier than the parent, in case of which acquisition is
-      //         forced in the parent as well.
+      // may well need a Connection earlier than the parent, in case of which acquisition is
+      // forced in the parent as well.
       if (connection == null) DefaultExecuteContext.this.connection();
-
       return wrapConnection(this, connection);
     }
 

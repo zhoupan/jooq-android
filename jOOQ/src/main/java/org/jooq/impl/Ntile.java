@@ -45,11 +45,11 @@ import org.jooq.Field;
 
 /** @author Lukas Eder */
 final class Ntile extends AbstractWindowFunction<Integer> {
+
   private final Field<Integer> tiles;
 
   Ntile(Field<Integer> tiles) {
     super(N_NTILE, INTEGER.notNull());
-
     this.tiles = tiles;
   }
 
@@ -60,7 +60,6 @@ final class Ntile extends AbstractWindowFunction<Integer> {
         ctx.visit(N_NTILE).sql('(').visit(tiles).sql(')');
         break;
     }
-
     acceptOverClause(ctx);
   }
 }

@@ -63,6 +63,7 @@ import org.jooq.Select;
 
 /** @author Lukas Eder */
 final class RowIsDistinctFrom extends AbstractCondition {
+
   private static final Set<SQLDialect> EMULATE_DISTINCT = SQLDialect.supportedBy(CUBRID, DERBY);
 
   // An emulation may be required only for the version where a subquery is used
@@ -70,12 +71,16 @@ final class RowIsDistinctFrom extends AbstractCondition {
   // Or in PostgreSQL: https://twitter.com/pg_xocolatl/status/1260344255035379714
   private static final Set<SQLDialect> EMULATE_DISTINCT_SELECT =
       SQLDialect.supportedBy(HSQLDB, POSTGRES);
+
   private static final Set<SQLDialect> SUPPORT_DISTINCT_WITH_ARROW =
       SQLDialect.supportedBy(MARIADB, MYSQL);
 
   private final Row lhs;
+
   private final Row rhsRow;
+
   private final Select<?> rhsSelect;
+
   private final boolean not;
 
   RowIsDistinctFrom(Row lhs, Row rhs, boolean not) {
@@ -99,9 +104,8 @@ final class RowIsDistinctFrom extends AbstractCondition {
 
   @Override
   public final void accept(Context<?> ctx) {
-
     // [#3511]         These dialects need to emulate the IS DISTINCT FROM predicate,
-    //                 optimally using INTERSECT...
+    // optimally using INTERSECT...
     // [#7222] [#7224] Make sure the columns are aliased
     // [#10178]        Special treatment for DISTINCT with subqueries
     if (EMULATE_DISTINCT.contains(ctx.dialect())
@@ -109,33 +113,22 @@ final class RowIsDistinctFrom extends AbstractCondition {
       Select<Record> intersect =
           select(lhs.fields()).intersect(rhsSelect != null ? rhsSelect : select(rhsRow.fields()));
       ctx.visit(not ? exists(intersect) : notExists(intersect));
-    }
-
-    // MySQL knows the <=> operator
-    else if (SUPPORT_DISTINCT_WITH_ARROW.contains(ctx.dialect())) {
+    } else // MySQL knows the <=> operator
+    if (SUPPORT_DISTINCT_WITH_ARROW.contains(ctx.dialect())) {
       if (!not) ctx.visit(K_NOT).sql('(');
-
       ctx.visit(lhs).sql(" <=> ");
-
       if (rhsRow != null) ctx.visit(rhsRow);
       else visitSubquery(ctx, rhsSelect);
-
       if (!not) ctx.sql(')');
-    }
-
-    // SQLite knows the IS / IS NOT predicate
-    else if (SQLITE == ctx.family()) {
+    } else // SQLite knows the IS / IS NOT predicate
+    if (SQLITE == ctx.family()) {
       ctx.visit(lhs).sql(' ').visit(K_IS).sql(' ');
-
       if (!not) ctx.visit(K_NOT).sql(' ');
-
       if (rhsRow != null) ctx.visit(rhsRow);
       else visitSubquery(ctx, rhsSelect);
-    }
-
-    // These dialects natively support the IS DISTINCT FROM predicate:
+    } else // These dialects natively support the IS DISTINCT FROM predicate:
     // H2, Postgres
-    else {
+    {
       ctx.visit(
           rhsRow != null
               ? new RowCondition(lhs, rhsRow, not ? IS_NOT_DISTINCT_FROM : IS_DISTINCT_FROM)
@@ -144,7 +137,8 @@ final class RowIsDistinctFrom extends AbstractCondition {
     }
   }
 
-  @Override // Avoid AbstractCondition implementation
+  // Avoid AbstractCondition implementation
+  @Override
   public final Clause[] clauses(Context<?> ctx) {
     return null;
   }

@@ -58,11 +58,11 @@ import org.jooq.tools.*;
 final class DropViewImpl extends AbstractDDLQuery implements DropViewFinalStep {
 
   private final Table<?> view;
+
   private final boolean dropViewIfExists;
 
   DropViewImpl(Configuration configuration, Table<?> view, boolean dropViewIfExists) {
     super(configuration);
-
     this.view = view;
     this.dropViewIfExists = dropViewIfExists;
   }
@@ -78,8 +78,8 @@ final class DropViewImpl extends AbstractDDLQuery implements DropViewFinalStep {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Clause[] CLAUSES = {Clause.DROP_VIEW};
+
   private static final Set<SQLDialect> NO_SUPPORT_IF_EXISTS =
       SQLDialect.supportedBy(DERBY, FIREBIRD);
 
@@ -96,11 +96,8 @@ final class DropViewImpl extends AbstractDDLQuery implements DropViewFinalStep {
 
   private void accept0(Context<?> ctx) {
     ctx.start(Clause.DROP_VIEW_TABLE).visit(K_DROP_VIEW).sql(' ');
-
     if (dropViewIfExists && supportsIfExists(ctx)) ctx.visit(K_IF_EXISTS).sql(' ');
-
     ctx.visit(view);
-
     ctx.end(Clause.DROP_VIEW_TABLE);
   }
 

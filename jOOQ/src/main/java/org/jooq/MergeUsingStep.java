@@ -149,7 +149,6 @@ public interface MergeUsingStep<R extends Record> extends MergeKeyStepN<R> {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     DSLContext#mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
@@ -162,7 +161,6 @@ public interface MergeUsingStep<R extends Record> extends MergeKeyStepN<R> {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     DSLContext#mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
@@ -179,7 +177,6 @@ public interface MergeUsingStep<R extends Record> extends MergeKeyStepN<R> {
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
-  @Deprecated(forRemoval = true, since = "3.14")
   <T1> MergeKeyStep1<R, T1> columns(Field<T1> field1);
 
   /**
@@ -193,7 +190,6 @@ public interface MergeUsingStep<R extends Record> extends MergeKeyStepN<R> {
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
-  @Deprecated(forRemoval = true, since = "3.14")
   <T1, T2> MergeKeyStep2<R, T1, T2> columns(Field<T1> field1, Field<T2> field2);
 
   /**
@@ -207,7 +203,6 @@ public interface MergeUsingStep<R extends Record> extends MergeKeyStepN<R> {
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
-  @Deprecated(forRemoval = true, since = "3.14")
   <T1, T2, T3> MergeKeyStep3<R, T1, T2, T3> columns(
       Field<T1> field1, Field<T2> field2, Field<T3> field3);
 
@@ -222,7 +217,6 @@ public interface MergeUsingStep<R extends Record> extends MergeKeyStepN<R> {
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
-  @Deprecated(forRemoval = true, since = "3.14")
   <T1, T2, T3, T4> MergeKeyStep4<R, T1, T2, T3, T4> columns(
       Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4);
 
@@ -237,7 +231,6 @@ public interface MergeUsingStep<R extends Record> extends MergeKeyStepN<R> {
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
-  @Deprecated(forRemoval = true, since = "3.14")
   <T1, T2, T3, T4, T5> MergeKeyStep5<R, T1, T2, T3, T4, T5> columns(
       Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4, Field<T5> field5);
 
@@ -252,7 +245,6 @@ public interface MergeUsingStep<R extends Record> extends MergeKeyStepN<R> {
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
-  @Deprecated(forRemoval = true, since = "3.14")
   <T1, T2, T3, T4, T5, T6> MergeKeyStep6<R, T1, T2, T3, T4, T5, T6> columns(
       Field<T1> field1,
       Field<T2> field2,
@@ -272,7 +264,6 @@ public interface MergeUsingStep<R extends Record> extends MergeKeyStepN<R> {
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
-  @Deprecated(forRemoval = true, since = "3.14")
   <T1, T2, T3, T4, T5, T6, T7> MergeKeyStep7<R, T1, T2, T3, T4, T5, T6, T7> columns(
       Field<T1> field1,
       Field<T2> field2,
@@ -293,7 +284,6 @@ public interface MergeUsingStep<R extends Record> extends MergeKeyStepN<R> {
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
-  @Deprecated(forRemoval = true, since = "3.14")
   <T1, T2, T3, T4, T5, T6, T7, T8> MergeKeyStep8<R, T1, T2, T3, T4, T5, T6, T7, T8> columns(
       Field<T1> field1,
       Field<T2> field2,
@@ -315,7 +305,6 @@ public interface MergeUsingStep<R extends Record> extends MergeKeyStepN<R> {
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
-  @Deprecated(forRemoval = true, since = "3.14")
   <T1, T2, T3, T4, T5, T6, T7, T8, T9> MergeKeyStep9<R, T1, T2, T3, T4, T5, T6, T7, T8, T9> columns(
       Field<T1> field1,
       Field<T2> field2,
@@ -338,7 +327,6 @@ public interface MergeUsingStep<R extends Record> extends MergeKeyStepN<R> {
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
-  @Deprecated(forRemoval = true, since = "3.14")
   <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>
       MergeKeyStep10<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> columns(
           Field<T1> field1,
@@ -363,7 +351,6 @@ public interface MergeUsingStep<R extends Record> extends MergeKeyStepN<R> {
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
-  @Deprecated(forRemoval = true, since = "3.14")
   <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>
       MergeKeyStep11<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> columns(
           Field<T1> field1,
@@ -389,7 +376,6 @@ public interface MergeUsingStep<R extends Record> extends MergeKeyStepN<R> {
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
-  @Deprecated(forRemoval = true, since = "3.14")
   <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>
       MergeKeyStep12<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> columns(
           Field<T1> field1,
@@ -416,7 +402,6 @@ public interface MergeUsingStep<R extends Record> extends MergeKeyStepN<R> {
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
-  @Deprecated(forRemoval = true, since = "3.14")
   <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>
       MergeKeyStep13<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> columns(
           Field<T1> field1,
@@ -444,7 +429,6 @@ public interface MergeUsingStep<R extends Record> extends MergeKeyStepN<R> {
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
-  @Deprecated(forRemoval = true, since = "3.14")
   <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>
       MergeKeyStep14<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> columns(
           Field<T1> field1,
@@ -473,7 +457,6 @@ public interface MergeUsingStep<R extends Record> extends MergeKeyStepN<R> {
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
-  @Deprecated(forRemoval = true, since = "3.14")
   <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>
       MergeKeyStep15<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> columns(
           Field<T1> field1,
@@ -503,7 +486,6 @@ public interface MergeUsingStep<R extends Record> extends MergeKeyStepN<R> {
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
-  @Deprecated(forRemoval = true, since = "3.14")
   <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>
       MergeKeyStep16<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>
           columns(
@@ -535,7 +517,6 @@ public interface MergeUsingStep<R extends Record> extends MergeKeyStepN<R> {
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
-  @Deprecated(forRemoval = true, since = "3.14")
   <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17>
       MergeKeyStep17<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17>
           columns(
@@ -568,7 +549,6 @@ public interface MergeUsingStep<R extends Record> extends MergeKeyStepN<R> {
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
-  @Deprecated(forRemoval = true, since = "3.14")
   <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18>
       MergeKeyStep18<
               R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18>
@@ -603,7 +583,6 @@ public interface MergeUsingStep<R extends Record> extends MergeKeyStepN<R> {
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
-  @Deprecated(forRemoval = true, since = "3.14")
   <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19>
       MergeKeyStep19<
               R,
@@ -658,7 +637,6 @@ public interface MergeUsingStep<R extends Record> extends MergeKeyStepN<R> {
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
-  @Deprecated(forRemoval = true, since = "3.14")
   <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20>
       MergeKeyStep20<
               R,
@@ -715,7 +693,6 @@ public interface MergeUsingStep<R extends Record> extends MergeKeyStepN<R> {
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
-  @Deprecated(forRemoval = true, since = "3.14")
   <T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16, T17, T18, T19, T20, T21>
       MergeKeyStep21<
               R,
@@ -774,7 +751,6 @@ public interface MergeUsingStep<R extends Record> extends MergeKeyStepN<R> {
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
-  @Deprecated(forRemoval = true, since = "3.14")
   <
           T1,
           T2,

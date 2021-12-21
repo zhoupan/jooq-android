@@ -58,12 +58,12 @@ import org.jooq.tools.*;
 final class DropSequenceImpl extends AbstractDDLQuery implements DropSequenceFinalStep {
 
   private final Sequence<?> sequence;
+
   private final boolean dropSequenceIfExists;
 
   DropSequenceImpl(
       Configuration configuration, Sequence<?> sequence, boolean dropSequenceIfExists) {
     super(configuration);
-
     this.sequence = sequence;
     this.dropSequenceIfExists = dropSequenceIfExists;
   }
@@ -79,8 +79,8 @@ final class DropSequenceImpl extends AbstractDDLQuery implements DropSequenceFin
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Clause[] CLAUSES = {Clause.DROP_SEQUENCE};
+
   private static final Set<SQLDialect> NO_SUPPORT_IF_EXISTS =
       SQLDialect.supportedBy(DERBY, FIREBIRD);
 
@@ -101,9 +101,7 @@ final class DropSequenceImpl extends AbstractDDLQuery implements DropSequenceFin
         .sql(' ')
         .visit(ctx.family() == CUBRID ? K_SERIAL : K_SEQUENCE)
         .sql(' ');
-
     if (dropSequenceIfExists && supportsIfExists(ctx)) ctx.visit(K_IF_EXISTS).sql(' ');
-
     switch (ctx.family()) {
       default:
         {
@@ -111,9 +109,7 @@ final class DropSequenceImpl extends AbstractDDLQuery implements DropSequenceFin
           break;
         }
     }
-
     if (ctx.family() == DERBY) ctx.sql(' ').visit(K_RESTRICT);
-
     ctx.end(Clause.DROP_SEQUENCE_SEQUENCE);
   }
 

@@ -58,7 +58,6 @@ final class ConstantSortField<T> extends CustomField<T> {
       case POSTGRES:
         ctx.sql('(').visit(select(one())).sql(')');
         break;
-
       default:
         ctx.visit(DSL.NULL().sortDefault());
         break;

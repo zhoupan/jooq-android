@@ -79,26 +79,41 @@ import org.jooq.util.xml.jaxb.TableConstraint;
 final class InformationSchemaMetaImpl extends AbstractMeta {
 
   private final List<Catalog> catalogs;
+
   private final Map<Name, Catalog> catalogsByName;
+
   private final List<Schema> schemas;
+
   private final Map<Name, Schema> schemasByName;
+
   private final Map<Catalog, List<Schema>> schemasPerCatalog;
+
   private final List<InformationSchemaTable> tables;
+
   private final Map<Name, InformationSchemaTable> tablesByName;
+
   private final Map<Schema, List<InformationSchemaTable>> tablesPerSchema;
+
   private final List<InformationSchemaDomain<?>> domains;
+
   private final Map<Name, InformationSchemaDomain<?>> domainsByName;
+
   private final Map<Schema, List<InformationSchemaDomain<?>>> domainsPerSchema;
+
   private final List<Sequence<?>> sequences;
+
   private final Map<Schema, List<Sequence<?>>> sequencesPerSchema;
+
   private final List<UniqueKeyImpl<Record>> primaryKeys;
+
   private final Map<Name, UniqueKeyImpl<Record>> keysByName;
+
   private final Map<Name, Name> referentialKeys;
+
   private final Map<Name, IndexImpl> indexesByName;
 
   InformationSchemaMetaImpl(Configuration configuration, InformationSchema source) {
     super(configuration);
-
     this.catalogs = new ArrayList<>();
     this.catalogsByName = new HashMap<>();
     this.schemas = new ArrayList<>();
@@ -116,14 +131,12 @@ final class InformationSchemaMetaImpl extends AbstractMeta {
     this.keysByName = new HashMap<>();
     this.referentialKeys = new HashMap<>();
     this.indexesByName = new HashMap<>();
-
     init(source);
   }
 
   @SuppressWarnings({"unchecked", "rawtypes"})
   private final void init(InformationSchema meta) {
     List<String> errors = new ArrayList<>();
-
     // Catalogs
     // -------------------------------------------------------------------------------------------------------------
     boolean hasCatalogs = false;
@@ -134,63 +147,51 @@ final class InformationSchemaMetaImpl extends AbstractMeta {
       catalogsByName.put(name(xc.getCatalogName()), ic);
       hasCatalogs = true;
     }
-
     // Schemas
     // -------------------------------------------------------------------------------------------------------------
     schemaLoop:
     for (org.jooq.util.xml.jaxb.Schema xs : meta.getSchemata()) {
-
       // [#6662] This is kept for backwards compatibility reasons
       if (!hasCatalogs) {
         InformationSchemaCatalog ic = new InformationSchemaCatalog(xs.getCatalogName(), null);
-
         if (!catalogs.contains(ic)) {
           catalogs.add(ic);
           catalogsByName.put(name(xs.getCatalogName()), ic);
         }
       }
-
       Name catalogName = name(xs.getCatalogName());
       Catalog catalog = catalogsByName.get(catalogName);
-
       if (catalog == null) {
         errors.add("Catalog " + catalogName + " not defined for schema " + xs.getSchemaName());
         continue schemaLoop;
       }
-
       InformationSchemaSchema is =
           new InformationSchemaSchema(xs.getSchemaName(), catalog, xs.getComment());
       schemas.add(is);
       schemasByName.put(name(xs.getCatalogName(), xs.getSchemaName()), is);
     }
-
     // Domains
     // -------------------------------------------------------------------------------------------------------------
     domainLoop:
     for (org.jooq.util.xml.jaxb.Domain d : meta.getDomains()) {
       Name schemaName = name(d.getDomainCatalog(), d.getDomainSchema());
       Schema schema = schemasByName.get(schemaName);
-
       if (schema == null) {
         errors.add("Schema " + schemaName + " not defined for domain " + d.getDomainName());
         continue domainLoop;
       }
-
       Name domainName = name(d.getDomainCatalog(), d.getDomainSchema(), d.getDomainName());
       int length = d.getCharacterMaximumLength() == null ? 0 : d.getCharacterMaximumLength();
       int precision = d.getNumericPrecision() == null ? 0 : d.getNumericPrecision();
       int scale = d.getNumericScale() == null ? 0 : d.getNumericScale();
-
       // TODO [#10239] Support NOT NULL constraints
       boolean nullable = true;
       List<Check<?>> checks = new ArrayList<>();
-
       for (org.jooq.util.xml.jaxb.DomainConstraint dc : meta.getDomainConstraints()) {
         if (domainName.equals(
             name(dc.getDomainCatalog(), dc.getDomainSchema(), dc.getDomainName()))) {
           Name constraintName =
               name(dc.getConstraintCatalog(), dc.getConstraintSchema(), dc.getConstraintName());
-
           for (org.jooq.util.xml.jaxb.CheckConstraint cc : meta.getCheckConstraints())
             if (constraintName.equals(
                 name(cc.getConstraintCatalog(), cc.getConstraintSchema(), cc.getConstraintName())))
@@ -198,7 +199,6 @@ final class InformationSchemaMetaImpl extends AbstractMeta {
                   new CheckImpl<>(null, constraintName, DSL.condition(cc.getCheckClause()), true));
         }
       }
-
       InformationSchemaDomain<?> id =
           new InformationSchemaDomain<Object>(
               schema,
@@ -208,21 +208,17 @@ final class InformationSchemaMetaImpl extends AbstractMeta {
       domains.add(id);
       domainsByName.put(domainName, id);
     }
-
     // Tables
     // -------------------------------------------------------------------------------------------------------------
     tableLoop:
     for (org.jooq.util.xml.jaxb.Table xt : meta.getTables()) {
       Name schemaName = name(xt.getTableCatalog(), xt.getTableSchema());
       Schema schema = schemasByName.get(schemaName);
-
       if (schema == null) {
         errors.add("Schema " + schemaName + " not defined for table " + xt.getTableName());
         continue tableLoop;
       }
-
       TableType tableType;
-
       switch (xt.getTableType()) {
         case GLOBAL_TEMPORARY:
           tableType = TableType.TEMPORARY;
@@ -235,11 +231,8 @@ final class InformationSchemaMetaImpl extends AbstractMeta {
           tableType = TableType.TABLE;
           break;
       }
-
       String sql = null;
-
       if (tableType == TableType.VIEW) {
-
         viewLoop:
         for (org.jooq.util.xml.jaxb.View vt : meta.getViews()) {
           if (StringUtils.equals(
@@ -248,19 +241,16 @@ final class InformationSchemaMetaImpl extends AbstractMeta {
                   defaultIfNull(xt.getTableSchema(), ""), defaultIfNull(vt.getTableSchema(), ""))
               && StringUtils.equals(
                   defaultIfNull(xt.getTableName(), ""), defaultIfNull(vt.getTableName(), ""))) {
-
             sql = vt.getViewDefinition();
             break viewLoop;
           }
         }
       }
-
       InformationSchemaTable it =
           new InformationSchemaTable(xt.getTableName(), schema, xt.getComment(), tableType, sql);
       tables.add(it);
       tablesByName.put(name(xt.getTableCatalog(), xt.getTableSchema(), xt.getTableName()), it);
     }
-
     // Columns
     // -------------------------------------------------------------------------------------------------------------
     List<Column> columns = new ArrayList<>(meta.getColumns());
@@ -268,14 +258,11 @@ final class InformationSchemaMetaImpl extends AbstractMeta {
         (o1, o2) -> {
           Integer p1 = o1.getOrdinalPosition();
           Integer p2 = o2.getOrdinalPosition();
-
           if (p1 == p2) return 0;
           if (p1 == null) return -1;
           if (p2 == null) return 1;
-
           return p1.compareTo(p2);
         });
-
     columnLoop:
     for (Column xc : columns) {
       String typeName = xc.getDataType();
@@ -283,72 +270,57 @@ final class InformationSchemaMetaImpl extends AbstractMeta {
       int precision = xc.getNumericPrecision() == null ? 0 : xc.getNumericPrecision();
       int scale = xc.getNumericScale() == null ? 0 : xc.getNumericScale();
       boolean nullable = xc.isIsNullable() == null || xc.isIsNullable();
-
       // TODO: Exception handling should be moved inside SQLDataType
       Name tableName = name(xc.getTableCatalog(), xc.getTableSchema(), xc.getTableName());
       InformationSchemaTable table = tablesByName.get(tableName);
-
       if (table == null) {
         errors.add("Table " + tableName + " not defined for column " + xc.getColumnName());
         continue columnLoop;
       }
-
       AbstractTable.createField(
           name(xc.getColumnName()),
           type(typeName, length, precision, scale, nullable),
           table,
           xc.getComment());
     }
-
     // Indexes
     // -------------------------------------------------------------------------------------------------------------
     Map<Name, List<SortField<?>>> columnsByIndex = new HashMap<>();
     List<IndexColumnUsage> indexColumnUsages = new ArrayList<>(meta.getIndexColumnUsages());
     indexColumnUsages.sort(comparingInt(IndexColumnUsage::getOrdinalPosition));
-
     indexColumnLoop:
     for (IndexColumnUsage ic : indexColumnUsages) {
       Name indexName =
           name(ic.getIndexCatalog(), ic.getIndexSchema(), ic.getTableName(), ic.getIndexName());
       List<SortField<?>> fields = columnsByIndex.computeIfAbsent(indexName, k -> new ArrayList<>());
-
       Name tableName = name(ic.getTableCatalog(), ic.getTableSchema(), ic.getTableName());
       InformationSchemaTable table = tablesByName.get(tableName);
-
       if (table == null) {
         errors.add("Table " + tableName + " not defined for index " + indexName);
         continue indexColumnLoop;
       }
-
       TableField<Record, ?> field = (TableField<Record, ?>) table.field(ic.getColumnName());
-
       if (field == null) {
         errors.add("Column " + ic.getColumnName() + " not defined for table " + tableName);
         continue indexColumnLoop;
       }
-
       fields.add(Boolean.TRUE.equals(ic.isIsDescending()) ? field.desc() : field.asc());
     }
-
     indexLoop:
     for (org.jooq.util.xml.jaxb.Index i : meta.getIndexes()) {
       Name tableName = name(i.getTableCatalog(), i.getTableSchema(), i.getTableName());
       Name indexName =
           name(i.getIndexCatalog(), i.getIndexSchema(), i.getTableName(), i.getIndexName());
       InformationSchemaTable table = tablesByName.get(tableName);
-
       if (table == null) {
         errors.add("Table " + tableName + " not defined for index " + indexName);
         continue indexLoop;
       }
-
       List<SortField<?>> c = columnsByIndex.get(indexName);
-
       if (c == null || c.isEmpty()) {
         errors.add("No columns defined for index " + indexName);
         continue indexLoop;
       }
-
       IndexImpl index =
           (IndexImpl)
               Internal.createIndex(
@@ -356,42 +328,33 @@ final class InformationSchemaMetaImpl extends AbstractMeta {
                   table,
                   c.toArray(EMPTY_SORTFIELD),
                   Boolean.TRUE.equals(i.isIsUnique()));
-
       table.indexes.add(index);
       indexesByName.put(indexName, index);
     }
-
     // Constraints
     // -------------------------------------------------------------------------------------------------------------
     Map<Name, List<TableField<Record, ?>>> columnsByConstraint = new HashMap<>();
     List<KeyColumnUsage> keyColumnUsages = new ArrayList<>(meta.getKeyColumnUsages());
     keyColumnUsages.sort(comparing(KeyColumnUsage::getOrdinalPosition));
-
     keyColumnLoop:
     for (KeyColumnUsage xc : keyColumnUsages) {
       Name constraintName =
           name(xc.getConstraintCatalog(), xc.getConstraintSchema(), xc.getConstraintName());
       List<TableField<Record, ?>> fields =
           columnsByConstraint.computeIfAbsent(constraintName, k -> new ArrayList<>());
-
       Name tableName = name(xc.getTableCatalog(), xc.getTableSchema(), xc.getTableName());
       InformationSchemaTable table = tablesByName.get(tableName);
-
       if (table == null) {
         errors.add("Table " + tableName + " not defined for constraint " + constraintName);
         continue keyColumnLoop;
       }
-
       TableField<Record, ?> field = (TableField<Record, ?>) table.field(xc.getColumnName());
-
       if (field == null) {
         errors.add("Column " + xc.getColumnName() + " not defined for table " + tableName);
         continue keyColumnLoop;
       }
-
       fields.add(field);
     }
-
     tableConstraintLoop:
     for (TableConstraint xc : meta.getTableConstraints()) {
       switch (xc.getConstraintType()) {
@@ -402,35 +365,28 @@ final class InformationSchemaMetaImpl extends AbstractMeta {
             Name constraintName =
                 name(xc.getConstraintCatalog(), xc.getConstraintSchema(), xc.getConstraintName());
             InformationSchemaTable table = tablesByName.get(tableName);
-
             if (table == null) {
               errors.add("Table " + tableName + " not defined for constraint " + constraintName);
               continue tableConstraintLoop;
             }
-
             List<TableField<Record, ?>> c = columnsByConstraint.get(constraintName);
-
             if (c == null || c.isEmpty()) {
               errors.add("No columns defined for constraint " + constraintName);
               continue tableConstraintLoop;
             }
-
             UniqueKeyImpl<Record> key =
                 (UniqueKeyImpl<Record>)
                     Internal.createUniqueKey(
                         table, xc.getConstraintName(), c.toArray(new TableField[0]));
-
             if (xc.getConstraintType() == PRIMARY_KEY) {
               table.primaryKey = key;
               primaryKeys.add(key);
             } else table.uniqueKeys.add(key);
-
             keysByName.put(constraintName, key);
             break;
           }
       }
     }
-
     for (ReferentialConstraint xr : meta.getReferentialConstraints()) {
       referentialKeys.put(
           name(xr.getConstraintCatalog(), xr.getConstraintSchema(), xr.getConstraintName()),
@@ -439,7 +395,6 @@ final class InformationSchemaMetaImpl extends AbstractMeta {
               xr.getUniqueConstraintSchema(),
               xr.getUniqueConstraintName()));
     }
-
     tableConstraintLoop:
     for (TableConstraint xc : meta.getTableConstraints()) {
       switch (xc.getConstraintType()) {
@@ -449,26 +404,20 @@ final class InformationSchemaMetaImpl extends AbstractMeta {
             Name constraintName =
                 name(xc.getConstraintCatalog(), xc.getConstraintSchema(), xc.getConstraintName());
             InformationSchemaTable table = tablesByName.get(tableName);
-
             if (table == null) {
               errors.add("Table " + tableName + " not defined for constraint " + constraintName);
               continue tableConstraintLoop;
             }
-
             List<TableField<Record, ?>> c = columnsByConstraint.get(constraintName);
-
             if (c == null || c.isEmpty()) {
               errors.add("No columns defined for constraint " + constraintName);
               continue tableConstraintLoop;
             }
-
             UniqueKeyImpl<Record> uniqueKey = keysByName.get(referentialKeys.get(constraintName));
-
             if (uniqueKey == null) {
               errors.add("No unique key defined for foreign key " + constraintName);
               continue tableConstraintLoop;
             }
-
             ForeignKey<Record, Record> key =
                 Internal.createForeignKey(
                     uniqueKey, table, xc.getConstraintName(), c.toArray(new TableField[0]));
@@ -477,7 +426,6 @@ final class InformationSchemaMetaImpl extends AbstractMeta {
           }
       }
     }
-
     tableConstraintLoop:
     for (TableConstraint xc : meta.getTableConstraints()) {
       switch (xc.getConstraintType()) {
@@ -487,12 +435,10 @@ final class InformationSchemaMetaImpl extends AbstractMeta {
             Name constraintName =
                 name(xc.getConstraintCatalog(), xc.getConstraintSchema(), xc.getConstraintName());
             InformationSchemaTable table = tablesByName.get(tableName);
-
             if (table == null) {
               errors.add("Table " + tableName + " not defined for constraint " + constraintName);
               continue tableConstraintLoop;
             }
-
             for (CheckConstraint cc : meta.getCheckConstraints()) {
               if (constraintName.equals(
                   name(
@@ -505,25 +451,21 @@ final class InformationSchemaMetaImpl extends AbstractMeta {
                 continue tableConstraintLoop;
               }
             }
-
             errors.add("No check clause found for check constraint " + constraintName);
             continue tableConstraintLoop;
           }
       }
     }
-
     // Sequences
     // -------------------------------------------------------------------------------------------------------------
     sequenceLoop:
     for (org.jooq.util.xml.jaxb.Sequence xs : meta.getSequences()) {
       Name schemaName = name(xs.getSequenceCatalog(), xs.getSequenceSchema());
       Schema schema = schemasByName.get(schemaName);
-
       if (schema == null) {
         errors.add("Schema " + schemaName + " not defined for sequence " + xs.getSequenceName());
         continue sequenceLoop;
       }
-
       String typeName = xs.getDataType();
       int length = xs.getCharacterMaximumLength() == null ? 0 : xs.getCharacterMaximumLength();
       int precision = xs.getNumericPrecision() == null ? 0 : xs.getNumericPrecision();
@@ -535,7 +477,6 @@ final class InformationSchemaMetaImpl extends AbstractMeta {
       BigInteger maxvalue = xs.getMaximumValue();
       Boolean cycle = xs.isCycleOption();
       BigInteger cache = xs.getCache();
-
       InformationSchemaSequence is =
           new InformationSchemaSequence(
               xs.getSequenceName(),
@@ -547,20 +488,14 @@ final class InformationSchemaMetaImpl extends AbstractMeta {
               maxvalue,
               cycle,
               cache);
-
       sequences.add(is);
     }
-
     // Lookups
     // -------------------------------------------------------------------------------------------------------------
     for (Schema s : schemas) initLookup(schemasPerCatalog, s.getCatalog(), s);
-
     for (InformationSchemaDomain<?> d : domains) initLookup(domainsPerSchema, d.getSchema(), d);
-
     for (InformationSchemaTable t : tables) initLookup(tablesPerSchema, t.getSchema(), t);
-
     for (Sequence<?> q : sequences) initLookup(sequencesPerSchema, q.getSchema(), q);
-
     if (!errors.isEmpty()) throw new IllegalArgumentException(errors.toString());
   }
 
@@ -571,17 +506,14 @@ final class InformationSchemaMetaImpl extends AbstractMeta {
   private final DataType<?> type(
       String typeName, int length, int precision, int scale, boolean nullable) {
     DataType<?> type = null;
-
     try {
       type = DefaultDataType.getDataType(configuration.family(), typeName);
       type = type.nullable(nullable);
-
       if (length != 0) type = type.length(length);
       else if (precision != 0 || scale != 0) type = type.precision(precision, scale);
     } catch (SQLDialectNotSupportedException e) {
       type = SQLDataType.OTHER;
     }
-
     return type;
   }
 
@@ -650,9 +582,13 @@ final class InformationSchemaMetaImpl extends AbstractMeta {
   private static final class InformationSchemaTable extends TableImpl<Record> {
 
     UniqueKey<Record> primaryKey;
+
     final List<UniqueKey<Record>> uniqueKeys = new ArrayList<>();
+
     final List<ForeignKey<Record, Record>> foreignKeys = new ArrayList<>();
+
     final List<Check<Record>> checks = new ArrayList<>();
+
     final List<Index> indexes = new ArrayList<>();
 
     InformationSchemaTable(

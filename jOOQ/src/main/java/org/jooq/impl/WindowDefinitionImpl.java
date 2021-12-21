@@ -56,6 +56,7 @@ import org.jooq.WindowSpecificationRowsStep;
 final class WindowDefinitionImpl extends AbstractQueryPart implements WindowDefinition {
 
   private final Name name;
+
   private final WindowSpecification window;
 
   WindowDefinitionImpl(Name name, WindowSpecification window) {
@@ -69,49 +70,34 @@ final class WindowDefinitionImpl extends AbstractQueryPart implements WindowDefi
 
   @Override
   public final void accept(Context<?> ctx) {
-
     // In the WINDOW clause, always declare window definitions
     if (ctx.declareWindows()) {
       ctx.visit(name).sql(' ').visit(K_AS).sql(" (");
-
       if (window != null) ctx.visit(window);
-
       ctx.sql(')');
-    }
-
-    // Outside the WINDOW clause, only few dialects actually support
+    } else // Outside the WINDOW clause, only few dialects actually support
     // referencing WINDOW definitions
-    else if (!NO_SUPPORT_WINDOW_CLAUSE.contains(ctx.dialect())) {
+    if (!NO_SUPPORT_WINDOW_CLAUSE.contains(ctx.dialect())) {
       ctx.visit(name);
-    }
-
-    // When emulating, just repeat the window specification
-    else if (window != null) {
+    } else // When emulating, just repeat the window specification
+    if (window != null) {
       ctx.visit(window);
-    }
-
-    // Try looking up the window specification from the context
-    else {
-
+    } else // Try looking up the window specification from the context
+    {
       @SuppressWarnings("unchecked")
       QueryPartList<WindowDefinition> windows =
           (QueryPartList<WindowDefinition>) ctx.data(DATA_WINDOW_DEFINITIONS);
-
       renderContextDefinitionOrName:
       if (windows != null) {
-
         windowLoop:
         for (WindowDefinition w : windows) {
           if (((WindowDefinitionImpl) w).getName().equals(name)) {
-
             // Prevent StackOverflowError
             if (w == this) break windowLoop;
-
             ctx.visit(w);
             break renderContextDefinitionOrName;
           }
         }
-
         // [#7296] This is an empty window specification if we reach this far
       }
     }
@@ -125,7 +111,6 @@ final class WindowDefinitionImpl extends AbstractQueryPart implements WindowDefi
   // ------------------------------------------------------------------------
   // XXX: WindowSpecification API
   // ------------------------------------------------------------------------
-
   @Override
   public final WindowSpecificationRowsStep orderBy(OrderField<?>... fields) {
     return new WindowSpecificationImpl(this).orderBy(fields);

@@ -47,7 +47,6 @@ import org.jooq.Converter;
  *     java.util.function.Function, java.util.function.Function)} instead, e.g. <code>
  *     Converter.ofNullable(Date.class, LocalDate.class, Date::toLocalDate, Date::valueOf)</code>.
  */
-@Deprecated
 public final class DateToLocalDateConverter extends AbstractConverter<Date, LocalDate> {
 
   public DateToLocalDateConverter() {

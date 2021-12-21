@@ -50,6 +50,7 @@ import java.math.BigInteger;
 public final class UInteger extends UNumber implements Comparable<UInteger> {
 
   private static final Class<UInteger> CLASS = UInteger.class;
+
   private static final String CLASS_NAME = CLASS.getName();
 
   /** System property name for the property to set the size of the pre-cache. */
@@ -96,7 +97,6 @@ public final class UInteger extends UNumber implements Comparable<UInteger> {
   private static final int getPrecacheSize() {
     String prop = null;
     long propParsed;
-
     try {
       prop = System.getProperty(PRECACHE_PROPERTY);
     } catch (SecurityException e) {
@@ -105,11 +105,9 @@ public final class UInteger extends UNumber implements Comparable<UInteger> {
       return DEFAULT_PRECACHE_SIZE;
     }
     if (prop == null) return DEFAULT_PRECACHE_SIZE;
-
     // empty value
     // FIXME: should we log this somewhere?
     if (prop.length() <= 0) return DEFAULT_PRECACHE_SIZE;
-
     try {
       propParsed = Long.parseLong(prop);
     } catch (NumberFormatException e) {
@@ -117,13 +115,10 @@ public final class UInteger extends UNumber implements Comparable<UInteger> {
       // FIXME: should we log this somewhere?
       return DEFAULT_PRECACHE_SIZE;
     }
-
     // treat negative value as no cache...
     if (propParsed < 0) return 0;
-
     // FIXME: should we log this somewhere?
     if (propParsed > Integer.MAX_VALUE) return Integer.MAX_VALUE;
-
     return (int) propParsed;
   }
 
@@ -135,12 +130,9 @@ public final class UInteger extends UNumber implements Comparable<UInteger> {
   private static final UInteger[] mkValues() {
     int precacheSize = getPrecacheSize();
     UInteger[] ret;
-
     if (precacheSize <= 0) return null;
-
     ret = new UInteger[precacheSize];
     for (int i = 0; i < precacheSize; i++) ret[i] = new UInteger(i);
-
     return ret;
   }
 
@@ -165,16 +157,13 @@ public final class UInteger extends UNumber implements Comparable<UInteger> {
    */
   private static UInteger getCached(long value) {
     if (VALUES != null && value < VALUES.length) return VALUES[(int) value];
-
     return null;
   }
 
   /** Get the value of a long without checking the value. */
   private static UInteger valueOfUnchecked(long value) {
     UInteger cached;
-
     if ((cached = getCached(value)) != null) return cached;
-
     return new UInteger(value, true);
   }
 
@@ -244,7 +233,6 @@ public final class UInteger extends UNumber implements Comparable<UInteger> {
   private static long rangeCheck(long value) throws NumberFormatException {
     if (value < MIN_VALUE || value > MAX_VALUE)
       throw new NumberFormatException("Value is out of range : " + value);
-
     return value;
   }
 
@@ -256,11 +244,9 @@ public final class UInteger extends UNumber implements Comparable<UInteger> {
    */
   private Object readResolve() throws ObjectStreamException {
     UInteger cached;
-
     // the value read could be invalid so check it
     rangeCheck(value);
     if ((cached = getCached(value)) != null) return cached;
-
     return this;
   }
 
@@ -298,7 +284,6 @@ public final class UInteger extends UNumber implements Comparable<UInteger> {
   public boolean equals(Object obj) {
     if (this == obj) return true;
     if (obj instanceof UInteger) return value == ((UInteger) obj).value;
-
     return false;
   }
 

@@ -87,19 +87,29 @@ final class CursorImpl<R extends Record> extends AbstractCursor<R> {
   private static final JooqLogger log = JooqLogger.getLogger(CursorImpl.class);
 
   final ExecuteContext ctx;
+
   final ExecuteListener listener;
+
   private final boolean[] intern;
+
   private final boolean keepResultSet;
+
   private final boolean keepStatement;
+
   private final boolean autoclosing;
+
   private final int maxRows;
+
   private final Supplier<? extends R> factory;
+
   private boolean isClosed;
 
   private transient CursorResultSet rs;
+
   private transient DefaultBindingGetResultSetContext<?> rsContext;
 
   private transient Iterator<R> iterator;
+
   private transient int rows;
 
   @SuppressWarnings("unchecked")
@@ -133,7 +143,6 @@ final class CursorImpl<R extends Record> extends AbstractCursor<R> {
       int maxRows,
       boolean autoclosing) {
     super(ctx.configuration(), (AbstractRow<R>) Tools.row0(fields));
-
     this.ctx = ctx;
     this.listener = (listener != null ? listener : ExecuteListeners.getAndStart(ctx));
     this.factory = recordFactory(type, this.fields);
@@ -142,13 +151,10 @@ final class CursorImpl<R extends Record> extends AbstractCursor<R> {
     this.rs = new CursorResultSet();
     this.rsContext =
         new DefaultBindingGetResultSetContext<>(ctx.configuration(), ctx.data(), rs, 0);
-
     this.maxRows = maxRows;
     this.autoclosing = autoclosing;
-
     if (internIndexes != null) {
       this.intern = new boolean[fields.length];
-
       for (int i : internIndexes) intern[i] = true;
     } else this.intern = null;
   }
@@ -159,7 +165,6 @@ final class CursorImpl<R extends Record> extends AbstractCursor<R> {
       iterator = new CursorIterator();
       listener.fetchStart(ctx);
     }
-
     return iterator;
   }
 
@@ -170,15 +175,11 @@ final class CursorImpl<R extends Record> extends AbstractCursor<R> {
     iterator();
     ResultImpl<R> result =
         new ResultImpl<>(((DefaultExecuteContext) ctx).originalConfiguration(), fields);
-
     ctx.result(result);
     listener.resultStart(ctx);
-
     for (int i = 0; i < number && iterator().hasNext(); i++) result.addRecord(iterator().next());
-
     ctx.result(result);
     listener.resultEnd(ctx);
-
     return result;
   }
 
@@ -205,7 +206,6 @@ final class CursorImpl<R extends Record> extends AbstractCursor<R> {
     // ---------------------------------------------------------------------
     // XXX: Wrapper methods
     // ---------------------------------------------------------------------
-
     @Override
     public final <T> T unwrap(Class<T> iface) throws SQLException {
       return ctx.resultSet().unwrap(iface);
@@ -219,7 +219,6 @@ final class CursorImpl<R extends Record> extends AbstractCursor<R> {
     // ---------------------------------------------------------------------
     // XXX: Informational methods
     // ---------------------------------------------------------------------
-
     @Override
     public final Statement getStatement() throws SQLException {
       return ctx.resultSet().getStatement();
@@ -288,7 +287,6 @@ final class CursorImpl<R extends Record> extends AbstractCursor<R> {
     // ---------------------------------------------------------------------
     // XXX: Navigational methods
     // ---------------------------------------------------------------------
-
     @Override
     public final boolean isBeforeFirst() throws SQLException {
       return ctx.resultSet().isBeforeFirst();
@@ -367,17 +365,14 @@ final class CursorImpl<R extends Record> extends AbstractCursor<R> {
     @Override
     public final void close() throws SQLException {
       ctx.rows(rows);
-
       // [#12568] Make sure exceptions thrown in fetchEnd() don't produce
-      //          connection leaks
+      // connection leaks
       try {
         listener.fetchEnd(ctx);
-      }
-
-      // [#1868] If this Result / Cursor was "kept" through a lazy
+      } finally // [#1868] If this Result / Cursor was "kept" through a lazy
       // execution, we must assure that the ExecuteListener lifecycle is
       // correctly terminated.
-      finally {
+      {
         Tools.safeClose(listener, ctx, keepStatement, keepResultSet);
       }
     }
@@ -390,7 +385,6 @@ final class CursorImpl<R extends Record> extends AbstractCursor<R> {
     // ---------------------------------------------------------------------
     // XXX: Data retrieval
     // ---------------------------------------------------------------------
-
     @Override
     public final boolean wasNull() throws SQLException {
       return ctx.resultSet().wasNull();
@@ -734,7 +728,6 @@ final class CursorImpl<R extends Record> extends AbstractCursor<R> {
     // ---------------------------------------------------------------------
     // XXX: JDBC 4.1 methods
     // ---------------------------------------------------------------------
-
     @Override
     public final <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
       return ctx.resultSet().getObject(columnIndex, type);
@@ -748,7 +741,6 @@ final class CursorImpl<R extends Record> extends AbstractCursor<R> {
     // ---------------------------------------------------------------------
     // XXX: Data modification
     // ---------------------------------------------------------------------
-
     private final void logUpdate(int columnIndex, Object x) throws SQLException {
       if (log.isDebugEnabled()) {
         log.debug(
@@ -1317,7 +1309,6 @@ final class CursorImpl<R extends Record> extends AbstractCursor<R> {
     // ------------------------------------------------------------------------
     // JDBC 4.2
     // ------------------------------------------------------------------------
-
     @Override
     public void updateObject(int columnIndex, Object x, SQLType targetSqlType, int scaleOrLength)
         throws SQLException {
@@ -1376,14 +1367,11 @@ final class CursorImpl<R extends Record> extends AbstractCursor<R> {
     @Override
     public final boolean hasNext() {
       if (hasNext == null) {
-
         // Some databases (e.g. Redshift) do not implement JDBC's maxRows.
         if (maxRows > 0 && rows >= maxRows) return false;
-
         next = fetchNext();
         hasNext = (next != null);
       }
-
       return hasNext;
     }
 
@@ -1391,7 +1379,6 @@ final class CursorImpl<R extends Record> extends AbstractCursor<R> {
     public final R next() {
       if (!hasNext())
         throw new NoSuchElementException("There are no more records to fetch from this Cursor");
-
       R result = next;
       hasNext = null;
       next = null;
@@ -1401,15 +1388,12 @@ final class CursorImpl<R extends Record> extends AbstractCursor<R> {
     @SuppressWarnings("unchecked")
     private final R fetchNext() {
       AbstractRecord record = null;
-
       try {
         if (!isClosed && rs.next()) {
           record = recordDelegate.operate(initialiser.reset());
           rows++;
         }
-      }
-
-      // [#3427] ControlFlowSignals must not be passed on to ExecuteListners
+      } // [#3427] ControlFlowSignals must not be passed on to ExecuteListners
       catch (ControlFlowSignal e) {
         throw e;
       } catch (RuntimeException e) {
@@ -1421,14 +1405,12 @@ final class CursorImpl<R extends Record> extends AbstractCursor<R> {
         listener.exception(ctx);
         throw ctx.exception();
       }
-
       // [#1868] [#2373] [#2385] [#8544] This calls through to
       // Utils.safeClose() if necessary, lazy-terminating the ExecuteListener
       // lifecycle if the result is not eager-fetched.
       if (record == null && autoclosing) {
         CursorImpl.this.close();
       }
-
       return (R) record;
     }
 
@@ -1441,6 +1423,7 @@ final class CursorImpl<R extends Record> extends AbstractCursor<R> {
         implements ThrowingFunction<AbstractRecord, AbstractRecord, SQLException> {
 
       private final AbstractRow<?> initialiserFields;
+
       private int offset;
 
       CursorRecordInitialiser(AbstractRow<?> initialiserFields, int offset) {
@@ -1458,15 +1441,11 @@ final class CursorImpl<R extends Record> extends AbstractCursor<R> {
         ctx.record(record);
         listener.recordStart(ctx);
         int size = initialiserFields.size();
-
         for (int i = 0; i < size; i++) setValue(record, initialiserFields.field(i), i);
-
         if (intern != null)
           for (int i = 0; i < intern.length; i++) if (intern[i]) record.intern0(i);
-
         ctx.record(record);
         listener.recordEnd(ctx);
-
         return record;
       }
 
@@ -1478,11 +1457,9 @@ final class CursorImpl<R extends Record> extends AbstractCursor<R> {
           T value;
           AbstractRow<?> nested = null;
           Class<? extends AbstractRecord> recordType = null;
-
           // [#7100] TODO: This should be transparent to the CursorImpl
-          //         RowField may have a Row[N].mapping(...) applied
+          // RowField may have a Row[N].mapping(...) applied
           Field<?> f = uncoerce(field);
-
           if (f instanceof RowField && NO_NATIVE_SUPPORT.contains(ctx.dialect())) {
             nested = ((RowField<?, ?>) f).emulatedFields(configuration);
             recordType = Tools.recordType(nested.size());
@@ -1490,7 +1467,6 @@ final class CursorImpl<R extends Record> extends AbstractCursor<R> {
             nested = Tools.row0(embeddedFields(f));
             recordType = embeddedRecordType(f);
           }
-
           int nestedOffset = offset + index;
           if (nested != null) {
             CursorRecordInitialiser operation = new CursorRecordInitialiser(nested, nestedOffset);
@@ -1502,10 +1478,8 @@ final class CursorImpl<R extends Record> extends AbstractCursor<R> {
                             (AbstractRow<AbstractRecord>) nested,
                             ((DefaultExecuteContext) ctx).originalConfiguration())
                         .operate(operation);
-
             // [#7100] TODO: Is there a more elegant way to do this?
             if (f != field) value = ((Converter<Object, T>) field.getConverter()).from(value);
-
             offset += operation.offset - nestedOffset + nested.size() - 1;
           } else {
             rsContext.index(nestedOffset + 1);
@@ -1513,12 +1487,9 @@ final class CursorImpl<R extends Record> extends AbstractCursor<R> {
             field.getBinding().get((BindingGetResultSetContext<T>) rsContext);
             value = (T) rsContext.value();
           }
-
           record.values[index] = value;
           record.originals[index] = value;
-        }
-
-        // [#5901] Improved error logging, mostly useful when there are some data type conversion
+        } // [#5901] Improved error logging, mostly useful when there are some data type conversion
         // errors
         catch (Exception e) {
           throw new SQLException(

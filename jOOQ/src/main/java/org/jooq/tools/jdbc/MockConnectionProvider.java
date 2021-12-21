@@ -59,6 +59,7 @@ import org.jooq.ConnectionProvider;
 public class MockConnectionProvider implements ConnectionProvider {
 
   private final ConnectionProvider delegate;
+
   private final MockDataProvider provider;
 
   public MockConnectionProvider(ConnectionProvider delegate, MockDataProvider provider) {
@@ -79,6 +80,7 @@ public class MockConnectionProvider implements ConnectionProvider {
   }
 
   private class MockConnectionWrapper extends MockConnection {
+
     final Connection connection;
 
     public MockConnectionWrapper(Connection connection) {

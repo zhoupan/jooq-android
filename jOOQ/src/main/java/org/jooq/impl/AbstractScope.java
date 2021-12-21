@@ -48,6 +48,7 @@ import org.jooq.conf.Settings;
 abstract class AbstractScope implements Scope {
 
   final Configuration configuration;
+
   final Map<Object, Object> data;
 
   AbstractScope(Configuration configuration) {
@@ -55,13 +56,10 @@ abstract class AbstractScope implements Scope {
   }
 
   AbstractScope(Configuration configuration, Map<Object, Object> data) {
-
     // The Configuration can be null when unattached objects are
     // executed or when unattached Records are stored...
     if (configuration == null) configuration = new DefaultConfiguration();
-
     if (data == null) data = new DataMap();
-
     this.configuration = configuration;
     this.data = data;
   }
@@ -69,7 +67,6 @@ abstract class AbstractScope implements Scope {
   // ------------------------------------------------------------------------
   // XXX Scope API
   // ------------------------------------------------------------------------
-
   @Override
   public final Configuration configuration() {
     return configuration;

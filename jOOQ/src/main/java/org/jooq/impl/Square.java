@@ -61,21 +61,18 @@ final class Square<T extends Number> extends AbstractField<T> {
 
   Square(Field<T> value) {
     super(N_SQUARE, allNotNull((DataType) dataType(INTEGER, value, false), value));
-
     this.value = nullSafeNotNull(value, INTEGER);
   }
 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
       case SQLITE:
         ctx.visit(imul(value, value));
         break;
-
       case CUBRID:
       case DERBY:
       case FIREBIRD:
@@ -90,7 +87,6 @@ final class Square<T extends Number> extends AbstractField<T> {
           else ctx.visit(DSL.power(value, inline(2)));
           break;
         }
-
       default:
         ctx.visit(function(N_SQUARE, getDataType(), value));
         break;
@@ -100,7 +96,6 @@ final class Square<T extends Number> extends AbstractField<T> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Square) {

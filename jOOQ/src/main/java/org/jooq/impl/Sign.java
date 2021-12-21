@@ -61,14 +61,12 @@ final class Sign extends AbstractField<Integer> {
 
   Sign(Field<? extends Number> number) {
     super(N_SIGN, allNotNull(INTEGER, number));
-
     this.number = nullSafeNotNull(number, INTEGER);
   }
 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -78,7 +76,6 @@ final class Sign extends AbstractField<Integer> {
                 .when(((Field) number).lt(zero()), inline(-1))
                 .when(((Field) number).eq(zero()), inline(0)));
         break;
-
       default:
         ctx.visit(function(N_SIGN, getDataType(), number));
         break;
@@ -88,7 +85,6 @@ final class Sign extends AbstractField<Integer> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Sign) {

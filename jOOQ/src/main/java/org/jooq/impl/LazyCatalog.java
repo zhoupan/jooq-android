@@ -55,11 +55,11 @@ import org.jooq.Schema;
 public final class LazyCatalog extends AbstractNamed implements Catalog {
 
   final LazySupplier<Catalog> supplier;
+
   transient Catalog catalog;
 
   public LazyCatalog(Name name, LazySupplier<Catalog> supplier) {
     super(name, CommentImpl.NO_COMMENT);
-
     this.supplier = supplier;
   }
 
@@ -71,14 +71,12 @@ public final class LazyCatalog extends AbstractNamed implements Catalog {
         throw new RuntimeException(e);
       }
     }
-
     return catalog;
   }
 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     ctx.visit(catalog());
@@ -87,7 +85,6 @@ public final class LazyCatalog extends AbstractNamed implements Catalog {
   // -------------------------------------------------------------------------
   // XXX: Schema API
   // -------------------------------------------------------------------------
-
   @Override
   public final List<Schema> getSchemas() {
     return catalog().getSchemas();

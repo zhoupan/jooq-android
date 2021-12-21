@@ -52,8 +52,10 @@ import org.jooq.SQLDialect;
 
 /** @author Lukas Eder */
 final class JSONReturning extends AbstractQueryPart implements SimpleQueryPart {
+
   static final Set<SQLDialect> NO_SUPPORT_RETURNING =
       SQLDialect.supportedBy(H2, MARIADB, MYSQL, POSTGRES);
+
   final DataType<?> type;
 
   JSONReturning(DataType<?> type) {
@@ -71,7 +73,6 @@ final class JSONReturning extends AbstractQueryPart implements SimpleQueryPart {
       default:
         if (!NO_SUPPORT_RETURNING.contains(ctx.dialect()))
           ctx.visit(K_RETURNING).sql(' ').sql(type.getCastTypeName(ctx.configuration()));
-
         break;
     }
   }

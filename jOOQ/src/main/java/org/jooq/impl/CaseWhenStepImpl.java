@@ -55,30 +55,30 @@ import org.jooq.CaseWhenStep;
 import org.jooq.Context;
 import org.jooq.DataType;
 import org.jooq.Field;
-// ...
 
+// ...
 final class CaseWhenStepImpl<V, T> extends AbstractField<T> implements CaseWhenStep<V, T> {
 
   private final Field<V> value;
+
   private final List<Field<V>> compareValues;
+
   private final List<Field<T>> results;
+
   private Field<T> else_;
 
   CaseWhenStepImpl(Field<V> value, Field<V> compareValue, Field<T> result) {
     this(value, result.getDataType());
-
     when(compareValue, result);
   }
 
   CaseWhenStepImpl(Field<V> value, Map<? extends Field<V>, ? extends Field<T>> map) {
     this(value, dataType(map));
-
     mapFields(map);
   }
 
   private CaseWhenStepImpl(Field<V> value, DataType<T> type) {
     super(N_CASE, type);
-
     this.value = value;
     this.compareValues = new ArrayList<>();
     this.results = new ArrayList<>();
@@ -108,7 +108,6 @@ final class CaseWhenStepImpl<V, T> extends AbstractField<T> implements CaseWhenS
   @Override
   public final Field<T> else_(Field<T> result) {
     this.else_ = result;
-
     return this;
   }
 
@@ -131,7 +130,6 @@ final class CaseWhenStepImpl<V, T> extends AbstractField<T> implements CaseWhenS
   public final CaseWhenStep<V, T> when(Field<V> compareValue, Field<T> result) {
     compareValues.add(compareValue);
     results.add(result);
-
     return this;
   }
 
@@ -150,12 +148,10 @@ final class CaseWhenStepImpl<V, T> extends AbstractField<T> implements CaseWhenS
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
-
         // The DERBY dialect doesn't support the simple CASE clause
       case DERBY:
         acceptSearched(ctx);
         break;
-
       default:
         acceptNative(ctx);
         break;
@@ -164,12 +160,10 @@ final class CaseWhenStepImpl<V, T> extends AbstractField<T> implements CaseWhenS
 
   private final void acceptSearched(Context<?> ctx) {
     int size = compareValues.size();
-
     CaseConditionStep<T> when = null;
     for (int i = 0; i < size; i++)
       if (when == null) when = DSL.when(value.eq(compareValues.get(i)), results.get(i));
       else when = when.when(value.eq(compareValues.get(i)), results.get(i));
-
     if (when != null)
       if (else_ != null) ctx.visit(when.else_(else_));
       else ctx.visit(when);
@@ -177,10 +171,8 @@ final class CaseWhenStepImpl<V, T> extends AbstractField<T> implements CaseWhenS
 
   private final void acceptNative(Context<?> ctx) {
     ctx.visit(K_CASE);
-
     int size = compareValues.size();
     ctx.sql(' ').visit(value).formatIndentStart();
-
     for (int i = 0; i < size; i++)
       ctx.formatSeparator()
           .visit(K_WHEN)
@@ -190,11 +182,9 @@ final class CaseWhenStepImpl<V, T> extends AbstractField<T> implements CaseWhenS
           .visit(K_THEN)
           .sql(' ')
           .visit(results.get(i));
-
     if (else_ != null) ctx.formatSeparator().visit(K_ELSE).sql(' ').visit(else_);
     else if (TRUE.equals(ctx.data(DATA_FORCE_CASE_ELSE_NULL)))
       ctx.formatSeparator().visit(K_ELSE).sql(' ').visit(K_NULL);
-
     ctx.formatIndentEnd().formatSeparator().visit(K_END);
   }
 }

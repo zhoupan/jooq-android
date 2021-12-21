@@ -56,7 +56,6 @@ class DerivedTable<R extends Record> extends AbstractTable<R> {
 
   DerivedTable(Select<R> query) {
     super(TableOptions.expression(), N_SELECT);
-
     this.query = query;
   }
 
@@ -75,7 +74,8 @@ class DerivedTable<R extends Record> extends AbstractTable<R> {
   }
 
   @Override
-  /* non-final */ FieldsImpl<R> fields0() {
+  /* non-final */
+  FieldsImpl<R> fields0() {
     return new FieldsImpl<>(query.getSelect());
   }
 
@@ -86,11 +86,11 @@ class DerivedTable<R extends Record> extends AbstractTable<R> {
 
   @Override
   public final void accept(Context<?> ctx) {
-
     visitSubquery(ctx, query, false);
   }
 
-  @Override // Avoid AbstractTable implementation
+  // Avoid AbstractTable implementation
+  @Override
   public final Clause[] clauses(Context<?> ctx) {
     return null;
   }

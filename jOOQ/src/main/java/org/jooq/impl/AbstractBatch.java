@@ -51,6 +51,7 @@ import org.reactivestreams.Subscriber;
 abstract class AbstractBatch implements Batch {
 
   final Configuration configuration;
+
   final DSLContext dsl;
 
   AbstractBatch(Configuration configuration) {
@@ -60,7 +61,6 @@ abstract class AbstractBatch implements Batch {
 
   @Override
   public void subscribe(Subscriber<? super Integer> s) {
-
     // [#11700] TODO: Implement this
     throw new UnsupportedOperationException();
   }

@@ -50,14 +50,12 @@ final class SQLQuery extends AbstractRowCountQuery {
 
   SQLQuery(Configuration configuration, SQL delegate) {
     super(configuration);
-
     this.delegate = delegate;
   }
 
   // ------------------------------------------------------------------------
   // Query API
   // ------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -70,7 +68,6 @@ final class SQLQuery extends AbstractRowCountQuery {
   @Override
   public final Clause[] clauses(Context<?> ctx) {
     if (delegate instanceof QueryPartInternal) return ((QueryPartInternal) delegate).clauses(ctx);
-
     return null;
   }
 }

@@ -65,5 +65,4 @@ import org.jetbrains.annotations.*;
  *     </ul>
  */
 @SuppressWarnings({"unused"})
-@Deprecated(forRemoval = true, since = "3.15")
 public interface TruncateFinalStep<R extends Record> extends Truncate<R> {}

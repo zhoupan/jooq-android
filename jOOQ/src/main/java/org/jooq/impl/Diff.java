@@ -101,10 +101,15 @@ final class Diff {
       SQLDialect.supportedBy(IGNITE, MARIADB, MYSQL);
 
   private final MigrationConfiguration migrateConf;
+
   private final DDLExportConfiguration exportConf;
+
   private final DSLContext ctx;
+
   private final Meta meta1;
+
   private final Meta meta2;
+
   private final DDL ddl;
 
   Diff(Configuration configuration, MigrationConfiguration migrateConf, Meta meta1, Meta meta2) {
@@ -127,12 +132,8 @@ final class Diff {
         result,
         l1,
         l2,
-        null,
-
-        // TODO Implement this for SQL Server support.
-        null,
-
-        // TODO Implement this for SQL Server support.
+        null, // TODO Implement this for SQL Server support.
+        null, // TODO Implement this for SQL Server support.
         null,
         (r, c1, c2) -> appendSchemas(r, c1.getSchemas(), c2.getSchemas()));
   }
@@ -148,17 +149,13 @@ final class Diff {
           if (s.getTables().isEmpty() && s.getSequences().isEmpty()) {
             if (!StringUtils.isEmpty(s.getName())) r.queries.add(ctx.dropSchema(s));
           } else if (migrateConf.dropSchemaCascade()) {
-
             // TODO: Can we reuse the logic from DROP_TABLE?
             for (Table<?> t1 : s.getTables())
               for (UniqueKey<?> uk : t1.getKeys()) r.droppedFks.addAll(uk.getReferences());
-
             if (!StringUtils.isEmpty(s.getName())) r.queries.add(ctx.dropSchema(s).cascade());
           } else {
             for (Table<?> t2 : s.getTables()) dropTable().drop(r, t2);
-
             for (Sequence<?> seq : s.getSequences()) dropSequence().drop(r, seq);
-
             if (!StringUtils.isEmpty(s.getName())) r.queries.add(ctx.dropSchema(s));
           }
         },
@@ -185,35 +182,28 @@ final class Diff {
         (r, s1, s2) -> {
           AlterSequenceFlagsStep stmt = null;
           AlterSequenceFlagsStep stmt0 = ctx.alterSequence(s1);
-
           if (s2.getStartWith() != null && !s2.getStartWith().equals(s1.getStartWith()))
             stmt = defaultIfNull(stmt, stmt0).startWith(s2.getStartWith());
           else if (s2.getStartWith() == null && s1.getStartWith() != null)
             stmt = defaultIfNull(stmt, stmt0).startWith(1);
-
           if (s2.getIncrementBy() != null && !s2.getIncrementBy().equals(s1.getIncrementBy()))
             stmt = defaultIfNull(stmt, stmt0).incrementBy(s2.getIncrementBy());
           else if (s2.getIncrementBy() == null && s1.getIncrementBy() != null)
             stmt = defaultIfNull(stmt, stmt0).incrementBy(1);
-
           if (s2.getMinvalue() != null && !s2.getMinvalue().equals(s1.getMinvalue()))
             stmt = defaultIfNull(stmt, stmt0).minvalue(s2.getMinvalue());
           else if (s2.getMinvalue() == null && s1.getMinvalue() != null)
             stmt = defaultIfNull(stmt, stmt0).noMinvalue();
-
           if (s2.getMaxvalue() != null && !s2.getMaxvalue().equals(s1.getMaxvalue()))
             stmt = defaultIfNull(stmt, stmt0).maxvalue(s2.getMaxvalue());
           else if (s2.getMaxvalue() == null && s1.getMaxvalue() != null)
             stmt = defaultIfNull(stmt, stmt0).noMaxvalue();
-
           if (s2.getCache() != null && !s2.getCache().equals(s1.getCache()))
             stmt = defaultIfNull(stmt, stmt0).cache(s2.getCache());
           else if (s2.getCache() == null && s1.getCache() != null)
             stmt = defaultIfNull(stmt, stmt0).noCache();
-
           if (s2.getCycle() && !s1.getCycle()) stmt = defaultIfNull(stmt, stmt0).cycle();
           else if (!s2.getCycle() && s1.getCycle()) stmt = defaultIfNull(stmt, stmt0).noCycle();
-
           if (stmt != null) r.queries.add(stmt);
         });
   }
@@ -238,7 +228,6 @@ final class Diff {
                 && !d2.getDataType().defaultValue().equals(d1.getDataType().defaultValue()))
               r.queries.add(
                   ctx.alterDomain(d1).setDefault((Field) d2.getDataType().defaultValue()));
-
             appendChecks(r, d1, d1.getChecks(), d2.getChecks());
           }
         });
@@ -254,7 +243,6 @@ final class Diff {
         for (ForeignKey<?, ?> fk : uk.getReferences())
           if (r.droppedFks.add(fk) && !migrateConf.dropTableCascade())
             r.queries.add(ctx.alterTable(fk.getTable()).dropForeignKey(fk.constraint()));
-
       if (t.getType().isView()) r.queries.add(ctx.dropView(t));
       else if (t.getType() == TableType.TEMPORARY) r.queries.add(ctx.dropTemporaryTable(t));
       else
@@ -265,11 +253,11 @@ final class Diff {
 
   private final Merge<Table<?>> MERGE_TABLE =
       new Merge<Table<?>>() {
+
         @Override
         public void merge(DiffResult r, Table<?> t1, Table<?> t2) {
           boolean v1 = t1.getType().isView();
           boolean v2 = t2.getType().isView();
-
           if (v1 && v2) {
             if (!Arrays.equals(t1.fields(), t2.fields())
                 || t2.getOptions().select() != null
@@ -283,9 +271,8 @@ final class Diff {
             replaceView(r, t1, t2);
             return;
           } else {
-
             // TODO: The order of dropping / adding these objects might be incorrect
-            //       as there could be inter-dependencies.
+            // as there could be inter-dependencies.
             appendColumns(r, t1, asList(t1.fields()), asList(t2.fields()));
             appendPrimaryKey(r, t1, asList(t1.getPrimaryKey()), asList(t2.getPrimaryKey()));
             appendUniqueKeys(r, t1, removePrimary(t1.getKeys()), removePrimary(t2.getKeys()));
@@ -293,10 +280,8 @@ final class Diff {
             appendChecks(r, t1, t1.getChecks(), t2.getChecks());
             appendIndexes(r, t1, t1.getIndexes(), t2.getIndexes());
           }
-
           String c1 = defaultString(t1.getComment());
           String c2 = defaultString(t2.getComment());
-
           if (!c1.equals(c2))
             if (v2) r.queries.add(ctx.commentOnView(t2).is(c2));
             else r.queries.add(ctx.commentOnTable(t2).is(c2));
@@ -304,7 +289,6 @@ final class Diff {
 
         private void replaceView(DiffResult r, Table<?> v1, Table<?> v2) {
           if (!migrateConf.createOrReplaceView()) dropTable().drop(r, v1);
-
           createTable().create(r, v2);
         }
       };
@@ -316,23 +300,19 @@ final class Diff {
 
   private final List<UniqueKey<?>> removePrimary(List<? extends UniqueKey<?>> list) {
     List<UniqueKey<?>> result = new ArrayList<>();
-
     for (UniqueKey<?> uk : list) if (!uk.isPrimary()) result.add(uk);
-
     return result;
   }
 
   private final boolean isSynthetic(Field<?> f) {
     switch (ctx.family()) {
     }
-
     return false;
   }
 
   private final boolean isSynthetic(UniqueKey<?> pk) {
     switch (ctx.family()) {
     }
-
     return false;
   }
 
@@ -340,7 +320,6 @@ final class Diff {
       DiffResult result, Table<?> t1, List<? extends Field<?>> l1, List<? extends Field<?>> l2) {
     final List<Field<?>> add = new ArrayList<>();
     final List<Field<?>> drop = new ArrayList<>();
-
     result =
         append(
             result,
@@ -348,7 +327,6 @@ final class Diff {
             l2,
             null,
             (r, f) -> {
-
               // Ignore synthetic columns
               if (isSynthetic(f))
                 ;
@@ -356,7 +334,6 @@ final class Diff {
               else r.queries.add(ctx.alterTable(t1).add(f));
             },
             (r, f) -> {
-
               // Ignore synthetic columns
               if (isSynthetic(f))
                 ;
@@ -364,32 +341,28 @@ final class Diff {
               else r.queries.add(ctx.alterTable(t1).drop(f));
             },
             new Merge<Field<?>>() {
+
               @SuppressWarnings({"unchecked", "rawtypes"})
               @Override
               public void merge(DiffResult r, Field<?> f1, Field<?> f2) {
                 DataType<?> type1 = f1.getDataType();
                 DataType<?> type2 = f2.getDataType();
-
                 // TODO: Some dialects support changing nullability and types in one statement
-                //       We should produce a single statement as well, and handle derived things
-                //       like nullability through emulations
+                // We should produce a single statement as well, and handle derived things
+                // like nullability through emulations
                 if (typeNameDifference(type1, type2))
                   r.queries.add(
                       ctx.alterTable(t1).alter(f1).set(type2.nullability(Nullability.DEFAULT)));
-
                 if (type1.nullable() && !type2.nullable())
                   r.queries.add(ctx.alterTable(t1).alter(f1).setNotNull());
                 else if (!type1.nullable() && type2.nullable())
                   r.queries.add(ctx.alterTable(t1).alter(f1).dropNotNull());
-
                 Field<?> d1 = type1.defaultValue();
                 Field<?> d2 = type2.defaultValue();
-
                 if (type1.defaulted() && !type2.defaulted())
                   r.queries.add(ctx.alterTable(t1).alter(f1).dropDefault());
                 else if (type2.defaulted() && (!type1.defaulted() || !d2.equals(d1)))
                   r.queries.add(ctx.alterTable(t1).alter(f1).setDefault((Field) d2));
-
                 if ((type1.hasLength()
                         && type2.hasLength()
                         && (type1.lengthDefined() != type2.lengthDefined()
@@ -402,44 +375,35 @@ final class Diff {
                         && (type1.scaleDefined() != type2.scaleDefined()
                             || type1.scale() != type2.scale())))
                   r.queries.add(ctx.alterTable(t1).alter(f1).set(type2));
-
                 // [#9656] TODO: Change collation
                 // [#9656] TODO: Change character set
               }
 
               private final boolean typeNameDifference(DataType<?> type1, DataType<?> type2) {
                 if (type1.getTypeName().equals(type2.getTypeName())) return false;
-
-                // [#10864] In most dialects, DECIMAL and NUMERIC are aliases and don't need to be
-                // changed into each other
                 else
+                  // [#10864] In most dialects, DECIMAL and NUMERIC are aliases and don't need to be
+                  // changed into each other
                   return type1.getType() != BigDecimal.class || type2.getType() != BigDecimal.class;
               }
 
               private final boolean precisionDifference(DataType<?> type1, DataType<?> type2) {
-
                 // [#10807] Only one type has a default precision defined
                 boolean d1 = defaultPrecision(type1);
                 boolean d2 = defaultPrecision(type2);
-
                 if (d1 || d2) return d1 != d2;
                 else return type1.precision() != type2.precision();
               }
 
               private final boolean defaultPrecision(DataType<?> type) {
                 if (!type.isDateTime()) return false;
-
                 if (!type.precisionDefined()) return true;
-
                 if (NO_SUPPORT_TIMESTAMP_PRECISION.contains(ctx.dialect())) return true;
-
                 if (FALSE.equals(ctx.settings().isMigrationIgnoreDefaultTimestampPrecisionDiffs()))
                   return false;
-
                 switch (ctx.family()) {
                   case MARIADB:
                     return type.precision() == 0;
-
                     // [#10807] TODO: Alternative defaults will be listed here as they are
                     // discovered
                   default:
@@ -447,11 +411,8 @@ final class Diff {
                 }
               }
             });
-
     if (!drop.isEmpty()) result.queries.add(0, ctx.alterTable(t1).drop(drop));
-
     if (!add.isEmpty()) result.queries.add(ctx.alterTable(t1).add(add));
-
     return result;
   }
 
@@ -466,7 +427,6 @@ final class Diff {
             ;
           else r.queries.add(ctx.alterTable(t1).add(pk.constraint()));
         };
-
     final Drop<UniqueKey<?>> drop =
         (r, pk) -> {
           if (isSynthetic(pk))
@@ -474,7 +434,6 @@ final class Diff {
           else if (isEmpty(pk.getName())) r.queries.add(ctx.alterTable(t1).dropPrimaryKey());
           else r.queries.add(ctx.alterTable(t1).dropPrimaryKey(pk.constraint()));
         };
-
     return append(
         result, pk1, pk2, KEY_COMP, create, drop, keyMerge(t1, create, drop, PRIMARY_KEY), true);
   }
@@ -488,7 +447,6 @@ final class Diff {
         (r, u) -> r.queries.add(ctx.alterTable(t1).add(u.constraint()));
     final Drop<UniqueKey<?>> drop =
         (r, u) -> r.queries.add(ctx.alterTable(t1).dropUnique(u.constraint()));
-
     return append(
         result, uk1, uk2, KEY_COMP, create, drop, keyMerge(t1, create, drop, UNIQUE), true);
   }
@@ -498,16 +456,12 @@ final class Diff {
     return (r, k1, k2) -> {
       Name n1 = k1.getUnqualifiedName();
       Name n2 = k2.getUnqualifiedName();
-
       if (n1.empty() ^ n2.empty()) {
         drop.drop(r, k1);
         create.create(r, k2);
-
         return;
       }
-
       if (NAMED_COMP.compare(k1, k2) != 0)
-
         // [#10813] Don't rename constraints in MySQL
         if (type != PRIMARY_KEY || !NO_SUPPORT_PK_NAMES.contains(ctx.dialect()))
           r.queries.add(ctx.alterTable(t1).renameConstraint(n1).to(n2));
@@ -518,14 +472,11 @@ final class Diff {
     return (r, k1, k2) -> {
       Name n1 = k1.getUnqualifiedName();
       Name n2 = k2.getUnqualifiedName();
-
       if (n1.empty() ^ n2.empty()) {
         drop.drop(r, k1);
         create.create(r, k2);
-
         return;
       }
-
       if (NAMED_COMP.compare(k1, k2) != 0)
         r.queries.add(ctx.alterDomain(d1).renameConstraint(n1).to(n2));
     };
@@ -543,7 +494,6 @@ final class Diff {
           if (r.droppedFks.add(fk))
             r.queries.add(ctx.alterTable(t1).dropForeignKey(fk.constraint()));
         };
-
     return append(
         result,
         fk1,
@@ -559,7 +509,6 @@ final class Diff {
       DiffResult result, Table<?> t1, List<? extends Check<?>> c1, List<? extends Check<?>> c2) {
     final Create<Check<?>> create = (r, c) -> r.queries.add(ctx.alterTable(t1).add(c.constraint()));
     final Drop<Check<?>> drop = (r, c) -> r.queries.add(ctx.alterTable(t1).drop(c.constraint()));
-
     return append(
         result, c1, c2, CHECK_COMP, create, drop, keyMerge(t1, create, drop, CHECK), true);
   }
@@ -570,7 +519,6 @@ final class Diff {
         (r, c) -> r.queries.add(ctx.alterDomain(d1).add(c.constraint()));
     final Drop<Check<?>> drop =
         (r, c) -> r.queries.add(ctx.alterDomain(d1).dropConstraint(c.constraint()));
-
     return append(result, c1, c2, CHECK_COMP, create, drop, keyMerge(d1, create, drop), true);
   }
 
@@ -582,7 +530,6 @@ final class Diff {
                 (i.getUnique() ? ctx.createUniqueIndex(i) : ctx.createIndex(i))
                     .on(t1, i.getFields()));
     final Drop<Index> drop = (r, i) -> r.queries.add(ctx.dropIndex(i).on(t1));
-
     return append(
         result,
         l1,
@@ -621,62 +568,52 @@ final class Diff {
       Merge<N> merge,
       boolean dropMergeCreate) {
     if (comp == null) comp = NAMED_COMP;
-
     N s1 = null;
     N s2 = null;
-
     Iterator<? extends N> i1 = sorted(l1, comp);
     Iterator<? extends N> i2 = sorted(l2, comp);
-
     DiffResult dropped =
         dropMergeCreate ? new DiffResult(new ArrayList<>(), result.droppedFks) : result;
     DiffResult merged =
         dropMergeCreate ? new DiffResult(new ArrayList<>(), result.droppedFks) : result;
     DiffResult created =
         dropMergeCreate ? new DiffResult(new ArrayList<>(), result.droppedFks) : result;
-
     for (; ; ) {
       if (s1 == null && i1.hasNext()) s1 = i1.next();
-
       if (s2 == null && i2.hasNext()) s2 = i2.next();
-
       if (s1 == null && s2 == null) break;
-
       int c = s1 == null ? 1 : s2 == null ? -1 : comp.compare(s1, s2);
-
       if (c < 0) {
         if (drop != null) drop.drop(dropped, s1);
-
         s1 = null;
       } else if (c > 0) {
         if (create != null) create.create(created, s2);
-
         s2 = null;
       } else {
         if (merge != null) merge.merge(merged, s1, s2);
-
         s1 = s2 = null;
       }
     }
-
     if (dropMergeCreate) {
       result.addAll(dropped);
       result.addAll(merged);
       result.addAll(created);
     }
-
     return result;
   }
 
   private static interface Create<N extends Named> {
+
     void create(DiffResult result, N named);
   }
 
   private static interface Drop<N extends Named> {
+
     void drop(DiffResult result, N named);
   }
 
   private static interface Merge<N extends Named> {
+
     void merge(DiffResult result, N named1, N named2);
   }
 
@@ -687,8 +624,10 @@ final class Diff {
     return result.iterator();
   }
 
-  private static final /* record */ class DiffResult {
+  private static final class /* record */ DiffResult {
+
     private final List<Query> queries;
+
     private final Set<ForeignKey<?, ?>> droppedFks;
 
     public DiffResult(List<Query> queries, Set<ForeignKey<?, ?>> droppedFks) {

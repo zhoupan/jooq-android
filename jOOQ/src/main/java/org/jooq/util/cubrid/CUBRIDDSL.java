@@ -48,7 +48,6 @@ import org.jooq.impl.DSL;
  * @deprecated - 3.13.0 - [#9403] - This dialect is hardly used by anyone with jOOQ or without jOOQ
  *     and will be removed in the near future.
  */
-@Deprecated(forRemoval = true, since = "3.13")
 public class CUBRIDDSL extends DSL {
 
   /** No instances */
@@ -57,7 +56,6 @@ public class CUBRIDDSL extends DSL {
   // -------------------------------------------------------------------------
   // MySQL-specific functions
   // -------------------------------------------------------------------------
-
   /**
    * Use the CUBRID-specific <code>INCR()</code> function.
    *

@@ -61,7 +61,6 @@ final class RecordImpl7<T1, T2, T3, T4, T5, T6, T7> extends AbstractRecord
   // ------------------------------------------------------------------------
   // XXX: Type-safe Record APIs
   // ------------------------------------------------------------------------
-
   @Override
   public RowImpl7<T1, T2, T3, T4, T5, T6, T7> fieldsRow() {
     return new RowImpl7<>(field1(), field2(), field3(), field4(), field5(), field6(), field7());

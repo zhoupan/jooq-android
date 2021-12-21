@@ -88,11 +88,10 @@ import org.jooq.TableLike;
 /** @author Lukas Eder */
 @SuppressWarnings({"rawtypes", "unchecked"})
 final class DeleteImpl<R extends Record> extends AbstractDelegatingDMLQuery<R, DeleteQueryImpl<R>>
-    implements
-
-        // Cascading interface implementations for Delete behaviour
+    implements // Cascading interface implementations for Delete behaviour
         DeleteUsingStep<R>,
         DeleteConditionStep<R> {
+
   private boolean returningResult;
 
   DeleteImpl(Configuration configuration, WithImpl with, Table<R> table) {

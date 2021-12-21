@@ -68,11 +68,17 @@ import org.jooq.XMLTablePassingStep;
 /** @author Lukas Eder */
 final class XMLTable extends AbstractTable<Record>
     implements XMLTablePassingStep, XMLTableColumnPathStep {
+
   private final Field<String> xpath;
+
   private final Field<XML> passing;
+
   private final XMLPassingMechanism passingMechanism;
+
   private final QueryPartList<XMLTableColumn> columns;
+
   private final boolean hasOrdinality;
+
   private transient FieldsImpl<Record> fields;
 
   XMLTable(Field<String> xpath) {
@@ -86,7 +92,6 @@ final class XMLTable extends AbstractTable<Record>
       QueryPartList<XMLTableColumn> columns,
       boolean hasOrdinality) {
     super(TableOptions.expression(), N_XMLTABLE);
-
     this.xpath = xpath;
     this.passing = passing;
     this.passingMechanism = passingMechanism;
@@ -97,7 +102,6 @@ final class XMLTable extends AbstractTable<Record>
   // -------------------------------------------------------------------------
   // XXX: DSL API
   // -------------------------------------------------------------------------
-
   @Override
   public final XMLTable passing(XML xml) {
     return passing(Tools.field(xml));
@@ -181,7 +185,6 @@ final class XMLTable extends AbstractTable<Record>
   // -------------------------------------------------------------------------
   // XXX: Table API
   // -------------------------------------------------------------------------
-
   @Override
   public final Class<? extends Record> getRecordType() {
     return RecordImplN.class;
@@ -198,14 +201,12 @@ final class XMLTable extends AbstractTable<Record>
                       c.field.getDataType() == c.type
                           ? c.field
                           : DSL.field(c.field.getQualifiedName(), c.type)));
-
     return fields;
   }
 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -219,32 +220,30 @@ final class XMLTable extends AbstractTable<Record>
     ctx.visit(K_XMLTABLE).sqlIndentStart('(');
     acceptXPath(ctx, xpath);
     if (passing != null) acceptPassing(ctx, passing, passingMechanism);
-
     ctx.formatSeparator().visit(K_COLUMNS).separatorRequired(true).visit(columns);
-
     ctx.sqlIndentEnd(')');
   }
 
   static final void acceptXPath(Context<?> ctx, Field<String> xpath) {
-
     ctx.visit(xpath);
   }
 
   static final void acceptPassing(
       Context<?> ctx, Field<XML> passing, XMLPassingMechanism passingMechanism) {
     ctx.formatSeparator().visit(K_PASSING);
-
     if (passingMechanism == BY_REF) ctx.sql(' ').visit(K_BY).sql(' ').visit(K_REF);
     else if (passingMechanism == BY_VALUE) ctx.sql(' ').visit(K_BY).sql(' ').visit(K_VALUE);
-
     ctx.sql(' ').visit(passing);
   }
 
   private static class XMLTableColumn extends AbstractQueryPart {
 
     final Field<?> field;
+
     final DataType<?> type;
+
     final boolean forOrdinality;
+
     final String path;
 
     XMLTableColumn(Field<?> field, DataType<?> type, boolean forOrdinality, String path) {
@@ -257,10 +256,8 @@ final class XMLTable extends AbstractTable<Record>
     @Override
     public final void accept(Context<?> ctx) {
       ctx.qualify(false, c -> c.visit(field)).sql(' ');
-
       if (forOrdinality) ctx.visit(K_FOR).sql(' ').visit(K_ORDINALITY);
       else Tools.toSQLDDLTypeDeclaration(ctx, type);
-
       if (path != null) ctx.sql(' ').visit(K_PATH).sql(' ').visit(inline(path));
     }
   }

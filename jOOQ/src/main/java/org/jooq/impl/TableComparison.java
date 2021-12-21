@@ -47,8 +47,11 @@ import org.jooq.Table;
 
 /** @author Lukas Eder */
 final class TableComparison<R extends Record> extends AbstractCondition {
+
   private final Table<R> lhs;
+
   private final Table<R> rhs;
+
   private final Comparator comparator;
 
   TableComparison(Table<R> lhs, Table<R> rhs, Comparator comparator) {
@@ -63,14 +66,14 @@ final class TableComparison<R extends Record> extends AbstractCondition {
       case POSTGRES:
         ctx.sql('(').visit(lhs).sql(' ').sql(comparator.toSQL()).sql(' ').visit(rhs).sql(')');
         break;
-
       default:
         ctx.visit(row(lhs.fields()).compare(comparator, row(rhs.fields())));
         break;
     }
   }
 
-  @Override // Avoid AbstractCondition implementation
+  // Avoid AbstractCondition implementation
+  @Override
   public final Clause[] clauses(Context<?> ctx) {
     return null;
   }

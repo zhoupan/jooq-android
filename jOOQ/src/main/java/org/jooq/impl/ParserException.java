@@ -47,9 +47,13 @@ import org.jooq.exception.SQLStateSubclass;
  * @author Lukas Eder
  */
 public final class ParserException extends DataAccessException {
+
   private final String sql;
+
   private int position;
+
   private int line;
+
   private int column;
 
   public ParserException(String sql) {
@@ -67,7 +71,6 @@ public final class ParserException extends DataAccessException {
   public ParserException(String sql, String message, SQLStateSubclass state, Throwable cause) {
     super(
         (state == null ? "" : state + ": ") + (message == null ? "" : message + ": ") + sql, cause);
-
     this.sql = sql;
   }
 

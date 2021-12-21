@@ -58,13 +58,15 @@ import org.jooq.tools.*;
 final class Overlay extends AbstractField<String> {
 
   private final Field<String> in;
+
   private final Field<String> placing;
+
   private final Field<? extends Number> startIndex;
+
   private final Field<? extends Number> length;
 
   Overlay(Field<String> in, Field<String> placing, Field<? extends Number> startIndex) {
     super(N_OVERLAY, allNotNull(VARCHAR, in, placing, startIndex));
-
     this.in = nullSafeNotNull(in, VARCHAR);
     this.placing = nullSafeNotNull(placing, VARCHAR);
     this.startIndex = nullSafeNotNull(startIndex, INTEGER);
@@ -77,7 +79,6 @@ final class Overlay extends AbstractField<String> {
       Field<? extends Number> startIndex,
       Field<? extends Number> length) {
     super(N_OVERLAY, allNotNull(VARCHAR, in, placing, startIndex, length));
-
     this.in = nullSafeNotNull(in, VARCHAR);
     this.placing = nullSafeNotNull(placing, VARCHAR);
     this.startIndex = nullSafeNotNull(startIndex, INTEGER);
@@ -87,15 +88,14 @@ final class Overlay extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Set<SQLDialect> NO_SUPPORT =
       SQLDialect.supportedBy(DERBY, HSQLDB, IGNITE, MARIADB, MYSQL, SQLITE);
+
   private static final Set<SQLDialect> SUPPORT_INSERT = SQLDialect.supportedBy(H2, MARIADB, MYSQL);
 
   @Override
   public final void accept(Context<?> ctx) {
     Field<? extends Number> l = length;
-
     if (l != null) {
       if (SUPPORT_INSERT.contains(ctx.dialect()))
         ctx.visit(function(N_INSERT, getDataType(), in, startIndex, l, placing));
@@ -148,7 +148,6 @@ final class Overlay extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Overlay) {

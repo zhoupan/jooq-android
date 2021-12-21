@@ -96,6 +96,7 @@ public class DefaultDataType<T> extends AbstractDataTypeX<T> {
 
   private static final Set<SQLDialect> ENCODED_TIMESTAMP_PRECISION =
       SQLDialect.supportedBy(HSQLDB, MARIADB);
+
   private static final Set<SQLDialect> NO_SUPPORT_TIMESTAMP_PRECISION =
       SQLDialect.supportedBy(FIREBIRD, MYSQL, SQLITE);
 
@@ -109,7 +110,6 @@ public class DefaultDataType<T> extends AbstractDataTypeX<T> {
   // -------------------------------------------------------------------------
   // Data type caches
   // -------------------------------------------------------------------------
-
   /** A cache for dialect-specific data types by normalised. */
   private static final Map<String, DefaultDataType<?>>[] TYPES_BY_NAME;
 
@@ -125,7 +125,6 @@ public class DefaultDataType<T> extends AbstractDataTypeX<T> {
   // -------------------------------------------------------------------------
   // Precisions
   // -------------------------------------------------------------------------
-
   /** The minimum decimal precision needed to represent a Java {@link Long} type. */
   static final int LONG_PRECISION = String.valueOf(Long.MAX_VALUE).length();
 
@@ -141,7 +140,6 @@ public class DefaultDataType<T> extends AbstractDataTypeX<T> {
   // -------------------------------------------------------------------------
   // Data type attributes
   // -------------------------------------------------------------------------
-
   /** The SQL dialect associated with this data type. */
   private final SQLDialect dialect;
 
@@ -176,27 +174,31 @@ public class DefaultDataType<T> extends AbstractDataTypeX<T> {
   private final String typeName;
 
   private final Nullability nullability;
+
   private final Collation collation;
+
   private final CharacterSet characterSet;
+
   private final boolean identity;
+
   private final Field<T> defaultValue;
+
   private final Integer precision;
+
   private final Integer scale;
+
   private final Integer length;
 
   static {
     TYPES_BY_SQL_DATATYPE = new Map[SQLDialect.values().length];
     TYPES_BY_NAME = new Map[SQLDialect.values().length];
     TYPES_BY_TYPE = new Map[SQLDialect.values().length];
-
     for (SQLDialect dialect : SQLDialect.values()) {
       TYPES_BY_SQL_DATATYPE[dialect.ordinal()] = new LinkedHashMap<>();
       TYPES_BY_NAME[dialect.ordinal()] = new LinkedHashMap<>();
       TYPES_BY_TYPE[dialect.ordinal()] = new LinkedHashMap<>();
     }
-
     SQL_DATATYPES_BY_TYPE = new LinkedHashMap<>();
-
     // [#2506] Transitively load all dialect-specific data types
     try {
       Class.forName(SQLDataType.class.getName());
@@ -371,22 +373,17 @@ public class DefaultDataType<T> extends AbstractDataTypeX<T> {
       boolean identity,
       Field<T> defaultValue) {
     super(qualifiedTypeName, NO_COMMENT);
-
     // Initialise final instance members
     // ---------------------------------
-
     this.dialect = dialect;
-
     // [#858] [#11086] SQLDataTypes should reference themselves for more convenience
     this.sqlDataType = (dialect == null && sqlDataType == null) ? this : sqlDataType;
     this.uType = type;
     this.typeName = TYPE_NAME_PATTERN.matcher(typeName).replaceAll("").trim();
     this.castTypeName = castTypeName == null ? this.typeName : castTypeName;
-
     String[] split = TYPE_NAME_PATTERN.split(castTypeName == null ? typeName : castTypeName);
     this.castTypePrefix = split[0];
     this.castTypeSuffix = split.length > 1 ? split[1] : "";
-
     this.nullability = nullability;
     this.collation = collation;
     this.characterSet = characterSet;
@@ -395,23 +392,17 @@ public class DefaultDataType<T> extends AbstractDataTypeX<T> {
     this.precision = integerPrecision(type, precision);
     this.scale = scale;
     this.length = length;
-
     // Register data type in static caches
     // -----------------------------------
-
     // Dialect-specific data types
     int ordinal = dialect == null ? SQLDialect.DEFAULT.ordinal() : dialect.family().ordinal();
-
     // [#3225] Avoid normalisation if not necessary
     if (!TYPES_BY_NAME[ordinal].containsKey(typeName.toUpperCase()))
       TYPES_BY_NAME[ordinal].putIfAbsent(DefaultDataType.normalise(typeName), this);
-
     TYPES_BY_TYPE[ordinal].putIfAbsent(type, this);
     if (sqlDataType != null) TYPES_BY_SQL_DATATYPE[ordinal].putIfAbsent(sqlDataType, this);
-
     // Global data types
     if (dialect == null) SQL_DATATYPES_BY_TYPE.putIfAbsent(type, this);
-
     this.binding = binding != null ? binding : binding(this);
     this.tType = this.binding.converter().fromType();
   }
@@ -451,7 +442,6 @@ public class DefaultDataType<T> extends AbstractDataTypeX<T> {
       boolean identity,
       Field<T> defaultValue) {
     super(t.getQualifiedName(), NO_COMMENT);
-
     this.dialect = t.getDialect();
     this.sqlDataType = t.getSQLDataType();
     this.uType = t.uType0();
@@ -460,7 +450,6 @@ public class DefaultDataType<T> extends AbstractDataTypeX<T> {
     this.castTypeName = t.castTypeName0();
     this.castTypePrefix = t.castTypePrefix0();
     this.castTypeSuffix = t.castTypeSuffix0();
-
     this.nullability = nullability;
     this.collation = collation;
     this.characterSet = characterSet;
@@ -469,7 +458,6 @@ public class DefaultDataType<T> extends AbstractDataTypeX<T> {
     this.precision = integerPrecision(uType, precision);
     this.scale = scale;
     this.length = length;
-
     // [#10362] User bindings and/or converters need to be retained
     this.binding =
         t.getBinding() instanceof org.jooq.impl.DefaultBinding.AbstractBinding
@@ -483,7 +471,6 @@ public class DefaultDataType<T> extends AbstractDataTypeX<T> {
       else if (type == Integer.class || type == UInteger.class) precision = INTEGER_PRECISION;
       else if (type == Short.class || type == UShort.class) precision = SHORT_PRECISION;
       else if (type == Byte.class || type == UByte.class) precision = BYTE_PRECISION;
-
     return precision;
   }
 
@@ -534,41 +521,30 @@ public class DefaultDataType<T> extends AbstractDataTypeX<T> {
 
   @Override
   public final DataType<T> getDataType(Configuration configuration) {
-
     // If this is a SQLDataType find the most suited dialect-specific
     // data type
     if (getDialect() == null) {
       DefaultDataType<T> dataType =
           (DefaultDataType<T>)
               TYPES_BY_SQL_DATATYPE[configuration.family().ordinal()]
-
-                  // Be sure to reset length, precision, and scale, as those
+                  . // Be sure to reset length, precision, and scale, as those
                   // values were not registered in the below cache
-                  .get(length0(null).precision0((Integer) null, null));
-
+                  get(length0(null).precision0((Integer) null, null));
       if (dataType != null)
-
         // ... and then, set them back to the original value
         // [#2710] TODO: Remove this logic along with cached data types
         return dataType.construct(
             precision, scale, length, nullability, collation, characterSet, identity, defaultValue);
-    }
-
-    // If this is already the dialect's specific data type, return this
-    else if (getDialect().family() == configuration.family()) {
+    } else // If this is already the dialect's specific data type, return this
+    if (getDialect().family() == configuration.family()) {
       return this;
-    }
-
-    // If the SQL data type is not available stick with this data type
-    else if (getSQLDataType() == null) {
+    } else // If the SQL data type is not available stick with this data type
+    if (getSQLDataType() == null) {
       return this;
-    }
-
-    // If this is another dialect's specific data type, recurse
-    else {
+    } else // If this is another dialect's specific data type, recurse
+    {
       return getSQLDataType().getDataType(configuration);
     }
-
     return this;
   }
 
@@ -631,29 +607,23 @@ public class DefaultDataType<T> extends AbstractDataTypeX<T> {
     String upper = typeName.toUpperCase();
     String normalised = typeName;
     DataType<?> result = TYPES_BY_NAME[ordinal].get(upper);
-
     // [#3225] Normalise only if necessary
     if (result == null) {
       result = TYPES_BY_NAME[ordinal].get(normalised = DefaultDataType.normalise(typeName));
-
       // UDT data types and others are registered using DEFAULT
       if (result == null) {
         result = TYPES_BY_NAME[SQLDialect.DEFAULT.ordinal()].get(normalised);
-
         // [#9797] INT = INTEGER alias in case dialect specific information is not available
         // [#5713] TODO: A more generic type aliasing system would be useful, in general!
         if (result == null && "INT".equals(normalised))
           result = TYPES_BY_NAME[SQLDialect.DEFAULT.ordinal()].get("INTEGER");
-
-        // [#4065] PostgreSQL reports array types as _typename, e.g. _varchar
-        else if (result == null && (family == POSTGRES) && normalised.charAt(0) == '_')
+        else // [#4065] PostgreSQL reports array types as _typename, e.g. _varchar
+        if (result == null && (family == POSTGRES) && normalised.charAt(0) == '_')
           result = getDataType(dialect, normalised.substring(1)).getArrayDataType();
-
-        // [#6466] HSQLDB reports array types as XYZARRAY
-        else if (result == null && family == HSQLDB && upper.endsWith(" ARRAY"))
+        else // [#6466] HSQLDB reports array types as XYZARRAY
+        if (result == null && family == HSQLDB && upper.endsWith(" ARRAY"))
           result =
               getDataType(dialect, typeName.substring(0, typeName.length() - 6)).getArrayDataType();
-
         // [#366] Don't log a warning here. The warning is logged when
         // catching the exception in jOOQ-codegen
         if (result == null)
@@ -661,7 +631,6 @@ public class DefaultDataType<T> extends AbstractDataTypeX<T> {
               "Type " + typeName + " is not supported in dialect " + dialect, false);
       }
     }
-
     return result;
   }
 
@@ -745,26 +714,18 @@ public class DefaultDataType<T> extends AbstractDataTypeX<T> {
 
   public static final <T> DataType<T> getDataType(
       SQLDialect dialect, Class<T> type, DataType<T> fallbackDataType) {
-
     // Treat primitive types the same way as their respective wrapper types
     type = wrapper(type);
-
     // Recurse for arrays
     if (byte[].class != type && type.isArray()) {
       return (DataType<T>) getDataType(dialect, type.getComponentType()).getArrayDataType();
-    }
-
-    // Base types are registered statically
-    else {
+    } else // Base types are registered statically
+    {
       DataType<?> result = null;
-
       if (dialect != null) result = TYPES_BY_TYPE[dialect.family().ordinal()].get(type);
-
       if (result == null) {
-
         // jOOQ data types are handled here
         try {
-
           // [#7174] PostgreSQL table records can be function argument types
           if (QualifiedRecord.class.isAssignableFrom(type))
             return (DataType<T>)
@@ -777,23 +738,18 @@ public class DefaultDataType<T> extends AbstractDataTypeX<T> {
           throw new MappingException("Cannot create instance of " + type, e);
         }
       }
-
       if (result == null) {
         if (SQL_DATATYPES_BY_TYPE.get(type) != null)
           return (DataType<T>) SQL_DATATYPES_BY_TYPE.get(type);
-
-        // If we have a "fallback" data type from an outer context
-        else if (fallbackDataType != null) return fallbackDataType;
-
-        // [#8022] Special handling
-        else if (java.util.Date.class == type) return (DataType<T>) SQLDataType.TIMESTAMP;
-
-        // All other data types are illegal
+        else // If we have a "fallback" data type from an outer context
+        if (fallbackDataType != null) return fallbackDataType;
+        else // [#8022] Special handling
+        if (java.util.Date.class == type) return (DataType<T>) SQLDataType.TIMESTAMP;
         else
+          // All other data types are illegal
           throw new SQLDialectNotSupportedException(
               "Type " + type + " is not supported in dialect " + dialect);
       }
-
       return (DataType<T>) result;
     }
   }
@@ -815,33 +771,25 @@ public class DefaultDataType<T> extends AbstractDataTypeX<T> {
       throws SQLDialectNotSupportedException {
     DataType<?> result = DefaultDataType.getDataType(dialect, t);
     boolean array = result.isArray();
-
     // [#11307] Apply length, precision, scale on the component type, not the array type
     if (array) result = result.getArrayComponentDataType();
-
     if (forceIntegerTypesOnZeroScaleDecimals && result.getType() == BigDecimal.class)
       result = DefaultDataType.getDataType(dialect, getNumericClass(p, s));
-
     // [#10809] Use dialect only for lookup, don't report the dialect-specific type
     if (result.getSQLDataType() != null) result = result.getSQLDataType();
-
     if (result.hasPrecision() && result.hasScale()) result = result.precision(p, s);
-
-    // [#9590] Timestamp precision is in the scale column in some dialects
-    else if (result.hasPrecision() && result.isDateTime()) {
+    else // [#9590] Timestamp precision is in the scale column in some dialects
+    if (result.hasPrecision() && result.isDateTime()) {
       if (ENCODED_TIMESTAMP_PRECISION.contains(dialect))
         result = result.precision(decodeTimestampPrecision(p));
       else if (!NO_SUPPORT_TIMESTAMP_PRECISION.contains(dialect)) result = result.precision(s);
     } else if (result.hasPrecision()) result = result.precision(p);
     else if (result.hasLength()) result = result.length(p);
-
     if (array) result = result.getArrayDataType();
-
     return result;
   }
 
   private static final int decodeTimestampPrecision(int precision) {
-
     // [#9590] Discovered empirically from COLUMN_SIZE
     return Math.max(0, precision - 20);
   }
@@ -854,19 +802,18 @@ public class DefaultDataType<T> extends AbstractDataTypeX<T> {
 
   /** Get the most suitable Java class for a given precision and scale */
   private static final Class<?> getNumericClass(int precision, int scale) {
-
     // Integer numbers
     if (scale == 0 && precision != 0)
       if (precision < BYTE_PRECISION) return Byte.class;
       else if (precision < SHORT_PRECISION) return Short.class;
       else if (precision < INTEGER_PRECISION) return Integer.class;
       else if (precision < LONG_PRECISION) return Long.class;
-
-      // Default integer number
-      else return BigInteger.class;
-
-    // Real numbers should not be represented as float or double
-    else return BigDecimal.class;
+      else
+        // Default integer number
+        return BigInteger.class;
+    else
+      // Real numbers should not be represented as float or double
+      return BigDecimal.class;
   }
 
   static final Collection<Class<?>> types() {
@@ -879,11 +826,9 @@ public class DefaultDataType<T> extends AbstractDataTypeX<T> {
 
   static final DataType<?> set(DataType<?> d, Integer l, Integer p, Integer s) {
     if (l != null) d = d.length(l);
-
     if (p != null)
       if (s != null) d = d.precision(p, s);
       else d = d.precision(p);
-
     return d;
   }
 }

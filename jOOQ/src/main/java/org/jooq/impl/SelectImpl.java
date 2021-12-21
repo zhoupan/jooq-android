@@ -150,9 +150,7 @@ final class SelectImpl<
         T21,
         T22>
     extends AbstractDelegatingQuery<R, SelectQueryImpl<R>>
-    implements ResultQueryTrait<R>,
-
-        // Cascading interface implementations for Select behaviour
+    implements ResultQueryTrait<R>, // Cascading interface implementations for Select behaviour
         SelectSelectStep<R>,
         SelectOptionalOnStep<R>,
         SelectOnConditionStep<R>,
@@ -295,7 +293,9 @@ final class SelectImpl<
   private transient Number limit;
 
   private transient Param<? extends Number> limitParam;
+
   private transient Number offset;
+
   private transient Param<? extends Number> offsetParam;
 
   SelectImpl(Configuration configuration, WithImpl with) {
@@ -482,7 +482,6 @@ final class SelectImpl<
       case WHERE:
         getQuery().addConditions(condition);
         break;
-
       case HAVING:
         getQuery().addHaving(condition);
         break;
@@ -493,7 +492,6 @@ final class SelectImpl<
         getQuery().addQualify(condition);
         break;
     }
-
     return this;
   }
 
@@ -548,7 +546,6 @@ final class SelectImpl<
       case WHERE:
         getQuery().addConditions(Operator.OR, condition);
         break;
-
       case HAVING:
         getQuery().addHaving(Operator.OR, condition);
         break;
@@ -559,7 +556,6 @@ final class SelectImpl<
         getQuery().addQualify(Operator.OR, condition);
         break;
     }
-
     return this;
   }
 
@@ -1010,7 +1006,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(Object t1) {
     return seekBefore(new Object[] {t1});
   }
@@ -1026,7 +1021,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(Object t1, Object t2) {
     return seekBefore(new Object[] {t1, t2});
   }
@@ -1042,7 +1036,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(Object t1, Object t2, Object t3) {
     return seekBefore(new Object[] {t1, t2, t3});
   }
@@ -1058,7 +1051,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(Object t1, Object t2, Object t3, Object t4) {
     return seekBefore(new Object[] {t1, t2, t3, t4});
   }
@@ -1074,7 +1066,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Object t1, Object t2, Object t3, Object t4, Object t5) {
     return seekBefore(new Object[] {t1, t2, t3, t4, t5});
@@ -1093,7 +1084,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Object t1, Object t2, Object t3, Object t4, Object t5, Object t6) {
     return seekBefore(new Object[] {t1, t2, t3, t4, t5, t6});
@@ -1112,7 +1102,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Object t1, Object t2, Object t3, Object t4, Object t5, Object t6, Object t7) {
     return seekBefore(new Object[] {t1, t2, t3, t4, t5, t6, t7});
@@ -1131,7 +1120,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Object t1, Object t2, Object t3, Object t4, Object t5, Object t6, Object t7, Object t8) {
     return seekBefore(new Object[] {t1, t2, t3, t4, t5, t6, t7, t8});
@@ -1158,7 +1146,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Object t1,
       Object t2,
@@ -1202,7 +1189,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Object t1,
       Object t2,
@@ -1249,7 +1235,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Object t1,
       Object t2,
@@ -1299,7 +1284,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Object t1,
       Object t2,
@@ -1352,7 +1336,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Object t1,
       Object t2,
@@ -1408,7 +1391,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Object t1,
       Object t2,
@@ -1467,7 +1449,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Object t1,
       Object t2,
@@ -1532,7 +1513,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Object t1,
       Object t2,
@@ -1600,7 +1580,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Object t1,
       Object t2,
@@ -1673,7 +1652,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Object t1,
       Object t2,
@@ -1753,7 +1731,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Object t1,
       Object t2,
@@ -1836,7 +1813,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Object t1,
       Object t2,
@@ -1923,7 +1899,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Object t1,
       Object t2,
@@ -2015,7 +1990,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Object t1,
       Object t2,
@@ -2083,7 +2057,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(Field t1) {
     return seekBefore(new Field[] {t1});
   }
@@ -2099,7 +2072,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(Field t1, Field t2) {
     return seekBefore(new Field[] {t1, t2});
   }
@@ -2115,7 +2087,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(Field t1, Field t2, Field t3) {
     return seekBefore(new Field[] {t1, t2, t3});
   }
@@ -2131,7 +2102,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(Field t1, Field t2, Field t3, Field t4) {
     return seekBefore(new Field[] {t1, t2, t3, t4});
   }
@@ -2147,7 +2117,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(Field t1, Field t2, Field t3, Field t4, Field t5) {
     return seekBefore(new Field[] {t1, t2, t3, t4, t5});
   }
@@ -2164,7 +2133,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Field t1, Field t2, Field t3, Field t4, Field t5, Field t6) {
     return seekBefore(new Field[] {t1, t2, t3, t4, t5, t6});
@@ -2183,7 +2151,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Field t1, Field t2, Field t3, Field t4, Field t5, Field t6, Field t7) {
     return seekBefore(new Field[] {t1, t2, t3, t4, t5, t6, t7});
@@ -2202,7 +2169,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Field t1, Field t2, Field t3, Field t4, Field t5, Field t6, Field t7, Field t8) {
     return seekBefore(new Field[] {t1, t2, t3, t4, t5, t6, t7, t8});
@@ -2221,7 +2187,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Field t1, Field t2, Field t3, Field t4, Field t5, Field t6, Field t7, Field t8, Field t9) {
     return seekBefore(new Field[] {t1, t2, t3, t4, t5, t6, t7, t8, t9});
@@ -2249,7 +2214,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Field t1,
       Field t2,
@@ -2296,7 +2260,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Field t1,
       Field t2,
@@ -2346,7 +2309,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Field t1,
       Field t2,
@@ -2399,7 +2361,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Field t1,
       Field t2,
@@ -2455,7 +2416,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Field t1,
       Field t2,
@@ -2514,7 +2474,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Field t1,
       Field t2,
@@ -2579,7 +2538,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Field t1,
       Field t2,
@@ -2647,7 +2605,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Field t1,
       Field t2,
@@ -2720,7 +2677,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Field t1,
       Field t2,
@@ -2800,7 +2756,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Field t1,
       Field t2,
@@ -2883,7 +2838,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Field t1,
       Field t2,
@@ -2970,7 +2924,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Field t1,
       Field t2,
@@ -3062,7 +3015,6 @@ final class SelectImpl<
   }
 
   @Override
-  @Deprecated
   public final SelectSeekLimitStep<R> seekBefore(
       Field t1,
       Field t2,
@@ -3273,7 +3225,6 @@ final class SelectImpl<
       if (offset != null) getQuery().addOffset(offset);
       else if (offsetParam != null) getQuery().addOffset(offsetParam);
     }
-
     return this;
   }
 
@@ -3488,9 +3439,7 @@ final class SelectImpl<
     conditionStep = ConditionStep.ON;
     joinConditions = new ConditionProviderImpl();
     joinConditions.addConditions(conditions);
-
     getQuery().addJoin(joinTable, joinType, joinConditions);
-
     joinTable = null;
     joinPartitionBy = null;
     joinType = null;
@@ -3502,9 +3451,7 @@ final class SelectImpl<
     conditionStep = ConditionStep.ON;
     joinConditions = new ConditionProviderImpl();
     joinConditions.addConditions(conditions);
-
     getQuery().addJoin(joinTable, joinType, new Condition[] {joinConditions});
-
     joinTable = null;
     joinPartitionBy = null;
     joinType = null;
@@ -3635,10 +3582,8 @@ final class SelectImpl<
           joinTable = null;
           joinPartitionBy = null;
           joinType = null;
-
           return this;
         }
-
       default:
         {
           conditionStep = ConditionStep.ON;
@@ -3646,7 +3591,6 @@ final class SelectImpl<
           joinType = type;
           joinPartitionBy = null;
           joinConditions = null;
-
           return this;
         }
     }
@@ -4631,13 +4575,10 @@ final class SelectImpl<
 
     /** Additional conditions go to the <code>JOIN</code> clause that is currently being added. */
     ON,
-
     /** Additional conditions go to the <code>WHERE</code> clause that is currently being added. */
     WHERE,
-
     /** Additional conditions go to the <code>HAVING</code> clause that is currently being added. */
     HAVING,
-
     /**
      * Additional conditions go to the <code>QUALIFY</code> clause that is currently being added.
      */

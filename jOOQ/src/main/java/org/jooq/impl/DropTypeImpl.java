@@ -52,19 +52,19 @@ import org.jooq.Name;
 
 /** @author Lukas Eder */
 final class DropTypeImpl extends AbstractDDLQuery
-    implements
-
-    // Cascading interface implementations for CREATE TYPE behaviour
+    implements // Cascading interface implementations for CREATE TYPE behaviour
     DropTypeStep {
 
   private final QueryPartList<Name> type;
+
   private final boolean ifExists;
+
   private boolean cascade;
+
   private boolean restrict;
 
   DropTypeImpl(Configuration configuration, Collection<?> type, boolean ifExists) {
     super(configuration);
-
     this.type = new QueryPartList<>(Tools.names(type));
     this.ifExists = ifExists;
   }
@@ -72,7 +72,6 @@ final class DropTypeImpl extends AbstractDDLQuery
   // ------------------------------------------------------------------------
   // XXX: DSL API
   // ------------------------------------------------------------------------
-
   @Override
   public final DropTypeFinalStep cascade() {
     this.cascade = true;
@@ -88,15 +87,11 @@ final class DropTypeImpl extends AbstractDDLQuery
   // ------------------------------------------------------------------------
   // XXX: QueryPart API
   // ------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     ctx.visit(K_DROP).sql(' ').visit(K_TYPE);
-
     if (ifExists) ctx.sql(' ').visit(K_IF_EXISTS);
-
     ctx.sql(' ').visit(type);
-
     if (cascade) ctx.sql(' ').visit(K_CASCADE);
     else if (restrict) ctx.sql(' ').visit(K_RESTRICT);
   }

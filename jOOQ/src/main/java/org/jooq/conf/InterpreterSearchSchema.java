@@ -55,6 +55,7 @@ public class InterpreterSearchSchema extends SettingsBase
     implements Serializable, Cloneable, XMLAppendable {
 
   private static final long serialVersionUID = 31500L;
+
   protected String catalog;
 
   @XmlElement(required = true)

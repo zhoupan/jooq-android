@@ -48,12 +48,12 @@ import org.jooq.Versions;
 final class VersionsImpl implements Versions {
 
   final Version root;
+
   final Map<String, Version> versions;
 
   VersionsImpl(Version root) {
     this.root = root;
     this.versions = new HashMap<>();
-
     add(root);
   }
 

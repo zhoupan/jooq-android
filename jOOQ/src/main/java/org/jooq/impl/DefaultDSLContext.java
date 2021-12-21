@@ -293,7 +293,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
   // -------------------------------------------------------------------------
   // XXX Constructors
   // -------------------------------------------------------------------------
-
   public DefaultDSLContext(SQLDialect dialect) {
     this(dialect, null);
   }
@@ -343,7 +342,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
   // -------------------------------------------------------------------------
   // XXX Configuration API
   // -------------------------------------------------------------------------
-
   @Override
   public Schema map(Schema schema) {
     return getMappedSchema(this, schema);
@@ -357,7 +355,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
   // -------------------------------------------------------------------------
   // XXX Convenience methods accessing the underlying Connection
   // -------------------------------------------------------------------------
-
   @Override
   public Parser parser() {
     return new ParserImpl(configuration());
@@ -489,10 +486,10 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
   public InformationSchema informationSchema(Table<?>... tables) {
     return InformationSchemaExport.exportTables(configuration(), asList(tables));
   }
+
   // -------------------------------------------------------------------------
   // XXX APIs related to query optimisation
   // -------------------------------------------------------------------------
-
   @Override
   public Explain explain(Query query) {
     return ExplainQuery.explain(this, query);
@@ -501,16 +498,13 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
   // -------------------------------------------------------------------------
   // XXX APIs for creating scope for transactions, mocking, batching, etc.
   // -------------------------------------------------------------------------
-
   @Override
   public <T> T transactionResult(ContextTransactionalCallable<T> transactional) {
     TransactionProvider tp = configuration().transactionProvider();
-
     if (!(tp instanceof ThreadLocalTransactionProvider))
       throw new ConfigurationException(
           "Cannot use ContextTransactionalCallable with TransactionProvider of type "
               + tp.getClass());
-
     return transactionResult0(
         c -> transactional.run(),
         ((ThreadLocalTransactionProvider) tp).configuration(configuration()),
@@ -524,22 +518,17 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
 
   private static <T> T transactionResult0(
       TransactionalCallable<T> transactional, Configuration configuration, boolean threadLocal) {
-
     // If used in a Java 8 Stream, a transaction should always be executed
     // in a ManagedBlocker context, just in case Stream.parallel() is called
-
     // The same is true for all asynchronous transactions, which must always
     // run in a ManagedBlocker context.
-
     return blocking(
             () -> {
               T result;
-
               DefaultTransactionContext ctx = new DefaultTransactionContext(configuration.derive());
               TransactionProvider provider = ctx.configuration().transactionProvider();
               TransactionListeners listeners = new TransactionListeners(ctx.configuration());
               boolean committed = false;
-
               try {
                 try {
                   listeners.beginStart(ctx);
@@ -547,9 +536,7 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
                 } finally {
                   listeners.beginEnd(ctx);
                 }
-
                 result = transactional.run(ctx.configuration());
-
                 try {
                   listeners.commitStart(ctx);
                   provider.commit(ctx);
@@ -557,28 +544,21 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
                 } finally {
                   listeners.commitEnd(ctx);
                 }
-              }
-
-              // [#6608] [#7167] Errors are no longer handled differently
+              } // [#6608] [#7167] Errors are no longer handled differently
               catch (Throwable cause) {
-
                 // [#8413] Avoid rollback logic if commit was successful (exception in commitEnd())
                 if (!committed) {
                   if (cause instanceof Exception) ctx.cause((Exception) cause);
                   else ctx.causeThrowable(cause);
-
                   listeners.rollbackStart(ctx);
                   try {
                     provider.rollback(ctx);
-                  }
-
-                  // [#3718] Use reflection to support also JDBC 4.0
+                  } // [#3718] Use reflection to support also JDBC 4.0
                   catch (Exception suppress) {
                     cause.addSuppressed(suppress);
                   }
                   listeners.rollbackEnd(ctx);
                 }
-
                 // [#6608] [#7167] Errors are no longer handled differently
                 if (cause instanceof RuntimeException) throw (RuntimeException) cause;
                 else if (cause instanceof Error) throw (Error) cause;
@@ -586,7 +566,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
                   throw new DataAccessException(
                       committed ? "Exception after commit" : "Rollback caused", cause);
               }
-
               return result;
             },
             threadLocal)
@@ -625,7 +604,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
     if (configuration().transactionProvider() instanceof ThreadLocalTransactionProvider)
       throw new ConfigurationException(
           "Cannot use TransactionalRunnable with ThreadLocalTransactionProvider");
-
     return ExecutorProviderCompletionStage.of(
         CompletableFuture.supplyAsync(
             () -> {
@@ -648,7 +626,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
     if (configuration().transactionProvider() instanceof ThreadLocalTransactionProvider)
       throw new ConfigurationException(
           "Cannot use TransactionalCallable with ThreadLocalTransactionProvider");
-
     return ExecutorProviderCompletionStage.of(
         CompletableFuture.supplyAsync(() -> transactionResult(transactional), executor),
         () -> executor);
@@ -657,10 +634,8 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
   @Override
   public <T> T connectionResult(ConnectionCallable<T> callable) {
     final Connection connection = configuration().connectionProvider().acquire();
-
     if (connection == null)
       throw new DetachedException("No JDBC Connection provided by ConnectionProvider");
-
     try {
       return callable.run(connection);
     } catch (Error | RuntimeException e) {
@@ -705,7 +680,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
   // -------------------------------------------------------------------------
   // XXX RenderContext and BindContext accessors
   // -------------------------------------------------------------------------
-
   @Override
   public RenderContext renderContext() {
     return new DefaultRenderContext(configuration());
@@ -758,7 +732,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
   // -------------------------------------------------------------------------
   // XXX Attachable and Serializable API
   // -------------------------------------------------------------------------
-
   @Override
   public void attach(Attachable... attachables) {
     attach(Arrays.asList(attachables));
@@ -772,7 +745,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
   // -------------------------------------------------------------------------
   // XXX Access to the loader API
   // -------------------------------------------------------------------------
-
   @Override
   public <R extends Record> LoaderOptionsStep<R> loadInto(Table<R> table) {
     return new LoaderImpl<>(configuration(), table);
@@ -781,7 +753,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
   // -------------------------------------------------------------------------
   // XXX: Queries
   // -------------------------------------------------------------------------
-
   @Override
   public Queries queries(Query... queries) {
     return queries(Arrays.asList(queries));
@@ -805,7 +776,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
   // -------------------------------------------------------------------------
   // XXX Plain SQL API
   // -------------------------------------------------------------------------
-
   @Override
   public RowCountQuery query(SQL sql) {
     return new SQLQuery(configuration(), sql);
@@ -1111,7 +1081,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
   // -------------------------------------------------------------------------
   // XXX JDBC convenience methods
   // -------------------------------------------------------------------------
-
   @Override
   public Result<Record> fetch(ResultSet rs) {
     return fetchLazy(rs).fetch();
@@ -1266,7 +1235,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
   public Cursor<Record> fetchLazy(ResultSet rs, Field<?>... fields) {
     ExecuteContext ctx = new DefaultExecuteContext(configuration());
     ExecuteListener listener = ExecuteListeners.getAndStart(ctx);
-
     ctx.resultSet(rs);
     return new CursorImpl<>(ctx, listener, fields, null, false, true);
   }
@@ -1277,10 +1245,8 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
       Field<?>[] fields = new Field[types.length];
       ResultSetMetaData meta = rs.getMetaData();
       int columns = meta.getColumnCount();
-
       for (int i = 0; i < types.length && i < columns; i++)
         fields[i] = field(meta.getColumnLabel(i + 1), types[i]);
-
       return fetchLazy(rs, fields);
     } catch (SQLException e) {
       throw new DataAccessException("Error while accessing ResultSet meta data", e);
@@ -1394,7 +1360,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
   public Result<Record> fetchFromCSV(String string, boolean header, char delimiter) {
     CSVReader reader = new CSVReader(new StringReader(string), delimiter);
     List<String[]> list = null;
-
     try {
       list = reader.readAll();
     } catch (IOException e) {
@@ -1405,7 +1370,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
       } catch (IOException ignore) {
       }
     }
-
     return fetchFromStringData(list, header);
   }
 
@@ -1441,23 +1405,18 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
               ? Tools.map(firstRow, s -> field(name(s), String.class), Field[]::new)
               : Tools.map(
                   firstRow, (s, i) -> field(name("COL" + (i + 1)), String.class), Field[]::new);
-
       AbstractRow row = Tools.row0(fields);
       Result<Record> result = new ResultImpl<>(configuration(), row);
-
       if (strings.size() > firstRowIndex) {
         for (String[] values : strings.subList(firstRowIndex, strings.size())) {
           RecordImplN record = new RecordImplN(row);
-
           for (int i = 0; i < Math.min(values.length, fields.length); i++) {
             record.values[i] = values[i];
             record.originals[i] = values[i];
           }
-
           result.add(record);
         }
       }
-
       return result;
     }
   }
@@ -1465,7 +1424,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
   // -------------------------------------------------------------------------
   // XXX Global Query factory
   // -------------------------------------------------------------------------
-
   @Override
   public WithAsStep with(String alias) {
     return new WithImpl(configuration(), false).with(alias);
@@ -6143,7 +6101,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Override
   public <R extends Record, T1> MergeKeyStep1<R, T1> mergeInto(Table<R> table, Field<T1> field1) {
     return new MergeImpl(configuration(), null, table, Arrays.asList(field1));
@@ -6153,7 +6110,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Override
   public <R extends Record, T1, T2> MergeKeyStep2<R, T1, T2> mergeInto(
       Table<R> table, Field<T1> field1, Field<T2> field2) {
@@ -6164,7 +6120,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Override
   public <R extends Record, T1, T2, T3> MergeKeyStep3<R, T1, T2, T3> mergeInto(
       Table<R> table, Field<T1> field1, Field<T2> field2, Field<T3> field3) {
@@ -6175,7 +6130,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Override
   public <R extends Record, T1, T2, T3, T4> MergeKeyStep4<R, T1, T2, T3, T4> mergeInto(
       Table<R> table, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4) {
@@ -6187,7 +6141,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Override
   public <R extends Record, T1, T2, T3, T4, T5> MergeKeyStep5<R, T1, T2, T3, T4, T5> mergeInto(
       Table<R> table,
@@ -6204,7 +6157,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Override
   public <R extends Record, T1, T2, T3, T4, T5, T6>
       MergeKeyStep6<R, T1, T2, T3, T4, T5, T6> mergeInto(
@@ -6226,7 +6178,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Override
   public <R extends Record, T1, T2, T3, T4, T5, T6, T7>
       MergeKeyStep7<R, T1, T2, T3, T4, T5, T6, T7> mergeInto(
@@ -6249,7 +6200,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Override
   public <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8>
       MergeKeyStep8<R, T1, T2, T3, T4, T5, T6, T7, T8> mergeInto(
@@ -6273,7 +6223,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Override
   public <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9>
       MergeKeyStep9<R, T1, T2, T3, T4, T5, T6, T7, T8, T9> mergeInto(
@@ -6298,7 +6247,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Override
   public <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10>
       MergeKeyStep10<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> mergeInto(
@@ -6325,7 +6273,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Override
   public <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11>
       MergeKeyStep11<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> mergeInto(
@@ -6354,7 +6301,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Override
   public <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>
       MergeKeyStep12<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> mergeInto(
@@ -6384,7 +6330,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Override
   public <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>
       MergeKeyStep13<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13> mergeInto(
@@ -6415,7 +6360,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Override
   public <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>
       MergeKeyStep14<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14> mergeInto(
@@ -6447,7 +6391,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Override
   public <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>
       MergeKeyStep15<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15> mergeInto(
@@ -6480,7 +6423,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Override
   public <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>
       MergeKeyStep16<R, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>
@@ -6515,7 +6457,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Override
   public <
           R extends Record,
@@ -6569,7 +6510,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Override
   public <
           R extends Record,
@@ -6626,7 +6566,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Override
   public <
           R extends Record,
@@ -6704,7 +6643,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Override
   public <
           R extends Record,
@@ -6786,7 +6724,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Override
   public <
           R extends Record,
@@ -6871,7 +6808,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Override
   public <
           R extends Record,
@@ -6984,7 +6920,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
   // -------------------------------------------------------------------------
   // XXX Batch query execution
   // -------------------------------------------------------------------------
-
   @Override
   public void batched(BatchedRunnable runnable) {
     batchedResult(
@@ -7001,7 +6936,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
           try (BatchedConnection bc =
               new BatchedConnection(connection, SettingsTools.getBatchSize(settings()))) {
             Configuration c = configuration().derive(bc);
-
             try {
               return callable.run(c);
             } catch (Error | RuntimeException e) {
@@ -7106,11 +7040,9 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
   // -------------------------------------------------------------------------
   // XXX DDL Statements from existing meta data
   // -------------------------------------------------------------------------
-
   // -------------------------------------------------------------------------
   // DDL statements
   // -------------------------------------------------------------------------
-
   @Override
   public org.jooq.AlterDatabaseStep alterDatabase(@Stringly.Name String database) {
     return new AlterDatabaseImpl(configuration(), DSL.catalog(DSL.name(database)), false);
@@ -7983,7 +7915,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
   // -------------------------------------------------------------------------
   // XXX DDL Statements
   // -------------------------------------------------------------------------
-
   @Override
   public CreateViewAsStep<Record> createView(String view, String... fields) {
     return createView(table(name(view)), Tools.fieldsByName(view, fields));
@@ -8315,28 +8246,22 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
   // -------------------------------------------------------------------------
   // XXX Other queries for identites and sequences
   // -------------------------------------------------------------------------
-
   @Override
   public BigInteger lastID() {
     switch (family()) {
       case DERBY:
         return fetchValue(field("identity_val_local()", BigInteger.class));
-
       case H2:
       case HSQLDB:
         return fetchValue(field("identity()", BigInteger.class));
-
       case CUBRID:
       case MARIADB:
       case MYSQL:
         return fetchValue(field("last_insert_id()", BigInteger.class));
-
       case SQLITE:
         return fetchValue(field("last_insert_rowid()", BigInteger.class));
-
       case POSTGRES:
         return fetchValue(field("lastval()", BigInteger.class));
-
       default:
         throw new SQLDialectNotSupportedException(
             "identity functionality not supported by " + configuration().dialect());
@@ -8383,7 +8308,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
   // -------------------------------------------------------------------------
   // XXX Global Record factory
   // -------------------------------------------------------------------------
-
   @Override
   public Record newRecord(Field<?>... fields) {
     return Tools.newRecord(false, RecordImplN.class, Tools.row0(fields), configuration())
@@ -9553,7 +9477,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
   // -------------------------------------------------------------------------
   // XXX Executing queries
   // -------------------------------------------------------------------------
-
   @Override
   public <R extends Record> Result<R> fetch(ResultQuery<R> query) {
     return Tools.attach(query, configuration(), query::fetch);
@@ -9650,10 +9573,8 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
 
   private final <T, R extends Record1<T>> T value1(R record) {
     if (record == null) return null;
-
     if (record.size() != 1)
       throw new InvalidResultException("Record contains more than one value : " + record);
-
     return record.value1();
   }
 
@@ -9720,7 +9641,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
   // -------------------------------------------------------------------------
   // XXX Fast querying
   // -------------------------------------------------------------------------
-
   @Override
   public <R extends Record> Result<R> fetch(Table<R> table) {
     return fetch(table, noCondition());
@@ -10590,11 +10510,9 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
   // -------------------------------------------------------------------------
   // XXX Static initialisation of dialect-specific data types
   // -------------------------------------------------------------------------
-
   static {
     // Load all dialect-specific data types
     // TODO [#650] Make this more reliable using a data type registry
-
     try {
       Class.forName(SQLDataType.class.getName());
     } catch (Exception ignore) {
@@ -10604,7 +10522,6 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
   // -------------------------------------------------------------------------
   // XXX Internals
   // -------------------------------------------------------------------------
-
   @Override
   public String toString() {
     return configuration().toString();

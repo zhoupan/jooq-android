@@ -79,6 +79,7 @@ final class JSONEntryImpl<T> extends AbstractQueryPart implements JSONEntry<T>, 
   static final Set<SQLDialect> SUPPORT_JSON_MERGE_PRESERVE = SQLDialect.supportedBy(MARIADB, MYSQL);
 
   private final Field<String> key;
+
   private final Field<T> value;
 
   JSONEntryImpl(Field<String> key) {
@@ -123,7 +124,6 @@ final class JSONEntryImpl<T> extends AbstractQueryPart implements JSONEntry<T>, 
       case POSTGRES:
         ctx.visit(key).sql(", ").visit(jsonCast(ctx, value));
         break;
-
       default:
         ctx.visit(K_KEY)
             .sql(' ')
@@ -142,35 +142,27 @@ final class JSONEntryImpl<T> extends AbstractQueryPart implements JSONEntry<T>, 
 
   static final Field<?> jsonCast(Context<?> ctx, Field<?> field) {
     DataType<?> type = field.getDataType();
-
     switch (ctx.family()) {
-
         // [#10769] [#12141] Some dialects don't support auto conversions from X to JSON
       case H2:
         if (isType(type, UUID.class)) return field.cast(VARCHAR(36));
         else if (type.isTemporal()) return field.cast(VARCHAR);
-
         break;
-
         // [#11025] These don't have boolean support outside of JSON
       case MARIADB:
       case MYSQL:
         if (isType(type, Boolean.class)) return inlined(field);
-
         break;
-
       case POSTGRES:
         if (field instanceof Param)
           if (field.getType() != Object.class) return field.cast(field.getDataType());
           else return field.cast(VARCHAR);
         else return field;
     }
-
     return field;
   }
 
   static final <T> Field<T> unescapeNestedJSON(Scope ctx, Field<T> value) {
-
     // [#12086] Avoid escaping nested JSON
     // [#12168] Yet another MariaDB JSON un-escaping workaround
     // https://jira.mariadb.org/browse/MDEV-26134
@@ -182,19 +174,16 @@ final class JSONEntryImpl<T> extends AbstractQueryPart implements JSONEntry<T>, 
           return function(N_JSON_EXTRACT, value.getDataType(), value, inline("$"));
       }
     }
-
     return value;
   }
 
   static final boolean isType(DataType<?> t, Class<?> type) {
     if (t instanceof ConvertedDataType) t = ((ConvertedDataType<?, ?>) t).delegate();
-
     return t.getType() == type;
   }
 
   static final boolean isJSON(Scope scope, DataType<?> t) {
     if (t instanceof ConvertedDataType) t = ((ConvertedDataType<?, ?>) t).delegate();
-
     return t.isJSON()
         || t.isEmbeddable()
             && (TRUE.equals(scope.data(DATA_MULTISET_CONTENT)) && emulateMultisetWithJSON(scope))

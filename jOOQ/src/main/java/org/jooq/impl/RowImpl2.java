@@ -72,7 +72,6 @@ final class RowImpl2<T1, T2> extends AbstractRow<Record2<T1, T2>> implements Row
   // ------------------------------------------------------------------------
   // Mapping convenience methods
   // ------------------------------------------------------------------------
-
   @Override
   public final <U> SelectField<U> mapping(Function2<? super T1, ? super T2, ? extends U> function) {
     return rf().convertFrom(Records.mapping(function));
@@ -87,7 +86,6 @@ final class RowImpl2<T1, T2> extends AbstractRow<Record2<T1, T2>> implements Row
   // ------------------------------------------------------------------------
   // XXX: Row accessor API
   // ------------------------------------------------------------------------
-
   @Override
   public final Field<T1> field1() {
     return (Field<T1>) fields.field(0);
@@ -101,7 +99,6 @@ final class RowImpl2<T1, T2> extends AbstractRow<Record2<T1, T2>> implements Row
   // ------------------------------------------------------------------------
   // Generic comparison predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition compare(Comparator comparator, Row2<T1, T2> row) {
     return new RowCondition(this, row, comparator);
@@ -138,7 +135,6 @@ final class RowImpl2<T1, T2> extends AbstractRow<Record2<T1, T2>> implements Row
   // ------------------------------------------------------------------------
   // Equal / Not equal comparison predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition equal(Row2<T1, T2> row) {
     return compare(Comparator.EQUALS, row);
@@ -222,7 +218,6 @@ final class RowImpl2<T1, T2> extends AbstractRow<Record2<T1, T2>> implements Row
   // ------------------------------------------------------------------------
   // Ordering comparison predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition lessThan(Row2<T1, T2> row) {
     return compare(Comparator.LESS, row);
@@ -386,7 +381,6 @@ final class RowImpl2<T1, T2> extends AbstractRow<Record2<T1, T2>> implements Row
   // ------------------------------------------------------------------------
   // [NOT] BETWEEN predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final BetweenAndStep2<T1, T2> between(T1 t1, T2 t2) {
     return between(
@@ -514,7 +508,6 @@ final class RowImpl2<T1, T2> extends AbstractRow<Record2<T1, T2>> implements Row
   // ------------------------------------------------------------------------
   // [NOT] DISTINCT predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition isNotDistinctFrom(Row2<T1, T2> row) {
     return new RowIsDistinctFrom(this, row, true);
@@ -570,7 +563,6 @@ final class RowImpl2<T1, T2> extends AbstractRow<Record2<T1, T2>> implements Row
   // ------------------------------------------------------------------------
   // [NOT] IN predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition in(Row2<T1, T2>... rows) {
     return in(Arrays.asList(rows));
@@ -579,9 +571,7 @@ final class RowImpl2<T1, T2> extends AbstractRow<Record2<T1, T2>> implements Row
   @Override
   public final Condition in(Record2<T1, T2>... records) {
     QueryPartList<Row> rows = new QueryPartList<>();
-
     for (Record record : records) rows.add(record.valuesRow());
-
     return new RowInCondition(this, rows, false);
   }
 
@@ -593,9 +583,7 @@ final class RowImpl2<T1, T2> extends AbstractRow<Record2<T1, T2>> implements Row
   @Override
   public final Condition notIn(Record2<T1, T2>... records) {
     QueryPartList<Row> rows = new QueryPartList<>();
-
     for (Record record : records) rows.add(record.valuesRow());
-
     return new RowInCondition(this, rows, true);
   }
 
@@ -622,7 +610,6 @@ final class RowImpl2<T1, T2> extends AbstractRow<Record2<T1, T2>> implements Row
   // ------------------------------------------------------------------------
   // Predicates involving subqueries
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition equal(Select<? extends Record2<T1, T2>> select) {
     return compare(Comparator.EQUALS, select);
@@ -756,7 +743,6 @@ final class RowImpl2<T1, T2> extends AbstractRow<Record2<T1, T2>> implements Row
   // ------------------------------------------------------------------------
   // XXX: Row2 API
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition overlaps(T1 t1, T2 t2) {
     return overlaps(row(t1, t2));

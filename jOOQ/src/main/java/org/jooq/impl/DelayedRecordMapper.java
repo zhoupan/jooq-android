@@ -52,6 +52,7 @@ import org.jooq.RecordType;
 final class DelayedRecordMapper<R extends Record, E> implements RecordMapper<R, E> {
 
   final Function<FieldsImpl<R>, RecordMapper<R, E>> init;
+
   RecordMapper<R, E> delegate;
 
   DelayedRecordMapper(Function<FieldsImpl<R>, RecordMapper<R, E>> init) {
@@ -63,7 +64,6 @@ final class DelayedRecordMapper<R extends Record, E> implements RecordMapper<R, 
   public final E map(R record) {
     if (delegate == null)
       delegate = init.apply((FieldsImpl<R>) ((AbstractRecord) record).fields.fields);
-
     return delegate.map(record);
   }
 }

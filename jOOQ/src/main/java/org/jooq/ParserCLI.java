@@ -70,11 +70,9 @@ public final class ParserCLI {
           Args a;
           Settings settings = new Settings();
           DSLContext ctx;
-
           a = parse(args);
           settings(a, settings);
           ctx = ctx(a, settings);
-
           if (a.interactive || args == null || args.length == 0) {
             interactiveMode(ctx, a);
           } else if (a.done) {
@@ -124,17 +122,13 @@ public final class ParserCLI {
 
   private static final void interactiveMode(DSLContext ctx, Args a) {
     Scanner scan = new Scanner(System.in);
-
     System.out.print("> ");
-
     cliLoop:
     do {
       String line = scan.nextLine();
-
       // TODO: Allow reading history again using arrow keys
       // https://stackoverflow.com/q/572001/521799
       a.history.add(line);
-
       if (a.sql == null && line.startsWith("/")) {
         if ("/q".equals(line)
             || "/quit".equals(line)
@@ -147,15 +141,12 @@ public final class ParserCLI {
         else if ("/d".equals(line) || "/display".equals(line)) displayArguments(a);
         else {
           Matcher matcher = FLAG.matcher(line);
-
           if (matcher.find()) {
             String flag = matcher.group(1);
             String arg = matcher.group(2);
-
             if (flag != null) {
               if ("f".equals(flag) || "formatted".equals(flag)) {
                 if (arg != null) a.formatted = Boolean.parseBoolean(arg.toLowerCase());
-
                 displayFormatted(a);
               } else if ("k".equals(flag) || "keyword".equals(flag))
                 parseInteractive(
@@ -192,7 +183,6 @@ public final class ParserCLI {
               else if ("render-coalesce-to-empty-string-in-concat".equals(flag)) {
                 if (arg != null)
                   a.renderCoalesceToEmptyStringInConcat = Boolean.parseBoolean(arg.toLowerCase());
-
                 displayRenderCoalesceToEmptyStringInConcat(a);
               } else if ("render-optional-inner-keyword".equals(flag))
                 parseInteractive(
@@ -229,7 +219,6 @@ public final class ParserCLI {
               else if ("transform-ansi-join-to-table-lists".equals(flag)) {
                 if (arg != null)
                   a.transformAnsiJoinToTableLists = Boolean.parseBoolean(arg.toLowerCase());
-
                 displayTransformAnsiJoinToTablesLists(a);
               } else if ("transform-qualify".equals(flag))
                 parseInteractive(
@@ -250,7 +239,6 @@ public final class ParserCLI {
               else if ("transform-table-lists-to-ansi-join".equals(flag)) {
                 if (arg != null)
                   a.transformTableListsToAnsiJoin = Boolean.parseBoolean(arg.toLowerCase());
-
                 displayTransformTableListsToAnsiJoin(a);
               } else if ("transform-unneeded-arithmetic".equals(flag))
                 parseInteractive(
@@ -260,9 +248,8 @@ public final class ParserCLI {
                       a.transformUnneededArithmetic = e;
                       displayTransformUnneededArithmetic(a);
                     });
-
-              // [#9144] /t maintained for backwards compatibility
-              else if ("t".equals(flag) || "T".equals(flag) || "to-dialect".equals(flag))
+              else // [#9144] /t maintained for backwards compatibility
+              if ("t".equals(flag) || "T".equals(flag) || "to-dialect".equals(flag))
                 parseInteractive(
                     SQLDialect.class,
                     arg,
@@ -276,22 +263,18 @@ public final class ParserCLI {
             System.out.println("Type /h for help");
           }
         }
-
         settings(a, ctx.settings());
         ctx = ctx(a, ctx.settings());
       }
-
       if (a.sql != null || !line.startsWith("/")) {
         if (a.sql == null) a.sql = line;
         else a.sql = a.sql + "\n" + line;
-
         if (a.sql.trim().endsWith(";")) {
           render(ctx, a);
           a.sql = null;
           System.out.println();
         }
       }
-
       System.out.print("> ");
     } while (scan.hasNextLine());
   }
@@ -379,13 +362,10 @@ public final class ParserCLI {
 
   private static final void render(DSLContext ctx, Args a) {
     String sql = a.sql.trim();
-
     try {
-
       System.out.println(ctx.render(ctx.parser().parse(a.sql)));
     } catch (ParserException e1) {
       ParserException e = e1;
-
       if (!sql.matches(
           "^(?is:(?:ALTER|BEGIN|COMMENT|CREATE|DECLARE|DELETE|DESCRIBE|DROP|GRANT|INSERT|MERGE|RENAME|REVOKE|SELECT|SET|SHOW|TRUNCATE|UPDATE|USE).*)$")) {
         try {
@@ -394,7 +374,6 @@ public final class ParserCLI {
           e = e1.position() >= e2.position() ? e1 : e2;
         }
       }
-
       System.out.println(e.getMessage());
     }
   }
@@ -411,10 +390,8 @@ public final class ParserCLI {
   @SuppressWarnings("unchecked")
   private static final <E extends Enum<E>> Args parse(String[] args) {
     Args result = new Args();
-
     for (int i = 0; i < args.length; i++) {
       Class<? extends Enum<?>> enumArgument = null;
-
       try {
         if ("-f".equals(args[i]) || "--formatted".equals(args[i])) result.formatted = true;
         else if ("-k".equals(args[i]) || "--keyword".equals(args[i]))
@@ -429,9 +406,8 @@ public final class ParserCLI {
         else if ("-F".equals(args[i]) || "--from-dialect".equals(args[i]))
           result.fromDialect =
               parse((Class<SQLDialect>) (enumArgument = SQLDialect.class), args[++i]);
-
-        // [#9144] -t maintained for backwards compatibility
-        else if ("-t".equals(args[i]) || "-T".equals(args[i]) || "--to-dialect".equals(args[i]))
+        else // [#9144] -t maintained for backwards compatibility
+        if ("-t".equals(args[i]) || "-T".equals(args[i]) || "--to-dialect".equals(args[i]))
           result.toDialect =
               parse((Class<SQLDialect>) (enumArgument = SQLDialect.class), args[++i]);
         else if ("--render-coalesce-to-empty-string-in-concat".equals(args[i]))
@@ -491,14 +467,12 @@ public final class ParserCLI {
         throw e;
       }
     }
-
     return result;
   }
 
   private static final void invalid(String string, Class<? extends Enum<?>> type) {
     System.out.println("Invalid " + type.getSimpleName() + ": " + string);
     System.out.println("Possible values:");
-
     for (Enum<?> e : type.getEnumConstants()) System.out.println("  " + e.name());
   }
 
@@ -577,25 +551,45 @@ public final class ParserCLI {
   }
 
   public static final class Args {
+
     List<String> history = new ArrayList<>();
+
     String sql;
+
     RenderKeywordCase keywords = RenderKeywordCase.LOWER;
+
     RenderNameCase name = RenderNameCase.LOWER;
+
     RenderQuotedNames quoted = RenderQuotedNames.EXPLICIT_DEFAULT_UNQUOTED;
+
     SQLDialect toDialect = SQLDialect.DEFAULT;
+
     SQLDialect fromDialect = SQLDialect.DEFAULT;
+
     boolean formatted;
+
     boolean interactive;
+
     boolean done;
+
     boolean renderCoalesceToEmptyStringInConcat;
+
     RenderOptionalKeyword renderOptionalInnerKeyword = RenderOptionalKeyword.DEFAULT;
+
     RenderOptionalKeyword renderOptionalOuterKeyword = RenderOptionalKeyword.DEFAULT;
+
     RenderOptionalKeyword renderOptionalAsKeywordForFieldAliases = RenderOptionalKeyword.DEFAULT;
+
     RenderOptionalKeyword renderOptionalAsKeywordForTableAliases = RenderOptionalKeyword.DEFAULT;
+
     boolean transformAnsiJoinToTableLists;
+
     Transformation transformQualify;
+
     Transformation transformRownum;
+
     boolean transformTableListsToAnsiJoin;
+
     TransformUnneededArithmeticExpressions transformUnneededArithmetic =
         TransformUnneededArithmeticExpressions.NEVER;
   }

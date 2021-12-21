@@ -66,6 +66,7 @@ public enum TableConstraintType {
   CHECK("CHECK"),
   @XmlEnumValue("FOREIGN KEY")
   FOREIGN_KEY("FOREIGN KEY");
+
   private final String value;
 
   TableConstraintType(String v) {

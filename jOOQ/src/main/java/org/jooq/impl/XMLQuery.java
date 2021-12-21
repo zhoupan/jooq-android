@@ -54,8 +54,11 @@ import org.jooq.XMLQueryPassingStep;
 
 /** @author Lukas Eder */
 final class XMLQuery extends AbstractField<XML> implements XMLQueryPassingStep {
+
   private final Field<String> xpath;
+
   private final Field<XML> passing;
+
   private final XMLPassingMechanism passingMechanism;
 
   XMLQuery(Field<String> xpath) {
@@ -64,7 +67,6 @@ final class XMLQuery extends AbstractField<XML> implements XMLQueryPassingStep {
 
   private XMLQuery(Field<String> xpath, Field<XML> passing, XMLPassingMechanism passingMechanism) {
     super(N_XMLQUERY, SQLDataType.XML);
-
     this.xpath = xpath;
     this.passing = passing;
     this.passingMechanism = passingMechanism;
@@ -96,13 +98,11 @@ final class XMLQuery extends AbstractField<XML> implements XMLQueryPassingStep {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
       case POSTGRES:
         Field<XML> x = DSL.field(DSL.name("x"), XML);
-
         ctx.sql('(')
             .visit(
                 select(xmlagg(x))
@@ -110,14 +110,11 @@ final class XMLQuery extends AbstractField<XML> implements XMLQueryPassingStep {
                         unnest(DSL.field("xpath({0}, {1})", XML.getArrayDataType(), xpath, passing))
                             .as("t", x.getName())))
             .sql(')');
-
         break;
-
       default:
         ctx.visit(N_XMLQUERY).sqlIndentStart('(');
         acceptXPath(ctx, xpath);
         acceptPassing(ctx, passing, passingMechanism);
-
         ctx.sqlIndentEnd(')');
         break;
     }

@@ -46,14 +46,16 @@ import org.jooq.Field;
 final class RegexpReplace extends AbstractField<String> {
 
   private final Field<String> field;
+
   private final Field<String> pattern;
+
   private final Field<String> replacement;
+
   private final boolean all;
 
   RegexpReplace(
       Field<String> field, Field<String> pattern, Field<String> replacement, boolean all) {
     super(N_REGEXP_REPLACE, field.getDataType());
-
     this.field = field;
     this.pattern = pattern;
     this.replacement = replacement;
@@ -71,12 +73,9 @@ final class RegexpReplace extends AbstractField<String> {
             .visit(pattern)
             .sql(", ")
             .visit(replacement);
-
         if (all) ctx.sql(", 'g')");
         else ctx.sql(')');
-
         break;
-
         // [#10151] TODO: Emulate REGEXP_REPLACE_FIRST for these three
       case H2:
       case HSQLDB:
@@ -89,10 +88,8 @@ final class RegexpReplace extends AbstractField<String> {
             .visit(pattern)
             .sql(", ")
             .visit(replacement);
-
         if (all) ctx.sql(')');
         else ctx.sql(", 1, 1)");
-
         break;
     }
   }
@@ -101,7 +98,6 @@ final class RegexpReplace extends AbstractField<String> {
     switch (ctx.family()) {
       case MYSQL:
         return "$" + group;
-
       default:
         return "\\" + group;
     }

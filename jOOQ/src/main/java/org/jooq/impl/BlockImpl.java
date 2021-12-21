@@ -81,11 +81,14 @@ import org.jooq.conf.ParamType;
 
 /** @author Lukas Eder */
 final class BlockImpl extends AbstractRowCountQuery implements Block {
+
   private static final Set<SQLDialect> REQUIRES_EXECUTE_IMMEDIATE_ON_DDL =
       SQLDialect.supportedBy(FIREBIRD);
+
   private static final Set<SQLDialect> SUPPORTS_NULL_STATEMENT = SQLDialect.supportedBy(POSTGRES);
 
   final Collection<? extends Statement> statements;
+
   final boolean alwaysWrapInBeginEnd;
 
   BlockImpl(
@@ -93,7 +96,6 @@ final class BlockImpl extends AbstractRowCountQuery implements Block {
       Collection<? extends Statement> statements,
       boolean alwaysWrapInBeginEnd) {
     super(configuration);
-
     this.statements = statements;
     this.alwaysWrapInBeginEnd = alwaysWrapInBeginEnd;
   }
@@ -105,26 +107,21 @@ final class BlockImpl extends AbstractRowCountQuery implements Block {
         {
           if (increment(ctx.data(), DATA_BLOCK_NESTING)) {
             ctx.paramType(INLINED).visit(K_EXECUTE_BLOCK).sql(' ').visit(K_AS);
-
             ctx.data(DATA_FORCE_STATIC_STATEMENT, true);
             scopeDeclarations(
                 ctx.formatIndentStart(), c -> accept0(c.formatIndentEnd().formatSeparator()));
           } else accept0(ctx);
-
           decrement(ctx.data(), DATA_BLOCK_NESTING);
           break;
         }
-
       case POSTGRES:
         {
           bodyAsString(ctx, K_DO, c -> accept0(c));
           break;
         }
-
       case H2:
         {
           String name = randomName();
-
           if (increment(ctx.data(), DATA_BLOCK_NESTING)) {
             ctx.paramType(INLINED)
                 .visit(K_CREATE)
@@ -138,12 +135,9 @@ final class BlockImpl extends AbstractRowCountQuery implements Block {
                 .formatIndentStart()
                 .formatSeparator()
                 .sql("void x(Connection c) throws SQLException ");
-
             ctx.data(DATA_FORCE_STATIC_STATEMENT, true);
           }
-
           accept0(ctx);
-
           if (decrement(ctx.data(), DATA_BLOCK_NESTING))
             ctx.formatIndentEnd()
                 .formatSeparator()
@@ -160,14 +154,11 @@ final class BlockImpl extends AbstractRowCountQuery implements Block {
                 .sql(' ')
                 .sql(name)
                 .sql(';');
-
           break;
         }
-
       case MYSQL:
         {
           String name = randomName();
-
           if (increment(ctx.data(), DATA_BLOCK_NESTING)) {
             ctx.paramType(INLINED)
                 .visit(K_CREATE)
@@ -178,12 +169,9 @@ final class BlockImpl extends AbstractRowCountQuery implements Block {
                 .sql("()")
                 .formatIndentStart()
                 .formatSeparator();
-
             ctx.data(DATA_FORCE_STATIC_STATEMENT, true);
           }
-
           accept0(ctx);
-
           if (decrement(ctx.data(), DATA_BLOCK_NESTING))
             ctx.formatIndentEnd()
                 .formatSeparator()
@@ -198,10 +186,8 @@ final class BlockImpl extends AbstractRowCountQuery implements Block {
                 .sql(' ')
                 .sql(name)
                 .sql(';');
-
           break;
         }
-
       case HSQLDB:
       case MARIADB:
       default:
@@ -224,17 +210,12 @@ final class BlockImpl extends AbstractRowCountQuery implements Block {
   static final void bodyAsString(
       Context<?> ctx, Keyword keyword, Consumer<? super Context<?>> runnable) {
     ParamType previous = ctx.paramType();
-
     if (increment(ctx.data(), DATA_BLOCK_NESTING)) {
       ctx.paramType(INLINED);
-
       if (keyword != null) ctx.visit(keyword).sql(' ');
-
       ctx.sql("$$").formatSeparator().data(DATA_FORCE_STATIC_STATEMENT, true);
     }
-
     runnable.accept(ctx);
-
     if (decrement(ctx.data(), DATA_BLOCK_NESTING))
       ctx.formatSeparator().sql("$$").paramType(previous);
   }
@@ -245,26 +226,21 @@ final class BlockImpl extends AbstractRowCountQuery implements Block {
 
   private final void accept0(Context<?> ctx) {
     boolean wrapInBeginEnd = alwaysWrapInBeginEnd;
-
     if (wrapInBeginEnd) {
       boolean topLevel = ctx.scopeLevel() == -1;
       LanguageContext language = ctx.languageContext();
-
       if (topLevel && language == LanguageContext.QUERY) ctx.languageContext(LanguageContext.BLOCK);
-
       {
         begin(ctx, topLevel);
         scopeDeclarations(ctx, c -> accept1(c));
         end(ctx, topLevel);
       }
-
       if (topLevel && language == LanguageContext.QUERY) ctx.languageContext(language);
     } else accept1(ctx);
   }
 
   private final void accept1(Context<?> ctx) {
     if (statements.isEmpty()) {
-
       // TODO: Replace this switch by SUPPORTS_NULL_STATEMENT usage
       switch (ctx.family()) {
         default:
@@ -273,23 +249,17 @@ final class BlockImpl extends AbstractRowCountQuery implements Block {
     } else {
       DefaultRenderContext r =
           ctx instanceof DefaultRenderContext ? (DefaultRenderContext) ctx : null;
-
       statementLoop:
       for (Statement s : statements) {
         if (s instanceof NullStatement && !SUPPORTS_NULL_STATEMENT.contains(ctx.dialect()))
           continue statementLoop;
-
         LanguageContext language = ctx.languageContext();
         ctx.languageContextIf(LanguageContext.QUERY, s instanceof Query && !(s instanceof Block));
-
         ctx.formatSeparator();
         int position = r != null ? r.sql.length() : 0;
-
         ctx.visit(s);
-
         // [#11374] [#11367] TODO Improve this clunky semi colon decision logic
         if (position < (r != null ? r.sql.length() : 0)) semicolonAfterStatement(ctx, s);
-
         ctx.languageContext(language);
       }
     }
@@ -297,32 +267,26 @@ final class BlockImpl extends AbstractRowCountQuery implements Block {
 
   private static final void semicolonAfterStatement(Context<?> ctx, Statement s) {
     if (s instanceof Block) return;
-
     ctx.sql(';');
   }
 
   private static final void begin(Context<?> ctx, boolean topLevel) {
     if (ctx.family() == H2) ctx.sql('{');
     else ctx.visit(K_BEGIN);
-
     if (ctx.family() == MARIADB && toplevel(ctx.data(), DATA_BLOCK_NESTING))
       ctx.sql(' ').visit(K_NOT).sql(' ').visit(K_ATOMIC);
     else if (ctx.family() == HSQLDB) ctx.sql(' ').visit(K_ATOMIC);
-
     ctx.formatIndentStart();
   }
 
   private static final void end(Context<?> ctx, boolean topLevel) {
     ctx.formatIndentEnd().formatSeparator();
-
     if (ctx.family() == H2) ctx.sql('}');
     else ctx.visit(K_END);
-
     switch (ctx.family()) {
       case H2:
       case FIREBIRD:
         break;
-
       default:
         ctx.sql(';');
     }

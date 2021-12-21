@@ -59,16 +59,27 @@ final class CreateSequenceImpl extends AbstractDDLQuery
     implements CreateSequenceFlagsStep, CreateSequenceFinalStep {
 
   private final Sequence<?> sequence;
+
   private final boolean createSequenceIfNotExists;
+
   private Field<? extends Number> startWith;
+
   private Field<? extends Number> incrementBy;
+
   private Field<? extends Number> minvalue;
+
   private boolean noMinvalue;
+
   private Field<? extends Number> maxvalue;
+
   private boolean noMaxvalue;
+
   private boolean cycle;
+
   private boolean noCycle;
+
   private Field<? extends Number> cache;
+
   private boolean noCache;
 
   CreateSequenceImpl(
@@ -104,7 +115,6 @@ final class CreateSequenceImpl extends AbstractDDLQuery
       Field<? extends Number> cache,
       boolean noCache) {
     super(configuration);
-
     this.sequence = sequence;
     this.createSequenceIfNotExists = createSequenceIfNotExists;
     this.startWith = startWith;
@@ -170,7 +180,6 @@ final class CreateSequenceImpl extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: DSL API
   // -------------------------------------------------------------------------
-
   @Override
   public final CreateSequenceImpl startWith(Number startWith) {
     return startWith(Tools.field(startWith, sequence.getDataType()));
@@ -259,17 +268,24 @@ final class CreateSequenceImpl extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Clause[] CLAUSES = {Clause.CREATE_SEQUENCE};
+
   private static final Set<SQLDialect> NO_SUPPORT_IF_NOT_EXISTS =
       SQLDialect.supportedBy(DERBY, FIREBIRD);
+
   private static final Set<SQLDialect> REQUIRES_START_WITH = SQLDialect.supportedBy(DERBY);
+
   private static final Set<SQLDialect> NO_SUPPORT_CACHE =
       SQLDialect.supportedBy(DERBY, FIREBIRD, HSQLDB);
+
   private static final Set<SQLDialect> NO_SEPARATOR = SQLDialect.supportedBy(CUBRID, MARIADB);
+
   private static final Set<SQLDialect> OMIT_NO_CACHE = SQLDialect.supportedBy(FIREBIRD, POSTGRES);
+
   private static final Set<SQLDialect> OMIT_NO_CYCLE = SQLDialect.supportedBy(FIREBIRD);
+
   private static final Set<SQLDialect> OMIT_NO_MINVALUE = SQLDialect.supportedBy(FIREBIRD);
+
   private static final Set<SQLDialect> OMIT_NO_MAXVALUE = SQLDialect.supportedBy(FIREBIRD);
 
   private final boolean supportsIfNotExists(Context<?> ctx) {
@@ -289,36 +305,27 @@ final class CreateSequenceImpl extends AbstractDDLQuery
         .sql(' ')
         .visit(ctx.family() == CUBRID ? K_SERIAL : K_SEQUENCE)
         .sql(' ');
-
     if (createSequenceIfNotExists && supportsIfNotExists(ctx)) ctx.visit(K_IF_NOT_EXISTS).sql(' ');
-
     ctx.visit(sequence);
     String noSeparator = NO_SEPARATOR.contains(ctx.dialect()) ? "" : " ";
-
     // Some databases default to sequences starting with MIN_VALUE
     if (startWith == null && REQUIRES_START_WITH.contains(ctx.dialect()))
       ctx.sql(' ').visit(K_START_WITH).sql(" 1");
     else if (startWith != null) ctx.sql(' ').visit(K_START_WITH).sql(' ').visit(startWith);
-
     if (incrementBy != null) ctx.sql(' ').visit(K_INCREMENT_BY).sql(' ').visit(incrementBy);
-
     if (minvalue != null) ctx.sql(' ').visit(K_MINVALUE).sql(' ').visit(minvalue);
     else if (noMinvalue && !OMIT_NO_MINVALUE.contains(ctx.dialect()))
       ctx.sql(' ').visit(K_NO).sql(noSeparator).visit(K_MINVALUE);
-
     if (maxvalue != null) ctx.sql(' ').visit(K_MAXVALUE).sql(' ').visit(maxvalue);
     else if (noMaxvalue && !OMIT_NO_MAXVALUE.contains(ctx.dialect()))
       ctx.sql(' ').visit(K_NO).sql(noSeparator).visit(K_MAXVALUE);
-
     if (cycle) ctx.sql(' ').visit(K_CYCLE);
     else if (noCycle && !OMIT_NO_CYCLE.contains(ctx.dialect()))
       ctx.sql(' ').visit(K_NO).sql(noSeparator).visit(K_CYCLE);
-
     if (!NO_SUPPORT_CACHE.contains(ctx.dialect()))
       if (cache != null) ctx.sql(' ').visit(K_CACHE).sql(' ').visit(cache);
       else if (noCache && !OMIT_NO_CACHE.contains(ctx.dialect()))
         ctx.sql(' ').visit(K_NO).sql(noSeparator).visit(K_CACHE);
-
     ctx.end(Clause.CREATE_SEQUENCE_SEQUENCE);
   }
 

@@ -80,24 +80,29 @@ public class TableImpl<R extends Record> extends AbstractTable<R>
     implements ScopeMappable, ScopeNestable, SimpleQueryPart {
 
   private static final Clause[] CLAUSES_TABLE_REFERENCE = {TABLE, TABLE_REFERENCE};
+
   private static final Clause[] CLAUSES_TABLE_ALIAS = {TABLE, TABLE_ALIAS};
+
   private static final Set<SQLDialect> NO_SUPPORT_QUALIFIED_TVF_CALLS =
       SQLDialect.supportedBy(HSQLDB, POSTGRES);
+
   private static final Set<SQLDialect> REQUIRES_TVF_TABLE_CONSTRUCTOR =
       SQLDialect.supportedBy(HSQLDB);
 
   final FieldsImpl<R> fields;
+
   final Alias<Table<R>> alias;
 
   protected final Field<?>[] parameters;
+
   final Table<?> child;
+
   final ForeignKey<?, R> childPath;
 
   /**
    * @deprecated - 3.10 - [#5996] - Use {@link #TableImpl(Name)} instead (or re-generated your
    *     code).
    */
-  @Deprecated
   public TableImpl(String name) {
     this(DSL.name(name));
   }
@@ -106,7 +111,6 @@ public class TableImpl<R extends Record> extends AbstractTable<R>
    * @deprecated - 3.10 - [#5996] - Use {@link #TableImpl(Name, Schema)} instead (or re-generated
    *     your code).
    */
-  @Deprecated
   public TableImpl(String name, Schema schema) {
     this(DSL.name(name), schema);
   }
@@ -115,7 +119,6 @@ public class TableImpl<R extends Record> extends AbstractTable<R>
    * @deprecated - 3.10 - [#5996] - Use {@link #TableImpl(Name, Schema, Table)} instead (or
    *     re-generated your code).
    */
-  @Deprecated
   public TableImpl(String name, Schema schema, Table<R> aliased) {
     this(DSL.name(name), schema, aliased);
   }
@@ -124,7 +127,6 @@ public class TableImpl<R extends Record> extends AbstractTable<R>
    * @deprecated - 3.10 - [#5996] - Use {@link #TableImpl(Name, Schema, Table, Field[])} instead (or
    *     re-generated your code).
    */
-  @Deprecated
   public TableImpl(String name, Schema schema, Table<R> aliased, Field<?>[] parameters) {
     this(DSL.name(name), schema, aliased, parameters);
   }
@@ -133,7 +135,6 @@ public class TableImpl<R extends Record> extends AbstractTable<R>
    * @deprecated - 3.10 - [#5996] - Use {@link #TableImpl(Name, Schema, Table, Field[], String)}
    *     instead (or re-generated your code).
    */
-  @Deprecated
   public TableImpl(
       String name, Schema schema, Table<R> aliased, Field<?>[] parameters, String comment) {
     this(DSL.name(name), schema, aliased, parameters, comment);
@@ -159,7 +160,6 @@ public class TableImpl<R extends Record> extends AbstractTable<R>
    * @deprecated - 3.11 - [#7027] - Use {@link #TableImpl(Name, Schema, Table, Field[], Comment)}
    *     instead.
    */
-  @Deprecated
   public TableImpl(
       Name name, Schema schema, Table<R> aliased, Field<?>[] parameters, String comment) {
     this(name, schema, null, null, aliased, parameters, DSL.comment(comment));
@@ -206,9 +206,7 @@ public class TableImpl<R extends Record> extends AbstractTable<R>
       Comment comment,
       TableOptions options) {
     super(options, name, schema, comment);
-
     this.fields = new FieldsImpl<>();
-
     if (child != null) {
       this.child = child;
       this.childPath = path == null ? null : Tools.aliasedKey((ForeignKey) path, child, this);
@@ -219,13 +217,10 @@ public class TableImpl<R extends Record> extends AbstractTable<R>
       this.child = null;
       this.childPath = null;
     }
-
     if (aliased != null) {
-
       // [#7115] Allow for aliased expressions (e.g. derived tables) to be passed to TableImpl
-      //         in order to support "type safe views"
+      // in order to support "type safe views"
       Alias<Table<R>> existingAlias = Tools.alias(aliased);
-
       if (existingAlias != null)
         this.alias =
             new Alias<>(
@@ -236,14 +231,12 @@ public class TableImpl<R extends Record> extends AbstractTable<R>
                 existingAlias.wrapInParentheses);
       else this.alias = new Alias<>(aliased, this, name);
     } else this.alias = null;
-
     this.parameters = parameters;
   }
 
   /** Get the aliased table wrapped by this table. */
   Table<R> getAliasedTable() {
     if (alias != null) return alias.wrapped();
-
     return null;
   }
 
@@ -292,10 +285,8 @@ public class TableImpl<R extends Record> extends AbstractTable<R>
 
   @Override
   public final void accept(Context<?> ctx) {
-
     if ((getType().isView() || getType().isFunction()) && isSynthetic() && ctx.declareTables()) {
       Select<?> s = getOptions().select();
-
       // TODO: Avoid parsing this every time
       ctx.visit(
           s != null
@@ -309,9 +300,7 @@ public class TableImpl<R extends Record> extends AbstractTable<R>
                   .as(getUnqualifiedName()));
       return;
     }
-
     if (child != null) ctx.scopeRegister(this);
-
     if (alias != null) {
       ctx.visit(alias);
     } else {
@@ -319,10 +308,8 @@ public class TableImpl<R extends Record> extends AbstractTable<R>
           && REQUIRES_TVF_TABLE_CONSTRUCTOR.contains(ctx.dialect())
           && ctx.declareTables()) {
         ctx.visit(K_TABLE).sql('(');
-
         accept0(ctx);
         ctx.sql(')');
-
         // [#4834] Generate alias only if allowed to do so
         if (ctx.declareAliases())
           ctx.sql(' ').visit(getMappedTable(ctx, this).getUnqualifiedName());
@@ -332,28 +319,21 @@ public class TableImpl<R extends Record> extends AbstractTable<R>
 
   private void accept0(Context<?> ctx) {
     if (ctx.declareTables()) ctx.scopeMarkStart(this);
-
     if (ctx.qualify()
         && (ctx.declareTables()
             || (!NO_SUPPORT_QUALIFIED_TVF_CALLS.contains(ctx.dialect()) || parameters == null))) {
-
       Schema mappedSchema = Tools.getMappedSchema(ctx, getSchema());
-
       if (mappedSchema != null && !"".equals(mappedSchema.getName())) {
         ctx.visit(mappedSchema);
         ctx.sql('.');
       }
     }
-
     ctx.visit(getMappedTable(ctx, this).getUnqualifiedName());
-
     if (parameters != null && ctx.declareTables()) {
-
       // [#2925] Some dialects don't like empty parameter lists
       if (ctx.family() == FIREBIRD && parameters.length == 0) ctx.visit(wrap(parameters));
       else ctx.sql('(').visit(wrap(parameters)).sql(')');
     }
-
     if (ctx.declareTables()) ctx.scopeMarkEnd(this);
   }
 
@@ -396,7 +376,6 @@ public class TableImpl<R extends Record> extends AbstractTable<R>
   @SuppressWarnings("unchecked")
   @Override
   public Class<? extends R> getRecordType() {
-
     // TODO: [#4695] Calculate the correct Record[B] type
     return (Class<? extends R>) RecordImplN.class;
   }
@@ -409,25 +388,20 @@ public class TableImpl<R extends Record> extends AbstractTable<R>
   // ------------------------------------------------------------------------
   // XXX: Object API
   // ------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (this == that) return true;
-
     // [#2144] TableImpl equality can be decided without executing the
     // rather expensive implementation of AbstractQueryPart.equals()
     if (that instanceof TableImpl) {
       TableImpl<?> other = (TableImpl<?>) that;
-      return
-
-      // [#7172] [#10274] Cannot use getQualifiedName() yet here
+      return // [#7172] [#10274] Cannot use getQualifiedName() yet here
       StringUtils.equals(
               defaultIfNull(getSchema(), DEFAULT_SCHEMA),
               defaultIfNull(other.getSchema(), DEFAULT_SCHEMA))
           && StringUtils.equals(getName(), other.getName())
           && Arrays.equals(parameters, other.parameters);
     }
-
     return super.equals(that);
   }
 }

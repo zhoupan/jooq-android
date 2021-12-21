@@ -56,6 +56,7 @@ import org.jooq.tools.json.ParseException;
 public final class JSONB implements Serializable {
 
   private final String data;
+
   private transient Object parsed;
 
   private JSONB(String data) {
@@ -100,7 +101,6 @@ public final class JSONB implements Serializable {
         parsed = data;
       }
     }
-
     return parsed;
   }
 

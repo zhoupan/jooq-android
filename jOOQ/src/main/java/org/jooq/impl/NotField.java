@@ -67,7 +67,6 @@ final class NotField extends AbstractField<Boolean> {
       case FIREBIRD:
         ctx.visit(DSL.field(not(condition(field))));
         break;
-
       default:
         ctx.visit(K_NOT)
             .sql('(')

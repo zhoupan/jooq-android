@@ -61,14 +61,12 @@ final class Floor<T extends Number> extends AbstractField<T> {
 
   Floor(Field<T> value) {
     super(N_FLOOR, allNotNull((DataType) dataType(INTEGER, value, false), value));
-
     this.value = nullSafeNotNull(value, INTEGER);
   }
 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -84,7 +82,6 @@ final class Floor<T extends Number> extends AbstractField<T> {
               .sql("))");
           break;
         }
-
       default:
         ctx.visit(function(N_FLOOR, getDataType(), value));
         break;
@@ -94,7 +91,6 @@ final class Floor<T extends Number> extends AbstractField<T> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Floor) {

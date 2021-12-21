@@ -51,18 +51,17 @@ public enum SortOrder {
   @NotNull
   @Support
   ASC("asc"),
-
   /** Descending sort order. */
   @NotNull
   @Support
   DESC("desc"),
-
   /** Default sort order. */
   @NotNull
   @Support
   DEFAULT("");
 
   private final String sql;
+
   private final Keyword keyword;
 
   private SortOrder(String sql) {

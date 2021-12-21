@@ -58,18 +58,17 @@ import org.jooq.tools.*;
 final class Rtrim extends AbstractField<String> {
 
   private final Field<String> string;
+
   private final Field<String> characters;
 
   Rtrim(Field<String> string) {
     super(N_RTRIM, allNotNull(VARCHAR, string));
-
     this.string = nullSafeNotNull(string, VARCHAR);
     this.characters = null;
   }
 
   Rtrim(Field<String> string, Field<String> characters) {
     super(N_RTRIM, allNotNull(VARCHAR, string, characters));
-
     this.string = nullSafeNotNull(string, VARCHAR);
     this.characters = nullSafeNotNull(characters, VARCHAR);
   }
@@ -77,10 +76,8 @@ final class Rtrim extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
-
     if (characters == null) {
       switch (ctx.family()) {
         case FIREBIRD:
@@ -93,7 +90,6 @@ final class Rtrim extends AbstractField<String> {
               .visit(string)
               .sql(')');
           break;
-
         default:
           ctx.visit(function(N_RTRIM, getDataType(), string));
           break;
@@ -103,7 +99,6 @@ final class Rtrim extends AbstractField<String> {
         case SQLITE:
           ctx.visit(function(N_RTRIM, getDataType(), string, characters));
           break;
-
         default:
           ctx.visit(N_TRIM)
               .sql('(')
@@ -123,7 +118,6 @@ final class Rtrim extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Rtrim) {

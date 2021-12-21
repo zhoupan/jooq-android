@@ -52,6 +52,7 @@ import org.jooq.tools.JooqLogger;
 public class DefaultMetaProvider implements MetaProvider {
 
   private static final JooqLogger log = JooqLogger.getLogger(DefaultMetaProvider.class);
+
   private final Configuration configuration;
 
   public DefaultMetaProvider(Configuration configuration) {
@@ -66,7 +67,6 @@ public class DefaultMetaProvider implements MetaProvider {
   /** Get a {@link Meta} that doesn't fail if it is not connected. */
   static Meta meta(Configuration configuration) {
     Meta meta = configuration.metaProvider().provide();
-
     if (meta instanceof MetaImpl
         && configuration.connectionProvider() instanceof NoConnectionProvider) {
       log.debug(

@@ -61,7 +61,6 @@ final class RecordImpl4<T1, T2, T3, T4> extends AbstractRecord
   // ------------------------------------------------------------------------
   // XXX: Type-safe Record APIs
   // ------------------------------------------------------------------------
-
   @Override
   public RowImpl4<T1, T2, T3, T4> fieldsRow() {
     return new RowImpl4<>(field1(), field2(), field3(), field4());

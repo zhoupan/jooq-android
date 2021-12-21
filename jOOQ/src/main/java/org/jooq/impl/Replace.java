@@ -58,12 +58,13 @@ import org.jooq.tools.*;
 final class Replace extends AbstractField<String> {
 
   private final Field<String> string;
+
   private final Field<String> search;
+
   private final Field<String> replace;
 
   Replace(Field<String> string, Field<String> search) {
     super(N_REPLACE, allNotNull(VARCHAR, string, search));
-
     this.string = nullSafeNotNull(string, VARCHAR);
     this.search = nullSafeNotNull(search, VARCHAR);
     this.replace = null;
@@ -71,7 +72,6 @@ final class Replace extends AbstractField<String> {
 
   Replace(Field<String> string, Field<String> search, Field<String> replace) {
     super(N_REPLACE, allNotNull(VARCHAR, string, search, replace));
-
     this.string = nullSafeNotNull(string, VARCHAR);
     this.search = nullSafeNotNull(search, VARCHAR);
     this.replace = nullSafeNotNull(replace, VARCHAR);
@@ -80,10 +80,8 @@ final class Replace extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
-
     // [#861] Most dialects don't ship with a two-argument replace function:
     switch (ctx.family()) {
       case FIREBIRD:
@@ -94,13 +92,10 @@ final class Replace extends AbstractField<String> {
       case SQLITE:
         if (replace == null) ctx.visit(function(N_REPLACE, VARCHAR, string, search, inline("")));
         else ctx.visit(function(N_REPLACE, VARCHAR, string, search, replace));
-
         return;
-
       default:
         if (replace == null) ctx.visit(function(N_REPLACE, VARCHAR, string, search));
         else ctx.visit(function(N_REPLACE, VARCHAR, string, search, replace));
-
         return;
     }
   }
@@ -108,7 +103,6 @@ final class Replace extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Replace) {

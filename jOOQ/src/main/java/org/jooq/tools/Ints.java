@@ -50,6 +50,7 @@ import java.util.Arrays;
  * @since 1.0
  */
 public final class Ints {
+
   private Ints() {}
 
   public static Integer tryParse(String string) {
@@ -60,30 +61,22 @@ public final class Ints {
   // modified for performance and to allow parsing numbers with leading '+'
   public static Integer tryParse(String string, int begin, int end) {
     if (begin < 0 || end > string.length() || end - begin < 1) return null;
-
     int radix = 10;
     char firstChar = string.charAt(begin);
     boolean negative = firstChar == '-';
     int index = negative || firstChar == '+' ? begin + 1 : begin;
     if (index == end) return null;
-
     int digit = Character.digit(string.charAt(index++), 10);
     if (digit < 0 || digit >= radix) return null;
-
     int accum = -digit;
-
     int cap = Integer.MIN_VALUE / radix;
-
     while (index < end) {
       digit = Character.digit(string.charAt(index++), 10);
       if (digit < 0 || digit >= radix || accum < cap) return null;
-
       accum *= radix;
       if (accum < Integer.MIN_VALUE + digit) return null;
-
       accum -= digit;
     }
-
     if (negative) return accum;
     else if (accum == Integer.MIN_VALUE) return null;
     else return -accum;

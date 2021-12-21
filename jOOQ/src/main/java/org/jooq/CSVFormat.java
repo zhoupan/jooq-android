@@ -50,11 +50,17 @@ import static org.jooq.CSVFormat.Quote.SPECIAL_CHARACTERS;
 public final class CSVFormat {
 
   final String delimiter;
+
   final String nullString;
+
   final String emptyString;
+
   final String newline;
+
   final String quoteString;
+
   final Quote quote;
+
   final boolean header;
 
   public CSVFormat() {
@@ -278,7 +284,6 @@ public final class CSVFormat {
 
     /** Each content element is quoted. */
     ALWAYS,
-
     /**
      * Only content elements are quoted containing special characters.
      *
@@ -296,7 +301,6 @@ public final class CSVFormat {
      * </ul>
      */
     SPECIAL_CHARACTERS,
-
     /** Content is never quoted. */
     NEVER
   }

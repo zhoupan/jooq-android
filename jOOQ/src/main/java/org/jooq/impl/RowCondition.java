@@ -64,15 +64,20 @@ import org.jooq.SQLDialect;
 /** @author Lukas Eder */
 @SuppressWarnings({"unchecked", "rawtypes"})
 final class RowCondition extends AbstractCondition {
+
   private static final Clause[] CLAUSES = {CONDITION, CONDITION_COMPARISON};
 
   private static final Set<SQLDialect> EMULATE_EQ_AND_NE = SQLDialect.supportedBy(DERBY, FIREBIRD);
+
   private static final Set<SQLDialect> EMULATE_RANGES =
       SQLDialect.supportedBy(CUBRID, DERBY, FIREBIRD);
 
   private final Row left;
+
   private final Row right;
+
   private final Comparator comparator;
+
   private final boolean forceEmulation;
 
   RowCondition(Row left, Row right, Comparator comparator) {
@@ -88,26 +93,19 @@ final class RowCondition extends AbstractCondition {
 
   @Override
   public final void accept(Context<?> ctx) {
-
     // Regular comparison predicate emulation
     if ((comparator == EQUALS || comparator == NOT_EQUALS)
         && (forceEmulation || EMULATE_EQ_AND_NE.contains(ctx.dialect()))) {
-
       Field<?>[] rightFields = right.fields();
       Condition result = DSL.and(map(left.fields(), (f, i) -> f.equal((Field) rightFields[i])));
-
       if (comparator == NOT_EQUALS) result = result.not();
-
       ctx.visit(result);
-    }
-
-    // Ordering comparison predicate emulation
-    else if ((comparator == GREATER
+    } else // Ordering comparison predicate emulation
+    if ((comparator == GREATER
             || comparator == GREATER_OR_EQUAL
             || comparator == LESS
             || comparator == LESS_OR_EQUAL)
         && (forceEmulation || EMULATE_RANGES.contains(ctx.dialect()))) {
-
       // The order component of the comparator (stripping the equal component)
       Comparator order =
           (comparator == GREATER)
@@ -115,7 +113,6 @@ final class RowCondition extends AbstractCondition {
               : (comparator == GREATER_OR_EQUAL)
                   ? GREATER
                   : (comparator == LESS) ? LESS : (comparator == LESS_OR_EQUAL) ? LESS : null;
-
       // [#2658] The factored order component of the comparator (enforcing the equal component)
       Comparator factoredOrder =
           (comparator == GREATER)
@@ -125,32 +122,23 @@ final class RowCondition extends AbstractCondition {
                   : (comparator == LESS)
                       ? LESS_OR_EQUAL
                       : (comparator == LESS_OR_EQUAL) ? LESS_OR_EQUAL : null;
-
       // Whether the comparator has an equal component
       boolean equal = (comparator == GREATER_OR_EQUAL) || (comparator == LESS_OR_EQUAL);
-
       Field<?>[] leftFields = left.fields();
       Field<?>[] rightFields = right.fields();
-
       // The following algorithm emulates the equivalency of these expressions:
       // (A, B, C) > (X, Y, Z)
       // (A > X) OR (A = X AND B > Y) OR (A = X AND B = Y AND C > Z)
       List<Condition> outer = new ArrayList<>(1 + leftFields.length);
-
       for (int i = 0; i < leftFields.length; i++) {
         List<Condition> inner = new ArrayList<>(1 + i);
-
         for (int j = 0; j < i; j++) inner.add(leftFields[j].equal((Field) rightFields[j]));
-
         inner.add(
             leftFields[i].compare(
                 equal && i == leftFields.length - 1 ? comparator : order, (Field) rightFields[i]));
-
         outer.add(DSL.and(inner));
       }
-
       Condition result = DSL.or(outer);
-
       // [#2658] For performance reasons, an additional, redundant
       // predicate is factored out to favour the application of range
       // scans as the topmost predicate is AND-connected, not
@@ -159,16 +147,12 @@ final class RowCondition extends AbstractCondition {
       // (A >= X) AND ((A > X) OR (A = X AND B > Y) OR (A = X AND B = Y AND C > Z))
       if (leftFields.length > 1)
         result = leftFields[0].compare(factoredOrder, (Field) rightFields[0]).and(result);
-
       ctx.visit(result);
     } else {
-
       // Some dialects do not support != comparison with rows
-
       {
         // Some databases need extra parentheses around the RHS
         boolean extraParentheses = false;
-
         ctx.visit(left)
             .sql(' ')
             .sql(comparator.toSQL())
@@ -180,7 +164,8 @@ final class RowCondition extends AbstractCondition {
     }
   }
 
-  @Override // Avoid AbstractCondition implementation
+  // Avoid AbstractCondition implementation
+  @Override
   public final Clause[] clauses(Context<?> ctx) {
     return null;
   }

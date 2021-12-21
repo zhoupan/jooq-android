@@ -92,12 +92,12 @@ abstract class AbstractStoreQuery<R extends Record> extends AbstractDMLQuery<R>
   }
 
   static class UnknownField<T> extends AbstractField<T> {
+
     private final int index;
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     UnknownField(int index) {
       super(DSL.name("unknown field " + index), (DataType) SQLDataType.OTHER);
-
       this.index = index;
     }
 

@@ -48,7 +48,9 @@ class DefaultBindingSetStatementContext<U> extends AbstractResourceManagingScope
     implements BindingSetStatementContext<U> {
 
   private final PreparedStatement statement;
+
   private final int index;
+
   private final U value;
 
   DefaultBindingSetStatementContext(
@@ -58,7 +60,6 @@ class DefaultBindingSetStatementContext<U> extends AbstractResourceManagingScope
       int index,
       U value) {
     super(configuration, data);
-
     this.statement = statement;
     this.index = index;
     this.value = value;

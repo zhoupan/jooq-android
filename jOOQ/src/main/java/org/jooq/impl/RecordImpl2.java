@@ -60,7 +60,6 @@ final class RecordImpl2<T1, T2> extends AbstractRecord implements InternalRecord
   // ------------------------------------------------------------------------
   // XXX: Type-safe Record APIs
   // ------------------------------------------------------------------------
-
   @Override
   public RowImpl2<T1, T2> fieldsRow() {
     return new RowImpl2<>(field1(), field2());

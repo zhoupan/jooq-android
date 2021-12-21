@@ -54,15 +54,18 @@ import org.jooq.tools.JooqLogger;
 public class BatchedPreparedStatement extends DefaultPreparedStatement {
 
   private static final JooqLogger log = JooqLogger.getLogger(BatchedPreparedStatement.class);
+
   final String sql;
+
   int batches;
+
   boolean executeImmediate;
+
   boolean getMoreResults = true;
 
   public BatchedPreparedStatement(
       String sql, BatchedConnection connection, PreparedStatement delegate) {
     super(delegate, connection);
-
     this.sql = sql;
   }
 
@@ -90,7 +93,6 @@ public class BatchedPreparedStatement extends DefaultPreparedStatement {
     if (log.isDebugEnabled())
       log.debug(
           "BatchedStatement", "Skipped batching statement: " + getBatchedConnection().lastSQL);
-
     resetMoreResults();
   }
 
@@ -98,7 +100,6 @@ public class BatchedPreparedStatement extends DefaultPreparedStatement {
     if (log.isDebugEnabled())
       log.debug(
           "BatchedStatement", "Batched " + batches + " times: " + getBatchedConnection().lastSQL);
-
     resetMoreResults();
   }
 
@@ -107,7 +108,6 @@ public class BatchedPreparedStatement extends DefaultPreparedStatement {
       log.debug(
           "BatchedStatement",
           "Executed with " + batches + " batched items: " + getBatchedConnection().lastSQL);
-
     resetMoreResults();
     resetBatches();
   }
@@ -115,7 +115,6 @@ public class BatchedPreparedStatement extends DefaultPreparedStatement {
   // -------------------------------------------------------------------------
   // XXX: Wrappers
   // -------------------------------------------------------------------------
-
   @SuppressWarnings("unchecked")
   @Override
   public <T> T unwrap(Class<T> iface) throws SQLException {
@@ -130,7 +129,6 @@ public class BatchedPreparedStatement extends DefaultPreparedStatement {
   // -------------------------------------------------------------------------
   // XXX: Executing queries
   // -------------------------------------------------------------------------
-
   @Override
   public int executeUpdate() throws SQLException {
     if (executeImmediate) {
@@ -145,7 +143,6 @@ public class BatchedPreparedStatement extends DefaultPreparedStatement {
   @Override
   public boolean execute() throws SQLException {
     resetMoreResults();
-
     if (executeImmediate) {
       logExecuteImmediate();
       return super.execute();
@@ -176,7 +173,6 @@ public class BatchedPreparedStatement extends DefaultPreparedStatement {
   // -------------------------------------------------------------------------
   // XXX: Multi result set features
   // -------------------------------------------------------------------------
-
   @Override
   public boolean getMoreResults() throws SQLException {
     return getMoreResults = false;
@@ -190,14 +186,12 @@ public class BatchedPreparedStatement extends DefaultPreparedStatement {
   // -------------------------------------------------------------------------
   // XXX: Batch features
   // -------------------------------------------------------------------------
-
   @Override
   public void addBatch() throws SQLException {
     getBatchedConnection().setBatch(this);
     batches++;
     logBatch();
     super.addBatch();
-
     if (batches >= getBatchedConnection().batchSize) {
       getBatchedConnection().executeLastBatch();
       batches = 0;
@@ -225,7 +219,6 @@ public class BatchedPreparedStatement extends DefaultPreparedStatement {
   // -------------------------------------------------------------------------
   // XXX: Unsupported static statement execution features
   // -------------------------------------------------------------------------
-
   @Override
   public void addBatch(String s) throws SQLException {
     throw new UnsupportedOperationException("No static statement methods can be called");
@@ -299,7 +292,6 @@ public class BatchedPreparedStatement extends DefaultPreparedStatement {
   // -------------------------------------------------------------------------
   // XXX: Unsupported result set query features
   // -------------------------------------------------------------------------
-
   @Override
   public ResultSet executeQuery() throws SQLException {
     if (batches == 0) {

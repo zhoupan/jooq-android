@@ -62,14 +62,12 @@ final class Cot extends AbstractField<BigDecimal> {
 
   Cot(Field<? extends Number> number) {
     super(N_COT, allNotNull(NUMERIC, number));
-
     this.number = nullSafeNotNull(number, INTEGER);
   }
 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -82,7 +80,6 @@ final class Cot extends AbstractField<BigDecimal> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Cot) {

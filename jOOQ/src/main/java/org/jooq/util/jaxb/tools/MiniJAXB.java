@@ -107,6 +107,7 @@ import org.xml.sax.SAXParseException;
 public final class MiniJAXB {
 
   private static final JooqLogger log = JooqLogger.getLogger(MiniJAXB.class);
+
   private static final Map<String, String> PROVIDED_SCHEMAS;
 
   static {
@@ -135,7 +136,6 @@ public final class MiniJAXB {
         out.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n");
         builder.append(e.name(), object);
       } else builder.append(object);
-
       builder.appendTo(out);
     } catch (Exception e) {
       throw new ConfigurationException("Cannot print object", e);
@@ -190,7 +190,6 @@ public final class MiniJAXB {
       StringWriter writer = new StringWriter();
       copyLarge(reader, writer);
       String xml = writer.toString();
-
       int startIdx = xml.indexOf('<');
       // skip over all processing instructions (like <?xml ...?>
       while (startIdx > 0 && xml.length() > startIdx + 1 && xml.charAt(startIdx + 1) == '?')
@@ -218,29 +217,22 @@ public final class MiniJAXB {
       Object result, Element element, Map<Class<?>, Map<String, Field>> fieldsByClass)
       throws Exception {
     if (result == null) return;
-
     Map<String, Field> map = fieldsByElementName(fieldsByClass, result.getClass());
-
     NodeList childNodes = element.getChildNodes();
     for (int i = 0; i < childNodes.getLength(); i++) {
       Node item = childNodes.item(i);
-
       if (item.getNodeType() != Node.ELEMENT_NODE) continue;
-
       Element childElement = (Element) item;
       Field child = map.get(childElement.getTagName());
       if (child == null) child = map.get(childElement.getLocalName());
       // skip unknown elements
       if (child == null) continue;
-
       XmlElementWrapper w = child.getAnnotation(XmlElementWrapper.class);
       XmlElement e = child.getAnnotation(XmlElement.class);
       XmlJavaTypeAdapter a = child.getAnnotation(XmlJavaTypeAdapter.class);
       XmlList l = child.getAnnotation(XmlList.class);
-
       String childName = child.getName();
       Class<?> childType = child.getType();
-
       if (List.class.isAssignableFrom(childType) && w != null && e != null) {
         List<Object> list = new ArrayList<Object>();
         unmarshalList0(
@@ -268,7 +260,6 @@ public final class MiniJAXB {
       } else if (childType.getAnnotation(XmlType.class) != null) {
         Object object = Reflect.on(childType).create().get();
         Reflect.on(result).set(childName, object);
-
         unmarshal0(object, childElement, fieldsByClass);
       } else if (a != null) {
         @SuppressWarnings("unchecked")
@@ -289,11 +280,9 @@ public final class MiniJAXB {
       Map<Class<?>, Map<String, Field>> fieldsByClass)
       throws Exception {
     if (result == null) return;
-
     NodeList list = element.getChildNodes();
     for (int i = 0; i < list.getLength(); i++) {
       Node item = list.item(i);
-
       if (item.getNodeType() == Node.ELEMENT_NODE) {
         if (name.equals(((Element) item).getTagName())
             || name.equals(((Element) item).getLocalName())) {
@@ -311,20 +300,16 @@ public final class MiniJAXB {
     if (result == null) {
       result = new HashMap<String, Field>();
       fieldsByClass.put(type, result);
-
       for (Field child : type.getDeclaredFields()) {
         int modifiers = child.getModifiers();
         if (Modifier.isFinal(modifiers) || Modifier.isStatic(modifiers)) continue;
-
         XmlElementWrapper w = child.getAnnotation(XmlElementWrapper.class);
         XmlElement e = child.getAnnotation(XmlElement.class);
-
         String childName = child.getName();
         String childElementName =
             w != null
                 ? "##default".equals(w.name()) ? child.getName() : w.name()
                 : e == null || "##default".equals(e.name()) ? childName : e.name();
-
         result.put(childElementName, child);
       }
     }
@@ -334,30 +319,25 @@ public final class MiniJAXB {
   private static DocumentBuilder builder(Class<?> type) {
     try {
       DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-
       // -----------------------------------------------------------------
       // [JOOX #136] FIX START: Prevent OWASP attack vectors
       try {
         factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
       } catch (ParserConfigurationException ignore) {
       }
-
       try {
         factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
       } catch (ParserConfigurationException ignore) {
       }
-
       try {
         factory.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
       } catch (ParserConfigurationException ignore) {
       }
-
       // [JOOX #149] Not implemented on Android
       try {
         factory.setXIncludeAware(false);
       } catch (UnsupportedOperationException ignore) {
       }
-
       // [#8918] log warnings for unknown elements
       String namespace = getNamespace(type);
       if (namespace != null)
@@ -366,17 +346,16 @@ public final class MiniJAXB {
           factory.setSchema(schema);
         } catch (UnsupportedOperationException ignore) {
         }
-
       factory.setExpandEntityReferences(false);
       // [JOOX #136] FIX END
       // -----------------------------------------------------------------
-
       // [JOOX #9] [JOOX #107] In order to take advantage of namespace-related DOM
       // features, the internal builder should be namespace-aware
       factory.setNamespaceAware(true);
       DocumentBuilder builder = factory.newDocumentBuilder();
       builder.setErrorHandler(
           new ErrorHandler() {
+
             @Override
             public void warning(SAXParseException exception) throws SAXException {
               log.warn(exception);
@@ -392,7 +371,6 @@ public final class MiniJAXB {
               log.warn(exception);
             }
           });
-
       return builder;
     } catch (Exception e) {
       throw new RuntimeException(e);
@@ -413,7 +391,6 @@ public final class MiniJAXB {
       if (PROVIDED_SCHEMAS.containsKey(namespace))
         url = type.getResource(PROVIDED_SCHEMAS.get(namespace));
       else url = new URL(namespace);
-
       if (url != null) {
         SchemaFactory schemaFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
         Schema schema = schemaFactory.newSchema(url);
@@ -435,33 +412,27 @@ public final class MiniJAXB {
   public static <T> T append(T first, T second) {
     if (first == null) return second;
     if (second == null) return first;
-
     Class<T> klass = (Class<T>) first.getClass();
     if (klass != second.getClass())
       throw new IllegalArgumentException("Can only append identical types");
-    // [#8527] support enum types
-    else if (klass.isEnum()) return first;
-
+    else // [#8527] support enum types
+    if (klass.isEnum()) return first;
     // We're assuming that XJC generated objects are all in the same package
     Package pkg = klass.getPackage();
     try {
       T defaults = klass.getDeclaredConstructor().newInstance();
-
       for (Method setter : klass.getMethods()) {
         if (setter.getName().startsWith("set")) {
           Method getter;
-
           try {
             getter = klass.getMethod("get" + setter.getName().substring(3));
           } catch (NoSuchMethodException e) {
             getter = klass.getMethod("is" + setter.getName().substring(3));
           }
-
           Class<?> childType = setter.getParameterTypes()[0];
           Object firstChild = getter.invoke(first);
           Object secondChild = getter.invoke(second);
           Object defaultChild = getter.invoke(defaults);
-
           if (Collection.class.isAssignableFrom(childType))
             ((List) firstChild).addAll((List) secondChild);
           else if (secondChild != null && (firstChild == null || firstChild.equals(defaultChild)))
@@ -469,13 +440,13 @@ public final class MiniJAXB {
           else if (secondChild != null && pkg == childType.getPackage())
             append(firstChild, secondChild);
           else
-            ; // All other types cannot be merged
+            // All other types cannot be merged
+            ;
         }
       }
     } catch (Exception e) {
       throw new ReflectException(e);
     }
-
     return first;
   }
 }

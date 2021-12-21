@@ -57,7 +57,6 @@ final class DefaultCacheProvider implements CacheProvider {
   @Override
   public Map<Object, Object> provide(CacheContext ctx) {
     switch (ctx.cacheType()) {
-
         // TODO: Is there a better implementation than wrapping LinkedHashMap
         // in synchronizedMap(), i.e. one that does not use a monitor?
       case CACHE_PARSING_CONNECTION:
@@ -65,7 +64,6 @@ final class DefaultCacheProvider implements CacheProvider {
             new LRUCache<>(
                 defaultIfNull(
                     settings(ctx.configuration()).getCacheParsingConnectionLRUCacheSize(), 8912)));
-
       default:
         return new ConcurrentHashMap<>();
     }

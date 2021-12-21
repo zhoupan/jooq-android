@@ -77,7 +77,6 @@ final class ConditionProviderImpl extends AbstractQueryPart
   // -------------------------------------------------------------------------
   // ConditionProvider API
   // -------------------------------------------------------------------------
-
   @Override
   public final void addConditions(Condition conditions) {
     addConditions(Operator.AND, conditions);
@@ -108,10 +107,8 @@ final class ConditionProviderImpl extends AbstractQueryPart
   public final void addConditions(Operator operator, Collection<? extends Condition> conditions) {
     if (!conditions.isEmpty()) {
       Condition c;
-
       if (conditions.size() == 1) c = conditions.iterator().next();
       else c = DSL.condition(operator, conditions);
-
       addConditions(operator, c);
     }
   }
@@ -124,7 +121,6 @@ final class ConditionProviderImpl extends AbstractQueryPart
   // -------------------------------------------------------------------------
   // Condition API
   // -------------------------------------------------------------------------
-
   @Override
   public final Condition and(Condition other) {
     return getWhere().and(other);

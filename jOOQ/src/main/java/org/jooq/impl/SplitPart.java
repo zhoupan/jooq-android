@@ -58,12 +58,13 @@ import org.jooq.tools.*;
 final class SplitPart extends AbstractField<String> {
 
   private final Field<String> string;
+
   private final Field<String> delimiter;
+
   private final Field<? extends Number> n;
 
   SplitPart(Field<String> string, Field<String> delimiter, Field<? extends Number> n) {
     super(N_SPLIT_PART, allNotNull(VARCHAR, string, delimiter, n));
-
     this.string = nullSafeNotNull(string, VARCHAR);
     this.delimiter = nullSafeNotNull(delimiter, VARCHAR);
     this.n = nullSafeNotNull(n, INTEGER);
@@ -72,7 +73,6 @@ final class SplitPart extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -88,7 +88,6 @@ final class SplitPart extends AbstractField<String> {
                             .plus(DSL.length(delimiter))
                             .plus(one()))));
         break;
-
       case HSQLDB:
         {
           Field<String> rS = DSL.field(name("s"), String.class);
@@ -99,7 +98,6 @@ final class SplitPart extends AbstractField<String> {
           Field<Integer> rPosN = DSL.nullif(rPos, zero());
           Field<String> rStr = DSL.substring(rS, rPosN.plus(rLen));
           Field<String> rRes = DSL.coalesce(DSL.substring(rS, one(), rPosN.minus(one())), rS);
-
           CommonTableExpression<?> s1 = name("s1").fields("s", "d").as(select(string, delimiter));
           CommonTableExpression<?> s2 =
               name("s2")
@@ -111,7 +109,6 @@ final class SplitPart extends AbstractField<String> {
                               select(rStr, rD, rRes, rN.plus(one()))
                                   .from(name("s2"))
                                   .where(rS.isNotNull())));
-
           visitSubquery(
               ctx,
               withRecursive(s1, s2)
@@ -120,7 +117,6 @@ final class SplitPart extends AbstractField<String> {
                   .where(s2.field("n").eq((Field) n)));
           break;
         }
-
       default:
         ctx.visit(function(N_SPLIT_PART, getDataType(), string, delimiter, n));
         break;
@@ -130,7 +126,6 @@ final class SplitPart extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof SplitPart) {

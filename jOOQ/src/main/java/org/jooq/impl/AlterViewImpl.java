@@ -58,8 +58,11 @@ import org.jooq.tools.*;
 final class AlterViewImpl extends AbstractDDLQuery implements AlterViewStep, AlterViewFinalStep {
 
   private final Table<?> view;
+
   private final boolean alterViewIfExists;
+
   private Comment comment;
+
   private Table<?> renameTo;
 
   AlterViewImpl(Configuration configuration, Table<?> view, boolean alterViewIfExists) {
@@ -73,7 +76,6 @@ final class AlterViewImpl extends AbstractDDLQuery implements AlterViewStep, Alt
       Comment comment,
       Table<?> renameTo) {
     super(configuration);
-
     this.view = view;
     this.alterViewIfExists = alterViewIfExists;
     this.comment = comment;
@@ -99,7 +101,6 @@ final class AlterViewImpl extends AbstractDDLQuery implements AlterViewStep, Alt
   // -------------------------------------------------------------------------
   // XXX: DSL API
   // -------------------------------------------------------------------------
-
   @Override
   public final AlterViewImpl comment(String comment) {
     return comment(DSL.comment(comment));
@@ -130,8 +131,8 @@ final class AlterViewImpl extends AbstractDDLQuery implements AlterViewStep, Alt
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Clause[] CLAUSES = {Clause.ALTER_VIEW};
+
   private static final Set<SQLDialect> SUPPORT_IF_EXISTS =
       SQLDialect.supportedBy(CUBRID, DERBY, FIREBIRD);
 
@@ -151,7 +152,6 @@ final class AlterViewImpl extends AbstractDDLQuery implements AlterViewStep, Alt
       ctx.visit(commentOnView(view).is(comment));
       return;
     }
-
     accept1(ctx);
   }
 
@@ -160,18 +160,14 @@ final class AlterViewImpl extends AbstractDDLQuery implements AlterViewStep, Alt
         .visit(K_ALTER)
         .sql(' ')
         .visit(ctx.family() == HSQLDB ? K_TABLE : K_VIEW);
-
     if (alterViewIfExists && supportsIfExists(ctx)) ctx.sql(' ').visit(K_IF_EXISTS);
-
     ctx.sql(' ').visit(view).end(Clause.ALTER_VIEW_VIEW).formatIndentStart().formatSeparator();
-
     if (renameTo != null)
       ctx.start(Clause.ALTER_VIEW_RENAME)
           .visit(K_RENAME_TO)
           .sql(' ')
           .qualify(false, c -> c.visit(renameTo))
           .end(Clause.ALTER_VIEW_RENAME);
-
     ctx.formatIndentEnd();
   }
 

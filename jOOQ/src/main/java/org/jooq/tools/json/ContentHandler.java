@@ -47,6 +47,7 @@ import java.io.IOException;
  * @author FangYidong&lt;fangyidong@yahoo.com.cn&gt;
  */
 public interface ContentHandler {
+
   /**
    * Receive notification of the beginning of JSON processing. The parser will invoke this method
    * only once.

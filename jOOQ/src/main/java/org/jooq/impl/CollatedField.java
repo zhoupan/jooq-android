@@ -49,11 +49,11 @@ import org.jooq.Field;
 final class CollatedField extends AbstractField<String> {
 
   private final Field<?> field;
+
   private final Collation collation;
 
   CollatedField(Field<?> field, Collation collation) {
     super(field.getQualifiedName(), type(field), field.getCommentPart(), binding(field));
-
     this.field = field;
     this.collation = collation;
   }
@@ -74,7 +74,6 @@ final class CollatedField extends AbstractField<String> {
 
   @Override
   public final void accept(Context<?> ctx) {
-
     // [#8011] Collations are vendor-specific storage clauses, which we might need to ignore
     if (ctx.configuration().data("org.jooq.ddl.ignore-storage-clauses") == null)
       ctx.sql("((").visit(field).sql(") ").visit(K_COLLATE).sql(' ').visit(collation).sql(')');

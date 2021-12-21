@@ -55,7 +55,6 @@ public interface ParseContext extends Scope {
   // -------------------------------------------------------------------------
   // Additional Scope context
   // -------------------------------------------------------------------------
-
   /** Convenient access to {@link Settings#getParseDialect()}. */
   @NotNull
   SQLDialect parseDialect();
@@ -67,7 +66,6 @@ public interface ParseContext extends Scope {
   // -------------------------------------------------------------------------
   // Parse context
   // -------------------------------------------------------------------------
-
   /** The current language context. */
   @NotNull
   LanguageContext languageContext();
@@ -91,7 +89,6 @@ public interface ParseContext extends Scope {
   // -------------------------------------------------------------------------
   // Parse actions
   // -------------------------------------------------------------------------
-
   /**
    * Peek at the next character.
    *

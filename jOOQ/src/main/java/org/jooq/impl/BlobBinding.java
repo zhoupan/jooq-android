@@ -57,7 +57,6 @@ import org.jooq.ResourceManagingScope;
 import org.jooq.tools.jdbc.JDBCUtils;
 
 // ...
-
 /**
  * A binding that takes binary values but binds them as {@link Blob} to at the JDBC level.
  *
@@ -96,7 +95,6 @@ public class BlobBinding implements Binding<byte[], byte[]> {
   @Override
   public final void get(BindingGetResultSetContext<byte[]> ctx) throws SQLException {
     Blob blob = ctx.resultSet().getBlob(ctx.index());
-
     try {
       ctx.value(blob == null ? null : blob.getBytes(1, asInt(blob.length())));
     } finally {
@@ -107,7 +105,6 @@ public class BlobBinding implements Binding<byte[], byte[]> {
   @Override
   public final void get(BindingGetStatementContext<byte[]> ctx) throws SQLException {
     Blob blob = ctx.statement().getBlob(ctx.index());
-
     try {
       ctx.value(blob == null ? null : blob.getBytes(1, asInt(blob.length())));
     } finally {
@@ -118,7 +115,6 @@ public class BlobBinding implements Binding<byte[], byte[]> {
   @Override
   public final void get(BindingGetSQLInputContext<byte[]> ctx) throws SQLException {
     Blob blob = ctx.input().readBlob();
-
     try {
       ctx.value(blob == null ? null : blob.getBytes(1, asInt(blob.length())));
     } finally {
@@ -128,7 +124,6 @@ public class BlobBinding implements Binding<byte[], byte[]> {
 
   static final Blob newBlob(ResourceManagingScope scope, byte[] bytes) throws SQLException {
     Blob blob;
-
     switch (scope.dialect()) {
       default:
         {
@@ -136,7 +131,6 @@ public class BlobBinding implements Binding<byte[], byte[]> {
           break;
         }
     }
-
     scope.autoFree(blob);
     blob.setBytes(1, bytes);
     return blob;

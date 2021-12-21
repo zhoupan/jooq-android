@@ -52,13 +52,11 @@ import java.sql.Statement;
  * @deprecated - 3.15.0 - [#11618] - This type is no longer used by jOOQ and will be removed in the
  *     future.
  */
-@Deprecated
 public abstract class JDBC41Statement {
 
   // ------------------------------------------------------------------------
   // Methods from JDBC 4.1 java.sql.Statement
   // ------------------------------------------------------------------------
-
   // JDBC 4.1 compliance: @Override
   @SuppressWarnings("unused")
   public void closeOnCompletion() throws SQLException {
@@ -74,7 +72,6 @@ public abstract class JDBC41Statement {
   // ------------------------------------------------------------------------
   // Methods from JDBC 4.1 java.sql.PreparedCall
   // ------------------------------------------------------------------------
-
   // JDBC 4.1 compliance: @Override
   @SuppressWarnings("unused")
   public <T> T getObject(int parameterIndex, Class<T> type) throws SQLException {

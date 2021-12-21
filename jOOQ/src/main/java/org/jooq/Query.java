@@ -158,7 +158,6 @@ public interface Query extends Statement, AttachableQueryPart, AutoCloseable {
   // ------------------------------------------------------------------------
   // JDBC methods
   // ------------------------------------------------------------------------
-
   /**
    * Specify whether any JDBC {@link java.sql.Statement} created by this query should be {@link
    * java.sql.Statement#setPoolable(boolean)}.

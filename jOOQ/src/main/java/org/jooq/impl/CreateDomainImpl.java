@@ -62,9 +62,13 @@ final class CreateDomainImpl<T> extends AbstractDDLQuery
         CreateDomainFinalStep {
 
   private final Domain<?> domain;
+
   private final boolean createDomainIfNotExists;
+
   private DataType<T> dataType;
+
   private Field<T> default_;
+
   private Collection<? extends Constraint> constraints;
 
   CreateDomainImpl(Configuration configuration, Domain<?> domain, boolean createDomainIfNotExists) {
@@ -79,7 +83,6 @@ final class CreateDomainImpl<T> extends AbstractDDLQuery
       Field<T> default_,
       Collection<? extends Constraint> constraints) {
     super(configuration);
-
     this.domain = domain;
     this.createDomainIfNotExists = createDomainIfNotExists;
     this.dataType = dataType;
@@ -110,7 +113,6 @@ final class CreateDomainImpl<T> extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: DSL API
   // -------------------------------------------------------------------------
-
   @Override
   public final <T> CreateDomainImpl<T> as(Class<T> dataType) {
     return as(DefaultDataType.getDataType(null, dataType));
@@ -147,7 +149,6 @@ final class CreateDomainImpl<T> extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Set<SQLDialect> NO_SUPPORT_IF_NOT_EXISTS =
       SQLDialect.supportedBy(FIREBIRD, POSTGRES);
 
@@ -166,16 +167,12 @@ final class CreateDomainImpl<T> extends AbstractDDLQuery
     switch (ctx.family()) {
       default:
         ctx.visit(K_CREATE).sql(' ').visit(K_DOMAIN);
-
         if (createDomainIfNotExists && supportsIfNotExists(ctx))
           ctx.sql(' ').visit(K_IF_NOT_EXISTS);
-
         ctx.sql(' ').visit(domain).sql(' ').visit(K_AS).sql(' ');
     }
-
     Tools.toSQLDDLTypeDeclaration(ctx, dataType);
     if (default_ != null) ctx.formatSeparator().visit(K_DEFAULT).sql(' ').visit(default_);
-
     if (constraints != null)
       if (ctx.family() == FIREBIRD)
         ctx.formatSeparator()

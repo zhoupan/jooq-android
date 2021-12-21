@@ -67,7 +67,6 @@ public class MockResultSetMetaData implements ResultSetMetaData, Serializable {
   // -------------------------------------------------------------------------
   // XXX: Unwrapping
   // -------------------------------------------------------------------------
-
   @SuppressWarnings("unchecked")
   @Override
   public <T> T unwrap(Class<T> iface) throws SQLException {
@@ -83,42 +82,36 @@ public class MockResultSetMetaData implements ResultSetMetaData, Serializable {
   @Override
   public int getColumnCount() throws SQLException {
     rs.checkNotClosed();
-
     return rs.result.fieldsRow().size();
   }
 
   @Override
   public boolean isAutoIncrement(int column) throws SQLException {
     rs.checkNotClosed();
-
     return false;
   }
 
   @Override
   public boolean isCaseSensitive(int column) throws SQLException {
     rs.checkNotClosed();
-
     return true;
   }
 
   @Override
   public boolean isSearchable(int column) throws SQLException {
     rs.checkNotClosed();
-
     return true;
   }
 
   @Override
   public boolean isCurrency(int column) throws SQLException {
     rs.checkNotClosed();
-
     return false;
   }
 
   @Override
   public int isNullable(int column) throws SQLException {
     rs.checkNotClosed();
-
     // TODO: Check generated JSR-303 or JPA annotations for nullability
     return ResultSetMetaData.columnNullableUnknown;
   }
@@ -126,10 +119,8 @@ public class MockResultSetMetaData implements ResultSetMetaData, Serializable {
   @Override
   public boolean isSigned(int column) throws SQLException {
     rs.checkNotClosed();
-
     Field<?> field = rs.result.field(column - 1);
     Class<?> type = field.getType();
-
     return Number.class.isAssignableFrom(type) && !UNumber.class.isAssignableFrom(type);
   }
 
@@ -146,33 +137,26 @@ public class MockResultSetMetaData implements ResultSetMetaData, Serializable {
   @Override
   public String getColumnName(int column) throws SQLException {
     rs.checkNotClosed();
-
     return rs.result.field(column - 1).getName();
   }
 
   @Override
   public String getSchemaName(int column) throws SQLException {
     rs.checkNotClosed();
-
     Field<?> field = rs.result.field(column - 1);
     if (field instanceof TableField) {
       Table<?> table = ((TableField<?, ?>) field).getTable();
-
       if (table != null) {
         Schema schema = table.getSchema();
-
         if (schema != null) {
           Configuration configuration = rs.result.configuration();
           Schema mapped = null;
-
           if (configuration != null) mapped = DSL.using(configuration).map(schema);
-
           if (mapped != null) return mapped.getName();
           else return schema.getName();
         }
       }
     }
-
     // By default, no schema is available
     return "";
   }
@@ -180,7 +164,6 @@ public class MockResultSetMetaData implements ResultSetMetaData, Serializable {
   @Override
   public int getPrecision(int column) throws SQLException {
     rs.checkNotClosed();
-
     // TODO: Check generated JSR-303 or JPA annotations for precision
     return 0;
   }
@@ -188,7 +171,6 @@ public class MockResultSetMetaData implements ResultSetMetaData, Serializable {
   @Override
   public int getScale(int column) throws SQLException {
     rs.checkNotClosed();
-
     // TODO: Check generated JSR-303 or JPA annotations for scale
     return 0;
   }
@@ -196,16 +178,13 @@ public class MockResultSetMetaData implements ResultSetMetaData, Serializable {
   @Override
   public String getTableName(int column) throws SQLException {
     rs.checkNotClosed();
-
     Field<?> field = rs.result.field(column - 1);
     if (field instanceof TableField) {
       Table<?> table = ((TableField<?, ?>) field).getTable();
-
       if (table != null) {
         return table.getName();
       }
     }
-
     // By default, no table is available
     return "";
   }
@@ -213,7 +192,6 @@ public class MockResultSetMetaData implements ResultSetMetaData, Serializable {
   @Override
   public String getCatalogName(int column) throws SQLException {
     rs.checkNotClosed();
-
     // jOOQ doesn't support catalogs yet
     return "";
   }
@@ -221,42 +199,36 @@ public class MockResultSetMetaData implements ResultSetMetaData, Serializable {
   @Override
   public int getColumnType(int column) throws SQLException {
     rs.checkNotClosed();
-
     return rs.result.field(column - 1).getDataType().getSQLType();
   }
 
   @Override
   public String getColumnTypeName(int column) throws SQLException {
     rs.checkNotClosed();
-
     return rs.result.field(column - 1).getDataType().getTypeName();
   }
 
   @Override
   public boolean isReadOnly(int column) throws SQLException {
     rs.checkNotClosed();
-
     return true;
   }
 
   @Override
   public boolean isWritable(int column) throws SQLException {
     rs.checkNotClosed();
-
     return false;
   }
 
   @Override
   public boolean isDefinitelyWritable(int column) throws SQLException {
     rs.checkNotClosed();
-
     return false;
   }
 
   @Override
   public String getColumnClassName(int column) throws SQLException {
     rs.checkNotClosed();
-
     return rs.result.field(column - 1).getType().getName();
   }
 }

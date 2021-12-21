@@ -71,20 +71,21 @@ final class ParsingConnection extends DefaultConnection {
 
   ParsingConnection(Configuration configuration) {
     super(configuration.connectionProvider().acquire());
-
     if (getDelegate() == null)
       if (configuration.connectionFactory() instanceof NoConnectionFactory)
         throw new DetachedException("ConnectionProvider did not provide a JDBC Connection");
       else
         throw new DetachedException(
             "Attempt to use a ParsingConnection (JDBC) when only an R2BDC ConnectionFactory was configured. Using ParsingConnectionFactory instead.");
-
     this.configuration = configuration;
   }
 
   static final class CacheValue {
+
     final String output;
+
     final int bindSize;
+
     final Map<Integer, List<Integer>> bindMapping;
 
     CacheValue(Configuration configuration, String input, Param<?>[] bindValues) {
@@ -93,11 +94,9 @@ final class ParsingConnection extends DefaultConnection {
       render
           .paramType(configuration.settings().getParamType())
           .visit(ctx.parser().parseQuery(input, (Object[]) bindValues));
-
       output = render.render();
       bindSize = render.bindValues().size();
       bindMapping = new HashMap<>();
-
       // TODO: We shouldn't rely on identity for these reasons:
       // - Copies are possible
       // - Wrappings are possible
@@ -114,10 +113,8 @@ final class ParsingConnection extends DefaultConnection {
 
     Rendered rendered(Param<?>... bindValues) {
       Param<?>[] binds = new Param[bindSize];
-
       for (int i = 0; i < bindValues.length; i++)
         for (int mapped : bindMapping.getOrDefault(i, emptyList())) binds[mapped] = bindValues[i];
-
       return new Rendered(output, new QueryPartList<>(binds), 0);
     }
 
@@ -130,13 +127,11 @@ final class ParsingConnection extends DefaultConnection {
   static final Rendered translate(Configuration configuration, String sql, Param<?>... bindValues) {
     log.debug("Translating from", sql);
     Rendered result = null;
-
     Supplier<CacheValue> miss =
         () -> {
           log.debug("Translation cache miss", sql);
           return new CacheValue(configuration, sql, bindValues);
         };
-
     Settings settings = configuration.settings();
     if (CACHE_PARSING_CONNECTION.category.predicate.test(settings) && bindValues.length > 0) {
       switch (getParamType(settings)) {
@@ -146,7 +141,6 @@ final class ParsingConnection extends DefaultConnection {
           break;
       }
     }
-
     if (result == null)
       result =
           Cache.run(
@@ -155,7 +149,6 @@ final class ParsingConnection extends DefaultConnection {
                   CACHE_PARSING_CONNECTION,
                   () -> Cache.key(sql, map(nonNull(bindValues), f -> f.getDataType())))
               .rendered(bindValues);
-
     log.debug("Translating to", result.sql);
     return result;
   }
@@ -164,7 +157,6 @@ final class ParsingConnection extends DefaultConnection {
     for (int i = 0; i < bindValues.length; i++)
       if (bindValues[i] == null)
         throw new DataAccessException("Bind value at position " + i + " not set");
-
     return bindValues;
   }
 
@@ -198,20 +190,15 @@ final class ParsingConnection extends DefaultConnection {
               ? translate(configuration, sql)
               : translate(configuration, sql, p.get(0).toArray(EMPTY_PARAM));
       PreparedStatement s = prepare.apply(rendered.sql);
-
       for (int i = 0; i < size; i++) {
-
         // TODO: Can we avoid re-parsing and re-generating the SQL and mapping bind values only?
         if (i > 0) rendered = translate(configuration, sql, p.get(i).toArray(EMPTY_PARAM));
-
         new DefaultBindContext(configuration, s).visit(rendered.bindValues);
-
         // TODO: Find a less hacky way to signal that we're batching. Currently:
         // - ArrayList<Arraylist<Param<?>>> = batching
         // - SingletonList<ArrayList<Param<?>>> = not batching
         if (size > 1 || p instanceof ArrayList) s.addBatch();
       }
-
       return s;
     };
   }

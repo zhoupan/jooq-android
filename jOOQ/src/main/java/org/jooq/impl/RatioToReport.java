@@ -50,11 +50,11 @@ import org.jooq.Field;
 
 /** @author Lukas Eder */
 final class RatioToReport extends DefaultAggregateFunction<BigDecimal> {
+
   private final Field<? extends Number> field;
 
   RatioToReport(Field<? extends Number> field) {
     super(N_RATIO_TO_REPORT, DECIMAL, field);
-
     this.field = field;
   }
 
@@ -62,7 +62,6 @@ final class RatioToReport extends DefaultAggregateFunction<BigDecimal> {
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
       case CUBRID:
-
       case MARIADB:
       case MYSQL:
       case POSTGRES:
@@ -72,7 +71,6 @@ final class RatioToReport extends DefaultAggregateFunction<BigDecimal> {
             .visit(DSL.sum(field));
         acceptOverClause(ctx);
         break;
-
       default:
         ctx.visit(N_RATIO_TO_REPORT).sql('(').visit(field).sql(')');
         acceptOverClause(ctx);

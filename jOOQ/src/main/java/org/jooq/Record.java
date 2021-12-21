@@ -1576,7 +1576,6 @@ public interface Record extends Fields, Attachable, Comparable<Record>, Formatta
   // -------------------------------------------------------------------------
   // Inherited methods
   // -------------------------------------------------------------------------
-
   /**
    * Get a hash code of this <code>Record</code>, based on the underlying row value expression.
    *
@@ -1704,7 +1703,6 @@ public interface Record extends Fields, Attachable, Comparable<Record>, Formatta
   // -------------------------------------------------------------------------
   // XXX: Deprecated and discouraged methods
   // -------------------------------------------------------------------------
-
   /**
    * Get a value from this Record, providing a field.
    *

@@ -775,7 +775,6 @@ public interface UpdateQuery<R extends Record> extends StoreQuery<R>, ConditionP
   // ------------------------------------------------------------------------
   // XXX: Methods from ConditionProvider
   // ------------------------------------------------------------------------
-
   @Override
   @Support
   void addConditions(Condition condition);
@@ -835,7 +834,6 @@ public interface UpdateQuery<R extends Record> extends StoreQuery<R>, ConditionP
   // ------------------------------------------------------------------------
   // XXX: Methods for the UPDATE .. RETURNING syntax
   // ------------------------------------------------------------------------
-
   /**
    * {@inheritDoc}
    *

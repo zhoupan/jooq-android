@@ -62,8 +62,11 @@ import org.jooq.exception.ControlFlowSignal;
 final class RecordDelegate<R extends Record> {
 
   private final Configuration configuration;
+
   private final Supplier<R> recordSupplier;
+
   private final Boolean fetched;
+
   private final RecordLifecycleType type;
 
   RecordDelegate(Configuration configuration, Supplier<R> recordSupplier, Boolean fetched) {
@@ -89,25 +92,20 @@ final class RecordDelegate<R extends Record> {
   @SuppressWarnings("unchecked")
   final <E extends Exception> R operate(ThrowingFunction<R, R, E> operation) throws E {
     R record = recordSupplier.get();
-
     // [#3300] Records that were fetched from the database
     if (fetched != null && record instanceof AbstractRecord)
       ((AbstractRecord) record).fetched = fetched;
-
     RecordListenerProvider[] providers = null;
     RecordListener[] listeners = null;
     DefaultRecordContext ctx = null;
     E exception = null;
-
     if (configuration != null) {
       providers = configuration.recordListenerProviders();
-
       if (providers != null && providers.length > 0) {
         listeners = map(providers, p -> p.provide(), RecordListener[]::new);
         ctx = new DefaultRecordContext(configuration, executeType(), record);
       }
     }
-
     if (listeners != null) {
       for (RecordListener listener :
           (ctx == null || ctx.settings().getRecordListenerStartInvocationOrder() != REVERSE
@@ -140,28 +138,21 @@ final class RecordDelegate<R extends Record> {
         }
       }
     }
-
     // [#1684] Do not attach configuration if settings say no
     if (attachRecords(configuration)) record.attach(configuration);
-
     if (operation != null) {
       try {
         operation.apply(record);
-      }
-
-      // [#2770][#3036] Exceptions must not propagate before listeners receive "end" events
+      } // [#2770][#3036] Exceptions must not propagate before listeners receive "end" events
       catch (Exception e) {
         exception = (E) e;
-
         // Do not propagate these exception types to client code as they're not really "exceptions"
         if (!(e instanceof ControlFlowSignal)) {
           if (ctx != null) ctx.exception = e;
-
           if (listeners != null) for (RecordListener listener : listeners) listener.exception(ctx);
         }
       }
     }
-
     if (listeners != null) {
       for (RecordListener listener :
           (ctx == null || ctx.settings().getRecordListenerEndInvocationOrder() != REVERSE
@@ -194,9 +185,7 @@ final class RecordDelegate<R extends Record> {
         }
       }
     }
-
     if (exception != null) throw exception;
-
     return record;
   }
 

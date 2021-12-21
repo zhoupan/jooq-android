@@ -48,7 +48,6 @@ final class CountTable extends DefaultAggregateFunction<Integer> {
 
   CountTable(Table<?> table, boolean distinct) {
     super(distinct, "count", SQLDataType.INTEGER, DSL.field(DSL.name(table.getName())));
-
     this.table = table;
   }
 
@@ -60,17 +59,14 @@ final class CountTable extends DefaultAggregateFunction<Integer> {
           super.accept(ctx);
           break;
         }
-
       default:
         {
           UniqueKey<?> pk = table.getPrimaryKey();
-
           if (pk != null)
             ctx.visit(
                 new DefaultAggregateFunction<>(
                     distinct, "count", SQLDataType.INTEGER, table.fields(pk.getFieldsArray())));
           else super.accept(ctx);
-
           break;
         }
     }

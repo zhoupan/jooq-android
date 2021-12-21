@@ -62,34 +62,37 @@ final class DiagnosticsConnection extends DefaultConnection {
 
   // TODO: Make these configurable
   static final int LRU_SIZE_GLOBAL = 50000;
+
   static final int LRU_SIZE_LOCAL = 500;
+
   static final int DUP_SIZE = 500;
+
   static final Map<String, Set<String>> DUPLICATE_SQL =
       Collections.synchronizedMap(new LRU<>(LRU_SIZE_GLOBAL));
 
   final Map<String, List<String>> repeatedSQL = new LRU<>(LRU_SIZE_LOCAL);
+
   final Configuration configuration;
+
   final RenderContext normalisingRenderer;
+
   final Parser parser;
+
   final DiagnosticsListeners listeners;
 
   DiagnosticsConnection(Configuration configuration) {
     super(configuration.connectionProvider().acquire());
-
     this.configuration = configuration;
     this.normalisingRenderer =
         configuration
             .deriveSettings(
                 s ->
-                    s
-
-                        // Forcing all inline parameters to be indexed helps find opportunities to
+                    s. // Forcing all inline parameters to be indexed helps find opportunities to
                         // use bind variables
-                        .withParamType(FORCE_INDEXED)
-
-                        // Padding IN lists shows duplicates that arise from arbitrary-length
+                        withParamType(FORCE_INDEXED)
+                        . // Padding IN lists shows duplicates that arise from arbitrary-length
                         // dynamic IN lists
-                        .withInListPadding(true)
+                        withInListPadding(true)
                         .withInListPadBase(16))
             .dsl()
             .renderContext();
@@ -191,48 +194,41 @@ final class DiagnosticsConnection extends DefaultConnection {
   final String parse(String sql) {
     Queries queries;
     String normalised;
-
     try {
       queries = parser.parse(sql);
       normalised = normalisingRenderer.render(queries);
     } catch (ParserException ignore) {
       normalised = sql;
     }
-
     Set<String> duplicates;
     synchronized (DUPLICATE_SQL) {
       duplicates = duplicates(DUPLICATE_SQL, sql, normalised);
     }
-
     if (duplicates != null)
       listeners.duplicateStatements(
           new DefaultDiagnosticsContext(sql, normalised, duplicates, null));
-
     List<String> repetitions = repetitions(repeatedSQL, sql, normalised);
-
     if (repetitions != null)
       listeners.repeatedStatements(
           new DefaultDiagnosticsContext(sql, normalised, null, repetitions));
-
     return sql;
   }
 
   private Set<String> duplicates(Map<String, Set<String>> map, String sql, String normalised) {
     Set<String> v = map.computeIfAbsent(normalised, k -> new HashSet<>());
-
     if (v.size() >= DUP_SIZE || (v.add(sql) && v.size() > 1)) return v;
     else return null;
   }
 
   private List<String> repetitions(Map<String, List<String>> map, String sql, String normalised) {
     List<String> v = map.computeIfAbsent(normalised, k -> new ArrayList<>());
-
     if (v.size() >= DUP_SIZE || (v.add(sql) && v.size() > 1)) return v;
     else return null;
   }
 
   // See https://stackoverflow.com/a/1953516/521799
   static class LRU<V> extends LinkedHashMap<String, V> {
+
     private final int size;
 
     LRU(int size) {

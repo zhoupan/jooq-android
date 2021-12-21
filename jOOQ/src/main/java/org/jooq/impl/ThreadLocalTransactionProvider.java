@@ -64,8 +64,11 @@ import org.jooq.TransactionProvider;
 public class ThreadLocalTransactionProvider implements TransactionProvider {
 
   final DefaultTransactionProvider delegateTransactionProvider;
+
   final ThreadLocalConnectionProvider localConnectionProvider;
+
   final ThreadLocal<Connection> localTxConnection;
+
   final ThreadLocal<Deque<Configuration>> localConfigurations;
 
   public ThreadLocalTransactionProvider(ConnectionProvider connectionProvider) {
@@ -115,12 +118,10 @@ public class ThreadLocalTransactionProvider implements TransactionProvider {
 
   private Deque<Configuration> configurations() {
     Deque<Configuration> result = localConfigurations.get();
-
     if (result == null) {
       result = new ArrayDeque<>();
       localConfigurations.set(result);
     }
-
     return result;
   }
 
@@ -135,7 +136,6 @@ public class ThreadLocalTransactionProvider implements TransactionProvider {
     @Override
     public final Connection acquire() {
       Connection local = localTxConnection.get();
-
       if (local == null) return delegateConnectionProvider.acquire();
       else return local;
     }
@@ -143,7 +143,6 @@ public class ThreadLocalTransactionProvider implements TransactionProvider {
     @Override
     public final void release(Connection connection) {
       Connection local = localTxConnection.get();
-
       if (local == null) delegateConnectionProvider.release(connection);
       else if (local != connection)
         throw new IllegalStateException(

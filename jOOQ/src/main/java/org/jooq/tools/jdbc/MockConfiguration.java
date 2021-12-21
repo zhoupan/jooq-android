@@ -82,6 +82,7 @@ import org.jooq.impl.DefaultDSLContext;
 public class MockConfiguration extends AbstractConfiguration {
 
   private final Configuration delegate;
+
   private final MockDataProvider provider;
 
   public MockConfiguration(Configuration delegate, MockDataProvider provider) {

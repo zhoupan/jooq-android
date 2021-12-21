@@ -53,20 +53,33 @@ public final class DDLExportConfiguration {
   private final EnumSet<DDLFlag> flags;
 
   private final boolean createSchemaIfNotExists;
+
   private final boolean createTableIfNotExists;
+
   private final boolean createIndexIfNotExists;
+
   private final boolean createDomainIfNotExists;
+
   private final boolean createSequenceIfNotExists;
+
   private final boolean createViewIfNotExists;
+
   private final boolean createOrReplaceView;
 
   private final boolean respectCatalogOrder;
+
   private final boolean respectSchemaOrder;
+
   private final boolean respectTableOrder;
+
   private final boolean respectColumnOrder;
+
   private final boolean respectConstraintOrder;
+
   private final boolean respectIndexOrder;
+
   private final boolean respectDomainOrder;
+
   private final boolean respectSequenceOrder;
 
   private final boolean defaultSequenceFlags;
@@ -116,7 +129,6 @@ public final class DDLExportConfiguration {
       boolean defaultSequenceFlags,
       boolean includeConstraintsOnViews) {
     this.flags = EnumSet.copyOf(flags);
-
     this.createSchemaIfNotExists = createSchemaIfNotExists;
     this.createTableIfNotExists = createTableIfNotExists;
     this.createIndexIfNotExists = createIndexIfNotExists;
@@ -124,7 +136,6 @@ public final class DDLExportConfiguration {
     this.createSequenceIfNotExists = createSequenceIfNotExists;
     this.createViewIfNotExists = createViewIfNotExists;
     this.createOrReplaceView = createOrReplaceView;
-
     this.respectCatalogOrder = respectCatalogOrder;
     this.respectSchemaOrder = respectSchemaOrder;
     this.respectTableOrder = respectTableOrder;
@@ -133,9 +144,7 @@ public final class DDLExportConfiguration {
     this.respectIndexOrder = respectIndexOrder;
     this.respectDomainOrder = respectDomainOrder;
     this.respectSequenceOrder = respectSequenceOrder;
-
     this.defaultSequenceFlags = defaultSequenceFlags;
-
     this.includeConstraintsOnViews = includeConstraintsOnViews;
   }
 

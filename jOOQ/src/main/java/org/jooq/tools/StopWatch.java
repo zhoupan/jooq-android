@@ -45,7 +45,9 @@ package org.jooq.tools;
 public final class StopWatch {
 
   private static final JooqLogger log = JooqLogger.getLogger(StopWatch.class);
+
   private long start;
+
   private long split;
 
   /** Initialise the stop watch */
@@ -66,7 +68,6 @@ public final class StopWatch {
   public void splitTrace(String message, long thresholdNano) {
     if (log.isTraceEnabled()) {
       String splitMessage = splitMessage(thresholdNano);
-
       if (splitMessage != null) log.trace(message, splitMessage);
     }
   }
@@ -83,7 +84,6 @@ public final class StopWatch {
   public void splitDebug(String message, long thresholdNano) {
     if (log.isDebugEnabled()) {
       String splitMessage = splitMessage(thresholdNano);
-
       if (splitMessage != null) log.debug(message, splitMessage);
     }
   }
@@ -100,7 +100,6 @@ public final class StopWatch {
   public void splitInfo(String message, long thresholdNano) {
     if (log.isInfoEnabled()) {
       String splitMessage = splitMessage(thresholdNano);
-
       if (splitMessage != null) log.info(message, splitMessage);
     }
   }
@@ -116,7 +115,6 @@ public final class StopWatch {
    */
   public void splitWarn(String message, long thresholdNano) {
     String splitMessage = splitMessage(thresholdNano);
-
     if (splitMessage != null) log.warn(message, splitMessage);
   }
 
@@ -128,27 +126,20 @@ public final class StopWatch {
     final long temp = split;
     split = System.nanoTime();
     final long inc = split - temp;
-
     if (thresholdNano > 0 && inc < thresholdNano) return null;
-
     if (temp == start) return "Total: " + format(split - start);
     else return "Total: " + format(split - start) + ", +" + format(inc);
   }
 
   public static String format(long nanoTime) {
-
     // If more than one minute, format in HH:mm:ss
     if (nanoTime > (60L * 1000L * 1000000L)) {
       return formatHours(nanoTime / (1000L * 1000000L));
-    }
-
-    // If more than one second, display seconds with milliseconds
-    else if (nanoTime > (1000L * 1000000L)) {
+    } else // If more than one second, display seconds with milliseconds
+    if (nanoTime > (1000L * 1000000L)) {
       return ((nanoTime / 1000000L) / 1000.0) + "s";
-    }
-
-    // If less than one second, display milliseconds with microseconds
-    else {
+    } else // If less than one second, display milliseconds with microseconds
+    {
       return ((nanoTime / 1000L) / 1000.0) + "ms";
     }
   }
@@ -157,9 +148,7 @@ public final class StopWatch {
     long s = seconds % 60L;
     long m = (seconds / 60L) % 60L;
     long h = (seconds / 3600L);
-
     StringBuilder sb = new StringBuilder();
-
     if (h == 0) {
       // nop
     } else if (h < 10) {
@@ -170,7 +159,6 @@ public final class StopWatch {
       sb.append(h);
       sb.append(":");
     }
-
     if (m < 10) {
       sb.append("0");
       sb.append(m);
@@ -179,14 +167,12 @@ public final class StopWatch {
       sb.append(m);
       sb.append(":");
     }
-
     if (s < 10) {
       sb.append("0");
       sb.append(s);
     } else {
       sb.append(s);
     }
-
     return sb.toString();
   }
 }

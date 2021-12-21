@@ -50,7 +50,6 @@ public enum Operator {
   @NotNull
   @Support
   AND("and"),
-
   /** The or operator */
   @NotNull
   @Support

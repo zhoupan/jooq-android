@@ -114,7 +114,6 @@ public interface LoaderCSVStep<R extends Record> {
    * @throws LoaderConfigurationException When the source data does not expose field names.
    * @deprecated - 3.14.0 - [#10010] - Use {@link #fieldsCorresponding()} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support

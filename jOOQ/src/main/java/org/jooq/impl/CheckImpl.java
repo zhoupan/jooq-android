@@ -50,7 +50,9 @@ import org.jooq.Table;
 final class CheckImpl<R extends Record> extends AbstractNamed implements Check<R> {
 
   final Table<R> table;
+
   final Condition condition;
+
   final boolean enforced;
 
   CheckImpl(Table<R> table, Condition condition, boolean enforced) {
@@ -59,7 +61,6 @@ final class CheckImpl<R extends Record> extends AbstractNamed implements Check<R
 
   CheckImpl(Table<R> table, Name name, Condition condition, boolean enforced) {
     super(name, null);
-
     this.table = table;
     this.condition = condition;
     this.enforced = enforced;

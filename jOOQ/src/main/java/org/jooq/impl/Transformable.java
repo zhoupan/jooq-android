@@ -46,5 +46,6 @@ import org.jooq.conf.TransformUnneededArithmeticExpressions;
  * @author Lukas Eder
  */
 interface Transformable<T> extends Field<T> {
+
   Field<?> transform(TransformUnneededArithmeticExpressions transform);
 }

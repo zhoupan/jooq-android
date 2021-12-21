@@ -67,6 +67,7 @@ import org.jooq.QueryPart;
  * @author Lukas Eder
  */
 public abstract class CustomQueryPart extends AbstractQueryPart {
+
   private static final Clause[] CLAUSES = {CUSTOM};
 
   protected CustomQueryPart() {}
@@ -74,6 +75,7 @@ public abstract class CustomQueryPart extends AbstractQueryPart {
   /** Create a {@link CustomQueryPart} from a lambda expression. */
   public static final CustomQueryPart of(Consumer<? super Context<?>> consumer) {
     return new CustomQueryPart() {
+
       @Override
       public void accept(Context<?> ctx) {
         consumer.accept(ctx);
@@ -84,7 +86,6 @@ public abstract class CustomQueryPart extends AbstractQueryPart {
   // -------------------------------------------------------------------------
   // Implementation required
   // -------------------------------------------------------------------------
-
   /** Subclasses must implement this method. <hr/> {@inheritDoc} */
   @Override
   public abstract void accept(Context<?> ctx);
@@ -92,7 +93,6 @@ public abstract class CustomQueryPart extends AbstractQueryPart {
   // -------------------------------------------------------------------------
   // No further overrides allowed
   // -------------------------------------------------------------------------
-
   @Override
   public final Clause[] clauses(Context<?> ctx) {
     return CLAUSES;

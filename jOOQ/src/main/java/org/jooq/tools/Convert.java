@@ -124,7 +124,6 @@ import org.jooq.util.xml.jaxb.InformationSchema;
  *     ConverterProvider} provided ones, or implementations attached to fields via generated code,
  *     or via {@link Field#convert(Converter)}, or {@link DataType#asConvertedDataType(Converter)}.
  */
-@Deprecated(forRemoval = true, since = "3.15")
 public final class Convert {
 
   private static final JooqLogger log = JooqLogger.getLogger(Convert.class);
@@ -155,7 +154,6 @@ public final class Convert {
   static {
     Set<String> trueValues = new HashSet<>();
     Set<String> falseValues = new HashSet<>();
-
     trueValues.add("1");
     trueValues.add("1.0");
     trueValues.add("y");
@@ -170,7 +168,6 @@ public final class Convert {
     trueValues.add("ON");
     trueValues.add("enabled");
     trueValues.add("ENABLED");
-
     falseValues.add("0");
     falseValues.add("0.0");
     falseValues.add("n");
@@ -185,28 +182,22 @@ public final class Convert {
     falseValues.add("OFF");
     falseValues.add("disabled");
     falseValues.add("DISABLED");
-
     TRUE_VALUES = Collections.unmodifiableSet(trueValues);
     FALSE_VALUES = Collections.unmodifiableSet(falseValues);
-
     Object jsonMapper = null;
     Method jsonReadMethod = null;
     Method jsonWriteMethod = null;
     boolean jaxbAvailable = false;
-
     try {
       Class<?> klass = Class.forName("com.fasterxml.jackson.databind.ObjectMapper");
-
       jsonMapper = klass.getDeclaredConstructor().newInstance();
       jsonReadMethod = klass.getMethod("readValue", String.class, Class.class);
       jsonWriteMethod = klass.getMethod("writeValueAsString", Object.class);
       log.debug("Jackson is available");
     } catch (Exception e1) {
       log.debug("Jackson not available", e1.getMessage());
-
       try {
         Class<?> klass = Class.forName("com.google.gson.Gson");
-
         jsonMapper = klass.getDeclaredConstructor().newInstance();
         jsonReadMethod = klass.getMethod("fromJson", String.class, Class.class);
         jsonWriteMethod = klass.getMethod("toJson", Object.class);
@@ -215,23 +206,18 @@ public final class Convert {
         log.debug("Gson not available", e2.getMessage());
       }
     }
-
     JSON_MAPPER = jsonMapper;
     JSON_READ_METHOD = jsonReadMethod;
     JSON_WRITE_METHOD = jsonWriteMethod;
-
     try {
       JAXB.marshal(new InformationSchema(), new StringWriter());
       jaxbAvailable = true;
       log.debug("JAXB is available");
-    }
-
-    // [#10145] Depending on whether jOOQ is modularised or not, this can also
-    //          be a NoClassDefFoundError.
+    } // [#10145] Depending on whether jOOQ is modularised or not, this can also
+    // be a NoClassDefFoundError.
     catch (Throwable t) {
       log.debug("JAXB not available", t.getMessage());
     }
-
     JAXB_AVAILABLE = jaxbAvailable;
   }
 
@@ -242,17 +228,14 @@ public final class Convert {
    */
   public static final Object[] convert(Object[] values, Field<?>[] fields) {
     if (values == null) return null;
-
     // [#1005] Convert values from the <code>VALUES</code> clause to appropriate
     // values as specified by the <code>INTO</code> clause's column list.
     Object[] result = new Object[values.length];
-
     // TODO [#1008] Should fields be cast? Check this with
     // appropriate integration tests
     for (int i = 0; i < values.length; i++)
       if (values[i] instanceof Field<?>) result[i] = values[i];
       else result[i] = convert(values[i], fields[i].getType());
-
     return result;
   }
 
@@ -263,19 +246,17 @@ public final class Convert {
    */
   public static final Object[] convert(Object[] values, Class<?>[] types) {
     if (values == null) return null;
-
     // [#1005] Convert values from the <code>VALUES</code> clause to appropriate
     // values as specified by the <code>INTO</code> clause's column list.
     Object[] result = new Object[values.length];
-
     // TODO [#1008] Should fields be cast? Check this with
     // appropriate integration tests
     for (int i = 0; i < values.length; i++)
       if (values[i] instanceof Field<?>) result[i] = values[i];
       else result[i] = convert(values[i], types[i]);
-
     return result;
   }
+
   /**
    * Convert an array into another one using a converter
    *
@@ -291,12 +272,9 @@ public final class Convert {
   public static final <U> U[] convertArray(Object[] from, Converter<?, ? extends U> converter)
       throws DataTypeException {
     if (from == null) return null;
-
     Object[] arrayOfT = convertArray(from, converter.fromType());
     Object[] arrayOfU = (Object[]) Array.newInstance(converter.toType(), from.length);
-
     for (int i = 0; i < arrayOfT.length; i++) arrayOfU[i] = convert(arrayOfT[i], converter);
-
     return (U[]) arrayOfU;
   }
 
@@ -325,16 +303,13 @@ public final class Convert {
     else if (toClass == from.getClass()) return from;
     else {
       final Class<?> toComponentType = toClass.getComponentType();
-
       if (from.length == 0)
         return Arrays.copyOf(from, from.length, (Class<? extends Object[]>) toClass);
       else if (from[0] != null && from[0].getClass() == toComponentType)
         return Arrays.copyOf(from, from.length, (Class<? extends Object[]>) toClass);
       else {
         final Object[] result = (Object[]) Array.newInstance(toComponentType, from.length);
-
         for (int i = 0; i < from.length; i++) result[i] = convert(from[i], toComponentType);
-
         return result;
       }
     }
@@ -355,9 +330,8 @@ public final class Convert {
   @SuppressWarnings("unchecked")
   public static final <U> U convert(Object from, Converter<?, ? extends U> converter)
       throws DataTypeException {
-
     // [#5865] [#6799] [#11099] This leads to significant performance improvements especially when
-    //                          used from MockResultSet, which is likely to host IdentityConverters
+    // used from MockResultSet, which is likely to host IdentityConverters
     if (converter instanceof IdentityConverter) return (U) from;
     else return convert0(from, converter);
   }
@@ -367,9 +341,7 @@ public final class Convert {
   private static final <T, U> U convert0(Object from, Converter<T, ? extends U> converter)
       throws DataTypeException {
     Class<T> fromType = converter.fromType();
-
     if (fromType == Object.class) return converter.from((T) from);
-
     ConvertAll<T> convertAll = new ConvertAll<>(fromType);
     return converter.from(convertAll.from(from));
   }
@@ -471,9 +443,7 @@ public final class Convert {
       Collection<?> collection, Converter<T, ? extends U> converter) throws DataTypeException {
     ConvertAll<T> all = new ConvertAll<>(converter.fromType());
     List<U> result = new ArrayList<>(collection.size());
-
     for (Object o : collection) result.add(convert(all.from(o), converter));
-
     return result;
   }
 
@@ -493,53 +463,42 @@ public final class Convert {
     @Override
     public U from(Object from) {
       if (from == null) {
-
         // [#936] If types are converted to primitives, the result must not
         // be null. Return the default value instead
         if (toClass.isPrimitive()) {
-
           // Characters default to the "zero" character
           if (toClass == char.class) return (U) Character.valueOf((char) 0);
-
-          // All others can be converted from (int) 0
-          else return convert(0, toClass);
+          else
+            // All others can be converted from (int) 0
+            return convert(0, toClass);
         } else if (toClass == Optional.class) return (U) Optional.empty();
         else return null;
       } else {
         final Class<?> fromClass = from.getClass();
         final Class<?> wrapperTo;
         final Class<?> wrapperFrom;
-
         // No conversion
         if (toClass == fromClass) return (U) from;
-
-        // [#2535] Simple up-casting can be done early
+        else // [#2535] Simple up-casting can be done early
         // [#1155] ... up-casting includes (toClass == Object.class)
-        else if (toClass.isAssignableFrom(fromClass)) return (U) from;
-
-        // [#6790] No conversion for primitive / wrapper conversions
-        else if ((wrapperTo = wrapper(toClass)) == (wrapperFrom = wrapper(fromClass)))
-          return (U) from;
-
-        // Regular checks
-        else if (fromClass == byte[].class) {
-
+        if (toClass.isAssignableFrom(fromClass)) return (U) from;
+        else // [#6790] No conversion for primitive / wrapper conversions
+        if ((wrapperTo = wrapper(toClass)) == (wrapperFrom = wrapper(fromClass))) return (U) from;
+        else // Regular checks
+        if (fromClass == byte[].class) {
           // [#5824] UUID's most significant bits in byte[] are first
           if (toClass == UUID.class) {
             ByteBuffer b = ByteBuffer.wrap((byte[]) from);
             long mostSigBits = b.getLong();
             long leastSigBits = b.getLong();
             return (U) new UUID(mostSigBits, leastSigBits);
-          }
-
-          // [#11700] [#11772] R2DBC uses ByteBuffer instead of byte[]
-          else if (toClass == ByteBuffer.class) return (U) ByteBuffer.wrap((byte[]) from);
-
-          // [#5569] Binary data is expected to be in JVM's default encoding
-          else return convert(new String((byte[]) from), toClass);
+          } else // [#11700] [#11772] R2DBC uses ByteBuffer instead of byte[]
+          if (toClass == ByteBuffer.class) return (U) ByteBuffer.wrap((byte[]) from);
+          else
+            // [#5569] Binary data is expected to be in JVM's default encoding
+            return convert(new String((byte[]) from), toClass);
         } else if (fromClass.isArray()) {
           Object[] fromArray = (Object[]) from;
-
           // [#3062] [#5796] Default collections if no specific collection type was requested
           if (Collection.class.isAssignableFrom(toClass)
               && toClass.isAssignableFrom(ArrayList.class))
@@ -547,39 +506,27 @@ public final class Convert {
           else if (Collection.class.isAssignableFrom(toClass)
               && toClass.isAssignableFrom(LinkedHashSet.class))
             return (U) new LinkedHashSet<>(Arrays.asList(fromArray));
-
-          // [#3443] Conversion from Object[] to JDBC Array
-          else if (toClass == java.sql.Array.class)
-            return (U) new MockArray(null, fromArray, fromClass);
+          else // [#3443] Conversion from Object[] to JDBC Array
+          if (toClass == java.sql.Array.class) return (U) new MockArray(null, fromArray, fromClass);
           else return (U) convertArray(fromArray, toClass);
-        }
-
-        // [#11560] Results wrapped in ResultSet
-        else if (Result.class.isAssignableFrom(fromClass) && toClass == ResultSet.class) {
+        } else // [#11560] Results wrapped in ResultSet
+        if (Result.class.isAssignableFrom(fromClass) && toClass == ResultSet.class) {
           return (U) new MockResultSet((Result<?>) from);
-        }
-
-        // [#3062] Default collections if no specific collection type was requested
-        else if (Collection.class.isAssignableFrom(fromClass)
+        } else // [#3062] Default collections if no specific collection type was requested
+        if (Collection.class.isAssignableFrom(fromClass)
             && (toClass == java.sql.Array.class || toClass.isArray())) {
           Object[] fromArray = ((Collection<?>) from).toArray();
-
           // [#3443] [#10704] Conversion from Object[] to JDBC Array
           if (toClass == java.sql.Array.class) return (U) new MockArray(null, fromArray, fromClass);
           else return (U) convertArray(fromArray, toClass);
         } else if (toClass == Optional.class) return (U) Optional.of(from);
-
-        // All types can be converted into String
-        else if (toClass == String.class) {
+        else // All types can be converted into String
+        if (toClass == String.class) {
           if (from instanceof EnumType) return (U) ((EnumType) from).getLiteral();
-
           return (U) from.toString();
-        }
-
-        // [#5569] It should be possible, at least, to convert an empty string to an empty
+        } else // [#5569] It should be possible, at least, to convert an empty string to an empty
         // (var)binary.
-        else if (toClass == byte[].class) {
-
+        if (toClass == byte[].class) {
           // [#5824] UUID's most significant bits in byte[] are first
           if (from instanceof UUID) {
             ByteBuffer b = ByteBuffer.wrap(new byte[16]);
@@ -588,16 +535,12 @@ public final class Convert {
             return (U) b.array();
           } else if (from instanceof ByteBuffer) return (U) ((ByteBuffer) from).array();
           else return (U) from.toString().getBytes();
-        }
-
-        // Various number types are converted between each other via String
-        else if (wrapperTo == Byte.class) {
+        } else // Various number types are converted between each other via String
+        if (wrapperTo == Byte.class) {
           if (Number.class.isAssignableFrom(fromClass))
             return (U) Byte.valueOf(((Number) from).byteValue());
-
           if (wrapperFrom == Boolean.class)
             return (U) (((Boolean) from) ? Byte.valueOf((byte) 1) : Byte.valueOf((byte) 0));
-
           try {
             String fromString = from.toString().trim();
             Integer asInt = Ints.tryParse(fromString);
@@ -610,10 +553,8 @@ public final class Convert {
         } else if (wrapperTo == Short.class) {
           if (Number.class.isAssignableFrom(fromClass))
             return (U) Short.valueOf(((Number) from).shortValue());
-
           if (wrapperFrom == Boolean.class)
             return (U) (((Boolean) from) ? Short.valueOf((short) 1) : Short.valueOf((short) 0));
-
           try {
             String fromString = from.toString().trim();
             Integer asInt = Ints.tryParse(fromString);
@@ -626,10 +567,8 @@ public final class Convert {
         } else if (wrapperTo == Integer.class) {
           if (Number.class.isAssignableFrom(fromClass))
             return (U) Integer.valueOf(((Number) from).intValue());
-
           if (wrapperFrom == Boolean.class)
             return (U) (((Boolean) from) ? Integer.valueOf(1) : Integer.valueOf(0));
-
           try {
             String fromString = from.toString().trim();
             Integer asInt = Ints.tryParse(fromString);
@@ -642,16 +581,12 @@ public final class Convert {
         } else if (wrapperTo == Long.class) {
           if (Number.class.isAssignableFrom(fromClass))
             return (U) Long.valueOf(((Number) from).longValue());
-
           if (wrapperFrom == Boolean.class)
             return (U) (((Boolean) from) ? Long.valueOf(1L) : Long.valueOf(0L));
-
           if (java.util.Date.class.isAssignableFrom(fromClass))
             return (U) Long.valueOf(((java.util.Date) from).getTime());
-
           if (Temporal.class.isAssignableFrom(fromClass))
             return (U) Long.valueOf(millis((Temporal) from));
-
           try {
             String fromString = from.toString().trim();
             Long asLong = Longs.tryParse(fromString);
@@ -661,16 +596,12 @@ public final class Convert {
           } catch (NumberFormatException e) {
             return Reflect.initValue(toClass);
           }
-        }
-
-        // ... this also includes unsigned number types
-        else if (toClass == UByte.class) {
+        } else // ... this also includes unsigned number types
+        if (toClass == UByte.class) {
           try {
             if (Number.class.isAssignableFrom(fromClass))
               return (U) ubyte(((Number) from).shortValue());
-
             if (wrapperFrom == Boolean.class) return (U) (((Boolean) from) ? ubyte(1) : ubyte(0));
-
             String fromString = from.toString().trim();
             Integer asInt = Ints.tryParse(fromString);
             return (U)
@@ -682,9 +613,7 @@ public final class Convert {
           try {
             if (Number.class.isAssignableFrom(fromClass))
               return (U) ushort(((Number) from).intValue());
-
             if (wrapperFrom == Boolean.class) return (U) (((Boolean) from) ? ushort(1) : ushort(0));
-
             String fromString = from.toString().trim();
             Integer asInt = Ints.tryParse(fromString);
             return (U)
@@ -696,9 +625,7 @@ public final class Convert {
           try {
             if (Number.class.isAssignableFrom(fromClass))
               return (U) uint(((Number) from).longValue());
-
             if (wrapperFrom == Boolean.class) return (U) (((Boolean) from) ? uint(1) : uint(0));
-
             String fromString = from.toString().trim();
             Long asLong = Longs.tryParse(fromString);
             return (U)
@@ -708,12 +635,9 @@ public final class Convert {
           }
         } else if (toClass == ULong.class) {
           if (wrapperFrom == Boolean.class) return (U) (((Boolean) from) ? ulong(1) : ulong(0));
-
           if (java.util.Date.class.isAssignableFrom(fromClass))
             return (U) ulong(((java.util.Date) from).getTime());
-
           if (Temporal.class.isAssignableFrom(fromClass)) return (U) ulong(millis((Temporal) from));
-
           try {
             String fromString = from.toString().trim();
             // tryParse() will return null in case of overflow
@@ -724,16 +648,12 @@ public final class Convert {
           } catch (NumberFormatException e) {
             return null;
           }
-        }
-
-        // ... and floating point / fixed point types
-        else if (wrapperTo == Float.class) {
+        } else // ... and floating point / fixed point types
+        if (wrapperTo == Float.class) {
           if (Number.class.isAssignableFrom(fromClass))
             return (U) Float.valueOf(((Number) from).floatValue());
-
           if (wrapperFrom == Boolean.class)
             return (U) (((Boolean) from) ? Float.valueOf(1.0f) : Float.valueOf(0.0f));
-
           try {
             return (U) Float.valueOf(from.toString().trim());
           } catch (NumberFormatException e) {
@@ -742,10 +662,8 @@ public final class Convert {
         } else if (wrapperTo == Double.class) {
           if (Number.class.isAssignableFrom(fromClass))
             return (U) Double.valueOf(((Number) from).doubleValue());
-
           if (wrapperFrom == Boolean.class)
             return (U) (((Boolean) from) ? Double.valueOf(1.0) : Double.valueOf(0.0));
-
           try {
             return (U) Double.valueOf(from.toString().trim());
           } catch (NumberFormatException e) {
@@ -754,7 +672,6 @@ public final class Convert {
         } else if (toClass == BigDecimal.class) {
           if (wrapperFrom == Boolean.class)
             return (U) (((Boolean) from) ? BigDecimal.ONE : BigDecimal.ZERO);
-
           try {
             return (U) new BigDecimal(from.toString().trim());
           } catch (NumberFormatException e) {
@@ -763,7 +680,6 @@ public final class Convert {
         } else if (toClass == BigInteger.class) {
           if (wrapperFrom == Boolean.class)
             return (U) (((Boolean) from) ? BigInteger.ONE : BigInteger.ZERO);
-
           try {
             return (U) new BigDecimal(from.toString().trim()).toBigInteger();
           } catch (NumberFormatException e) {
@@ -771,31 +687,23 @@ public final class Convert {
           }
         } else if (wrapperTo == Boolean.class) {
           String s = from.toString().toLowerCase().trim();
-
           if (TRUE_VALUES.contains(s)) return (U) Boolean.TRUE;
           else if (FALSE_VALUES.contains(s)) return (U) Boolean.FALSE;
           else return (U) (toClass == Boolean.class ? null : false);
         } else if (wrapperTo == Character.class) {
           if (wrapperFrom == Boolean.class)
             return (U) (((Boolean) from) ? Character.valueOf('1') : Character.valueOf('0'));
-
           if (from.toString().length() < 1) return Reflect.initValue(toClass);
-
           return (U) Character.valueOf(from.toString().charAt(0));
-        }
-
-        // URI types can be converted from strings
-        else if (fromClass == String.class && toClass == URL.class) {
+        } else // URI types can be converted from strings
+        if (fromClass == String.class && toClass == URL.class) {
           try {
             return (U) new URI(from.toString()).toURL();
           } catch (Exception e) {
             return null;
           }
-        }
-
-        // Date types can be converted among each other
-        else if (java.util.Date.class.isAssignableFrom(fromClass)) {
-
+        } else // Date types can be converted among each other
+        if (java.util.Date.class.isAssignableFrom(fromClass)) {
           // [#12225] Avoid losing precision if possible
           if (Timestamp.class == fromClass && LocalDateTime.class == toClass)
             return (U) ((Timestamp) from).toLocalDateTime();
@@ -805,7 +713,6 @@ public final class Convert {
             return (U) ((Time) from).toLocalTime();
           else return toDate(((java.util.Date) from).getTime(), toClass);
         } else if (Temporal.class.isAssignableFrom(fromClass)) {
-
           // [#12225] Avoid losing precision if possible
           if (LocalDateTime.class == fromClass && Timestamp.class == toClass)
             return (U) Timestamp.valueOf((LocalDateTime) from);
@@ -816,42 +723,33 @@ public final class Convert {
           else return toDate(convert(from, Long.class), toClass);
         } else if (Temporal.class.isAssignableFrom(fromClass)) {
           return toDate(convert(from, Long.class), toClass);
-        }
-
-        // Long may also be converted into a date type
-        else if (wrapperFrom == Long.class && java.util.Date.class.isAssignableFrom(toClass)) {
+        } else // Long may also be converted into a date type
+        if (wrapperFrom == Long.class && java.util.Date.class.isAssignableFrom(toClass)) {
           return toDate((Long) from, toClass);
         } else if (wrapperFrom == Long.class && Temporal.class.isAssignableFrom(toClass)) {
           return toDate((Long) from, toClass);
-        }
-
-        // [#1501] Strings can be converted to java.sql.Date
-        else if (fromClass == String.class && toClass == java.sql.Date.class) {
+        } else // [#1501] Strings can be converted to java.sql.Date
+        if (fromClass == String.class && toClass == java.sql.Date.class) {
           try {
             return (U) java.sql.Date.valueOf((String) from);
           } catch (IllegalArgumentException e) {
             return null;
           }
-        }
-
-        // [#1501] Strings can be converted to java.sql.Date
-        else if (fromClass == String.class && toClass == java.sql.Time.class) {
+        } else // [#1501] Strings can be converted to java.sql.Date
+        if (fromClass == String.class && toClass == java.sql.Time.class) {
           try {
             return (U) java.sql.Time.valueOf(patchIso8601Time((String) from));
           } catch (IllegalArgumentException e) {
             return null;
           }
-        }
-
-        // [#1501] Strings can be converted to java.sql.Date
-        else if (fromClass == String.class && toClass == java.sql.Timestamp.class) {
+        } else // [#1501] Strings can be converted to java.sql.Date
+        if (fromClass == String.class && toClass == java.sql.Timestamp.class) {
           try {
             return (U) java.sql.Timestamp.valueOf(patchIso8601Timestamp((String) from, false));
           } catch (IllegalArgumentException e) {
             return null;
           }
         } else if (fromClass == String.class && toClass == LocalDate.class) {
-
           // Try "lenient" ISO date formats first
           try {
             return (U) java.sql.Date.valueOf((String) from).toLocalDate();
@@ -869,7 +767,6 @@ public final class Convert {
             return null;
           }
         } else if (fromClass == String.class && toClass == OffsetTime.class) {
-
           // Try "local" ISO date formats first
           try {
             return (U)
@@ -890,7 +787,6 @@ public final class Convert {
             return null;
           }
         } else if (fromClass == String.class && toClass == OffsetDateTime.class) {
-
           // Try "local" ISO date formats first
           try {
             return (U)
@@ -905,7 +801,6 @@ public final class Convert {
             }
           }
         } else if (fromClass == String.class && toClass == Instant.class) {
-
           // Try "local" ISO date formats first
           try {
             return (U)
@@ -920,10 +815,8 @@ public final class Convert {
               return null;
             }
           }
-        }
-
-        // [#1448] [#6255] [#5720] To Enum conversion
-        else if (java.lang.Enum.class.isAssignableFrom(toClass)
+        } else // [#1448] [#6255] [#5720] To Enum conversion
+        if (java.lang.Enum.class.isAssignableFrom(toClass)
             && (fromClass == String.class || from instanceof Enum || from instanceof EnumType)) {
           try {
             String fromString =
@@ -932,63 +825,47 @@ public final class Convert {
                     : (from instanceof EnumType)
                         ? ((EnumType) from).getLiteral()
                         : ((Enum) from).name();
-
             if (fromString == null) return null;
-
             if (EnumType.class.isAssignableFrom(toClass)) {
               for (Object value : toClass.getEnumConstants())
                 if (fromString.equals(((EnumType) value).getLiteral())) return (U) value;
-
               return null;
             } else {
               return (U) java.lang.Enum.valueOf((Class) toClass, fromString);
             }
-
           } catch (IllegalArgumentException e) {
             return null;
           }
-        }
-
-        // [#1624] UUID data types can be read from Strings
-        else if (fromClass == String.class && toClass == UUID.class) {
+        } else // [#1624] UUID data types can be read from Strings
+        if (fromClass == String.class && toClass == UUID.class) {
           try {
             return (U) parseUUID((String) from);
           } catch (IllegalArgumentException e) {
             return null;
           }
-        }
-
-        // [#8943] JSON data types can be read from Strings
-        else if (fromClass == String.class && toClass == JSON.class) {
+        } else // [#8943] JSON data types can be read from Strings
+        if (fromClass == String.class && toClass == JSON.class) {
           return (U) JSON.valueOf((String) from);
-        }
-
-        // [#8943] JSONB data types can be read from Strings
-        else if (fromClass == String.class && toClass == JSONB.class) {
+        } else // [#8943] JSONB data types can be read from Strings
+        if (fromClass == String.class && toClass == JSONB.class) {
           return (U) JSONB.valueOf((String) from);
-        }
-
-        // [#10072] Out of the box Jackson JSON mapping support
-        else if (fromClass == JSON.class && JSON_MAPPER != null) {
+        } else // [#10072] Out of the box Jackson JSON mapping support
+        if (fromClass == JSON.class && JSON_MAPPER != null) {
           try {
             return (U) JSON_READ_METHOD.invoke(JSON_MAPPER, ((JSON) from).data(), toClass);
           } catch (Exception e) {
             throw new DataTypeException("Error while mapping JSON to POJO using Jackson", e);
           }
-        }
-
-        // [#10072] Out of the box Jackson JSON mapping support
-        else if (fromClass == JSONB.class && JSON_MAPPER != null) {
+        } else // [#10072] Out of the box Jackson JSON mapping support
+        if (fromClass == JSONB.class && JSON_MAPPER != null) {
           try {
             return (U) JSON_READ_METHOD.invoke(JSON_MAPPER, ((JSONB) from).data(), toClass);
           } catch (Exception e) {
             throw new DataTypeException("Error while mapping JSON to POJO using Jackson", e);
           }
-        }
-
-        // [#11213] Workaround for a problem when Jackson or Gson do not know
-        //          the generic List<X> type because toClass has its generics erased
-        else if (Map.class.isAssignableFrom(fromClass) && JSON_MAPPER != null) {
+        } else // [#11213] Workaround for a problem when Jackson or Gson do not know
+        // the generic List<X> type because toClass has its generics erased
+        if (Map.class.isAssignableFrom(fromClass) && JSON_MAPPER != null) {
           try {
             return (U)
                 JSON_READ_METHOD.invoke(
@@ -996,25 +873,20 @@ public final class Convert {
           } catch (Exception e) {
             throw new DataTypeException("Error while mapping JSON to POJO using Jackson", e);
           }
-        }
-
-        // [#10072] Out of the box JAXB mapping support
-        else if (fromClass == XML.class && JAXB_AVAILABLE) {
+        } else // [#10072] Out of the box JAXB mapping support
+        if (fromClass == XML.class && JAXB_AVAILABLE) {
           try {
             return JAXB.unmarshal(new StringReader(((XML) from).data()), toClass);
           } catch (Exception e) {
             throw new DataTypeException("Error while mapping XML to POJO using JAXB", e);
           }
-        }
-
-        // [#3023] Record types can be converted using the supplied Configuration's
+        } else // [#3023] Record types can be converted using the supplied Configuration's
         // RecordMapperProvider
-        else if (Record.class.isAssignableFrom(fromClass)) {
+        if (Record.class.isAssignableFrom(fromClass)) {
           Record record = (Record) from;
           return record.into(toClass);
         } else if (Struct.class.isAssignableFrom(fromClass)) {
           Struct struct = (Struct) from;
-
           if (QualifiedRecord.class.isAssignableFrom(toClass)) {
             try {
               QualifiedRecord<?> record =
@@ -1026,42 +898,32 @@ public final class Convert {
             }
           }
         }
-
         // TODO [#2520] When RecordUnmappers are supported, they should also be considered here
-
         // [#10229] Try public, single argument, applicable constructors first
         for (Constructor<?> constructor : toClass.getConstructors()) {
           Class<?>[] types = constructor.getParameterTypes();
-
           // [#11183] Prevent StackOverflowError when recursing into UDT POJOs
           if (types.length == 1 && types[0] != toClass) {
             try {
               return (U) constructor.newInstance(convert(from, types[0]));
-            }
-
-            // Throw exception further down instead
+            } // Throw exception further down instead
             catch (Exception ignore) {
             }
           }
         }
-
         // [#10229] Try private, single argument, applicable constructors
         for (Constructor<?> constructor : toClass.getDeclaredConstructors()) {
           Class<?>[] types = constructor.getParameterTypes();
-
           // [#11183] Prevent StackOverflowError when recursing into UDT POJOs
           if (types.length == 1 && types[0] != toClass) {
             try {
               return (U) accessible(constructor).newInstance(convert(from, types[0]));
-            }
-
-            // Throw exception further down instead
+            } // Throw exception further down instead
             catch (Exception ignore) {
             }
           }
         }
       }
-
       throw fail(from, toClass);
     }
 
@@ -1076,7 +938,6 @@ public final class Convert {
           return string.substring(0, 10) + "T" + string.substring(11);
         else if (!t && string.charAt(10) == 'T')
           return string.substring(0, 10) + " " + string.substring(11);
-
       return string;
     }
 
@@ -1115,25 +976,20 @@ public final class Convert {
       else if (toClass == OffsetDateTime.class)
         return (X) new Timestamp(time).toLocalDateTime().atOffset(OffsetDateTime.now().getOffset());
       else if (toClass == Instant.class) return (X) Instant.ofEpochMilli(time);
-
       throw fail(time, toClass);
     }
 
     private static final long millis(Temporal temporal) {
-
       // java.sql.* temporal types:
       if (temporal instanceof LocalDate) return Date.valueOf((LocalDate) temporal).getTime();
       else if (temporal instanceof LocalTime) return Time.valueOf((LocalTime) temporal).getTime();
       else if (temporal instanceof LocalDateTime)
         return Timestamp.valueOf((LocalDateTime) temporal).getTime();
-
-      // OffsetDateTime
-      else if (temporal.isSupported(INSTANT_SECONDS))
+      else // OffsetDateTime
+      if (temporal.isSupported(INSTANT_SECONDS))
         return 1000 * temporal.getLong(INSTANT_SECONDS) + temporal.getLong(MILLI_OF_SECOND);
-
-      // OffsetTime
-      else if (temporal.isSupported(MILLI_OF_DAY)) return temporal.getLong(MILLI_OF_DAY);
-
+      else // OffsetTime
+      if (temporal.isSupported(MILLI_OF_DAY)) return temporal.getLong(MILLI_OF_DAY);
       throw fail(temporal, Long.class);
     }
 
@@ -1149,7 +1005,6 @@ public final class Convert {
 
     private static DataTypeException fail(Object from, Class<?> toClass) {
       String message = "Cannot convert from " + from + " (" + from.getClass() + ") to " + toClass;
-
       // [#10072] [#11023] Some mappings may not have worked because of badly set up classpaths
       if ((from instanceof JSON || from instanceof JSONB) && JSON_MAPPER == null)
         return new DataTypeException(

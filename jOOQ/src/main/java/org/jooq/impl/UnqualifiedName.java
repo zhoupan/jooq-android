@@ -55,6 +55,7 @@ import org.jooq.tools.StringUtils;
 final class UnqualifiedName extends AbstractName {
 
   private final String name;
+
   private final Quoted quoted;
 
   UnqualifiedName(String name) {
@@ -68,16 +69,13 @@ final class UnqualifiedName extends AbstractName {
 
   @Override
   public final void accept(Context<?> ctx) {
-
     RenderQuotedNames q = SettingsTools.getRenderQuotedNames(ctx.settings());
-
     boolean previous = ctx.quote();
     boolean current =
         q == RenderQuotedNames.ALWAYS
             || q == RenderQuotedNames.EXPLICIT_DEFAULT_QUOTED
                 && (quoted == DEFAULT || quoted == QUOTED)
             || q == RenderQuotedNames.EXPLICIT_DEFAULT_UNQUOTED && quoted == QUOTED;
-
     ctx.quote(current);
     ctx.literal(name);
     ctx.quote(previous);

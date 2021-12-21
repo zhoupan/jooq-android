@@ -52,9 +52,13 @@ import org.jooq.SQLDialect;
 
 /** @author Lukas Eder */
 final class AsteriskImpl extends AbstractQueryPart implements Asterisk {
+
   static final AsteriskImpl INSTANCE = new AsteriskImpl(new QueryPartList<>());
+
   static final Set<SQLDialect> SUPPORT_NATIVE_EXCEPT = SQLDialect.supportedBy(H2);
+
   static final Set<SQLDialect> NO_SUPPORT_UNQUALIFIED_COMBINED = SQLDialect.supportedBy(FIREBIRD);
+
   final QueryPartList<Field<?>> fields;
 
   private AsteriskImpl(QueryPartList<Field<?>> fields) {
@@ -63,11 +67,9 @@ final class AsteriskImpl extends AbstractQueryPart implements Asterisk {
 
   @Override
   public final void accept(Context<?> ctx) {
-
     ctx.sql('*');
-
     // [#7921] H2 has native support for EXCEPT. Emulations are implemented
-    //         in SelectQueryImpl
+    // in SelectQueryImpl
     if (!fields.isEmpty()) ctx.sql(' ').visit(K_EXCEPT).sql(" (").visit(fields).sql(')');
   }
 
@@ -84,10 +86,8 @@ final class AsteriskImpl extends AbstractQueryPart implements Asterisk {
   @Override
   public final Asterisk except(Field<?>... f) {
     QueryPartList<Field<?>> list = new QueryPartList<>();
-
     list.addAll(fields);
     list.addAll(Arrays.asList(f));
-
     return new AsteriskImpl(list);
   }
 }

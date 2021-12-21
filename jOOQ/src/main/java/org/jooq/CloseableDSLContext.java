@@ -48,7 +48,6 @@ public interface CloseableDSLContext extends DSLContext, AutoCloseable {
   // -------------------------------------------------------------------------
   // XXX AutoCloseable API
   // -------------------------------------------------------------------------
-
   /**
    * Close the underlying resources, if any resources have been allocated when constructing this
    * <code>DSLContext</code>.

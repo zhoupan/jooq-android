@@ -66,7 +66,6 @@ final class RegrIntercept extends DefaultAggregateFunction<BigDecimal> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Set<SQLDialect> NO_SUPPORT_NATIVE =
       SQLDialect.supportedUntil(
           CUBRID, DERBY, FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, SQLITE);
@@ -81,7 +80,6 @@ final class RegrIntercept extends DefaultAggregateFunction<BigDecimal> {
   private final void acceptEmulation(Context<?> ctx) {
     Field<? extends Number> x = (Field) getArguments().get(0);
     Field<? extends Number> y = (Field) getArguments().get(1);
-
     ctx.visit(fo(regrAvgY(x, y)).minus(fo(regrSlope(x, y)).times(fo(regrAvgX(x, y)))));
   }
 }

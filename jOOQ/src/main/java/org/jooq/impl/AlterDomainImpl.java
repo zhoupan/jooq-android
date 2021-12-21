@@ -62,18 +62,31 @@ final class AlterDomainImpl<T> extends AbstractDDLQuery
         AlterDomainFinalStep {
 
   private final Domain<T> domain;
+
   private final boolean alterDomainIfExists;
+
   private Constraint addConstraint;
+
   private Constraint dropConstraint;
+
   private boolean dropConstraintIfExists;
+
   private Domain<?> renameTo;
+
   private Constraint renameConstraint;
+
   private boolean renameConstraintIfExists;
+
   private Field<T> setDefault;
+
   private boolean dropDefault;
+
   private boolean setNotNull;
+
   private boolean dropNotNull;
+
   private Cascade cascade;
+
   private Constraint renameConstraintTo;
 
   AlterDomainImpl(Configuration configuration, Domain<T> domain, boolean alterDomainIfExists) {
@@ -112,7 +125,6 @@ final class AlterDomainImpl<T> extends AbstractDDLQuery
       Cascade cascade,
       Constraint renameConstraintTo) {
     super(configuration);
-
     this.domain = domain;
     this.alterDomainIfExists = alterDomainIfExists;
     this.addConstraint = addConstraint;
@@ -188,7 +200,6 @@ final class AlterDomainImpl<T> extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: DSL API
   // -------------------------------------------------------------------------
-
   @Override
   public final AlterDomainImpl<T> add(Constraint addConstraint) {
     this.addConstraint = addConstraint;
@@ -339,9 +350,9 @@ final class AlterDomainImpl<T> extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Set<SQLDialect> NO_SUPPORT_RENAME_CONSTRAINT_IF_EXISTS =
       SQLDialect.supportedBy(FIREBIRD, POSTGRES);
+
   private static final Set<SQLDialect> NO_SUPPORT_DROP_CONSTRAINT_IF_EXISTS =
       SQLDialect.supportedBy(FIREBIRD);
 
@@ -363,21 +374,16 @@ final class AlterDomainImpl<T> extends AbstractDDLQuery
 
   private final void accept0(Context<?> ctx) {
     ctx.visit(K_ALTER).sql(' ').visit(K_DOMAIN).sql(' ');
-
     if (alterDomainIfExists) ctx.visit(K_IF_EXISTS).sql(' ');
-
     ctx.visit(domain).sql(' ');
-
     if (addConstraint != null) {
       if (ctx.family() == FIREBIRD)
         ctx.visit(K_ADD).sql(' ').visit(DSL.check(((ConstraintImpl) addConstraint).$check()));
       else ctx.visit(K_ADD).sql(' ').visit(addConstraint);
     } else if (dropConstraint != null) {
       ctx.visit(K_DROP_CONSTRAINT);
-
       if (dropConstraintIfExists && supportsDropConstraintIfExists(ctx))
         ctx.sql(' ').visit(K_IF_EXISTS);
-
       if (ctx.family() != FIREBIRD) {
         ctx.sql(' ').data(DATA_CONSTRAINT_REFERENCE, true, c -> c.visit(dropConstraint));
         acceptCascade(ctx, cascade);
@@ -395,7 +401,6 @@ final class AlterDomainImpl<T> extends AbstractDDLQuery
               c -> {
                 if (renameConstraintIfExists && supportsRenameConstraintIfExists(c))
                   c.visit(K_IF_EXISTS).sql(' ');
-
                 c.visit(renameConstraint).sql(' ').visit(K_TO).sql(' ').visit(renameConstraintTo);
               });
     } else if (setDefault != null) {

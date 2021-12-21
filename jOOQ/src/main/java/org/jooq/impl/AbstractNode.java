@@ -49,6 +49,7 @@ import org.jooq.exception.DataDefinitionException;
 abstract class AbstractNode<N extends Node<N>> implements Node<N> {
 
   private final String id;
+
   private final String message;
 
   AbstractNode(String id, String message) {
@@ -70,28 +71,21 @@ abstract class AbstractNode<N extends Node<N>> implements Node<N> {
   @SuppressWarnings("unchecked")
   public final N root() {
     N node = (N) this;
-
     while (!node.parents().isEmpty()) node = node.parents().get(0);
-
     return node;
   }
 
   @SuppressWarnings("unchecked")
   final N commonAncestor(N other) {
     if (this.id().equals(other.id())) return (N) this;
-
     // TODO: Find a better solution than the brute force one
     // See e.g. https://en.wikipedia.org/wiki/Lowest_common_ancestor
-
     Map<N, Integer> a1 = ancestors((N) this, new HashMap<>(), 1);
     Map<N, Integer> a2 = ancestors(other, new HashMap<>(), 1);
-
     N node = null;
     Integer distance = null;
-
     for (Entry<N, Integer> entry : a1.entrySet()) {
       if (a2.containsKey(entry.getKey())) {
-
         // TODO: What if there are several conflicting paths?
         if (distance == null || distance > entry.getValue()) {
           node = entry.getKey();
@@ -99,23 +93,18 @@ abstract class AbstractNode<N extends Node<N>> implements Node<N> {
         }
       }
     }
-
     if (node == null)
       throw new DataDefinitionException(
           "Versions " + this.id() + " and " + other.id() + " do not have a common ancestor");
-
     return node;
   }
 
   private Map<N, Integer> ancestors(N node, Map<N, Integer> result, int distance) {
     Integer previous = result.get(node);
-
     if (previous == null || previous > distance) {
       result.put(node, distance);
-
       for (N parent : node.parents()) ancestors(parent, result, distance + 1);
     }
-
     return result;
   }
 }

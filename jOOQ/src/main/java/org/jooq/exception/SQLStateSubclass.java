@@ -441,13 +441,13 @@ public enum SQLStateSubclass {
   C40004_TRIGGERED_ACTION_EXCEPTION(C40_TRANSACTION_ROLLBACK, "004"),
   C42000_NO_SUBCLASS(C42_SYNTAX_ERROR_OR_ACCESS_RULE_VIOLATION, "000"),
   CHZ000_NO_SUBCLASS(CHZ_REMOTE_DATABASE_ACCESS, "000"),
-
   OTHER(SQLStateClass.OTHER, ""),
-  NONE(SQLStateClass.OTHER, ""),
-  ;
+  NONE(SQLStateClass.OTHER, "");
 
   private static final Map<String, SQLStateSubclass> lookup = new HashMap<>();
+
   private final SQLStateClass clazz;
+
   private final String subclass;
 
   static {
@@ -475,18 +475,15 @@ public enum SQLStateSubclass {
 
   public static SQLStateSubclass fromCode(String code) {
     if (code == null || code.length() != 5) return SQLStateSubclass.OTHER;
-
     SQLStateSubclass result;
     result = lookup.get(code);
     if (result != null) return result;
-
     result = lookup.get(code.substring(0, 2) + "000");
     if (result != null) return result;
     else return SQLStateSubclass.OTHER;
   }
 
   static SQLStateSubclass fromSQLiteVendorCode(int errorCode) {
-
     // See https://sqlite.org/c3ref/c_abort.html
     // And https://sqlite.org/c3ref/c_abort_rollback.html
     switch (errorCode & 0xFF) {
@@ -505,7 +502,6 @@ public enum SQLStateSubclass {
       case 28:
         return C01000_NO_SUBCLASS;
     }
-
     return SQLStateSubclass.OTHER;
   }
 }

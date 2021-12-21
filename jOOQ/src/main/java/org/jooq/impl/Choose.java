@@ -51,11 +51,11 @@ import org.jooq.Field;
 final class Choose<T> extends AbstractField<T> {
 
   private Field<Integer> index;
+
   private Field<T>[] values;
 
   Choose(Field<Integer> index, Field<T>[] values) {
     super(N_CHOOSE, dataType(values));
-
     this.index = index;
     this.values = values;
   }
@@ -74,14 +74,12 @@ final class Choose<T> extends AbstractField<T> {
         {
           CaseValueStep<Integer> s = choose(index);
           CaseWhenStep<Integer, T> when = null;
-
           for (int i = 0; i < values.length; i++) {
             when =
                 when == null
                     ? s.when(inline(i + 1), values[i])
                     : when.when(inline(i + 1), values[i]);
           }
-
           ctx.visit(when);
           break;
         }

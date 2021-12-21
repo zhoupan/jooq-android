@@ -119,50 +119,71 @@ import org.jooq.TableOptions.OnCommit;
 
 /** @author Lukas Eder */
 final class CreateTableImpl extends AbstractDDLQuery
-    implements
-
-        // Cascading interface implementations for CREATE TABLE behaviour
+    implements // Cascading interface implementations for CREATE TABLE behaviour
         CreateTableWithDataStep,
         CreateTableColumnStep {
+
   private static final Set<SQLDialect> NO_SUPPORT_IF_NOT_EXISTS =
       SQLDialect.supportedBy(DERBY, FIREBIRD);
+
   private static final Set<SQLDialect> NO_SUPPORT_WITH_DATA =
       SQLDialect.supportedBy(H2, MARIADB, MYSQL, SQLITE);
+
   private static final Set<SQLDialect> NO_SUPPORT_CTAS_COLUMN_NAMES = SQLDialect.supportedBy(H2);
+
   private static final Set<SQLDialect> EMULATE_INDEXES_IN_BLOCK =
       SQLDialect.supportedBy(FIREBIRD, POSTGRES);
+
   private static final Set<SQLDialect> EMULATE_SOME_ENUM_TYPES_AS_CHECK =
       SQLDialect.supportedBy(CUBRID, DERBY, FIREBIRD, HSQLDB, POSTGRES, SQLITE);
+
   private static final Set<SQLDialect> EMULATE_STORED_ENUM_TYPES_AS_CHECK =
       SQLDialect.supportedBy(CUBRID, DERBY, FIREBIRD, HSQLDB, SQLITE);
+
   private static final Set<SQLDialect> REQUIRES_WITH_DATA = SQLDialect.supportedBy(HSQLDB);
+
   private static final Set<SQLDialect> WRAP_SELECT_IN_PARENS = SQLDialect.supportedBy(HSQLDB);
+
   private static final Set<SQLDialect> SUPPORT_TEMPORARY =
       SQLDialect.supportedBy(MARIADB, MYSQL, POSTGRES);
+
   private static final Set<SQLDialect> EMULATE_COMMENT_IN_BLOCK =
       SQLDialect.supportedBy(FIREBIRD, POSTGRES);
+
   private static final Set<SQLDialect> REQUIRE_EXECUTE_IMMEDIATE = SQLDialect.supportedBy(FIREBIRD);
+
   private static final Set<SQLDialect> NO_SUPPORT_NULLABLE_PRIMARY_KEY =
       SQLDialect.supportedBy(MARIADB, MYSQL);
+
   private static final Set<SQLDialect> REQUIRE_NON_PK_COLUMNS = SQLDialect.supportedBy(IGNITE);
 
   private final Table<?> table;
+
   private Select<?> select;
+
   private Boolean withData;
+
   private final List<Field<?>> columnFields;
+
   private final List<DataType<?>> columnTypes;
+
   private final List<Constraint> constraints;
+
   private final List<Index> indexes;
+
   private final boolean temporary;
+
   private final boolean ifNotExists;
+
   private OnCommit onCommit;
+
   private Comment comment;
+
   private SQL storage;
 
   CreateTableImpl(
       Configuration configuration, Table<?> table, boolean temporary, boolean ifNotExists) {
     super(configuration);
-
     this.table = table;
     this.temporary = temporary;
     this.ifNotExists = ifNotExists;
@@ -215,7 +236,6 @@ final class CreateTableImpl extends AbstractDDLQuery
   // ------------------------------------------------------------------------
   // XXX: DSL API
   // ------------------------------------------------------------------------
-
   @Override
   public final CreateTableImpl as(Select<? extends Record> s) {
     this.select = s;
@@ -258,7 +278,6 @@ final class CreateTableImpl extends AbstractDDLQuery
   @Override
   public final CreateTableImpl columns(Collection<? extends Field<?>> fields) {
     for (Field<?> field : fields) column(field);
-
     return this;
   }
 
@@ -411,7 +430,6 @@ final class CreateTableImpl extends AbstractDDLQuery
   // ------------------------------------------------------------------------
   // XXX: QueryPart API
   // ------------------------------------------------------------------------
-
   private final boolean supportsIfNotExists(Context<?> ctx) {
     return !NO_SUPPORT_IF_NOT_EXISTS.contains(ctx.dialect());
   }
@@ -436,27 +454,22 @@ final class CreateTableImpl extends AbstractDDLQuery
   private final void accept0(Context<?> ctx) {
     boolean bc = comment != null && EMULATE_COMMENT_IN_BLOCK.contains(ctx.dialect());
     boolean bi = !indexes.isEmpty() && EMULATE_INDEXES_IN_BLOCK.contains(ctx.dialect());
-
     if (bc || bi) {
       begin(
           ctx,
           c1 -> {
             executeImmediateIf(
                 REQUIRE_EXECUTE_IMMEDIATE.contains(c1.dialect()), c1, c2 -> accept1(c2));
-
             if (bc) {
               c1.formatSeparator();
-
               executeImmediateIf(
                   REQUIRE_EXECUTE_IMMEDIATE.contains(ctx.dialect()),
                   c1,
                   c2 -> c2.visit(commentOnTable(table).is(comment)));
             }
-
             if (bi) {
               for (Index index : indexes) {
                 c1.formatSeparator();
-
                 executeImmediateIf(
                     REQUIRE_EXECUTE_IMMEDIATE.contains(c1.dialect()),
                     c1,
@@ -476,86 +489,64 @@ final class CreateTableImpl extends AbstractDDLQuery
 
   private final void accept1(Context<?> ctx) {
     ctx.start(CREATE_TABLE);
-
     if (select != null) {
-
       acceptCreateTableAsSelect(ctx);
     } else {
       toSQLCreateTable(ctx);
       toSQLOnCommit(ctx);
     }
-
     if (comment != null && !EMULATE_COMMENT_IN_BLOCK.contains(ctx.dialect())) {
       ctx.formatSeparator().visit(K_COMMENT).sql(' ');
-
       ctx.visit(comment);
     }
-
     // [#7772] This data() value should be available from ctx directly, not only from
     // ctx.configuration()
     if (storage != null && ctx.configuration().data("org.jooq.ddl.ignore-storage-clauses") == null)
       ctx.formatSeparator().visit(storage);
-
     ctx.end(CREATE_TABLE);
   }
 
   private void toSQLCreateTable(Context<?> ctx) {
     toSQLCreateTableName(ctx);
-
     if (!columnFields.isEmpty()
         && (select == null || !NO_SUPPORT_CTAS_COLUMN_NAMES.contains(ctx.dialect()))) {
       ctx.sqlIndentStart(" (").start(CREATE_TABLE_COLUMNS);
-
       Field<?> identity = null;
       boolean qualify = ctx.qualify();
       ctx.qualify(false);
-
       for (int i = 0; i < columnFields.size(); i++) {
         DataType<?> type = columnType(ctx, i);
         if (identity == null && type.identity()) identity = columnFields.get(i);
-
         ctx.visit(columnFields.get(i));
-
         if (select == null) {
           ctx.sql(' ');
           Tools.toSQLDDLTypeDeclarationForAddition(ctx, type);
         }
-
         if (i < columnFields.size() - 1) ctx.sql(',').formatSeparator();
       }
-
       // [#10551] Ignite requires at least one non-PK column.
       toSQLDummyColumns(ctx);
-
       ctx.qualify(qualify);
       ctx.end(CREATE_TABLE_COLUMNS).start(CREATE_TABLE_CONSTRAINTS);
-
       if (!constraints.isEmpty())
-        for (Constraint constraint : constraints)
-
-          // [#6841] SQLite has a weird requirement of the PRIMARY KEY keyword being on the column
-          // directly,
-          //         when there is an identity. Thus, we must not repeat the primary key
-          // specification here.
+        for (Constraint constraint :
+            constraints) // [#6841] SQLite has a weird requirement of the PRIMARY KEY keyword being
+          // on the column directly,
+          // when there is an identity. Thus, we must not repeat the primary key specification here.
           if (((ConstraintImpl) constraint).supported(ctx)
               && (ctx.family() != SQLITE || !matchingPrimaryKey(constraint, identity)))
             ctx.sql(',').formatSeparator().visit(constraint);
-
       if (EMULATE_SOME_ENUM_TYPES_AS_CHECK.contains(ctx.dialect())) {
         for (int i = 0; i < columnFields.size(); i++) {
           DataType<?> type = columnTypes.get(i);
-
           if (EnumType.class.isAssignableFrom(type.getType())) {
-
             @SuppressWarnings("unchecked")
             DataType<EnumType> enumType = (DataType<EnumType>) type;
-
             if (EMULATE_STORED_ENUM_TYPES_AS_CHECK.contains(ctx.dialect())
                 || !storedEnumType(enumType)) {
               Field<?> field = columnFields.get(i);
               List<Field<String>> literals =
                   map(enums(enumType.getType()), e -> inline(e.getLiteral()));
-
               ctx.sql(',')
                   .formatSeparator()
                   .visit(
@@ -565,41 +556,29 @@ final class CreateTableImpl extends AbstractDDLQuery
           }
         }
       }
-
       ctx.end(CREATE_TABLE_CONSTRAINTS);
-
       if (!indexes.isEmpty() && !EMULATE_INDEXES_IN_BLOCK.contains(ctx.dialect())) {
         ctx.qualify(false);
-
         for (Index index : indexes) {
           ctx.sql(',').formatSeparator();
-
           if (index.getUnique()) ctx.visit(K_UNIQUE).sql(' ');
-
           ctx.visit(K_INDEX);
-
           if (!"".equals(index.getName())) ctx.sql(' ').visit(index.getUnqualifiedName());
-
           ctx.sql(" (").visit(new SortFieldList(index.getFields())).sql(')');
         }
-
         ctx.qualify(qualify);
       }
-
       ctx.sqlIndentEnd(')');
     }
   }
 
   private final void toSQLDummyColumns(Context<?> ctx) {
-
     // [#10551] [#11268] TODO: Make this behaviour configurable
     if (REQUIRE_NON_PK_COLUMNS.contains(ctx.dialect())) {
       Field<?>[] primaryKeyColumns = primaryKeyColumns();
-
       if (primaryKeyColumns != null && primaryKeyColumns.length == columnFields.size()) {
         ctx.sql(',').formatSeparator();
         ctx.visit(field(name("dummy")));
-
         if (select == null) {
           ctx.sql(' ');
           Tools.toSQLDDLTypeDeclarationForAddition(ctx, INTEGER);
@@ -610,11 +589,9 @@ final class CreateTableImpl extends AbstractDDLQuery
 
   private final DataType<?> columnType(Context<?> ctx, int i) {
     DataType<?> type = columnTypes.get(i);
-
     if (NO_SUPPORT_NULLABLE_PRIMARY_KEY.contains(ctx.dialect())
         && type.nullability() == Nullability.DEFAULT
         && isPrimaryKey(i)) type = type.nullable(false);
-
     return type;
   }
 
@@ -632,7 +609,6 @@ final class CreateTableImpl extends AbstractDDLQuery
   private final boolean matchingPrimaryKey(Constraint constraint, Field<?> identity) {
     if (constraint instanceof ConstraintImpl)
       return ((ConstraintImpl) constraint).matchingPrimaryKey(identity);
-
     return false;
   }
 
@@ -640,30 +616,22 @@ final class CreateTableImpl extends AbstractDDLQuery
     toSQLCreateTable(ctx);
     toSQLOnCommit(ctx);
     ctx.formatSeparator().visit(K_AS);
-
     if (WRAP_SELECT_IN_PARENS.contains(ctx.dialect())) ctx.sqlIndentStart(" (");
     else ctx.formatSeparator();
-
     if (FALSE.equals(withData) && NO_SUPPORT_WITH_DATA.contains(ctx.dialect()))
       ctx.data(DATA_SELECT_NO_DATA, true);
-
     ctx.start(CREATE_TABLE_AS);
-
     if (!columnFields.isEmpty() && NO_SUPPORT_CTAS_COLUMN_NAMES.contains(ctx.dialect()))
       ctx.visit(
           select(asterisk())
               .from(select.asTable(table(name("t")), columnFields.toArray(EMPTY_FIELD))));
     else ctx.visit(select);
-
     ctx.end(CREATE_TABLE_AS);
-
     if (FALSE.equals(withData) && NO_SUPPORT_WITH_DATA.contains(ctx.dialect()))
       ctx.data().remove(DATA_SELECT_NO_DATA);
-
     if (WRAP_SELECT_IN_PARENS.contains(ctx.dialect())) {
       ctx.sqlIndentEnd(')');
     }
-
     if (FALSE.equals(withData) && !NO_SUPPORT_WITH_DATA.contains(ctx.dialect()))
       ctx.formatSeparator().visit(K_WITH_NO_DATA);
     else if (TRUE.equals(withData) && !NO_SUPPORT_WITH_DATA.contains(ctx.dialect()))
@@ -673,15 +641,11 @@ final class CreateTableImpl extends AbstractDDLQuery
 
   private final void toSQLCreateTableName(Context<?> ctx) {
     ctx.start(CREATE_TABLE_NAME).visit(K_CREATE).sql(' ');
-
     if (temporary)
       if (SUPPORT_TEMPORARY.contains(ctx.dialect())) ctx.visit(K_TEMPORARY).sql(' ');
       else ctx.visit(K_GLOBAL_TEMPORARY).sql(' ');
-
     ctx.visit(K_TABLE).sql(' ');
-
     if (ifNotExists && supportsIfNotExists(ctx)) ctx.visit(K_IF_NOT_EXISTS).sql(' ');
-
     ctx.visit(table).end(CREATE_TABLE_NAME);
   }
 

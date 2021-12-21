@@ -112,29 +112,31 @@ import org.xml.sax.SAXException;
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
 abstract class AbstractRecord extends AbstractStore implements Record {
+
   private static final JooqLogger log = JooqLogger.getLogger(AbstractRecord.class);
 
   final AbstractRow<? extends AbstractRecord> fields;
+
   final Object[] values;
+
   final Object[] originals;
+
   final BitSet changed;
+
   boolean fetched;
 
   /** @deprecated - 3.14.5 - [#8495] [#11058] - Re-use AbstractRow reference if possible */
-  @Deprecated
   AbstractRecord(Collection<? extends Field<?>> fields) {
     this(Tools.row0(fields.toArray(EMPTY_FIELD)));
   }
 
   /** @deprecated - 3.14.5 - [#8495] [#11058] - Re-use AbstractRow reference if possible */
-  @Deprecated
   AbstractRecord(Field<?>... fields) {
     this(Tools.row0(fields));
   }
 
   AbstractRecord(AbstractRow<?> fields) {
     int size = fields.size();
-
     this.fields = (AbstractRow<? extends AbstractRecord>) fields;
     this.values = new Object[size];
     this.originals = new Object[size];
@@ -144,27 +146,22 @@ abstract class AbstractRecord extends AbstractStore implements Record {
   // ------------------------------------------------------------------------
   // XXX: Attachable API
   // ------------------------------------------------------------------------
-
   @Override
   final List<Attachable> getAttachables() {
     List<Attachable> result = null;
-
     int size = size();
     for (int i = 0; i < size; i++) {
       if (values[i] instanceof Attachable) {
         if (result == null) result = new ArrayList<>();
-
         result.add((Attachable) values[i]);
       }
     }
-
     return result == null ? emptyList() : result;
   }
 
   // ------------------------------------------------------------------------
   // XXX: FieldProvider API
   // ------------------------------------------------------------------------
-
   @Override
   public final Field<?>[] fields() {
     return fields.fields();
@@ -303,7 +300,6 @@ abstract class AbstractRecord extends AbstractStore implements Record {
   // ------------------------------------------------------------------------
   // XXX: Record API
   // ------------------------------------------------------------------------
-
   @Override
   public final int size() {
     return fields.size();
@@ -312,7 +308,6 @@ abstract class AbstractRecord extends AbstractStore implements Record {
   @Override
   public final <T> T get(Field<T> field) {
     int index = fields.indexOf(field);
-
     if (index >= 0) return (T) get(index);
     else if (Tools.nonReplacingEmbeddable(field))
       return (T)
@@ -384,7 +379,6 @@ abstract class AbstractRecord extends AbstractStore implements Record {
    *
    * @deprecated - Use {@link AbstractRecord#set(int, Object)} instead
    */
-  @Deprecated
   protected final void setValue(int index, Object value) {
     set(index, value);
   }
@@ -396,7 +390,6 @@ abstract class AbstractRecord extends AbstractStore implements Record {
   @Override
   public final <T> void set(Field<T> field, T value) {
     int index = fields.indexOf(field);
-
     if (index >= 0) set(index, field, value);
     else if (Tools.nonReplacingEmbeddable(field)) {
       Field<?>[] f = embeddedFields(field);
@@ -404,7 +397,6 @@ abstract class AbstractRecord extends AbstractStore implements Record {
           value instanceof EmbeddableRecord
               ? ((EmbeddableRecord) value).intoArray()
               : new Object[f.length];
-
       for (int i = 0; i < f.length; i++) set(indexOrFail(fields, f[i]), f[i], v[i]);
     } else throw indexFail(fields, field);
   }
@@ -413,44 +405,31 @@ abstract class AbstractRecord extends AbstractStore implements Record {
     // Relevant issues documenting this method's behaviour:
     // [#945] Avoid bugs resulting from setting the same value twice
     // [#948] To allow for controlling the number of hard-parses
-    //        To allow for explicitly overriding default values
+    // To allow for explicitly overriding default values
     // [#979] Avoid modifying chnaged flag on unchanged primary key values
-
     UniqueKey<?> key = getPrimaryKey();
-
     // Normal fields' changed flag is always set to true
     if (key == null || !key.getFields().contains(field)) {
       changed.set(index);
-    }
-
-    // The primary key's changed flag might've been set previously
-    else if (changed.get(index)) {
+    } else // The primary key's changed flag might've been set previously
+    if (changed.get(index)) {
       changed.set(index);
-    }
-
-    // [#2764] Users may override updatability of primary key values
-    else if (updatablePrimaryKeys(settings(this))) {
+    } else // [#2764] Users may override updatability of primary key values
+    if (updatablePrimaryKeys(settings(this))) {
       changed.set(index);
-    }
-
-    // [#2698] If the primary key has not yet been set
-    else if (originals[index] == null) {
+    } else // [#2698] If the primary key has not yet been set
+    if (originals[index] == null) {
       changed.set(index);
-    }
-
-    // [#979] If the primary key is being changed, all other fields' flags
+    } else // [#979] If the primary key is being changed, all other fields' flags
     // need to be set to true for in case this record is stored again, an
     // INSERT statement will thus be issued
-    else {
-
+    {
       // [#945] Be sure that changed is never reset to false
       changed.set(index, changed.get(index) || !StringUtils.equals(values[index], value));
-
       if (changed.get(index)) {
         changed(true);
       }
     }
-
     values[index] = value;
   }
 
@@ -461,7 +440,10 @@ abstract class AbstractRecord extends AbstractStore implements Record {
   }
 
   @Override
-  public /* non-final */ <T> Record with(Field<T> field, T value) {
+  public <
+          /* non-final */
+          T>
+      Record with(Field<T> field, T value) {
     set(field, value);
     return this;
   }
@@ -474,11 +456,9 @@ abstract class AbstractRecord extends AbstractStore implements Record {
 
   final void setValues(Field<?>[] fields, AbstractRecord record) {
     fetched = record.fetched;
-
     for (Field<?> field : fields) {
       int targetIndex = indexOrFail(this.fields, field);
       int sourceIndex = indexOrFail(record.fields, field);
-
       values[targetIndex] = record.get(sourceIndex);
       originals[targetIndex] = record.original(sourceIndex);
       changed.set(targetIndex, record.changed(sourceIndex));
@@ -487,7 +467,6 @@ abstract class AbstractRecord extends AbstractStore implements Record {
 
   final void intern0(int fieldIndex) {
     safeIndex(fieldIndex);
-
     if (field(fieldIndex).getType() == String.class) {
       values[fieldIndex] = intern((String) values[fieldIndex]);
       originals[fieldIndex] = intern((String) originals[fieldIndex]);
@@ -496,7 +475,6 @@ abstract class AbstractRecord extends AbstractStore implements Record {
 
   final int safeIndex(int index) {
     if (index >= 0 && index < values.length) return index;
-
     throw new IllegalArgumentException("No field at index " + index + " in Record type " + fields);
   }
 
@@ -519,7 +497,6 @@ abstract class AbstractRecord extends AbstractStore implements Record {
             record -> {
               for (int i = 0; i < originals.length; i++)
                 record.values[i] = record.originals[i] = originals[i];
-
               return record;
             });
   }
@@ -572,7 +549,6 @@ abstract class AbstractRecord extends AbstractStore implements Record {
   @Override
   public final void changed(boolean c) {
     changed.set(0, values.length, c);
-
     // [#1995] If a value is meant to be "unchanged", the "original" should
     // match the supposedly "unchanged" value.
     if (!c) {
@@ -588,9 +564,7 @@ abstract class AbstractRecord extends AbstractStore implements Record {
   @Override
   public final void changed(int fieldIndex, boolean c) {
     safeIndex(fieldIndex);
-
     changed.set(fieldIndex, c);
-
     // [#1995] If a value is meant to be "unchanged", the "original" should
     // match the supposedly "unchanged" value.
     if (!c) originals[fieldIndex] = values[fieldIndex];
@@ -609,7 +583,6 @@ abstract class AbstractRecord extends AbstractStore implements Record {
   @Override
   public final void reset() {
     changed.clear();
-
     System.arraycopy(originals, 0, values, 0, originals.length);
   }
 
@@ -621,7 +594,6 @@ abstract class AbstractRecord extends AbstractStore implements Record {
   @Override
   public final void reset(int fieldIndex) {
     safeIndex(fieldIndex);
-
     changed.clear(fieldIndex);
     values[fieldIndex] = originals[fieldIndex];
   }
@@ -654,17 +626,14 @@ abstract class AbstractRecord extends AbstractStore implements Record {
   @Override
   public final Map<String, Object> intoMap() {
     Map<String, Object> map = new LinkedHashMap<>();
-
     int size = fields.size();
     for (int i = 0; i < size; i++) {
       Field<?> field = fields.field(i);
-
       if (map.put(field.getName(), get(i)) != null) {
         throw new InvalidResultException(
             "Field " + field.getName() + " is not unique in Record : " + this);
       }
     }
-
     return map;
   }
 
@@ -1230,23 +1199,20 @@ abstract class AbstractRecord extends AbstractStore implements Record {
   // generic type erasure, but Scala cannot, see
   // https://twitter.com/lukaseder/status/1262652304773259264
   @Override
-  public /* final */ <E> E into(E object) {
+  public <
+          /* final */
+          E>
+      E into(E object) {
     if (object == null) throw new NullPointerException("Cannot copy Record into null");
-
     Class<E> type = (Class<E>) object.getClass();
-
     try {
       return new DefaultRecordMapper<Record, E>(
               (FieldsImpl) fields.fields, type, object, configuration())
           .map(this);
-    }
-
-    // Pass MappingExceptions on to client code
+    } // Pass MappingExceptions on to client code
     catch (MappingException e) {
       throw e;
-    }
-
-    // All other reflection exceptions are intercepted
+    } // All other reflection exceptions are intercepted
     catch (Exception e) {
       throw new MappingException("An error ocurred when mapping record to " + type, e);
     }
@@ -1275,29 +1241,24 @@ abstract class AbstractRecord extends AbstractStore implements Record {
     @Override
     public R apply(R target) throws MappingException {
       AbstractRecord source = AbstractRecord.this;
-
       try {
-
         // [#1522] [#2989] If possible the complete state of this record should be copied onto the
         // other record
         if (target instanceof AbstractRecord) {
           AbstractRecord t = (AbstractRecord) target;
-
           // Iterate over target fields, to avoid ambiguities when two source fields share the same
           // name.
           // [#3634] If external targetFields are provided, use those instead of the target record's
           // fields.
-          //         The record doesn't know about aliased tables, for instance.
+          // The record doesn't know about aliased tables, for instance.
           for (int targetIndex = 0;
               targetIndex < (targetFields != null ? targetFields.length : t.size());
               targetIndex++) {
             Field<?> targetField =
                 (targetFields != null ? targetFields[targetIndex] : t.field(targetIndex));
             int sourceIndex = fields.indexOf(targetField);
-
             if (sourceIndex >= 0) {
               DataType<?> targetType = targetField.getDataType();
-
               t.values[targetIndex] = targetType.convert(values[sourceIndex]);
               t.originals[targetIndex] = targetType.convert(originals[sourceIndex]);
               t.changed.set(targetIndex, changed.get(sourceIndex));
@@ -1306,15 +1267,11 @@ abstract class AbstractRecord extends AbstractStore implements Record {
         } else {
           for (Field<?> targetField : target.fields()) {
             Field<?> sourceField = field(targetField);
-
             if (sourceField != null) Tools.setValue(target, targetField, source, sourceField);
           }
         }
-
         return target;
-      }
-
-      // All reflection exceptions are intercepted
+      } // All reflection exceptions are intercepted
       catch (Exception e) {
         throw new MappingException("An error ocurred when mapping record to " + target, e);
       }
@@ -1333,14 +1290,12 @@ abstract class AbstractRecord extends AbstractStore implements Record {
 
   private final void from0(Object source, FieldsImpl f) {
     if (source == null) return;
-
     // [#2520] TODO: Benchmark this from() method. There's probably a better implementation
     from(
         Tools.configuration(this)
             .recordUnmapperProvider()
             .provide(source.getClass(), f)
             .unmap(prepareArrayForUnmap(source, f)));
-
     // [#2700] [#3582] If a POJO attribute is NULL, but the column is NOT NULL
     // then we should let the database apply DEFAULT values
     resetChangedOnNotNull(this);
@@ -1349,15 +1304,12 @@ abstract class AbstractRecord extends AbstractStore implements Record {
   private final Object prepareArrayForUnmap(Object source, FieldsImpl f) {
     if (source instanceof Object[]) {
       Object[] array = (Object[]) source;
-
       if (array.length != f.size()) {
         Object[] result = new Object[f.size()];
-
         for (int i = 0; i < result.length; i++) {
           int index = fields.indexOf(f.field(i));
           result[i] = index >= 0 && index < array.length ? array[index] : null;
         }
-
         return result;
       } else return source;
     } else return source;
@@ -1444,7 +1396,6 @@ abstract class AbstractRecord extends AbstractStore implements Record {
   protected final void from(Record source) {
     for (Field<?> field : fields.fields.fields) {
       Field<?> sourceField = source.field(field);
-
       if (sourceField != null && source.changed(sourceField))
         Tools.setValue(this, field, source, sourceField);
     }
@@ -1453,7 +1404,6 @@ abstract class AbstractRecord extends AbstractStore implements Record {
   // -------------------------------------------------------------------------
   // Formatting methods
   // -------------------------------------------------------------------------
-
   @Override
   public final void format(Writer writer, TXTFormat format) {
     asResult().format(writer, format);
@@ -1473,7 +1423,6 @@ abstract class AbstractRecord extends AbstractStore implements Record {
   public final void formatJSON(Writer writer, JSONFormat format) {
     if (format.header())
       log.debug("JSONFormat.header currently not supported for Record.formatJSON()");
-
     try {
       switch (format.recordFormat()) {
         case ARRAY:
@@ -1499,7 +1448,6 @@ abstract class AbstractRecord extends AbstractStore implements Record {
   public final void formatXML(Writer writer, XMLFormat format) {
     if (format.header())
       log.debug("XMLFormat.header currently not supported for Record.formatXML()");
-
     try {
       AbstractResult.formatXMLRecord(writer, format, 0, this, fields);
     } catch (java.io.IOException e) {
@@ -1546,7 +1494,6 @@ abstract class AbstractRecord extends AbstractStore implements Record {
   // ------------------------------------------------------------------------
   // XXX: Object and Comparable API
   // ------------------------------------------------------------------------
-
   @Override
   public String toString() {
     // [#3900] Nested records should generate different toString() behaviour
@@ -1557,59 +1504,45 @@ abstract class AbstractRecord extends AbstractStore implements Record {
   @Override
   public int compareTo(Record that) {
     // Note: keep this implementation in-sync with AbstractStore.equals()!
-
     if (that == this) return 0;
     if (that == null) throw new NullPointerException();
     if (size() != that.size())
       throw new ClassCastException(
           String.format(
               "Trying to compare incomparable records (wrong degree):\n%s\n%s", this, that));
-
     Class<?>[] thisTypes = this.fieldsRow().types();
     Class<?>[] thatTypes = that.fieldsRow().types();
-
     if (!asList(thisTypes).equals(asList(thatTypes)))
       throw new ClassCastException(
           String.format(
               "Trying to compare incomparable records (type mismatch):\n%s\n%s", this, that));
-
     for (int i = 0; i < size(); i++) {
       final Object thisValue = get(i);
       final Object thatValue = that.get(i);
-
       // [#1850] Only return -1/+1 early. In all other cases,
       // continue checking the remaining fields
       if (thisValue == null && thatValue == null) continue;
-
-      // Order column values in a SQL NULLS LAST manner
-      else if (thisValue == null) return 1;
+      else // Order column values in a SQL NULLS LAST manner
+      if (thisValue == null) return 1;
       else if (thatValue == null) return -1;
-
-      // [#985] Compare arrays too.
-      else if (thisValue.getClass().isArray() && thatValue.getClass().isArray()) {
-
+      else // [#985] Compare arrays too.
+      if (thisValue.getClass().isArray() && thatValue.getClass().isArray()) {
         // Might be byte[]
         if (thisValue.getClass() == byte[].class) {
           int compare = compare((byte[]) thisValue, (byte[]) thatValue);
-
           if (compare != 0) return compare;
-        }
-
-        // Other primitive types are not expected
-        else if (!thisValue.getClass().getComponentType().isPrimitive()) {
+        } else // Other primitive types are not expected
+        if (!thisValue.getClass().getComponentType().isPrimitive()) {
           int compare = compare((Object[]) thisValue, (Object[]) thatValue);
-
           if (compare != 0) return compare;
         } else
           throw new ClassCastException(
               String.format("Unsupported data type in natural ordering: %s", thisValue.getClass()));
       } else {
         int compare = compare0(thisValue, thatValue);
-
         if (compare != 0) return compare;
       }
     }
-
     // If we got through the above loop, the two records are equal
     return 0;
   }
@@ -1617,27 +1550,21 @@ abstract class AbstractRecord extends AbstractStore implements Record {
   /** Compare two byte arrays */
   final int compare(byte[] array1, byte[] array2) {
     int length = Math.min(array1.length, array2.length);
-
     for (int i = 0; i < length; i++) {
       int v1 = (array1[i] & 0xff);
       int v2 = (array2[i] & 0xff);
-
       if (v1 != v2) return v1 < v2 ? -1 : 1;
     }
-
     return array1.length - array2.length;
   }
 
   /** Compare two arrays */
   final int compare(Object[] array1, Object[] array2) {
     int length = Math.min(array1.length, array2.length);
-
     for (int i = 0; i < length; i++) {
       int compare = compare0(array1[i], array2[i]);
-
       if (compare != 0) return compare;
     }
-
     return array1.length - array2.length;
   }
 
@@ -1651,7 +1578,6 @@ abstract class AbstractRecord extends AbstractStore implements Record {
   // -------------------------------------------------------------------------
   // XXX: Deprecated and discouraged methods
   // -------------------------------------------------------------------------
-
   @Override
   public final <T> T getValue(Field<T> field) {
     return get(field);

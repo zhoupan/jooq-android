@@ -92,26 +92,27 @@ final class MigrationImpl extends AbstractScope implements Migration {
   // TODO: Make this table and its schema configurable
   private static final JooqMigrationsChangelog CHANGELOG =
       JooqMigrationsChangelog.JOOQ_MIGRATIONS_CHANGELOG;
+
   private final Commit to;
+
   private Commit from;
+
   private Queries queries;
+
   private Commits commits;
 
   MigrationImpl(Configuration configuration, Commit to) {
     super(
         configuration.derive(
             new ThreadLocalTransactionProvider(configuration.systemConnectionProvider())));
-
     this.to = to;
   }
 
   @Override
   public final Commit from() {
     if (from == null)
-
       // TODO: Use pessimistic locking so no one else can migrate in between
       from = currentCommit();
-
     return from;
   }
 
@@ -126,13 +127,11 @@ final class MigrationImpl extends AbstractScope implements Migration {
       Files files = from().migrateTo(to());
       queries = files.from().migrateTo(files.to());
     }
-
     return queries;
   }
 
   private final Commits commits() {
     if (commits == null) commits = configuration().commitProvider().provide();
-
     return commits;
   }
 
@@ -143,16 +142,13 @@ final class MigrationImpl extends AbstractScope implements Migration {
 
   private final void validate0(DefaultMigrationContext ctx) {
     JooqMigrationsChangelogRecord currentRecord = currentChangelogRecord();
-
     if (currentRecord != null) {
       Commit currentCommit = commits().get(currentRecord.getMigratedTo());
-
       if (currentCommit == null)
         throw new DataMigrationValidationException(
             "Version currently installed is not available from CommitProvider: "
                 + currentRecord.getMigratedTo());
     }
-
     validateCommitProvider(ctx, from());
     validateCommitProvider(ctx, to());
     revertUntracked(ctx, null, currentRecord);
@@ -162,7 +158,6 @@ final class MigrationImpl extends AbstractScope implements Migration {
     if (commits().get(commit.id()) == null)
       throw new DataMigrationValidationException(
           "Commit is not available from CommitProvider: " + commit.id());
-
     for (Schema schema : lookup(commit.meta().getSchemas()))
       if (!ctx.migratedSchemas().contains(schema))
         throw new DataMigrationValidationException(
@@ -170,21 +165,17 @@ final class MigrationImpl extends AbstractScope implements Migration {
   }
 
   private final Collection<Schema> lookup(List<Schema> schemas) {
-
     // TODO: Refactor usages of getInterpreterSearchPath()
     Collection<Schema> result = schemas;
     List<InterpreterSearchSchema> searchPath = dsl().settings().getInterpreterSearchPath();
-
     if (!searchPath.isEmpty()) {
       result = new HashSet<>();
       Schema defaultSchema =
           schema(name(searchPath.get(0).getCatalog(), searchPath.get(0).getSchema()));
-
       for (Schema schema : schemas)
         if (schema.getQualifiedName().empty()) result.add(defaultSchema);
         else result.add(schema);
     }
-
     return result;
   }
 
@@ -192,27 +183,22 @@ final class MigrationImpl extends AbstractScope implements Migration {
     Commit currentCommit = currentCommit();
     Meta currentMeta = currentCommit.meta();
     Meta existingMeta = dsl().meta().filterSchemas(includedSchemas::contains);
-
     Set<Schema> expectedSchemas = new HashSet<>();
     expectedSchemas.addAll(lookup(from().meta().getSchemas()));
     expectedSchemas.addAll(lookup(to().meta().getSchemas()));
     expectedSchemas.retainAll(includedSchemas);
-
     schemaLoop:
     for (Schema schema : existingMeta.getSchemas()) {
       if (!includedSchemas.contains(schema)) continue schemaLoop;
-
       // TODO Why is this qualification necessary?
       existingMeta =
           existingMeta.apply(
               dropTableIfExists(schema.getQualifiedName().append(CHANGELOG.getUnqualifiedName()))
                   .cascade());
-
       if (!expectedSchemas.contains(schema))
         existingMeta = existingMeta.apply(dropSchemaIfExists(schema).cascade());
       else currentMeta = currentMeta.apply(createSchemaIfNotExists(schema));
     }
-
     return existingMeta.migrateTo(currentMeta);
   }
 
@@ -233,44 +219,37 @@ final class MigrationImpl extends AbstractScope implements Migration {
 
   private final DefaultMigrationContext migrationContext() {
     Set<Schema> schemas = schemas();
-
     return new DefaultMigrationContext(
         configuration(), schemas, from(), to(), queries(), revertUntrackedQueries(schemas));
   }
 
   private final Set<Schema> schemas() {
     Set<Schema> set = new LinkedHashSet<>();
-
     for (MigrationSchema schema : configuration.settings().getMigrationSchemata())
       set.addAll(lookup(asList(schema(name(schema.getCatalog(), schema.getSchema())))));
-
     return set;
   }
 
   @Override
   public final void execute() {
-
     // TODO: Transactions don't really make sense in most dialects. In some, they do
-    //       e.g. PostgreSQL supports transactional DDL. Check if we're getting this right.
+    // e.g. PostgreSQL supports transactional DDL. Check if we're getting this right.
     run(
         new ContextTransactionalRunnable() {
+
           @Override
           public void run() {
             DefaultMigrationContext ctx = migrationContext();
             MigrationListener listener = new MigrationListeners(configuration);
-
             if (!FALSE.equals(dsl().settings().isMigrationAutoValidation())) validate0(ctx);
-
             try {
               listener.migrationStart(ctx);
-
               if (from().equals(to())) {
                 log.info(
                     "jOOQ Migrations",
                     "Version " + to().id() + " is already installed as the current version.");
                 return;
               }
-
               // TODO: Implement preconditions
               // TODO: Implement a listener with a variety of pro / oss features
               // TODO: Implement additional out-of-the-box sanity checks
@@ -281,19 +260,14 @@ final class MigrationImpl extends AbstractScope implements Migration {
               // TODO: Add CHANGELOG.USERNAME and HOSTNAME columns
               // TODO: Add CHANGELOG.COMMENTS column
               // TODO: Replace (MIGRATED_AT, MIGRATION_TIME) by (MIGRATION_START, MIGRATION_END)
-
               log.info(
                   "jOOQ Migrations", "Version " + from().id() + " is migrated to " + to().id());
-
               StopWatch watch = new StopWatch();
-
               // TODO: Make logging configurable
               if (log.isDebugEnabled())
                 for (Query query : queries())
                   log.debug("jOOQ Migrations", dsl().renderInlined(query));
-
               JooqMigrationsChangelogRecord record = createRecord(STARTING);
-
               try {
                 log(watch, record, REVERTING);
                 revertUntracked(ctx, listener, record);
@@ -301,7 +275,6 @@ final class MigrationImpl extends AbstractScope implements Migration {
                 execute(ctx, listener, queries());
                 log(watch, record, SUCCESS);
               } catch (DataAccessException e) {
-
                 // TODO: Make sure this is committed, given that we're re-throwing the exception.
                 // TODO: How can we recover from failure?
                 log(watch, record, FAILURE);
@@ -314,7 +287,6 @@ final class MigrationImpl extends AbstractScope implements Migration {
 
           private final JooqMigrationsChangelogRecord createRecord(Status status) {
             JooqMigrationsChangelogRecord record = dsl().newRecord(CHANGELOG);
-
             record
                 .setJooqVersion(Constants.VERSION)
                 .setMigratedAt(new Timestamp(System.currentTimeMillis()))
@@ -325,7 +297,6 @@ final class MigrationImpl extends AbstractScope implements Migration {
                 .setSqlCount(queries().queries().length)
                 .setStatus(status)
                 .insert();
-
             return record;
           }
 
@@ -340,7 +311,6 @@ final class MigrationImpl extends AbstractScope implements Migration {
     // TODO: Can we access the individual Queries from Version, if applicable?
     // TODO: Set the ctx.queriesFrom(), ctx.queriesTo(), and ctx.queries() values
     listener.queriesStart(ctx);
-
     // TODO: Make batching an option: queries().executeBatch();
     for (Query query : q.queries()) {
       ctx.query(query);
@@ -349,28 +319,24 @@ final class MigrationImpl extends AbstractScope implements Migration {
       listener.queryEnd(ctx);
       ctx.query(null);
     }
-
     listener.queriesEnd(ctx);
   }
 
   /** Initialise the underlying {@link Configuration} with the jOOQ Migrations Changelog. */
   public final void init() {
-
     // TODO: What to do when initialising jOOQ-migrations on an existing database?
-    //       - Should there be init() commands that can be run explicitly by the user?
-    //       - Will we reverse engineer the production Meta snapshot first?
+    // - Should there be init() commands that can be run explicitly by the user?
+    // - Will we reverse engineer the production Meta snapshot first?
     if (!existsChangelog()) dsl().meta(CHANGELOG).ddl().executeBatch();
   }
 
   private final boolean existsChangelog() {
-
     // [#8301] Find a better way to test if our table already exists
     try {
       dsl().fetchExists(CHANGELOG);
       return true;
     } catch (DataAccessException ignore) {
     }
-
     return false;
   }
 
@@ -378,9 +344,8 @@ final class MigrationImpl extends AbstractScope implements Migration {
     return existsChangelog()
         ? dsl()
             .selectFrom(CHANGELOG)
-
-            // TODO: How to recover from failure?
-            .where(CHANGELOG.STATUS.eq(inline(SUCCESS)))
+            . // TODO: How to recover from failure?
+            where(CHANGELOG.STATUS.eq(inline(SUCCESS)))
             .orderBy(CHANGELOG.MIGRATED_AT.desc(), CHANGELOG.ID.desc())
             .limit(1)
             .fetchOne()
@@ -389,22 +354,17 @@ final class MigrationImpl extends AbstractScope implements Migration {
 
   private final Commit currentCommit() {
     JooqMigrationsChangelogRecord currentRecord = currentChangelogRecord();
-
     if (currentRecord == null) {
       Commit result = TRUE.equals(settings().isMigrationAutoBaseline()) ? to() : to().root();
-
       if (result == null)
         throw new DataMigrationValidationException(
             "CommitProvider did not provide a root version for " + to().id());
-
       return result;
     } else {
       Commit result = commits().get(currentRecord.getMigratedTo());
-
       if (result == null)
         throw new DataMigrationValidationException(
             "CommitProvider did not provide a version for " + currentRecord.getMigratedTo());
-
       return result;
     }
   }
@@ -423,7 +383,6 @@ final class MigrationImpl extends AbstractScope implements Migration {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-
     sb.append("-- Migration\n--   From: ")
         .append(from().id())
         .append("\n")
@@ -431,7 +390,6 @@ final class MigrationImpl extends AbstractScope implements Migration {
         .append(to().id())
         .append("\n")
         .append(queries());
-
     return sb.toString();
   }
 
@@ -446,13 +404,11 @@ final class MigrationImpl extends AbstractScope implements Migration {
   // -------------------------------------------------------------------------
   // XXX: Generated code
   // -------------------------------------------------------------------------
-
   // TODO These classes have been generated and copied here. It would be desirable:
   // - [#6948] To be able to generate package private classes directly inside of other classes
   // - [#7444] Alternatively, have a simple public API replacing TableImpl
   // -         If the above cannot be implemented, generate these in the org.jooq.impl package
-  //           and make them package private or @Internal
-
+  // and make them package private or @Internal
   /** The migration log of jOOQ Migrations. */
   @SuppressWarnings({"all", "unchecked", "rawtypes"})
   static class JooqMigrationsChangelog extends TableImpl<JooqMigrationsChangelogRecord> {
@@ -742,7 +698,6 @@ final class MigrationImpl extends AbstractScope implements Migration {
     // -------------------------------------------------------------------------
     // Primary key information
     // -------------------------------------------------------------------------
-
     @Override
     public Record1<Long> key() {
       return (Record1) super.key();
@@ -751,7 +706,6 @@ final class MigrationImpl extends AbstractScope implements Migration {
     // -------------------------------------------------------------------------
     // Constructors
     // -------------------------------------------------------------------------
-
     /** Create a detached JooqMigrationsChangelogRecord */
     public JooqMigrationsChangelogRecord() {
       super(JooqMigrationsChangelog.JOOQ_MIGRATIONS_CHANGELOG);
@@ -768,7 +722,6 @@ final class MigrationImpl extends AbstractScope implements Migration {
         String sql,
         String status) {
       super(JooqMigrationsChangelog.JOOQ_MIGRATIONS_CHANGELOG);
-
       set(0, id);
       set(1, migratedFrom);
       set(2, migratedTo);

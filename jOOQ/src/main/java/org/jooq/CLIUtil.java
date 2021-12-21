@@ -50,7 +50,6 @@ final class CLIUtil {
 
   static void main(String url, Runnable runnable) {
     JooqLogger.initSimpleFormatter();
-
     try {
       runnable.run();
     } catch (NoClassDefFoundError e) {

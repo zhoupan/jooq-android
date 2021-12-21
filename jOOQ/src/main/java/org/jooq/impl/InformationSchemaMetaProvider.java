@@ -53,7 +53,9 @@ import org.jooq.util.xml.jaxb.InformationSchema;
 public class InformationSchemaMetaProvider implements MetaProvider {
 
   private final Configuration configuration;
+
   private final InformationSchema schema;
+
   private final Source[] sources;
 
   public InformationSchemaMetaProvider(Configuration configuration, Source... sources) {
@@ -71,14 +73,11 @@ public class InformationSchemaMetaProvider implements MetaProvider {
   @Override
   public Meta provide() {
     InformationSchema s = schema;
-
     if (s == null) {
       s = new InformationSchema();
-
       for (Source source : sources)
         MiniJAXB.append(s, MiniJAXB.unmarshal(source.reader(), InformationSchema.class));
     }
-
     return new InformationSchemaMetaImpl(configuration, s);
   }
 }

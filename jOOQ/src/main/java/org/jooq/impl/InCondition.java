@@ -80,14 +80,20 @@ import org.jooq.SQLDialect;
 final class InCondition<T> extends AbstractCondition {
 
   private static final int IN_LIMIT = 1000;
+
   private static final Clause[] CLAUSES_IN = {CONDITION, CONDITION_IN};
+
   private static final Clause[] CLAUSES_IN_NOT = {CONDITION, CONDITION_NOT_IN};
+
   private static final Set<SQLDialect> REQUIRES_IN_LIMIT = SQLDialect.supportedBy(FIREBIRD);
+
   private static final Set<SQLDialect> NO_SUPPORT_EMPTY_LISTS =
       SQLDialect.supportedBy(CUBRID, DERBY, FIREBIRD, HSQLDB, MARIADB, MYSQL, POSTGRES);
 
   final Field<T> field;
+
   final List<? extends Field<?>> values;
+
   final Comparator comparator;
 
   InCondition(Field<T> field, List<? extends Field<?>> values, Comparator comparator) {
@@ -116,7 +122,6 @@ final class InCondition<T> extends AbstractCondition {
   }
 
   private final void accept0(Context<?> ctx) {
-
     if (values.size() == 0 && NO_SUPPORT_EMPTY_LISTS.contains(ctx.dialect())) {
       if (comparator == IN) ctx.visit(falseCondition());
       else ctx.visit(trueCondition());
@@ -127,10 +132,8 @@ final class InCondition<T> extends AbstractCondition {
         case FIREBIRD:
           {
             ctx.sqlIndentStart('(');
-
             for (int i = 0; i < values.size(); i += IN_LIMIT) {
               if (i > 0) {
-
                 // [#1515] The connector depends on the IN / NOT IN
                 // operator
                 if (comparator == Comparator.IN) {
@@ -139,15 +142,12 @@ final class InCondition<T> extends AbstractCondition {
                   ctx.formatSeparator().visit(K_AND).sql(' ');
                 }
               }
-
               toSQLSubValues(
                   ctx, padded(ctx, values.subList(i, Math.min(i + IN_LIMIT, values.size()))));
             }
-
             ctx.sqlIndentEnd(')');
             break;
           }
-
           // Most dialects can handle larger lists
         default:
           {
@@ -170,29 +170,26 @@ final class InCondition<T> extends AbstractCondition {
   /** Render the SQL for a sub-set of the <code>IN</code> clause's values */
   private void toSQLSubValues(Context<?> ctx, List<? extends Field<?>> subValues) {
     ctx.visit(field).sql(' ').visit(comparator.toKeyword()).sql(" (");
-
     if (subValues.size() > 1) ctx.formatIndentStart().formatNewLine();
-
     String separator = "";
     for (Field<?> value : subValues) {
       ctx.sql(separator).formatNewLineAfterPrintMargin().visit(value);
-
       separator = ", ";
     }
-
     if (subValues.size() > 1) ctx.formatIndentEnd().formatNewLine();
-
     ctx.sql(')');
   }
 
   static class PaddedList<T> extends AbstractList<T> {
+
     private final List<T> delegate;
+
     private final int realSize;
+
     private final int padSize;
 
     PaddedList(List<T> delegate, int maxPadding, int padBase) {
       int b = max(2, padBase);
-
       this.delegate = delegate;
       this.realSize = delegate.size();
       this.padSize = min(maxPadding, (int) round(pow(b, ceil(log(realSize) / log(b)))));

@@ -58,7 +58,9 @@ public final class XMLBuilder {
   private final StringBuilder builder = new StringBuilder();
 
   private final boolean format;
+
   private int indentLevel;
+
   private boolean onNewLine;
 
   private XMLBuilder(boolean format) {
@@ -154,13 +156,11 @@ public final class XMLBuilder {
 
   public XMLBuilder append(String elementName, Pattern p) {
     if (p != null) append(elementName, p.pattern());
-
     return this;
   }
 
   public XMLBuilder append(String elementName, Object o) {
     if (o != null) append(elementName, "" + o);
-
     return this;
   }
 

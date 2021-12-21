@@ -62,14 +62,12 @@ final class Acos extends AbstractField<BigDecimal> {
 
   Acos(Field<? extends Number> number) {
     super(N_ACOS, allNotNull(NUMERIC, number));
-
     this.number = nullSafeNotNull(number, INTEGER);
   }
 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -82,7 +80,6 @@ final class Acos extends AbstractField<BigDecimal> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Acos) {

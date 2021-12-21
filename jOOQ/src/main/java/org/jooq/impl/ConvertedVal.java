@@ -53,14 +53,12 @@ import org.jooq.conf.ParamType;
  * @deprecated - [#11061] - 3.15.0 - This type has been introduced only because we have mutable
  *     {@link Param} types. Avoid reusing this type when not needed.
  */
-@Deprecated
 final class ConvertedVal<T> extends AbstractParamX<T> {
 
   final AbstractParamX<?> delegate;
 
   ConvertedVal(AbstractParamX<?> delegate, DataType<T> type) {
     super(delegate.getUnqualifiedName(), type);
-
     this.delegate =
         delegate instanceof ConvertedVal ? ((ConvertedVal<?>) delegate).delegate : delegate;
   }
@@ -68,7 +66,6 @@ final class ConvertedVal<T> extends AbstractParamX<T> {
   // ------------------------------------------------------------------------
   // XXX: Field API
   // ------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     ctx.visit(delegate);
@@ -77,7 +74,6 @@ final class ConvertedVal<T> extends AbstractParamX<T> {
   // ------------------------------------------------------------------------
   // XXX: Param API
   // ------------------------------------------------------------------------
-
   @Override
   public final String getParamName() {
     return delegate.getParamName();
@@ -116,7 +112,6 @@ final class ConvertedVal<T> extends AbstractParamX<T> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public String toString() {
     return delegate.toString();

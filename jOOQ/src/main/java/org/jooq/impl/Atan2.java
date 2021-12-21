@@ -59,11 +59,11 @@ import org.jooq.tools.*;
 final class Atan2 extends AbstractField<BigDecimal> {
 
   private final Field<? extends Number> x;
+
   private final Field<? extends Number> y;
 
   Atan2(Field<? extends Number> x, Field<? extends Number> y) {
     super(N_ATAN2, allNotNull(NUMERIC, x, y));
-
     this.x = nullSafeNotNull(x, INTEGER);
     this.y = nullSafeNotNull(y, INTEGER);
   }
@@ -71,7 +71,6 @@ final class Atan2 extends AbstractField<BigDecimal> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -84,7 +83,6 @@ final class Atan2 extends AbstractField<BigDecimal> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Atan2) {

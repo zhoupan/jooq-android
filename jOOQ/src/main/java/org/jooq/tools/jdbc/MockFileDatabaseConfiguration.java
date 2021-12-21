@@ -60,7 +60,9 @@ import org.jooq.Source;
 public final class MockFileDatabaseConfiguration {
 
   final LineNumberReader in;
+
   final boolean patterns;
+
   final String nullLiteral;
 
   public MockFileDatabaseConfiguration() {

@@ -75,6 +75,7 @@ import org.jooq.tools.StringUtils;
 public class SchemaImpl extends AbstractNamed implements Schema {
 
   private static final Clause[] CLAUSES = {SCHEMA, SCHEMA_REFERENCE};
+
   static final Schema DEFAULT_SCHEMA = new SchemaImpl("");
 
   private Catalog catalog;
@@ -101,7 +102,6 @@ public class SchemaImpl extends AbstractNamed implements Schema {
 
   public SchemaImpl(Name name, Catalog catalog, Comment comment) {
     super(qualify(catalog, name), comment);
-
     this.catalog = catalog;
   }
 
@@ -109,7 +109,6 @@ public class SchemaImpl extends AbstractNamed implements Schema {
   public /* non-final */ Catalog getCatalog() {
     if (catalog == null)
       catalog = getQualifiedName().qualified() ? DSL.catalog(getQualifiedName().qualifier()) : null;
-
     return catalog;
   }
 
@@ -117,11 +116,9 @@ public class SchemaImpl extends AbstractNamed implements Schema {
   public final void accept(Context<?> ctx) {
     if (ctx.qualifyCatalog()) {
       Catalog mappedCatalog = getMappedCatalog(ctx, getCatalog());
-
       if (mappedCatalog != null && !"".equals(mappedCatalog.getName()))
         ctx.visit(mappedCatalog).sql('.');
     }
-
     Schema mappedSchema = getMappedSchema(ctx, this);
     ctx.visit(mappedSchema != null ? mappedSchema.getUnqualifiedName() : getUnqualifiedName());
   }
@@ -229,10 +226,8 @@ public class SchemaImpl extends AbstractNamed implements Schema {
   @Override
   public List<UniqueKey<?>> getPrimaryKeys() {
     List<UniqueKey<?>> result = new ArrayList<>();
-
     for (Table<?> table : getTables())
       if (table.getPrimaryKey() != null) result.add(table.getPrimaryKey());
-
     return result;
   }
 
@@ -339,24 +334,19 @@ public class SchemaImpl extends AbstractNamed implements Schema {
   // ------------------------------------------------------------------------
   // XXX: Object API
   // ------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (this == that) return true;
-
     // [#2144] SchemaImpl equality can be decided without executing the
     // rather expensive implementation of AbstractQueryPart.equals()
     if (that instanceof SchemaImpl) {
       SchemaImpl other = (SchemaImpl) that;
-      return
-
-      // [#7172] [#10274] Cannot use getQualifiedName() yet here
+      return // [#7172] [#10274] Cannot use getQualifiedName() yet here
       StringUtils.equals(
               defaultIfNull(getCatalog(), DEFAULT_CATALOG),
               defaultIfNull(other.getCatalog(), DEFAULT_CATALOG))
           && StringUtils.equals(getName(), other.getName());
     }
-
     return super.equals(that);
   }
 }

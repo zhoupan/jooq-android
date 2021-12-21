@@ -55,6 +55,7 @@ import org.jooq.SQLDialect;
 
 /** @author Lukas Eder */
 final class CurrentTimestamp<T> extends AbstractField<T> {
+
   private static final Set<SQLDialect> NO_SUPPORT_PRECISION =
       SQLDialect.supportedBy(CUBRID, DERBY, SQLITE);
 
@@ -66,7 +67,6 @@ final class CurrentTimestamp<T> extends AbstractField<T> {
 
   CurrentTimestamp(DataType<T> type, Field<Integer> precision) {
     super(N_CURRENT_TIMESTAMP, type);
-
     this.precision = precision;
   }
 
@@ -78,14 +78,11 @@ final class CurrentTimestamp<T> extends AbstractField<T> {
         if (precision != null && !NO_SUPPORT_PRECISION.contains(ctx.dialect()))
           ctx.visit(N_CURRENT_TIMESTAMP).sql('(').visit(precision).sql(')');
         else ctx.visit(N_CURRENT_TIMESTAMP).sql("()");
-
         break;
-
       default:
         if (precision != null && !NO_SUPPORT_PRECISION.contains(ctx.dialect()))
           ctx.visit(K_CURRENT).sql('_').visit(K_TIMESTAMP).sql('(').visit(precision).sql(')');
         else ctx.visit(K_CURRENT).sql('_').visit(K_TIMESTAMP);
-
         break;
     }
   }

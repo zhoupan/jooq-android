@@ -60,8 +60,11 @@ import org.jooq.impl.Tools.DataKey;
 final class DataMap extends AbstractMap<Object, Object> {
 
   final EnumSet<BooleanDataKey> internalSet;
+
   final EnumMap<DataKey, Object> internalMap;
+
   Map<Object, Object> externalMap;
+
   final Set<Entry<Object, Object>> entrySet;
 
   DataMap() {
@@ -93,7 +96,6 @@ final class DataMap extends AbstractMap<Object, Object> {
       if ((Boolean) value && internalSet.size() > 0) return true;
       else if (!((Boolean) value) && internalSet.size() < BooleanDataKey.values().length)
         return true;
-
     return internalMap().containsValue(value) || external(false).containsValue(value);
   }
 
@@ -142,7 +144,6 @@ final class DataMap extends AbstractMap<Object, Object> {
       if (initialise) externalMap = new HashMap<>();
       else return Collections.emptyMap();
     }
-
     return externalMap;
   }
 
@@ -152,12 +153,16 @@ final class DataMap extends AbstractMap<Object, Object> {
   }
 
   private class EntrySet extends AbstractSet<Entry<Object, Object>> {
+
     @Override
     public final Iterator<Entry<Object, Object>> iterator() {
       return new Iterator<Entry<Object, Object>>() {
+
         final Iterator<BooleanDataKey> internalSetIterator = internalSet.iterator();
+
         final Iterator<Entry<Object, Object>> internalMapIterator =
             internalMap().entrySet().iterator();
+
         final Iterator<Entry<Object, Object>> externalMapIterator =
             external(false).entrySet().iterator();
 

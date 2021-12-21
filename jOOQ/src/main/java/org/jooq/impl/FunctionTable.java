@@ -55,7 +55,6 @@ final class FunctionTable<R extends Record> extends AbstractTable<R> {
 
   FunctionTable(Field<?> function) {
     super(TableOptions.function(), N_FUNCTION);
-
     this.function = function;
   }
 
@@ -84,16 +83,13 @@ final class FunctionTable<R extends Record> extends AbstractTable<R> {
           ctx.visit(K_TABLE).sql('(').visit(function).sql(')');
           break;
         }
-
         // [#4254] This is required to enable using PostgreSQL functions
         // with defaulted parameters.
-
       case POSTGRES:
         {
           ctx.visit(function);
           break;
         }
-
       default:
         throw new SQLDialectNotSupportedException(
             "FUNCTION TABLE is not supported for " + ctx.dialect());

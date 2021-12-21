@@ -61,11 +61,14 @@ final class IsDistinctFrom<T> extends AbstractCondition {
 
   private static final Set<SQLDialect> EMULATE_DISTINCT_PREDICATE =
       SQLDialect.supportedUntil(CUBRID, DERBY);
+
   private static final Set<SQLDialect> SUPPORT_DISTINCT_WITH_ARROW =
       SQLDialect.supportedBy(MARIADB, MYSQL);
 
   final Field<T> lhs;
+
   final Field<T> rhs;
+
   final Comparator comparator;
 
   IsDistinctFrom(Field<T> lhs, Field<T> rhs, Comparator comparator) {
@@ -83,25 +86,22 @@ final class IsDistinctFrom<T> extends AbstractCondition {
   public final void accept(Context<?> ctx) {
     if (lhs.getDataType().isEmbeddable() && rhs.getDataType().isEmbeddable())
       ctx.visit(row(embeddedFields(lhs)).compare(comparator, row(embeddedFields(rhs))));
-
-    // [#3511]         These dialects need to emulate the IS DISTINCT FROM predicate,
-    //                 optimally using INTERSECT...
+    else // [#3511]         These dialects need to emulate the IS DISTINCT FROM predicate,
+    // optimally using INTERSECT...
     // [#7222] [#7224] Make sure the columns are aliased
-    else if (EMULATE_DISTINCT_PREDICATE.contains(ctx.dialect()))
+    if (EMULATE_DISTINCT_PREDICATE.contains(ctx.dialect()))
       ctx.visit(
           comparator == IS_DISTINCT_FROM
               ? notExists(select(lhs.as("x")).intersect(select(rhs.as("x"))))
               : exists(select(lhs.as("x")).intersect(select(rhs.as("x")))));
-
-    // MySQL knows the <=> operator
-    else if (SUPPORT_DISTINCT_WITH_ARROW.contains(ctx.dialect()))
+    else // MySQL knows the <=> operator
+    if (SUPPORT_DISTINCT_WITH_ARROW.contains(ctx.dialect()))
       ctx.visit(
           comparator == IS_DISTINCT_FROM
               ? condition("{not}({0} <=> {1})", lhs, rhs)
               : condition("{0} <=> {1}", lhs, rhs));
-
-    // SQLite knows the IS / IS NOT predicate
-    else if (SQLITE == ctx.family())
+    else // SQLite knows the IS / IS NOT predicate
+    if (SQLITE == ctx.family())
       ctx.visit(
           comparator == IS_DISTINCT_FROM
               ? condition("{0} {is not} {1}", lhs, rhs)

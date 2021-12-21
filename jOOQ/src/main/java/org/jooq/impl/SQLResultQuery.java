@@ -61,14 +61,12 @@ final class SQLResultQuery extends AbstractResultQuery<Record> {
 
   SQLResultQuery(Configuration configuration, SQL delegate) {
     super(configuration);
-
     this.delegate = delegate;
   }
 
   // ------------------------------------------------------------------------
   // ResultQuery API
   // ------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -83,7 +81,6 @@ final class SQLResultQuery extends AbstractResultQuery<Record> {
     if (delegate instanceof QueryPartInternal) {
       return ((QueryPartInternal) delegate).clauses(ctx);
     }
-
     return null;
   }
 
@@ -95,7 +92,6 @@ final class SQLResultQuery extends AbstractResultQuery<Record> {
   @Override
   public final Field<?>[] getFields(ResultSetMetaData meta) {
     Field<?>[] result = getFields();
-
     if (!isEmpty(result)) return result;
     else return new MetaDataFieldProvider(configuration(), meta).getFields();
   }
@@ -103,7 +99,6 @@ final class SQLResultQuery extends AbstractResultQuery<Record> {
   @Override
   public final Field<?>[] getFields() {
     Collection<? extends Field<?>> coerce = coerce();
-
     if (!isEmpty(coerce)) return coerce.toArray(EMPTY_FIELD);
     else return EMPTY_FIELD;
   }

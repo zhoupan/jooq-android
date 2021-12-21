@@ -63,7 +63,6 @@ final class CatalogMetaImpl extends AbstractMeta {
 
   private CatalogMetaImpl(Configuration configuration, Catalog[] catalogs) {
     super(configuration);
-
     this.catalogs = catalogs;
   }
 
@@ -92,23 +91,21 @@ final class CatalogMetaImpl extends AbstractMeta {
   static final Meta filterSchemas(Configuration configuration, Set<Schema> schemas) {
     Map<Name, Catalog> c = new LinkedHashMap<>();
     Map<Name, List<Schema>> mapping = new LinkedHashMap<>();
-
     for (Schema schema : schemas)
       mapping
           .computeIfAbsent(nameOrDefault(schema.getCatalog()), k -> new ArrayList<>())
           .add(schema);
-
     for (Schema schema : schemas)
       c.computeIfAbsent(
           nameOrDefault(schema.getCatalog()),
           k ->
               new CatalogImpl(k) {
+
                 @Override
                 public List<Schema> getSchemas() {
                   return mapping.get(getQualifiedName());
                 }
               });
-
     return filterCatalogs(configuration, new LinkedHashSet<>(c.values()))
         .filterSchemas(schemas::contains);
   }
@@ -120,7 +117,6 @@ final class CatalogMetaImpl extends AbstractMeta {
   static final Meta filterTables(Configuration configuration, Set<Table<?>> tables) {
     Map<Name, Schema> s = new LinkedHashMap<>();
     Map<Name, List<Table<?>>> mapping = new LinkedHashMap<>();
-
     // TODO: [#7172] Can't use Table.getQualifiedName() here, yet
     for (Table<?> table : tables)
       mapping
@@ -128,18 +124,17 @@ final class CatalogMetaImpl extends AbstractMeta {
               nameOrDefault(table.getCatalog()).append(nameOrDefault(table.getSchema())),
               k -> new ArrayList<>())
           .add(table);
-
     for (Table<?> table : tables)
       s.computeIfAbsent(
           nameOrDefault(table.getCatalog()).append(nameOrDefault(table.getSchema())),
           k ->
               new SchemaImpl(k, table.getCatalog()) {
+
                 @Override
                 public List<Table<?>> getTables() {
                   return mapping.get(getQualifiedName());
                 }
               });
-
     return filterSchemas(configuration, new LinkedHashSet<>(s.values()))
         .filterTables(tables::contains)
         .filterSequences(none())

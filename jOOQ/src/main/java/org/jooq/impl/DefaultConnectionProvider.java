@@ -59,6 +59,7 @@ import org.jooq.tools.JooqLogger;
 public class DefaultConnectionProvider implements ConnectionProvider {
 
   private static final JooqLogger log = JooqLogger.getLogger(DefaultConnectionProvider.class);
+
   Connection connection;
 
   public DefaultConnectionProvider(Connection connection) {
@@ -68,7 +69,6 @@ public class DefaultConnectionProvider implements ConnectionProvider {
   // -------------------------------------------------------------------------
   // XXX: ConnectionProvider API
   // -------------------------------------------------------------------------
-
   @NotNull
   @Override
   public final Connection acquire() {
@@ -81,7 +81,6 @@ public class DefaultConnectionProvider implements ConnectionProvider {
   // -------------------------------------------------------------------------
   // XXX: Original DSLContext/Factory API (JDBC utility methods)
   // -------------------------------------------------------------------------
-
   public final void setConnection(Connection connection) {
     this.connection = connection;
   }

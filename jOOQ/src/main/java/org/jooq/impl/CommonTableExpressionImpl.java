@@ -64,14 +64,16 @@ final class CommonTableExpressionImpl<R extends Record> extends AbstractTable<R>
   private static final Set<SQLDialect> SUPPORT_MATERIALIZED = SQLDialect.supportedBy(POSTGRES);
 
   private final DerivedColumnListImpl name;
+
   private final ResultQuery<R> query;
+
   private final FieldsImpl<R> fields;
+
   private final Boolean materialized;
 
   CommonTableExpressionImpl(
       DerivedColumnListImpl name, ResultQuery<R> query, Boolean materialized) {
     super(TableOptions.expression(), name.name);
-
     this.name = name;
     this.query = query;
     this.fields = fields1();
@@ -90,13 +92,10 @@ final class CommonTableExpressionImpl<R extends Record> extends AbstractTable<R>
 
   @Override
   public final void accept(Context<?> ctx) {
-
     if (ctx.declareCTE()) {
       QueryPart s = query;
-
       ctx.visit(name);
       ctx.sql(' ').visit(K_AS).sql(' ');
-
       Object previous = null;
       if (materialized != null) {
         if (SUPPORT_MATERIALIZED.contains(ctx.dialect())) {
@@ -104,9 +103,7 @@ final class CommonTableExpressionImpl<R extends Record> extends AbstractTable<R>
           else ctx.visit(K_NOT).sql(' ').visit(K_MATERIALIZED).sql(' ');
         }
       }
-
       visitSubquery(ctx, s);
-
     } else ctx.visit(name.name);
   }
 
@@ -118,18 +115,15 @@ final class CommonTableExpressionImpl<R extends Record> extends AbstractTable<R>
   final FieldsImpl<R> fields1() {
     Field<?>[] s = query.fields();
     Field<?>[] f = new Field[Tools.degree(query)];
-
     for (int i = 0; i < f.length; i++) {
       f[i] =
           DSL.field(
               DSL.name(
-                  name.name,
-
-                  // If the CTE has no explicit column names, inherit those of the subquery
+                  name.name, // If the CTE has no explicit column names, inherit those of the
+                  // subquery
                   name.fieldNames.length > 0 ? name.fieldNames[i] : s[i].getUnqualifiedName()),
               (DataType<?>) (f.length == 1 ? Tools.scalarType(query) : s[i].getDataType()));
     }
-
     return new FieldsImpl<>(f);
   }
 }

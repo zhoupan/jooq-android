@@ -84,11 +84,17 @@ import org.jooq.Source;
 final class ParsingStatement implements CallableStatement {
 
   private final ParsingConnection connection;
+
   private final Statement statement;
+
   private final ThrowingFunction<List<List<Param<?>>>, PreparedStatement, SQLException> prepared;
+
   private final List<ThrowingConsumer<Statement, SQLException>> flags;
+
   private final List<Param<?>> binds;
+
   private final List<List<Param<?>>> batch;
+
   private PreparedStatement last;
 
   ParsingStatement(ParsingConnection connection, Statement statement) {
@@ -114,16 +120,13 @@ final class ParsingStatement implements CallableStatement {
   private final List<Param<?>> bindValues(int index) {
     int size = binds.size();
     int reserve = index - size;
-
     if (reserve > 0) binds.addAll(Collections.nCopies(reserve, null));
-
     return binds;
   }
 
   // -------------------------------------------------------------------------
   // XXX: Flags
   // -------------------------------------------------------------------------
-
   private final SQLException closed() {
     return new SQLException("Statement is closed or not yet prepared.");
   }
@@ -237,7 +240,6 @@ final class ParsingStatement implements CallableStatement {
   // -------------------------------------------------------------------------
   // XXX: Static statement execution
   // -------------------------------------------------------------------------
-
   @Override
   public final ResultSet executeQuery(String sql) throws SQLException {
     return statement.executeQuery(translate(connection.configuration, sql).sql);
@@ -318,7 +320,6 @@ final class ParsingStatement implements CallableStatement {
   // -------------------------------------------------------------------------
   // XXX: Prepared statement execution
   // -------------------------------------------------------------------------
-
   private final PreparedStatement last() throws SQLException {
     if (last == null) throw new SQLException("No PreparedStatement is available yet");
     else return last;
@@ -326,9 +327,7 @@ final class ParsingStatement implements CallableStatement {
 
   private final PreparedStatement prepareAndBind() throws SQLException {
     last = prepared.apply(batch.isEmpty() ? singletonList(binds) : batch);
-
     for (ThrowingConsumer<Statement, SQLException> flag : flags) flag.accept(last);
-
     return last;
   }
 
@@ -360,11 +359,9 @@ final class ParsingStatement implements CallableStatement {
   // -------------------------------------------------------------------------
   // XXX: Shared static and prepared statement execution
   // -------------------------------------------------------------------------
-
   @Override
   public final void clearBatch() throws SQLException {
     statement().clearBatch();
-
     if (batch != null) batch.clear();
   }
 
@@ -383,7 +380,6 @@ final class ParsingStatement implements CallableStatement {
   // -------------------------------------------------------------------------
   // XXX: Lifecycle management
   // -------------------------------------------------------------------------
-
   @Override
   public final void close() throws SQLException {
     if (last != null) last.close();
@@ -405,7 +401,6 @@ final class ParsingStatement implements CallableStatement {
   // -------------------------------------------------------------------------
   // XXX: Result streaming
   // -------------------------------------------------------------------------
-
   @Override
   public final ResultSet getResultSet() throws SQLException {
     return last().getResultSet();
@@ -444,7 +439,6 @@ final class ParsingStatement implements CallableStatement {
   // -------------------------------------------------------------------------
   // XXX: Indexed Variable binding for PreparedStatement
   // -------------------------------------------------------------------------
-
   @Override
   public final void clearParameters() throws SQLException {
     binds.clear();
@@ -580,19 +574,15 @@ final class ParsingStatement implements CallableStatement {
 
   // -------------------------------------------------------------------------
   // XXX: [#12666] Streaming bind values are collected into String or byte[]
-  //               More efficient approaches are currently not possible in
-  //               jOOQ, which has no built in way to represent streaming bind
-  //               values or ResultSet values.
+  // More efficient approaches are currently not possible in
+  // jOOQ, which has no built in way to represent streaming bind
+  // values or ResultSet values.
   // -------------------------------------------------------------------------
-
   private static final byte[] readBytes(InputStream x, int length) {
     try {
-
       if (true) return x.readNBytes(length);
-
       // Legacy Java 8 implementation
       ByteArrayOutputStream out = new ByteArrayOutputStream(length);
-
       long total = 0;
       byte[] buffer = new byte[8192];
       int delta;
@@ -600,7 +590,6 @@ final class ParsingStatement implements CallableStatement {
         out.write(buffer, 0, delta);
         total += delta;
       }
-
       return out.toByteArray();
     } catch (IOException e) {
       throw new org.jooq.exception.IOException("Could not read source", e);
@@ -724,7 +713,6 @@ final class ParsingStatement implements CallableStatement {
   // -------------------------------------------------------------------------
   // XXX: Indexed Variable binding (TODO)
   // -------------------------------------------------------------------------
-
   @Override
   public final void setRef(int parameterIndex, Ref x) throws SQLException {
     throw new SQLFeatureNotSupportedException();
@@ -769,9 +757,7 @@ final class ParsingStatement implements CallableStatement {
   // -------------------------------------------------------------------------
   // XXX: Named Variable binding for CallableStatement
   // -------------------------------------------------------------------------
-
   // TODO: [#11512] What to do about these?
-
   @Override
   public final void setURL(String parameterName, URL val) throws SQLException {
     throw new SQLFeatureNotSupportedException();
@@ -1025,9 +1011,7 @@ final class ParsingStatement implements CallableStatement {
   // -------------------------------------------------------------------------
   // XXX: Other CallableStatement API
   // -------------------------------------------------------------------------
-
   // TODO: [#11512] What to do about these?
-
   @Override
   public final void registerOutParameter(int parameterIndex, int sqlType) throws SQLException {
     throw new SQLFeatureNotSupportedException();
@@ -1411,7 +1395,6 @@ final class ParsingStatement implements CallableStatement {
   // -------------------------------------------------------------------------
   // XXX: TODO
   // -------------------------------------------------------------------------
-
   @Override
   public final ParameterMetaData getParameterMetaData() throws SQLException {
     throw new SQLFeatureNotSupportedException();

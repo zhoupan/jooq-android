@@ -44,13 +44,14 @@ import org.jooq.Result;
 
 /** @author Lukas Eder */
 final class ResultAsCursor<R extends Record> extends AbstractCursor<R> {
+
   private final Result<R> result;
+
   private int index;
 
   @SuppressWarnings("unchecked")
   ResultAsCursor(Result<R> result) {
     super(result.configuration(), (AbstractRow<R>) result.fieldsRow());
-
     this.result = result;
   }
 
@@ -62,9 +63,7 @@ final class ResultAsCursor<R extends Record> extends AbstractCursor<R> {
   @Override
   public final Result<R> fetchNext(int number) {
     Result<R> r = new ResultImpl<R>(configuration, fields);
-
     for (int i = 0; i < number && i + index < result.size(); i++) r.add(result.get(i + index));
-
     index += number;
     return r;
   }

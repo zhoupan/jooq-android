@@ -67,13 +67,11 @@ abstract class AbstractStore extends AbstractFormattable implements Attachable {
   // -------------------------------------------------------------------------
   // The Attachable API
   // -------------------------------------------------------------------------
-
   abstract List<Attachable> getAttachables();
 
   @Override
   public final void attach(Configuration c) {
     configuration = c;
-
     for (Attachable attachable : getAttachables()) if (attachable != null) attachable.attach(c);
   }
 
@@ -93,7 +91,6 @@ abstract class AbstractStore extends AbstractFormattable implements Attachable {
    * @deprecated - 3.11.0 - [#6720] [#6721] - Use {@link Attachable#configuration()} and {@link
    *     Configuration#dsl()} instead.
    */
-  @Deprecated
   protected final DSLContext create() {
     return DSL.using(configuration());
   }
@@ -101,7 +98,6 @@ abstract class AbstractStore extends AbstractFormattable implements Attachable {
   // -------------------------------------------------------------------------
   // equals and hashCode
   // -------------------------------------------------------------------------
-
   /** This method coincides with {@link Record#size()} and {@link ArrayRecord#size()} */
   abstract int size();
 
@@ -114,65 +110,51 @@ abstract class AbstractStore extends AbstractFormattable implements Attachable {
   @Override
   public int hashCode() {
     int hashCode = 1;
-
     for (int i = 0; i < size(); i++) {
       final Object obj = get(i);
-
       if (obj == null) {
         hashCode = 31 * hashCode;
-      }
-
-      // [#985] [#2045] Don't use obj.hashCode() on arrays, but avoid
+      } else // [#985] [#2045] Don't use obj.hashCode() on arrays, but avoid
       // calculating it as byte[] (BLOBs) can be quite large
-      else if (obj.getClass().isArray()) {
+      if (obj.getClass().isArray()) {
         hashCode = 31 * hashCode;
       } else {
         hashCode = 31 * hashCode + obj.hashCode();
       }
     }
-
     return hashCode;
   }
 
   @Override
   public boolean equals(Object obj) {
     if (this == obj) return true;
-
     // Note: keep this implementation in-sync with AbstractRecord.compareTo()!
     if (obj instanceof AbstractStore) {
       final AbstractStore that = (AbstractStore) obj;
-
       if (size() == that.size()) {
         for (int i = 0; i < size(); i++) {
           final Object thisValue = get(i);
           final Object thatValue = that.get(i);
-
           // [#1850] Only return false early. In all other cases,
           // continue checking the remaining fields
           if (thisValue == null && thatValue == null) continue;
           else if (thisValue == null || thatValue == null) return false;
-
-          // [#985] Compare arrays too.
-          else if (thisValue.getClass().isArray() && thatValue.getClass().isArray()) {
-
+          else // [#985] Compare arrays too.
+          if (thisValue.getClass().isArray() && thatValue.getClass().isArray()) {
             // Might be byte[]
             if (thisValue.getClass() == byte[].class && thatValue.getClass() == byte[].class) {
               if (!Arrays.equals((byte[]) thisValue, (byte[]) thatValue)) return false;
-            }
-
-            // Other primitive types are not expected
-            else if (!thisValue.getClass().getComponentType().isPrimitive()
+            } else // Other primitive types are not expected
+            if (!thisValue.getClass().getComponentType().isPrimitive()
                 && !thatValue.getClass().getComponentType().isPrimitive()) {
               if (!Arrays.equals((Object[]) thisValue, (Object[]) thatValue)) return false;
             } else return false;
           } else if (!thisValue.equals(thatValue)) return false;
         }
-
         // If we got through the above loop, the two records are equal
         return true;
       }
     }
-
     return false;
   }
 }

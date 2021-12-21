@@ -768,13 +768,11 @@ interface ResultQueryTrait<R extends Record>
   @Override
   default Stream<R> fetchStream() {
     if (fetchIntermediateResult(Tools.configuration(this))) return fetch().stream();
-
     // [#11895] Don't use the Stream.of(1).flatMap(i -> fetchLazy().stream())
-    //          trick, because flatMap() will consume the entire result set
+    // trick, because flatMap() will consume the entire result set
     AtomicReference<Cursor<R>> r = new AtomicReference<>();
-
     // [#11895] Don't use the Stream.of(1).flatMap(i -> fetchLazy().stream())
-    //          trick, because flatMap() will consume the entire result set
+    // trick, because flatMap() will consume the entire result set
     return StreamSupport.stream(
             () -> {
               Cursor<R> c = fetchLazy();
@@ -808,7 +806,6 @@ interface ResultQueryTrait<R extends Record>
   default <X, A> X collect(Collector<? super R, A, X> collector) {
     if (fetchIntermediateResult(Tools.configuration(this)))
       return patch(collector, fetch()).collect(collector);
-
     try (Cursor<R> c = fetchLazyNonAutoClosing()) {
       return patch(collector, c).collect(collector);
     }
@@ -817,7 +814,6 @@ interface ResultQueryTrait<R extends Record>
   @Override
   default void subscribe(Subscriber<? super R> subscriber) {
     ConnectionFactory cf = configuration().connectionFactory();
-
     if (!(cf instanceof NoConnectionFactory))
       subscriber.onSubscribe(new QuerySubscription<>(this, subscriber, ResultSubscriber::new));
     else subscriber.onSubscribe(new BlockingRecordSubscription<>(this, subscriber));
@@ -1752,17 +1748,13 @@ interface ResultQueryTrait<R extends Record>
     // [#9288] TODO: Create a delayed Collector that can delay the array type lookup until it's
     // available
     Result<R> r = fetch();
-
     if (r.isNotEmpty()) return r.toArray((R[]) Array.newInstance(r.get(0).getClass(), r.size()));
-
     Class<? extends R> recordType;
-
     // TODO [#3185] Pull up getRecordType()
     if (this instanceof AbstractResultQuery)
       recordType = ((AbstractResultQuery<R>) this).getRecordType();
     else if (this instanceof SelectImpl) recordType = ((SelectImpl) this).getRecordType();
     else throw new DataAccessException("Attempt to call fetchArray() on " + getClass());
-
     return r.toArray((R[]) Array.newInstance(recordType, r.size()));
   }
 
@@ -1948,13 +1940,11 @@ interface ResultQueryTrait<R extends Record>
   default boolean hasLimit1() {
     if (this instanceof Select) {
       SelectQueryImpl<?> s = Tools.selectQueryImpl((Select<?>) this);
-
       if (s != null) {
         Limit l = s.getLimit();
         return !l.withTies() && !l.percent() && l.limitOne();
       }
     }
-
     return false;
   }
 
@@ -2056,7 +2046,6 @@ interface ResultQueryTrait<R extends Record>
   // -------------------------------------------------------------------------
   // XXX: Fields API
   // -------------------------------------------------------------------------
-
   /**
    * Get a list of fields provided a result set.
    *

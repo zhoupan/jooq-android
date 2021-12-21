@@ -62,6 +62,7 @@ import org.jooq.Converters;
 public class LocalDateAsLocalDateTimeBinding implements Binding<LocalDateTime, LocalDateTime> {
 
   private final Converter<LocalDateTime, LocalDateTime> converter;
+
   private final Binding<LocalDateTime, LocalDateTime> delegate;
 
   public LocalDateAsLocalDateTimeBinding() {
@@ -76,7 +77,6 @@ public class LocalDateAsLocalDateTimeBinding implements Binding<LocalDateTime, L
 
   @Override
   public final void sql(BindingSQLContext<LocalDateTime> ctx) throws SQLException {
-
     delegate.sql(ctx);
   }
 

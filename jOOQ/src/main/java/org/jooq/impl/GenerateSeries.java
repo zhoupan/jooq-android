@@ -61,13 +61,18 @@ import org.jooq.TableOptions;
 /** @author Lukas Eder */
 final class GenerateSeries extends AbstractTable<Record1<Integer>>
     implements AutoAliasTable<Record1<Integer>> {
+
   private static final Set<SQLDialect> EMULATE_WITH_RECURSIVE =
       SQLDialect.supportedBy(FIREBIRD, HSQLDB, MARIADB, MYSQL, SQLITE);
+
   private static final Set<SQLDialect> EMULATE_SYSTEM_RANGE = SQLDialect.supportedBy(H2);
 
   private final Field<Integer> from;
+
   private final Field<Integer> to;
+
   private final Field<Integer> step;
+
   private final Name name;
 
   GenerateSeries(Field<Integer> from, Field<Integer> to) {
@@ -80,7 +85,6 @@ final class GenerateSeries extends AbstractTable<Record1<Integer>>
 
   GenerateSeries(Field<Integer> from, Field<Integer> to, Field<Integer> step, Name name) {
     super(TableOptions.expression(), name);
-
     this.from = from;
     this.to = to;
     this.step = step;
@@ -115,10 +119,8 @@ final class GenerateSeries extends AbstractTable<Record1<Integer>>
     } else if (EMULATE_SYSTEM_RANGE.contains(ctx.dialect())) {
       if (step == null) {
         ctx.visit(N_SYSTEM_RANGE).sql('(').visit(from).sql(", ").visit(to).sql(')');
-      }
-
-      // Work around https://github.com/h2database/h2database/issues/3046
-      else {
+      } else // Work around https://github.com/h2database/h2database/issues/3046
+      {
         ctx.visit(N_SYSTEM_RANGE).sql('(').visit(from).sql(", ").visit(to).sql(", ");
         ctx.paramType(INLINED, c -> c.visit(step));
         ctx.sql(')');
@@ -149,7 +151,8 @@ final class GenerateSeries extends AbstractTable<Record1<Integer>>
     return new FieldsImpl<>(DSL.field(DSL.name(name, N_GENERATE_SERIES), Integer.class));
   }
 
-  @Override // Avoid AbstractTable implementation
+  // Avoid AbstractTable implementation
+  @Override
   public final Clause[] clauses(Context<?> ctx) {
     return null;
   }

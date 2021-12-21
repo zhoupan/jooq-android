@@ -54,7 +54,6 @@ final class DefaultBindContext extends AbstractBindContext {
   @SuppressWarnings({"unchecked"})
   protected final BindContext bindValue0(Object value, Field<?> field) throws SQLException {
     int nextIndex = nextIndex();
-
     try {
       ((Field<Object>) field)
           .getBinding()
@@ -64,7 +63,6 @@ final class DefaultBindContext extends AbstractBindContext {
     } catch (Exception e) {
       throw new SQLException("Error while writing value at JDBC bind index: " + nextIndex, e);
     }
-
     return this;
   }
 }

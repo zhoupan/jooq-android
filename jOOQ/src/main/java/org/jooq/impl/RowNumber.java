@@ -52,13 +52,11 @@ final class RowNumber extends AbstractWindowFunction<Integer> {
 
   @Override
   public final void accept(Context<?> ctx) {
-
     // [#1524] Don't render this clause where it is not supported
     switch (ctx.family()) {
       case HSQLDB:
         ctx.visit(N_ROWNUM).sql("()");
         break;
-
       default:
         ctx.visit(N_ROW_NUMBER).sql("()");
         acceptOverClause(ctx);

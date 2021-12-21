@@ -70,7 +70,6 @@ final class RecordDataType<R extends Record> extends DefaultDataType<R> {
   @SuppressWarnings("unchecked")
   public RecordDataType(Row row, Class<R> recordType, String name) {
     super(null, recordType, name, name);
-
     this.row = (AbstractRow<R>) row;
   }
 
@@ -88,7 +87,6 @@ final class RecordDataType<R extends Record> extends DefaultDataType<R> {
       Field<R> defaultValue) {
     super(
         t, precision, scale, length, nullability, collation, characterSet, identity, defaultValue);
-
     this.row = row;
   }
 
@@ -129,20 +127,17 @@ final class RecordDataType<R extends Record> extends DefaultDataType<R> {
   @SuppressWarnings("unchecked")
   @Override
   public R convert(Object object) {
-
     // [#12116] TODO: Move this logic into JSONReader to make it more generally useful
     if (object instanceof Record || object instanceof Map || object instanceof List) {
       return newRecord(true, getRecordType(), row, CTX.configuration())
           .operate(
               r -> {
-
                 // [#12014] TODO: Fix this and remove workaround
                 if (object instanceof Record)
                   ((AbstractRecord) r).fromArray(((Record) object).intoArray());
-
-                // This sort is required if we use the JSONFormat.RecordFormat.OBJECT encoding (e.g.
-                // in SQL Server)
-                else if (object instanceof Map)
+                else // This sort is required if we use the JSONFormat.RecordFormat.OBJECT encoding
+                // (e.g. in SQL Server)
+                if (object instanceof Map)
                   r.from(
                       ((Map<String, ?>) object)
                           .entrySet().stream()
@@ -150,7 +145,6 @@ final class RecordDataType<R extends Record> extends DefaultDataType<R> {
                               .map(Entry::getValue)
                               .collect(toList()));
                 else r.from(object);
-
                 return r;
               });
     } else return super.convert(object);

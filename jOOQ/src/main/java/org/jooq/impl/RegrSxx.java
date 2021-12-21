@@ -65,7 +65,6 @@ final class RegrSxx extends DefaultAggregateFunction<BigDecimal> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Set<SQLDialect> NO_SUPPORT_NATIVE =
       SQLDialect.supportedUntil(
           CUBRID, DERBY, FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, SQLITE);
@@ -78,7 +77,6 @@ final class RegrSxx extends DefaultAggregateFunction<BigDecimal> {
 
   @Override
   void acceptFunctionName(Context<?> ctx) {
-
     super.acceptFunctionName(ctx);
   }
 
@@ -86,7 +84,6 @@ final class RegrSxx extends DefaultAggregateFunction<BigDecimal> {
   private final void acceptEmulation(Context<?> ctx) {
     Field<? extends Number> x = (Field) getArguments().get(0);
     Field<? extends Number> y = (Field) getArguments().get(1);
-
     ctx.visit(fo(DSL.regrCount(x, y)).times(fo(DSL.varPop(y(x, y)))));
   }
 }

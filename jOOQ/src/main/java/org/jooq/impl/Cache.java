@@ -63,19 +63,15 @@ final class Cache {
   @SuppressWarnings("unchecked")
   static final <V> V run(
       Configuration configuration, Supplier<V> operation, CacheType type, Supplier<?> key) {
-
     // If no configuration is provided take the default configuration that loads the default
     // Settings
     if (configuration == null) configuration = new DefaultConfiguration();
-
     // Shortcut caching when the relevant Settings flag isn't set.
     if (!type.category.predicate.test(configuration.settings())) return operation.get();
-
     Object cacheOrNull = configuration.data(type);
     if (cacheOrNull == null) {
       synchronized (type) {
         cacheOrNull = configuration.data(type);
-
         if (cacheOrNull == null)
           configuration.data(
               type,
@@ -87,9 +83,7 @@ final class Cache {
                       NULL));
       }
     }
-
     if (cacheOrNull == NULL) return operation.get();
-
     // The cache is guaranteed to be thread safe by the CacheProvider
     // contract. However since we cannot use ConcurrentHashMap.computeIfAbsent()
     // recursively, we have to revert to double checked locking nonetheless.
@@ -99,11 +93,9 @@ final class Cache {
     if (v == null) {
       synchronized (cache) {
         v = cache.get(k);
-
         if (v == null) cache.put(k, (v = operation.get()) == null ? NULL : v);
       }
     }
-
     return (V) (v == NULL ? null : v);
   }
 
@@ -116,8 +108,10 @@ final class Cache {
   }
 
   /** A 2-value key for caching. */
-  private static final /* record */ class Key2 implements Serializable {
+  private static final class /* record */ Key2 implements Serializable {
+
     private final Object key1;
+
     private final Object key2;
 
     public Key2(Object key1, Object key2) {

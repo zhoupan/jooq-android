@@ -42,31 +42,22 @@ public enum DDLFlag {
 
   /** Whether <code>CREATE SCHEMA</code> statements should be generated. */
   SCHEMA,
-
   /** Whether <code>CREATE TABLE</code> statements should be generated. */
   TABLE,
-
   /** Whether <code>PRIMARY KEY</code> constraints should be generated. */
   PRIMARY_KEY,
-
   /** Whether <code>UNIQUE</code> constraints should be generated. */
   UNIQUE,
-
   /** Whether <code>FOREIGN KEY</code> constraints should be generated. */
   FOREIGN_KEY,
-
   /** Whether <code>CHECK</code> constraints should be generated. */
   CHECK,
-
   /** Whether <code>INDEX</code> definitions should be generated. */
   INDEX,
-
   /** Whether <code>DOMAIN</code> statements should be generated. */
   DOMAIN,
-
   /** Whether <code>SEQUENCE</code> statements should be generated. */
   SEQUENCE,
-
   /** Whether <code>COMMENT</code> statements should be generated. */
-  COMMENT,
+  COMMENT
 }

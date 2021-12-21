@@ -47,7 +47,6 @@ import org.jooq.Converter;
  *     java.util.function.Function, java.util.function.Function)} instead, e.g. <code>
  *     Converter.ofNullable(Time.class, LocalTime.class, Time::toLocalTime, Time::valueOf)</code>.
  */
-@Deprecated
 public final class TimeToLocalTimeConverter extends AbstractConverter<Time, LocalTime> {
 
   public TimeToLocalTimeConverter() {

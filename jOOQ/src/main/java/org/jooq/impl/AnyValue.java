@@ -64,7 +64,6 @@ final class AnyValue<T> extends DefaultAggregateFunction<T> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   void acceptFunctionName(Context<?> ctx) {
     switch (ctx.family()) {
@@ -72,7 +71,6 @@ final class AnyValue<T> extends DefaultAggregateFunction<T> {
       case DERBY:
       case FIREBIRD:
       case H2:
-
       case HSQLDB:
       case IGNITE:
       case MARIADB:
@@ -80,7 +78,6 @@ final class AnyValue<T> extends DefaultAggregateFunction<T> {
       case SQLITE:
         ctx.visit(N_MIN);
         break;
-
       default:
         super.acceptFunctionName(ctx);
         break;

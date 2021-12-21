@@ -57,11 +57,9 @@ public final class DiffCLI {
           Args a;
           Settings settings = new Settings();
           DSLContext ctx;
-
           a = parse(args);
           settings(a, settings);
           ctx = ctx(a, settings);
-
           if (a.done) {
           } else if (a.toDialect == null || a.sql1 == null || a.sql2 == null) {
             System.out.println("Mandatory arguments: -T and -1, -2. Use -h for help");
@@ -84,13 +82,11 @@ public final class DiffCLI {
   private static final void render(DSLContext ctx, Args a) {
     String sql1 = a.sql1.trim();
     String sql2 = a.sql2.trim();
-
     System.out.println(ctx.render(ctx.meta(sql1).migrateTo(ctx.meta(sql2))));
   }
 
   private static final Args parse(String[] args) {
     Args result = new Args();
-
     argsLoop:
     for (int i = 0; i < args.length; i++) {
       if ("-f".equals(args[i]) || "--formatted".equals(args[i])) {
@@ -128,10 +124,8 @@ public final class DiffCLI {
           System.out.println("Flag -F / --from-dialect requires <SQLDialect> argument");
           throw e;
         }
-      }
-
-      // [#9144] -t maintained for backwards compatibility
-      else if ("-t".equals(args[i]) || "-T".equals(args[i]) || "--to-dialect".equals(args[i])) {
+      } else // [#9144] -t maintained for backwards compatibility
+      if ("-t".equals(args[i]) || "-T".equals(args[i]) || "--to-dialect".equals(args[i])) {
         try {
           result.toDialect = SQLDialect.valueOf(args[++i].toUpperCase());
           continue argsLoop;
@@ -166,14 +160,12 @@ public final class DiffCLI {
         throw new RuntimeException();
       }
     }
-
     return result;
   }
 
   private static final void invalid(String string, Class<? extends Enum<?>> type) {
     System.out.println("Invalid " + type.getSimpleName() + ": " + string);
     System.out.println("Possible values:");
-
     for (Enum<?> e : type.getEnumConstants()) System.out.println("  " + e.name());
   }
 
@@ -196,13 +188,21 @@ public final class DiffCLI {
   }
 
   public static final class Args {
+
     String sql1;
+
     String sql2;
+
     RenderKeywordCase keywords = RenderKeywordCase.LOWER;
+
     RenderNameCase name = RenderNameCase.LOWER;
+
     SQLDialect toDialect = SQLDialect.DEFAULT;
+
     SQLDialect fromDialect = SQLDialect.DEFAULT;
+
     boolean formatted;
+
     boolean done;
   }
 }

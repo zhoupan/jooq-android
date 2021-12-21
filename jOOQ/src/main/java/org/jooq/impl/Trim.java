@@ -58,18 +58,17 @@ import org.jooq.tools.*;
 final class Trim extends AbstractField<String> {
 
   private final Field<String> string;
+
   private final Field<String> characters;
 
   Trim(Field<String> string) {
     super(N_TRIM, allNotNull(VARCHAR, string));
-
     this.string = nullSafeNotNull(string, VARCHAR);
     this.characters = null;
   }
 
   Trim(Field<String> string, Field<String> characters) {
     super(N_TRIM, allNotNull(VARCHAR, string, characters));
-
     this.string = nullSafeNotNull(string, VARCHAR);
     this.characters = nullSafeNotNull(characters, VARCHAR);
   }
@@ -77,19 +76,15 @@ final class Trim extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
-
     if (characters == null) {
-
       ctx.visit(N_TRIM).sql('(').visit(string).sql(')');
     } else {
       switch (ctx.family()) {
         case SQLITE:
           ctx.visit(N_TRIM).sql('(').visit(string).sql(", ").visit(characters).sql(')');
           break;
-
         default:
           ctx.visit(N_TRIM)
               .sql('(')
@@ -109,7 +104,6 @@ final class Trim extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Trim) {

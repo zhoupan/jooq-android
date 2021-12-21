@@ -86,7 +86,6 @@ public interface Row12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>
   // ------------------------------------------------------------------------
   // Mapping convenience methods
   // ------------------------------------------------------------------------
-
   /**
    * A convenience method to define a local {@link Record12} to custom type {@link RecordMapper}
    * that can be used when projecting {@link Row} types in <code>SELECT</code> or <code>RETURNING
@@ -151,7 +150,6 @@ public interface Row12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>
   // ------------------------------------------------------------------------
   // Field accessors
   // ------------------------------------------------------------------------
-
   /** Get the first field. */
   @NotNull
   Field<T1> field1();
@@ -203,7 +201,6 @@ public interface Row12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>
   // ------------------------------------------------------------------------
   // Generic comparison predicates
   // ------------------------------------------------------------------------
-
   /**
    * Compare this row value expression with another row value expression using a dynamic comparator.
    *
@@ -342,7 +339,6 @@ public interface Row12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>
   // ------------------------------------------------------------------------
   // Equal / Not equal comparison predicates
   // ------------------------------------------------------------------------
-
   /**
    * Compare this row value expression with another row value expression for equality.
    *
@@ -650,7 +646,6 @@ public interface Row12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>
   // ------------------------------------------------------------------------
   // [NOT] DISTINCT predicates
   // ------------------------------------------------------------------------
-
   /** Compare this row value expression with another row value expression for distinctness. */
   @NotNull
   @Support
@@ -732,7 +727,6 @@ public interface Row12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>
   // ------------------------------------------------------------------------
   // Ordering comparison predicates
   // ------------------------------------------------------------------------
-
   /**
    * Compare this row value expression with another row value expression for order.
    *
@@ -1344,7 +1338,6 @@ public interface Row12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>
   // ------------------------------------------------------------------------
   // [NOT] BETWEEN predicates
   // ------------------------------------------------------------------------
-
   /**
    * Check if this row value expression is within a range of two other row value expressions.
    *
@@ -1716,11 +1709,9 @@ public interface Row12<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>
   // ------------------------------------------------------------------------
   // [NOT] DISTINCT predicates
   // ------------------------------------------------------------------------
-
   // ------------------------------------------------------------------------
   // [NOT] IN predicates
   // ------------------------------------------------------------------------
-
   /**
    * Compare this row value expression with a set of row value expressions for equality.
    *

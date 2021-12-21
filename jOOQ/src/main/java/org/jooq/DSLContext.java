@@ -127,7 +127,6 @@ public interface DSLContext extends Scope {
   // -------------------------------------------------------------------------
   // XXX Configuration API
   // -------------------------------------------------------------------------
-
   /**
    * Map a schema to another one.
    *
@@ -156,7 +155,6 @@ public interface DSLContext extends Scope {
   // -------------------------------------------------------------------------
   // XXX Convenience methods accessing the underlying Connection
   // -------------------------------------------------------------------------
-
   /** Access the parser API. */
   @NotNull
   Parser parser();
@@ -414,7 +412,6 @@ public interface DSLContext extends Scope {
   // -------------------------------------------------------------------------
   // XXX APIs related to query optimisation
   // -------------------------------------------------------------------------
-
   /**
    * Run an <code>EXPLAIN</code> statement in the database to estimate the cardinality of the query.
    */
@@ -425,7 +422,6 @@ public interface DSLContext extends Scope {
   // -------------------------------------------------------------------------
   // XXX APIs for creating scope for transactions, mocking, batching, etc.
   // -------------------------------------------------------------------------
-
   /**
    * Run a {@link TransactionalCallable} in the context of this <code>DSLContext</code>'s underlying
    * {@link #configuration()}'s {@link Configuration#transactionProvider()}, and return the <code>
@@ -602,7 +598,6 @@ public interface DSLContext extends Scope {
   // -------------------------------------------------------------------------
   // XXX RenderContext and BindContext accessors
   // -------------------------------------------------------------------------
-
   /**
    * Get a new {@link RenderContext} for the context of this <code>DSLContext</code>.
    *
@@ -623,7 +618,6 @@ public interface DSLContext extends Scope {
    * @deprecated - [#6280] - 3.10 - Do not reuse this method. It will be completely internal with
    *     jOOQ 4.0
    */
-  @Deprecated(forRemoval = true, since = "3.10")
   @Internal
   @NotNull
   RenderContext renderContext();
@@ -728,7 +722,6 @@ public interface DSLContext extends Scope {
    * @deprecated - [#6280] - 3.10 - Do not reuse this method. It will be completely internal with
    *     jOOQ 4.0
    */
-  @Deprecated(forRemoval = true, since = "3.10")
   @Internal
   @NotNull
   BindContext bindContext(PreparedStatement stmt);
@@ -736,7 +729,6 @@ public interface DSLContext extends Scope {
   // -------------------------------------------------------------------------
   // XXX Attachable and Serializable API
   // -------------------------------------------------------------------------
-
   /**
    * Attach this <code>DSLContext</code>'s underlying {@link #configuration()} to some attachables.
    */
@@ -750,7 +742,6 @@ public interface DSLContext extends Scope {
   // -------------------------------------------------------------------------
   // XXX Access to the loader API
   // -------------------------------------------------------------------------
-
   /** Create a new <code>Loader</code> object to load data from a CSV or XML source. */
   @NotNull
   @CheckReturnValue
@@ -760,7 +751,6 @@ public interface DSLContext extends Scope {
   // -------------------------------------------------------------------------
   // XXX: Queries
   // -------------------------------------------------------------------------
-
   /**
    * Wrap a collection of queries.
    *
@@ -804,7 +794,6 @@ public interface DSLContext extends Scope {
   // -------------------------------------------------------------------------
   // XXX Plain SQL API
   // -------------------------------------------------------------------------
-
   /**
    * Create a new query holding plain SQL. There must not be any binding variables contained in the
    * SQL.
@@ -2591,7 +2580,6 @@ public interface DSLContext extends Scope {
   // -------------------------------------------------------------------------
   // XXX JDBC convenience methods
   // -------------------------------------------------------------------------
-
   /**
    * Fetch all data from a JDBC {@link ResultSet} and transform it to a jOOQ {@link Result}.
    *
@@ -3735,7 +3723,6 @@ public interface DSLContext extends Scope {
   // -------------------------------------------------------------------------
   // XXX Global Query factory
   // -------------------------------------------------------------------------
-
   /**
    * Create a <code>WITH</code> clause to supply subsequent <code>SELECT</code>, <code>UPDATE</code>
    * , <code>INSERT</code>, <code>DELETE</code>, and <code>MERGE</code> statements with {@link
@@ -3844,7 +3831,6 @@ public interface DSLContext extends Scope {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, POSTGRES, SQLITE})
@@ -3869,7 +3855,6 @@ public interface DSLContext extends Scope {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, POSTGRES, SQLITE})
@@ -5217,7 +5202,6 @@ public interface DSLContext extends Scope {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
@@ -5243,7 +5227,6 @@ public interface DSLContext extends Scope {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({FIREBIRD, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
@@ -10058,7 +10041,6 @@ public interface DSLContext extends Scope {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
@@ -10072,7 +10054,6 @@ public interface DSLContext extends Scope {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
@@ -10087,7 +10068,6 @@ public interface DSLContext extends Scope {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
@@ -10102,7 +10082,6 @@ public interface DSLContext extends Scope {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
@@ -10117,7 +10096,6 @@ public interface DSLContext extends Scope {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
@@ -10137,7 +10115,6 @@ public interface DSLContext extends Scope {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
@@ -10158,7 +10135,6 @@ public interface DSLContext extends Scope {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
@@ -10181,7 +10157,6 @@ public interface DSLContext extends Scope {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
@@ -10205,7 +10180,6 @@ public interface DSLContext extends Scope {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
@@ -10230,7 +10204,6 @@ public interface DSLContext extends Scope {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
@@ -10256,7 +10229,6 @@ public interface DSLContext extends Scope {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
@@ -10283,7 +10255,6 @@ public interface DSLContext extends Scope {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
@@ -10311,7 +10282,6 @@ public interface DSLContext extends Scope {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
@@ -10340,7 +10310,6 @@ public interface DSLContext extends Scope {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
@@ -10370,7 +10339,6 @@ public interface DSLContext extends Scope {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
@@ -10401,7 +10369,6 @@ public interface DSLContext extends Scope {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
@@ -10434,7 +10401,6 @@ public interface DSLContext extends Scope {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
@@ -10468,7 +10434,6 @@ public interface DSLContext extends Scope {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
@@ -10523,7 +10488,6 @@ public interface DSLContext extends Scope {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
@@ -10599,7 +10563,6 @@ public interface DSLContext extends Scope {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
@@ -10678,7 +10641,6 @@ public interface DSLContext extends Scope {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
@@ -10760,7 +10722,6 @@ public interface DSLContext extends Scope {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
@@ -10873,7 +10834,6 @@ public interface DSLContext extends Scope {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
@@ -10886,7 +10846,6 @@ public interface DSLContext extends Scope {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
@@ -10956,7 +10915,6 @@ public interface DSLContext extends Scope {
   // -------------------------------------------------------------------------
   // XXX Batch query execution
   // -------------------------------------------------------------------------
-
   /**
    * Run a <code>BatchedRunnable</code> on a {@link BatchedConnection}, delaying execution as long
    * as possible before batching.
@@ -11347,7 +11305,6 @@ public interface DSLContext extends Scope {
   // -------------------------------------------------------------------------
   // XXX DDL Statements from existing meta data
   // -------------------------------------------------------------------------
-
   /**
    * Convenience method for {@link Meta#ddl()}.
    *
@@ -11501,11 +11458,9 @@ public interface DSLContext extends Scope {
   // -------------------------------------------------------------------------
   // XXX DDL Statements
   // -------------------------------------------------------------------------
-
   // -------------------------------------------------------------------------
   // DDL statements
   // -------------------------------------------------------------------------
-
   /**
    * The <code>ALTER DATABASE</code> statement.
    *
@@ -13294,7 +13249,6 @@ public interface DSLContext extends Scope {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
@@ -13313,7 +13267,6 @@ public interface DSLContext extends Scope {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
@@ -13333,7 +13286,6 @@ public interface DSLContext extends Scope {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
@@ -13352,7 +13304,6 @@ public interface DSLContext extends Scope {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
@@ -13371,7 +13322,6 @@ public interface DSLContext extends Scope {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
@@ -13390,7 +13340,6 @@ public interface DSLContext extends Scope {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
@@ -13440,7 +13389,6 @@ public interface DSLContext extends Scope {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({FIREBIRD, H2, MARIADB, MYSQL, POSTGRES})
@@ -13459,7 +13407,6 @@ public interface DSLContext extends Scope {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({FIREBIRD, H2, MARIADB, MYSQL, POSTGRES})
@@ -13479,7 +13426,6 @@ public interface DSLContext extends Scope {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({FIREBIRD, H2, MARIADB, MYSQL, POSTGRES})
@@ -13498,7 +13444,6 @@ public interface DSLContext extends Scope {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({FIREBIRD, H2, MARIADB, MYSQL, POSTGRES})
@@ -13517,7 +13462,6 @@ public interface DSLContext extends Scope {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({FIREBIRD, H2, MARIADB, MYSQL, POSTGRES})
@@ -13536,7 +13480,6 @@ public interface DSLContext extends Scope {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({FIREBIRD, H2, MARIADB, MYSQL, POSTGRES})
@@ -13586,7 +13529,6 @@ public interface DSLContext extends Scope {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
@@ -13605,7 +13547,6 @@ public interface DSLContext extends Scope {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
@@ -13625,7 +13566,6 @@ public interface DSLContext extends Scope {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
@@ -13644,7 +13584,6 @@ public interface DSLContext extends Scope {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
@@ -13663,7 +13602,6 @@ public interface DSLContext extends Scope {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
@@ -13682,7 +13620,6 @@ public interface DSLContext extends Scope {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
@@ -13873,7 +13810,6 @@ public interface DSLContext extends Scope {
   // -------------------------------------------------------------------------
   // XXX Other queries for identites and sequences
   // -------------------------------------------------------------------------
-
   /**
    * Retrieve the last inserted ID.
    *
@@ -13979,7 +13915,6 @@ public interface DSLContext extends Scope {
   // -------------------------------------------------------------------------
   // XXX Global Record factory
   // -------------------------------------------------------------------------
-
   /**
    * Create a new {@link UDTRecord}.
    *
@@ -15295,7 +15230,6 @@ public interface DSLContext extends Scope {
   // -------------------------------------------------------------------------
   // XXX Executing queries
   // -------------------------------------------------------------------------
-
   /**
    * Execute a {@link ResultQuery} in the context of this <code>DSLContext</code> and return
    * results.
@@ -15720,7 +15654,6 @@ public interface DSLContext extends Scope {
   // -------------------------------------------------------------------------
   // XXX Fast querying
   // -------------------------------------------------------------------------
-
   /**
    * Execute and return all records for <code><pre>SELECT table.col1, table.col2 FROM table</pre>
    * </code>.

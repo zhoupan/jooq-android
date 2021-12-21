@@ -45,75 +45,86 @@ import java.util.function.Supplier;
 /*
  * This file contains a few functional interfaces that are missing from the JDK.
  */
-
 /** A checked exception throwing {@link Runnable}. */
 @FunctionalInterface
 interface ThrowingRunnable<E extends Throwable> {
+
   void run() throws E;
 }
 
 /** A checked exception throwing {@link Consumer}. */
 @FunctionalInterface
 interface ThrowingConsumer<T, E extends Throwable> {
+
   void accept(T t) throws E;
 }
 
 /** A checked exception throwing {@link Supplier}. */
 @FunctionalInterface
 interface ThrowingSupplier<T, E extends Throwable> {
+
   T get() throws E;
 }
 
 /** A checked exception throwing {@link Function}. */
 @FunctionalInterface
 interface ThrowingFunction<T, R, E extends Throwable> {
+
   R apply(T t) throws E;
 }
 
 /** A checked exception throwing {@link Predicate}. */
 @FunctionalInterface
 interface ThrowingPredicate<T, E extends Throwable> {
+
   boolean test(T t) throws E;
 }
 
 /** A checked exception throwing {@link Predicate}. */
 @FunctionalInterface
 interface ThrowingIntPredicate<T, E extends Throwable> {
+
   boolean test(T t, int i) throws E;
 }
 
 /** A checked exception throwing {@link IntFunction}. */
 @FunctionalInterface
 interface ThrowingIntFunction<R, E extends Throwable> {
+
   R apply(int t) throws E;
 }
 
 /** A checked exception throwing {@link BiFunction}. */
 @FunctionalInterface
 interface ThrowingBiFunction<T1, T2, R, E extends Throwable> {
+
   R apply(T1 t1, T2 t2) throws E;
 }
 
 /** A checked exception throwing {@link IntIntFunction}. */
 @FunctionalInterface
 interface ThrowingIntIntFunction<R, E extends Throwable> {
+
   R apply(int i, int j) throws E;
 }
 
 /** A checked exception throwing {@link ObjIntFunction}. */
 @FunctionalInterface
 interface ThrowingObjIntFunction<T, R, E extends Throwable> {
+
   R apply(T t, int i) throws E;
 }
 
 /** A missing primitive type {@link Consumer} for booleans. */
 @FunctionalInterface
 interface BooleanConsumer {
+
   void accept(boolean b);
 }
 
 /** A missing primitive type {@link BiFunction} for references and ints. */
 @FunctionalInterface
 interface ObjIntFunction<T, R> {
+
   R apply(T t, int i);
 }

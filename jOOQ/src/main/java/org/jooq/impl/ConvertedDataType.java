@@ -61,16 +61,15 @@ import org.jooq.SQLDialect;
 final class ConvertedDataType<T, U> extends AbstractDataTypeX<U> {
 
   final AbstractDataTypeX<T> delegate;
+
   final Binding<? super T, U> binding;
 
   ConvertedDataType(AbstractDataTypeX<T> delegate, Binding<? super T, U> binding) {
     super(delegate.getQualifiedName(), delegate.getCommentPart());
-
     this.delegate = delegate;
     this.binding = binding;
-
     // [#9492] For backwards compatibility reasons, a legacy type registers
-    //         itself in the static type registry
+    // itself in the static type registry
     new LegacyConvertedDataType<>(delegate, binding);
   }
 
@@ -216,19 +215,17 @@ final class ConvertedDataType<T, U> extends AbstractDataTypeX<U> {
   @Override
   public final U convert(Object object) {
     if (getConverter().toType().isInstance(object)) return (U) object;
-
-    // [#12155] Avoid double conversion passes between Result and custom List<UserType>
-    else if (delegate.isMultiset() && !(object instanceof Result)) return (U) object;
-
-    // [#12413] Avoid double conversion passes between Record and custom object types
-    //          - List is what we produce when reading XML or JSON nested data in standard SQL
-    //          - Map is what we produce in SQL Server (which doesn't support JSON_ARRAY)
-    else if (delegate.isRecord()
+    else // [#12155] Avoid double conversion passes between Result and custom List<UserType>
+    if (delegate.isMultiset() && !(object instanceof Result)) return (U) object;
+    else // [#12413] Avoid double conversion passes between Record and custom object types
+    // - List is what we produce when reading XML or JSON nested data in standard SQL
+    // - Map is what we produce in SQL Server (which doesn't support JSON_ARRAY)
+    if (delegate.isRecord()
         && !(object instanceof Record || object instanceof List || object instanceof Map))
       return (U) object;
-
-    // [#3200] Try to convert arbitrary objects to T
-    else return ((Converter<T, U>) getConverter()).from(delegate.convert(object));
+    else
+      // [#3200] Try to convert arbitrary objects to T
+      return ((Converter<T, U>) getConverter()).from(delegate.convert(object));
   }
 
   @Override

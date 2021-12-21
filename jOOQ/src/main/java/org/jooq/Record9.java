@@ -50,7 +50,6 @@ public interface Record9<T1, T2, T3, T4, T5, T6, T7, T8, T9> extends Record {
   // ------------------------------------------------------------------------
   // Row value expressions
   // ------------------------------------------------------------------------
-
   /** Get this record's fields as a {@link Row9}. */
   @NotNull
   @Override
@@ -64,7 +63,6 @@ public interface Record9<T1, T2, T3, T4, T5, T6, T7, T8, T9> extends Record {
   // ------------------------------------------------------------------------
   // Field accessors
   // ------------------------------------------------------------------------
-
   /** Get the first field. */
   @NotNull
   Field<T1> field1();
@@ -104,7 +102,6 @@ public interface Record9<T1, T2, T3, T4, T5, T6, T7, T8, T9> extends Record {
   // ------------------------------------------------------------------------
   // Value accessors
   // ------------------------------------------------------------------------
-
   /** Get the first value. */
   T1 value1();
 
@@ -187,7 +184,6 @@ public interface Record9<T1, T2, T3, T4, T5, T6, T7, T8, T9> extends Record {
   // ------------------------------------------------------------------------
   // Value accessors for record destructuring in Kotlin
   // ------------------------------------------------------------------------
-
   /**
    * Get the first value.
    *

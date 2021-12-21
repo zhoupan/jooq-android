@@ -355,7 +355,8 @@ public final class StringUtils {
     }
     int pads = size - str.length();
     if (pads <= 0) {
-      return str; // returns original String when possible
+      // returns original String when possible
+      return str;
     }
     if (pads > PAD_LIMIT) {
       return rightPad(str, size, String.valueOf(padChar));
@@ -397,12 +398,12 @@ public final class StringUtils {
     int strLen = str.length();
     int pads = size - strLen;
     if (pads <= 0) {
-      return str; // returns original String when possible
+      // returns original String when possible
+      return str;
     }
     if (padLen == 1 && pads <= PAD_LIMIT) {
       return rightPad(str, size, padStr.charAt(0));
     }
-
     if (pads == padLen) {
       return str.concat(padStr);
     } else if (pads < padLen) {
@@ -467,7 +468,8 @@ public final class StringUtils {
     }
     int pads = size - str.length();
     if (pads <= 0) {
-      return str; // returns original String when possible
+      // returns original String when possible
+      return str;
     }
     if (pads > PAD_LIMIT) {
       return leftPad(str, size, String.valueOf(padChar));
@@ -509,12 +511,12 @@ public final class StringUtils {
     int strLen = str.length();
     int pads = size - strLen;
     if (pads <= 0) {
-      return str; // returns original String when possible
+      // returns original String when possible
+      return str;
     }
     if (padLen == 1 && pads <= PAD_LIMIT) {
       return leftPad(str, size, padStr.charAt(0));
     }
-
     if (pads == padLen) {
       return padStr.concat(str);
     } else if (pads < padLen) {
@@ -846,10 +848,8 @@ public final class StringUtils {
    */
   private static String replaceEach(
       String text, String[] searchList, String[] replacementList, boolean repeat, int timeToLive) {
-
     // mchyzer Performance note: This creates very few new objects (one major goal)
     // let me know if there are performance requests, we can create a harness to measure
-
     if (text == null
         || text.length() == 0
         || searchList == null
@@ -858,15 +858,12 @@ public final class StringUtils {
         || replacementList.length == 0) {
       return text;
     }
-
     // if recursing, this shouldnt be less than 0
     if (timeToLive < 0) {
       throw new IllegalStateException("TimeToLive of " + timeToLive + " is less than 0: " + text);
     }
-
     int searchLength = searchList.length;
     int replacementLength = replacementList.length;
-
     // make sure lengths are ok, these need to be equal
     if (searchLength != replacementLength) {
       throw new IllegalArgumentException(
@@ -875,15 +872,12 @@ public final class StringUtils {
               + " vs "
               + replacementLength);
     }
-
     // keep track of which still have matches
     boolean[] noMoreMatchesForReplIndex = new boolean[searchLength];
-
     // index on index that the match was found
     int textIndex = -1;
     int replaceIndex = -1;
     int tempIndex = -1;
-
     // index of replace array that will replace the search string found
     // NOTE: logic duplicated below START
     for (int i = 0; i < searchLength; i++) {
@@ -894,7 +888,6 @@ public final class StringUtils {
         continue;
       }
       tempIndex = text.indexOf(searchList[i]);
-
       // see if we need to keep searching for this
       if (tempIndex == -1) {
         noMoreMatchesForReplIndex[i] = true;
@@ -906,40 +899,32 @@ public final class StringUtils {
       }
     }
     // NOTE: logic mostly below END
-
     // no search strings found, we are done
     if (textIndex == -1) {
       return text;
     }
-
     int start = 0;
-
     // get a good guess on the size of the result buffer so it doesnt have to double if it goes over
     // a bit
     int increase = 0;
-
     // count the replacement text elements that are larger than their corresponding text being
     // replaced
     for (int i = 0; i < searchList.length; i++) {
       int greater = replacementList[i].length() - searchList[i].length();
       if (greater > 0) {
-        increase += 3 * greater; // assume 3 matches
+        // assume 3 matches
+        increase += 3 * greater;
       }
     }
     // have upper-bound at 20% increase, then let Java take over
     increase = Math.min(increase, text.length() / 5);
-
     StringBuffer buf = new StringBuffer(text.length() + increase);
-
     while (textIndex != -1) {
-
       for (int i = start; i < textIndex; i++) {
         buf.append(text.charAt(i));
       }
       buf.append(replacementList[replaceIndex]);
-
       start = textIndex + searchList[replaceIndex].length();
-
       textIndex = -1;
       replaceIndex = -1;
       tempIndex = -1;
@@ -953,7 +938,6 @@ public final class StringUtils {
           continue;
         }
         tempIndex = text.indexOf(searchList[i], start);
-
         // see if we need to keep searching for this
         if (tempIndex == -1) {
           noMoreMatchesForReplIndex[i] = true;
@@ -965,7 +949,6 @@ public final class StringUtils {
         }
       }
       // NOTE: logic duplicated above END
-
     }
     int textLength = text.length();
     for (int i = start; i < textLength; i++) {
@@ -975,7 +958,6 @@ public final class StringUtils {
     if (!repeat) {
       return result;
     }
-
     return replaceEach(result, searchList, replacementList, repeat, timeToLive - 1);
   }
 
@@ -1032,7 +1014,6 @@ public final class StringUtils {
     if (array == null) {
       return null;
     }
-
     return join(array, separator, 0, array.length);
   }
 
@@ -1069,9 +1050,7 @@ public final class StringUtils {
     if (noOfItems <= 0) {
       return EMPTY;
     }
-
     StringBuilder buf = new StringBuilder(noOfItems * 16);
-
     for (int i = startIndex; i < endIndex; i++) {
       if (i > startIndex) {
         buf.append(separator);
@@ -1145,16 +1124,13 @@ public final class StringUtils {
     if (separator == null) {
       separator = EMPTY;
     }
-
     // endIndex - startIndex > 0:   Len = NofStrings *(len(firstString) + len(separator))
-    //           (Assuming that all Strings are roughly equally long)
+    // (Assuming that all Strings are roughly equally long)
     int noOfItems = (endIndex - startIndex);
     if (noOfItems <= 0) {
       return EMPTY;
     }
-
     StringBuilder buf = new StringBuilder(noOfItems * 16);
-
     for (int i = startIndex; i < endIndex; i++) {
       if (i > startIndex) {
         buf.append(separator);
@@ -1171,7 +1147,6 @@ public final class StringUtils {
   // -------------------------------------------------------------------------
   // XXX: The following methods are taken from ObjectUtils
   // -------------------------------------------------------------------------
-
   /**
    * Compares two strings for equality, where either one or both objects may be {@code null}.
    *
@@ -1272,34 +1247,26 @@ public final class StringUtils {
   // -------------------------------------------------------------------------
   // XXX: The following methods are not part of Apache's commons-lang library
   // -------------------------------------------------------------------------
-
   /** Convert a string to camel case */
   public static String toCamelCase(String string) {
     StringBuilder result = new StringBuilder();
-
     // [#2515] - Keep trailing underscores
     for (String word : string.split("_", -1)) {
-
       // Uppercase first letter of a word
       if (word.length() > 0) {
-
         // [#82] - If a word starts with a digit, prevail the
         // underscore to prevent naming clashes
         if (Character.isDigit(word.charAt(0))) {
           result.append("_");
         }
-
         result.append(word.substring(0, 1).toUpperCase());
         result.append(word.substring(1).toLowerCase());
-      }
-
-      // If no letter exists, prevail the underscore (e.g. leading
+      } else // If no letter exists, prevail the underscore (e.g. leading
       // underscores)
-      else {
+      {
         result.append("_");
       }
     }
-
     return result.toString();
   }
 
@@ -1311,14 +1278,12 @@ public final class StringUtils {
   /** Change a string's first letter to lower case */
   public static String toLC(String string) {
     if (string == null || string.isEmpty()) return string;
-
     return Character.toLowerCase(string.charAt(0)) + string.substring(1);
   }
 
   /** Change a string's first letter to upper case */
   public static String toUC(String string) {
     if (string == null || string.isEmpty()) return string;
-
     return Character.toUpperCase(string.charAt(0)) + string.substring(1);
   }
 
@@ -1338,21 +1303,16 @@ public final class StringUtils {
     int index = 0;
     ArrayList<String> matchList = new ArrayList<>();
     Matcher m = Pattern.compile(regex).matcher(input);
-
     // Add segments before each match found
     while (m.find()) {
       matchList.add(input.subSequence(index, m.start()).toString());
       matchList.add(input.subSequence(m.start(), m.end()).toString());
-
       index = m.end();
     }
-
     // If no match was found, return this
     if (index == 0) return new String[] {input.toString()};
-
     // Add remaining segment
     matchList.add(input.subSequence(index, input.length()).toString());
-
     // Construct result
     Iterator<String> it = matchList.iterator();
     while (it.hasNext()) {
@@ -1360,7 +1320,6 @@ public final class StringUtils {
         it.remove();
       }
     }
-
     String[] result = new String[matchList.size()];
     return matchList.toArray(result);
   }

@@ -93,63 +93,80 @@ abstract class AbstractContext<C extends Context<C>> extends AbstractScope imple
   final PreparedStatement stmt;
 
   boolean declareFields;
+
   boolean declareTables;
+
   boolean declareAliases;
+
   boolean declareWindows;
+
   boolean declareCTE;
 
   int subquery;
+
   BitSet subqueryScopedNestedSetOperations;
+
   int stringLiteral;
+
   String stringLiteralEscapedApos = "'";
+
   int index;
+
   int scopeMarking;
+
   final ScopeStack<QueryPart, ScopeStackElement> scopeStack;
+
   int skipUpdateCounts;
 
   // [#2665] VisitListener API
   private final VisitListener[] visitListenersStart;
+
   private final VisitListener[] visitListenersEnd;
+
   private final Deque<Clause> visitClauses;
+
   private final DefaultVisitContext visitContext;
+
   private final Deque<QueryPart> visitParts;
 
   // [#2694] Unified RenderContext and BindContext traversal
   final ParamType forcedParamType;
+
   final boolean castModeOverride;
+
   CastMode castMode;
+
   LanguageContext languageContext;
+
   ParamType paramType = ParamType.INDEXED;
+
   boolean quote = true;
+
   boolean qualifySchema = true;
+
   boolean qualifyCatalog = true;
 
   // [#11711] Enforcing scientific notation
   private transient DecimalFormat doubleFormat;
+
   private transient DecimalFormat floatFormat;
 
   AbstractContext(Configuration configuration, PreparedStatement stmt) {
     super(configuration);
     this.stmt = stmt;
-
     VisitListenerProvider[] providers = configuration.visitListenerProviders();
-
     // [#2080] [#3935] Currently, the InternalVisitListener is not used everywhere
     boolean useInternalVisitListener = false;
-
     // [#6758] Avoid this allocation if unneeded
     VisitListener[] visitListeners =
         providers.length > 0 || useInternalVisitListener
             ? new VisitListener[providers.length + (useInternalVisitListener ? 1 : 0)]
             : null;
-
     if (visitListeners != null) {
       for (int i = 0; i < providers.length; i++) visitListeners[i] = providers[i].provide();
-
       this.visitContext = new DefaultVisitContext();
       this.visitParts = new ArrayDeque<>();
       this.visitClauses = new ArrayDeque<>();
-
       this.visitListenersStart =
           configuration.settings().getVisitListenerStartInvocationOrder() != REVERSE
               ? visitListeners
@@ -165,14 +182,12 @@ abstract class AbstractContext<C extends Context<C>> extends AbstractScope imple
       this.visitListenersStart = null;
       this.visitListenersEnd = null;
     }
-
     this.forcedParamType =
         SettingsTools.getStatementType(settings()) == StatementType.STATIC_STATEMENT
             ? ParamType.INLINED
             : SettingsTools.getParamType(settings()) == ParamType.FORCE_INDEXED
                 ? ParamType.INDEXED
                 : null;
-
     ParamCastMode m = settings().getParamCastMode();
     this.castModeOverride = m != ParamCastMode.DEFAULT && m != null;
     this.castMode =
@@ -186,26 +201,20 @@ abstract class AbstractContext<C extends Context<C>> extends AbstractScope imple
   // ------------------------------------------------------------------------
   // VisitListener API
   // ------------------------------------------------------------------------
-
   @Override
   public final C visit(QueryPart part) {
     if (part != null) {
-
       // Issue start clause events
       // -----------------------------------------------------------------
       Clause[] clauses = Tools.isNotEmpty(visitListenersStart) ? clause(part) : null;
       if (clauses != null) for (int i = 0; i < clauses.length; i++) start(clauses[i]);
-
       // Perform the actual visiting, or recurse into the replacement
       // -----------------------------------------------------------------
       QueryPart replacement = start(part);
-
       if (replacement != null) {
         QueryPartInternal internal = (QueryPartInternal) scopeMapping(replacement);
-
         // If this is supposed to be a declaration section and the part isn't
         // able to declare anything, then disable declaration temporarily
-
         // We're declaring fields, but "part" does not declare fields
         if (declareFields() && !internal.declaresFields()) {
           boolean aliases = declareAliases();
@@ -213,26 +222,20 @@ abstract class AbstractContext<C extends Context<C>> extends AbstractScope imple
           visit0(internal);
           declareFields(true);
           declareAliases(aliases);
-        }
-
-        // We're declaring tables, but "part" does not declare tables
-        else if (declareTables() && !internal.declaresTables()) {
+        } else // We're declaring tables, but "part" does not declare tables
+        if (declareTables() && !internal.declaresTables()) {
           boolean aliases = declareAliases();
           declareTables(false);
           visit0(internal);
           declareTables(true);
           declareAliases(aliases);
-        }
-
-        // We're declaring windows, but "part" does not declare windows
-        else if (declareWindows() && !internal.declaresWindows()) {
+        } else // We're declaring windows, but "part" does not declare windows
+        if (declareWindows() && !internal.declaresWindows()) {
           declareWindows(false);
           visit0(internal);
           declareWindows(true);
-        }
-
-        // We're declaring cte, but "part" does not declare cte
-        else if (declareCTE() && !internal.declaresCTE()) {
+        } else // We're declaring cte, but "part" does not declare cte
+        if (declareCTE() && !internal.declaresCTE()) {
           declareCTE(false);
           visit0(internal);
           declareCTE(true);
@@ -240,25 +243,19 @@ abstract class AbstractContext<C extends Context<C>> extends AbstractScope imple
             && castMode() != CastMode.DEFAULT
             && !internal.generatesCast()) {
           CastMode previous = castMode();
-
           castMode(CastMode.DEFAULT);
           visit0(internal);
           castMode(previous);
-        }
-
-        // We're not declaring, or "part" can declare
-        else {
+        } else // We're not declaring, or "part" can declare
+        {
           visit0(internal);
         }
       }
-
       end(replacement);
-
       // Issue end clause events
       // -----------------------------------------------------------------
       if (clauses != null) for (int i = clauses.length - 1; i >= 0; i--) end(clauses[i]);
     }
-
     return (C) this;
   }
 
@@ -267,27 +264,23 @@ abstract class AbstractContext<C extends Context<C>> extends AbstractScope imple
   private final C toggle(
       boolean b, BooleanSupplier get, BooleanConsumer set, Consumer<? super C> consumer) {
     boolean previous = get.getAsBoolean();
-
     try {
       set.accept(b);
       consumer.accept((C) this);
     } finally {
       set.accept(previous);
     }
-
     return (C) this;
   }
 
   private final <T> C toggle(T t, Supplier<T> get, Consumer<T> set, Consumer<? super C> consumer) {
     T previous = get.get();
-
     try {
       set.accept(t);
       consumer.accept((C) this);
     } finally {
       set.accept(previous);
     }
-
     return (C) this;
   }
 
@@ -320,7 +313,6 @@ abstract class AbstractContext<C extends Context<C>> extends AbstractScope imple
   private final Clause[] clause(QueryPart part) {
     if (part instanceof QueryPartInternal && !TRUE.equals(data(DATA_OMIT_CLAUSE_EVENT_EMISSION)))
       return ((QueryPartInternal) part).clauses(this);
-
     return null;
   }
 
@@ -328,10 +320,8 @@ abstract class AbstractContext<C extends Context<C>> extends AbstractScope imple
   public final C start(Clause clause) {
     if (clause != null && visitClauses != null) {
       visitClauses.addLast(clause);
-
       for (VisitListener listener : visitListenersStart) listener.clauseStart(visitContext);
     }
-
     return (C) this;
   }
 
@@ -339,20 +329,16 @@ abstract class AbstractContext<C extends Context<C>> extends AbstractScope imple
   public final C end(Clause clause) {
     if (clause != null && visitClauses != null) {
       for (VisitListener listener : visitListenersEnd) listener.clauseEnd(visitContext);
-
       if (visitClauses.removeLast() != clause)
         throw new IllegalStateException("Mismatch between visited clauses!");
     }
-
     return (C) this;
   }
 
   private final QueryPart start(QueryPart part) {
     if (visitParts != null) {
       visitParts.addLast(part);
-
       for (VisitListener listener : visitListenersStart) listener.visitStart(visitContext);
-
       return visitParts.peekLast();
     } else {
       return part;
@@ -362,7 +348,6 @@ abstract class AbstractContext<C extends Context<C>> extends AbstractScope imple
   private final void end(QueryPart part) {
     if (visitParts != null) {
       for (VisitListener listener : visitListenersEnd) listener.visitEnd(visitContext);
-
       if (visitParts.removeLast() != part)
         throw new RuntimeException("Mismatch between visited query parts");
     }
@@ -563,35 +548,28 @@ abstract class AbstractContext<C extends Context<C>> extends AbstractScope imple
   final C subquery0(boolean s, boolean setOperation) {
     if (s) {
       subquery++;
-
       // [#7222] If present the nested set operations flag needs to be reset whenever we're
-      //         entering a subquery (and restored when leaving it).
+      // entering a subquery (and restored when leaving it).
       // [#2791] This works differently from the scope marking mechanism, which wraps a
       // [#7152] naming scope for aliases and other object names.
       // [#9961] Do this only for scalar subqueries and derived tables, not for set operation
       // subqueries
       if (!setOperation && TRUE.equals(data(DATA_NESTED_SET_OPERATIONS))) {
         data().remove(DATA_NESTED_SET_OPERATIONS);
-
         if (subqueryScopedNestedSetOperations == null)
           subqueryScopedNestedSetOperations = new BitSet();
-
         subqueryScopedNestedSetOperations.set(subquery);
       }
-
       scopeStart();
     } else {
       scopeEnd();
-
       if (!setOperation)
         if (subqueryScopedNestedSetOperations != null
             && subqueryScopedNestedSetOperations.get(subquery))
           data(DATA_NESTED_SET_OPERATIONS, true);
         else data().remove(DATA_NESTED_SET_OPERATIONS);
-
       subquery--;
     }
-
     return (C) this;
   }
 
@@ -604,7 +582,6 @@ abstract class AbstractContext<C extends Context<C>> extends AbstractScope imple
   public final C scopeStart() {
     scopeStack.scopeStart();
     scopeStart0();
-
     return (C) this;
   }
 
@@ -636,14 +613,12 @@ abstract class AbstractContext<C extends Context<C>> extends AbstractScope imple
   @Override
   public final C scopeMarkStart(QueryPart part) {
     if (scopeStack.inScope() && scopeMarking++ == 0) scopeMarkStart0(part);
-
     return (C) this;
   }
 
   @Override
   public final C scopeMarkEnd(QueryPart part) {
     if (scopeStack.inScope() && --scopeMarking == 0) scopeMarkEnd0(part);
-
     return (C) this;
   }
 
@@ -651,7 +626,6 @@ abstract class AbstractContext<C extends Context<C>> extends AbstractScope imple
   public final C scopeEnd() {
     scopeEnd0();
     scopeStack.scopeEnd();
-
     return (C) this;
   }
 
@@ -682,7 +656,6 @@ abstract class AbstractContext<C extends Context<C>> extends AbstractScope imple
       stringLiteralEscapedApos =
           stringLiteralEscapedApos.substring(0, stringLiteralEscapedApos.length() / 2);
     }
-
     return (C) this;
   }
 
@@ -715,12 +688,10 @@ abstract class AbstractContext<C extends Context<C>> extends AbstractScope imple
   // ------------------------------------------------------------------------
   // XXX RenderContext API
   // ------------------------------------------------------------------------
-
   @Override
   public final DecimalFormat floatFormat() {
     if (floatFormat == null)
       floatFormat = new DecimalFormat("0.#######E0", DecimalFormatSymbols.getInstance(Locale.US));
-
     return floatFormat;
   }
 
@@ -729,7 +700,6 @@ abstract class AbstractContext<C extends Context<C>> extends AbstractScope imple
     if (doubleFormat == null)
       doubleFormat =
           new DecimalFormat("0.################E0", DecimalFormatSymbols.getInstance(Locale.US));
-
     return doubleFormat;
   }
 
@@ -752,7 +722,6 @@ abstract class AbstractContext<C extends Context<C>> extends AbstractScope imple
   @Override
   public final C paramTypeIf(ParamType p, boolean condition) {
     if (condition) paramType(p);
-
     return (C) this;
   }
 
@@ -765,7 +734,6 @@ abstract class AbstractContext<C extends Context<C>> extends AbstractScope imple
   public final C paramTypeIf(ParamType p, boolean condition, Consumer<? super C> runnable) {
     if (condition) paramType(p, runnable);
     else runnable.accept((C) this);
-
     return (C) this;
   }
 
@@ -851,7 +819,6 @@ abstract class AbstractContext<C extends Context<C>> extends AbstractScope imple
   @Override
   public final C languageContextIf(LanguageContext context, boolean condition) {
     if (condition) languageContext(context);
-
     return (C) this;
   }
 
@@ -874,14 +841,12 @@ abstract class AbstractContext<C extends Context<C>> extends AbstractScope imple
   @Override
   public final C castModeIf(CastMode mode, boolean condition) {
     if (condition) castMode(mode);
-
     return (C) this;
   }
 
   // ------------------------------------------------------------------------
   // XXX BindContext API
   // ------------------------------------------------------------------------
-
   @Override
   public final PreparedStatement statement() {
     return stmt;
@@ -890,7 +855,6 @@ abstract class AbstractContext<C extends Context<C>> extends AbstractScope imple
   // ------------------------------------------------------------------------
   // XXX Object API
   // ------------------------------------------------------------------------
-
   void toString(StringBuilder sb) {
     sb.append("bind index   [");
     sb.append(index);
@@ -899,14 +863,11 @@ abstract class AbstractContext<C extends Context<C>> extends AbstractScope imple
     sb.append(castMode);
     sb.append("]");
     sb.append("\ndeclaring    [");
-
     if (declareFields) {
       sb.append("fields");
-
       if (declareAliases) sb.append(" and aliases");
     } else if (declareTables) {
       sb.append("tables");
-
       if (declareAliases) sb.append(" and aliases");
     } else if (declareWindows) {
       sb.append("windows");
@@ -915,15 +876,17 @@ abstract class AbstractContext<C extends Context<C>> extends AbstractScope imple
     } else {
       sb.append("-");
     }
-
     sb.append("]\nsubquery     [");
     sb.append(subquery);
     sb.append("]");
   }
 
   static class JoinNode {
+
     final Configuration configuration;
+
     final Table<?> table;
+
     final Map<ForeignKey<?, ?>, JoinNode> children;
 
     JoinNode(Configuration configuration, Table<?> table) {
@@ -934,10 +897,8 @@ abstract class AbstractContext<C extends Context<C>> extends AbstractScope imple
 
     public Table<?> joinTree() {
       Table<?> result = table;
-
       for (Entry<ForeignKey<?, ?>, JoinNode> e : children.entrySet()) {
         JoinType type;
-
         switch (StringUtils.defaultIfNull(
             Tools.settings(configuration).getRenderImplicitJoinType(),
             RenderImplicitJoinType.DEFAULT)) {
@@ -952,10 +913,8 @@ abstract class AbstractContext<C extends Context<C>> extends AbstractScope imple
             type = e.getKey().nullable() ? LEFT_OUTER_JOIN : JOIN;
             break;
         }
-
         result = result.join(e.getValue().joinTree(), type).onKey(e.getKey());
       }
-
       return result;
     }
 
@@ -966,12 +925,19 @@ abstract class AbstractContext<C extends Context<C>> extends AbstractScope imple
   }
 
   static class ScopeStackElement {
+
     final int scopeLevel;
+
     final QueryPart part;
+
     QueryPart mapped;
+
     int[] positions;
+
     int bindIndex;
+
     int indent;
+
     JoinNode joinNode;
 
     ScopeStackElement(QueryPart part, int scopeLevel) {

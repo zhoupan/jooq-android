@@ -54,12 +54,11 @@ enum Quantifier {
 
   /** The <code>ANY</code> quantifier */
   ANY("any"),
-
   /** The <code>ALL</code> quantifier */
-  ALL("all"),
-  ;
+  ALL("all");
 
   private final String sql;
+
   private final Keyword keyword;
 
   private Quantifier(String sql) {

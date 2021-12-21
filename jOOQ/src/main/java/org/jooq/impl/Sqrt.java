@@ -62,21 +62,18 @@ final class Sqrt extends AbstractField<BigDecimal> {
 
   Sqrt(Field<? extends Number> value) {
     super(N_SQRT, allNotNull(NUMERIC, value));
-
     this.value = nullSafeNotNull(value, INTEGER);
   }
 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
       case SQLITE:
         ctx.visit(DSL.power(value, inline(0.5)));
         break;
-
       default:
         ctx.visit(function(N_SQRT, getDataType(), value));
         break;
@@ -86,7 +83,6 @@ final class Sqrt extends AbstractField<BigDecimal> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Sqrt) {

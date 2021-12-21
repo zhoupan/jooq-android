@@ -142,14 +142,12 @@ import org.jooq.Name;
 import org.jooq.Nullability;
 import org.jooq.SQLDialect;
 import org.jooq.Table;
-// ...
 
+// ...
 /** @author Lukas Eder */
 @SuppressWarnings({"rawtypes", "unchecked"})
 final class AlterTableImpl extends AbstractDDLQuery
-    implements
-
-        // Cascading interface implementations for ALTER TABLE behaviour
+    implements // Cascading interface implementations for ALTER TABLE behaviour
         AlterTableStep,
         AlterTableAddStep,
         AlterTableDropStep,
@@ -159,59 +157,100 @@ final class AlterTableImpl extends AbstractDDLQuery
         AlterTableRenameColumnToStep,
         AlterTableRenameIndexToStep,
         AlterTableRenameConstraintToStep {
+
   private static final Clause[] CLAUSES = {ALTER_TABLE};
+
   private static final Set<SQLDialect> NO_SUPPORT_IF_EXISTS =
       SQLDialect.supportedBy(CUBRID, DERBY, FIREBIRD, MARIADB);
+
   private static final Set<SQLDialect> NO_SUPPORT_IF_EXISTS_COLUMN =
       SQLDialect.supportedBy(CUBRID, DERBY, FIREBIRD);
+
   private static final Set<SQLDialect> NO_SUPPORT_IF_EXISTS_CONSTRAINT =
       SQLDialect.supportedBy(CUBRID, DERBY, FIREBIRD);
+
   private static final Set<SQLDialect> NO_SUPPORT_IF_NOT_EXISTS_COLUMN =
       SQLDialect.supportedBy(CUBRID, DERBY, FIREBIRD);
+
   private static final Set<SQLDialect> SUPPORT_RENAME_COLUMN = SQLDialect.supportedBy(DERBY);
+
   private static final Set<SQLDialect> SUPPORT_RENAME_TABLE = SQLDialect.supportedBy(DERBY);
+
   private static final Set<SQLDialect> NO_SUPPORT_RENAME_QUALIFIED_TABLE =
       SQLDialect.supportedBy(POSTGRES);
+
   private static final Set<SQLDialect> NO_SUPPORT_ALTER_TYPE_AND_NULL =
       SQLDialect.supportedBy(POSTGRES);
+
   private static final Set<SQLDialect> NO_SUPPORT_DROP_CONSTRAINT =
       SQLDialect.supportedBy(MARIADB, MYSQL);
+
   private static final Set<SQLDialect> REQUIRE_REPEAT_ADD_ON_MULTI_ALTER =
       SQLDialect.supportedBy(FIREBIRD, MARIADB, MYSQL, POSTGRES);
+
   private static final Set<SQLDialect> REQUIRE_REPEAT_DROP_ON_MULTI_ALTER =
       SQLDialect.supportedBy(FIREBIRD, MARIADB, MYSQL, POSTGRES);
 
   private final Table<?> table;
+
   private final boolean ifExists;
+
   private boolean ifExistsColumn;
+
   private boolean ifExistsConstraint;
+
   private boolean ifNotExistsColumn;
+
   private Comment comment;
+
   private Table<?> renameTo;
+
   private Field<?> renameColumn;
+
   private Field<?> renameColumnTo;
+
   private Index renameIndex;
+
   private Index renameIndexTo;
+
   private Constraint renameConstraint;
+
   private Constraint renameConstraintTo;
+
   private QueryPartList<FieldOrConstraint> add;
+
   private Field<?> addColumn;
+
   private DataType<?> addColumnType;
+
   private Constraint addConstraint;
+
   private boolean addFirst;
+
   private Field<?> addBefore;
+
   private Field<?> addAfter;
 
   private Constraint alterConstraint;
+
   private boolean alterConstraintEnforced;
+
   private Field<?> alterColumn;
+
   private Nullability alterColumnNullability;
+
   private DataType<?> alterColumnType;
+
   private Field<?> alterColumnDefault;
+
   private boolean alterColumnDropDefault;
+
   private QueryPartList<Field<?>> dropColumns;
+
   private Constraint dropConstraint;
+
   private ConstraintType dropConstraintType;
+
   private Cascade dropCascade;
 
   AlterTableImpl(Configuration configuration, Table<?> table) {
@@ -220,7 +259,6 @@ final class AlterTableImpl extends AbstractDDLQuery
 
   AlterTableImpl(Configuration configuration, Table<?> table, boolean ifExists) {
     super(configuration);
-
     this.table = table;
     this.ifExists = ifExists;
   }
@@ -340,7 +378,6 @@ final class AlterTableImpl extends AbstractDDLQuery
   // ------------------------------------------------------------------------
   // XXX: DSL API
   // ------------------------------------------------------------------------
-
   @Override
   public final AlterTableImpl comment(String c) {
     return comment(DSL.comment(c));
@@ -434,7 +471,6 @@ final class AlterTableImpl extends AbstractDDLQuery
   public final AlterTableImpl to(Field<?> newName) {
     if (renameColumn != null) renameColumnTo = newName;
     else throw new IllegalStateException();
-
     return this;
   }
 
@@ -442,7 +478,6 @@ final class AlterTableImpl extends AbstractDDLQuery
   public final AlterTableImpl to(Constraint newName) {
     if (renameConstraint != null) renameConstraintTo = newName;
     else throw new IllegalStateException();
-
     return this;
   }
 
@@ -450,7 +485,6 @@ final class AlterTableImpl extends AbstractDDLQuery
   public final AlterTableImpl to(Index newName) {
     if (renameIndex != null) renameIndexTo = newName;
     else throw new IllegalStateException();
-
     return this;
   }
 
@@ -466,15 +500,12 @@ final class AlterTableImpl extends AbstractDDLQuery
 
   @Override
   public final AlterTableImpl add(Collection<? extends FieldOrConstraint> fields) {
-
     // [#9570] Better portability of single item ADD statements
     if (fields.size() == 1) {
       FieldOrConstraint first = fields.iterator().next();
-
       if (first instanceof Field) return add((Field<?>) first);
       else if (first instanceof Constraint) return add((Constraint) first);
     }
-
     add = new QueryPartList<>(fields);
     return this;
   }
@@ -941,7 +972,6 @@ final class AlterTableImpl extends AbstractDDLQuery
   // ------------------------------------------------------------------------
   // XXX: QueryPart API
   // ------------------------------------------------------------------------
-
   private final boolean supportsIfExists(Context<?> ctx) {
     return !NO_SUPPORT_IF_EXISTS.contains(ctx.dialect());
   }
@@ -970,19 +1000,16 @@ final class AlterTableImpl extends AbstractDDLQuery
 
   private final void accept0(Context<?> ctx) {
     SQLDialect family = ctx.family();
-
     if (comment != null) {
       switch (family) {
         case MARIADB:
         case MYSQL:
           break;
-
         default:
           ctx.visit(commentOnTable(table).is(comment));
           return;
       }
     }
-
     if (family == FIREBIRD) {
       if (addFirst) {
         begin(
@@ -1008,24 +1035,18 @@ final class AlterTableImpl extends AbstractDDLQuery
         return;
       }
     }
-
     if (renameIndexTo != null) {
       switch (family) {
-
           // [#5724] These databases use table-scoped index names
-
         case MARIADB:
-
         case MYSQL:
           break;
-
           // [#5724] Most databases use schema-scoped index names: Ignore the table.
         default:
           ctx.visit(DSL.alterIndex(renameIndex).renameTo(renameIndexTo));
           return;
       }
     }
-
     // [#3805] Compound statements to alter data type and change nullability in a single statement
     // if needed.
     if (alterColumnType != null && alterColumnType.nullability() != Nullability.DEFAULT) {
@@ -1035,45 +1056,33 @@ final class AlterTableImpl extends AbstractDDLQuery
           return;
       }
     }
-
     accept1(ctx);
   }
 
   private final void accept1(Context<?> ctx) {
     SQLDialect family = ctx.family();
-
     boolean omitAlterTable =
         (renameConstraint != null && family == HSQLDB)
             || (renameColumn != null && SUPPORT_RENAME_COLUMN.contains(ctx.dialect()));
     boolean renameTable = renameTo != null && SUPPORT_RENAME_TABLE.contains(ctx.dialect());
     boolean renameObject = renameTo != null && (false);
-
     if (!omitAlterTable) {
       ctx.start(ALTER_TABLE_TABLE)
           .visit(renameObject ? K_RENAME_OBJECT : renameTable ? K_RENAME_TABLE : K_ALTER_TABLE);
-
       if (ifExists && supportsIfExists(ctx)) ctx.sql(' ').visit(K_IF_EXISTS);
-
       ctx.sql(' ').visit(table).end(ALTER_TABLE_TABLE).formatIndentStart().formatSeparator();
     }
-
     if (comment != null) {
       ctx.visit(K_COMMENT).sql(' ').visit(comment);
     } else if (renameTo != null) {
       boolean qualify = ctx.qualify();
-
       ctx.start(ALTER_TABLE_RENAME);
-
       if (NO_SUPPORT_RENAME_QUALIFIED_TABLE.contains(ctx.dialect())) ctx.qualify(false);
-
       ctx.visit(renameObject || renameTable ? K_TO : K_RENAME_TO).sql(' ').visit(renameTo);
-
       if (NO_SUPPORT_RENAME_QUALIFIED_TABLE.contains(ctx.dialect())) ctx.qualify(qualify);
-
       ctx.end(ALTER_TABLE_RENAME);
     } else if (renameColumn != null) {
       ctx.start(ALTER_TABLE_RENAME_COLUMN);
-
       switch (ctx.family()) {
         case DERBY:
           ctx.visit(K_RENAME_COLUMN)
@@ -1083,9 +1092,7 @@ final class AlterTableImpl extends AbstractDDLQuery
               .visit(K_TO)
               .sql(' ')
               .qualify(false, c -> c.visit(renameColumnTo));
-
           break;
-
         case H2:
         case HSQLDB:
           ctx.visit(K_ALTER_COLUMN)
@@ -1095,9 +1102,7 @@ final class AlterTableImpl extends AbstractDDLQuery
               .visit(K_RENAME_TO)
               .sql(' ')
               .qualify(false, c -> c.visit(renameColumnTo));
-
           break;
-
         case FIREBIRD:
           ctx.visit(K_ALTER_COLUMN)
               .sql(' ')
@@ -1106,9 +1111,7 @@ final class AlterTableImpl extends AbstractDDLQuery
               .visit(K_TO)
               .sql(' ')
               .qualify(false, c -> c.visit(renameColumnTo));
-
           break;
-
         default:
           ctx.visit(K_RENAME_COLUMN)
               .sql(' ')
@@ -1117,10 +1120,8 @@ final class AlterTableImpl extends AbstractDDLQuery
               .visit(K_TO)
               .sql(' ')
               .qualify(false, c -> c.visit(renameColumnTo));
-
           break;
       }
-
       ctx.end(ALTER_TABLE_RENAME_COLUMN);
     } else if (renameIndex != null) {
       ctx.start(ALTER_TABLE_RENAME_INDEX)
@@ -1155,60 +1156,42 @@ final class AlterTableImpl extends AbstractDDLQuery
                   .sql(' ')
                   .qualify(false, c2 -> c2.visit(renameConstraintTo));
           });
-
       ctx.end(ALTER_TABLE_RENAME_CONSTRAINT);
     } else if (add != null) {
       boolean multiAdd = REQUIRE_REPEAT_ADD_ON_MULTI_ALTER.contains(ctx.dialect());
       boolean parens = !multiAdd;
       boolean comma = true;
-
       ctx.start(ALTER_TABLE_ADD).visit(addColumnKeyword(ctx)).sql(' ');
-
       if (parens) ctx.sql('(');
-
       boolean indent = !multiAdd && add.size() > 1;
-
       if (indent) ctx.formatIndentStart().formatNewLine();
-
       for (int i = 0; i < add.size(); i++) {
         if (i > 0) {
           ctx.sql(comma ? "," : "").formatSeparator();
-
           if (multiAdd) ctx.visit(addColumnKeyword(ctx)).sql(' ');
         }
-
         FieldOrConstraint part = add.get(i);
         ctx.qualify(false, c -> c.visit(part));
-
         if (part instanceof Field) {
           ctx.sql(' ');
           toSQLDDLTypeDeclarationForAddition(ctx, ((Field<?>) part).getDataType());
         }
       }
-
       if (indent) ctx.formatIndentEnd().formatNewLine();
-
       if (parens) ctx.sql(')');
-
       acceptFirstBeforeAfter(ctx);
       ctx.end(ALTER_TABLE_ADD);
     } else if (addColumn != null) {
       ctx.start(ALTER_TABLE_ADD).visit(addColumnKeyword(ctx)).sql(' ');
-
       if (ifNotExistsColumn && supportsIfNotExistsColumn(ctx)) ctx.visit(K_IF_NOT_EXISTS).sql(' ');
-
       ctx.qualify(false, c -> c.visit(addColumn)).sql(' ');
       toSQLDDLTypeDeclarationForAddition(ctx, addColumnType);
-
       acceptFirstBeforeAfter(ctx);
       ctx.end(ALTER_TABLE_ADD);
     } else if (addConstraint != null) {
       ctx.start(ALTER_TABLE_ADD);
-
       ctx.visit(K_ADD).sql(' ');
-
       ctx.visit(addConstraint);
-
       ctx.end(ALTER_TABLE_ADD);
     } else if (alterConstraint != null) {
       ctx.start(ALTER_TABLE_ALTER);
@@ -1221,53 +1204,42 @@ final class AlterTableImpl extends AbstractDDLQuery
                 ctx.visit(K_ALTER);
                 break;
             }
-
             ctx.sql(' ').visit(K_CONSTRAINT).sql(' ').visit(alterConstraint);
             ConstraintImpl.acceptEnforced(ctx, alterConstraintEnforced);
           });
-
       ctx.end(ALTER_TABLE_ALTER);
     } else if (alterColumn != null) {
       ctx.start(ALTER_TABLE_ALTER);
-
       switch (family) {
         case CUBRID:
         case MARIADB:
         case MYSQL:
           {
-
             // MySQL's CHANGE COLUMN clause has a mandatory RENAMING syntax...
             if (alterColumnDefault == null && !alterColumnDropDefault)
               ctx.visit(K_CHANGE_COLUMN).sql(' ').qualify(false, c -> c.visit(alterColumn));
             else ctx.visit(K_ALTER_COLUMN);
-
             break;
           }
-
         default:
           ctx.visit(K_ALTER);
           break;
       }
-
       ctx.sql(' ');
       ctx.qualify(false, c -> c.visit(alterColumn));
-
       if (alterColumnType != null) {
         switch (family) {
           case DERBY:
             ctx.sql(' ').visit(K_SET_DATA_TYPE);
             break;
-
           case FIREBIRD:
           case POSTGRES:
             ctx.sql(' ').visit(K_TYPE);
             break;
         }
-
         ctx.sql(' ');
         toSQLDDLTypeDeclaration(ctx, alterColumnType);
         toSQLDDLTypeDeclarationIdentityBeforeNull(ctx, alterColumnType);
-
         // [#3805] Some databases cannot change the type and the NOT NULL constraint in a single
         // statement
         if (!NO_SUPPORT_ALTER_TYPE_AND_NULL.contains(ctx.dialect())) {
@@ -1282,78 +1254,59 @@ final class AlterTableImpl extends AbstractDDLQuery
               break;
           }
         }
-
         toSQLDDLTypeDeclarationIdentityAfterNull(ctx, alterColumnType);
       } else if (alterColumnDefault != null) {
         ctx.start(ALTER_TABLE_ALTER_DEFAULT);
-
         switch (family) {
           default:
             ctx.sql(' ').visit(K_SET_DEFAULT);
             break;
         }
-
         ctx.sql(' ').visit(alterColumnDefault).end(ALTER_TABLE_ALTER_DEFAULT);
       } else if (alterColumnDropDefault) {
         ctx.start(ALTER_TABLE_ALTER_DEFAULT);
-
         switch (family) {
-
             // MySQL supports DROP DEFAULT, but it does not work correctly:
             // https://bugs.mysql.com/bug.php?id=81010
             // Same for MariaDB
-
           case MARIADB:
           case MYSQL:
             ctx.sql(' ').visit(K_SET_DEFAULT).sql(' ').visit(K_NULL);
             break;
-
           default:
             ctx.sql(' ').visit(K_DROP_DEFAULT);
             break;
         }
-
         ctx.end(ALTER_TABLE_ALTER_DEFAULT);
       } else if (alterColumnNullability != null) {
         ctx.start(ALTER_TABLE_ALTER_NULL);
-
         switch (ctx.family()) {
           default:
             ctx.sql(' ')
                 .visit(alterColumnNullability.nullable() ? K_DROP_NOT_NULL : K_SET_NOT_NULL);
             break;
         }
-
         ctx.end(ALTER_TABLE_ALTER_NULL);
       }
-
       ctx.end(ALTER_TABLE_ALTER);
     } else if (dropColumns != null) {
       ctx.start(ALTER_TABLE_DROP);
-
       if (REQUIRE_REPEAT_DROP_ON_MULTI_ALTER.contains(ctx.dialect())) {
         String separator = "";
-
         for (Field<?> dropColumn : dropColumns) {
           ctx.sql(separator);
-
           acceptDropColumn(ctx);
           if (ifExistsColumn && supportsIfExistsColumn(ctx)) ctx.sql(' ').visit(K_IF_EXISTS);
-
           ctx.sql(' ').qualify(false, c -> c.visit(dropColumn));
-
           separator = ", ";
         }
       } else {
         acceptDropColumn(ctx);
         if (ifExistsColumn && supportsIfExistsColumn(ctx)) ctx.sql(' ').visit(K_IF_EXISTS);
-
         ctx.sql(' ');
         ctx.qualify(false, c -> c.visit(dropColumns));
       }
-
       acceptCascade(ctx);
-
       ctx.end(ALTER_TABLE_DROP);
     } else if (dropConstraint != null) {
       ctx.start(ALTER_TABLE_DROP);
@@ -1368,33 +1321,26 @@ final class AlterTableImpl extends AbstractDDLQuery
                 && NO_SUPPORT_DROP_CONSTRAINT.contains(c.dialect())) {
               c.visit(K_DROP).sql(' ').visit(K_PRIMARY_KEY);
             } else {
-
               // [#9382] In some dialects, unnamed UNIQUE constraints can be
-              //         dropped by dropping their declarations.
+              // dropped by dropping their declarations.
               c.visit(dropConstraint.getUnqualifiedName().empty() ? K_DROP : K_DROP_CONSTRAINT)
                   .sql(' ');
-
               if (ifExistsConstraint && !NO_SUPPORT_IF_EXISTS_CONSTRAINT.contains(c.dialect()))
                 c.visit(K_IF_EXISTS).sql(' ');
-
               c.visit(dropConstraint);
             }
-
             acceptCascade(c);
           });
-
       ctx.end(ALTER_TABLE_DROP);
     } else if (dropConstraintType == PRIMARY_KEY) {
       ctx.start(ALTER_TABLE_DROP);
       ctx.visit(K_DROP).sql(' ').visit(K_PRIMARY_KEY);
       ctx.end(ALTER_TABLE_DROP);
     }
-
     if (!omitAlterTable) ctx.formatIndentEnd();
   }
 
   private final Keyword addColumnKeyword(Context<?> ctx) {
-
     return K_ADD;
   }
 
@@ -1403,7 +1349,6 @@ final class AlterTableImpl extends AbstractDDLQuery
       case H2:
         // H2 defaults to CASCADE but doesn't support the keywords
         break;
-
       default:
         acceptCascade(ctx, dropCascade);
         break;
@@ -1431,9 +1376,7 @@ final class AlterTableImpl extends AbstractDDLQuery
         ctx,
         c1 -> {
           accept1(c1);
-
           c1.sql(';').formatSeparator();
-
           switch (c1.family()) {
             case POSTGRES:
               {

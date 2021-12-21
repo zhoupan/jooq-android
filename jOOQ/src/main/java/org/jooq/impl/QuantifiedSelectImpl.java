@@ -57,8 +57,11 @@ final class QuantifiedSelectImpl<R extends Record> extends AbstractQueryPart
     implements QuantifiedSelect<R> {
 
   final Quantifier quantifier;
+
   final Select<R> query;
+
   final Field<? extends Object[]> array;
+
   final Field<?>[] values;
 
   QuantifiedSelectImpl(Quantifier quantifier, Select<R> query) {
@@ -85,7 +88,6 @@ final class QuantifiedSelectImpl<R extends Record> extends AbstractQueryPart
   @Override
   public final void accept(Context<?> ctx) {
     boolean extraParentheses = false;
-
     switch (ctx.family()) {
       default:
         ctx.visit(quantifier.toKeyword());
@@ -102,41 +104,32 @@ final class QuantifiedSelectImpl<R extends Record> extends AbstractQueryPart
       return query;
     } else if (values != null) {
       Select<Record1<?>> select = null;
-
       for (Field value : values)
         if (select == null) select = select(value);
         else select = select.unionAll(select(value));
-
       return select;
     } else {
       switch (ctx.family()) {
-
           // [#869] Postgres supports this syntax natively
-
         case POSTGRES:
           return array;
-
           // [#869] H2 and HSQLDB can emulate this syntax by unnesting
           // the array in a subselect
         case H2:
         case HSQLDB:
           return create(ctx).select().from(table(array));
-
           // [#1048] All other dialects emulate unnesting of arrays using
           // UNION ALL-connected subselects
         default:
           {
-
             // The Informix database has an interesting bug when quantified comparison predicates
             // use nested derived tables with UNION ALL
             if (array instanceof Param) {
               Object[] values0 = ((Param<? extends Object[]>) array).getValue();
-
               Select<Record1<Object>> select = null;
               for (Object value : values0)
                 if (select == null) select = select(val(value));
                 else select = select.unionAll(select(val(value)));
-
               return select;
             } else {
               return select().from(table(array));

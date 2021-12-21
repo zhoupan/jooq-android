@@ -58,12 +58,12 @@ import org.jooq.tools.*;
 final class CreateDatabaseImpl extends AbstractDDLQuery implements CreateDatabaseFinalStep {
 
   private final Catalog database;
+
   private final boolean createDatabaseIfNotExists;
 
   CreateDatabaseImpl(
       Configuration configuration, Catalog database, boolean createDatabaseIfNotExists) {
     super(configuration);
-
     this.database = database;
     this.createDatabaseIfNotExists = createDatabaseIfNotExists;
   }
@@ -79,7 +79,6 @@ final class CreateDatabaseImpl extends AbstractDDLQuery implements CreateDatabas
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Set<SQLDialect> NO_SUPPORT_IF_NOT_EXISTS =
       SQLDialect.supportedBy(DERBY, FIREBIRD, POSTGRES);
 
@@ -96,9 +95,7 @@ final class CreateDatabaseImpl extends AbstractDDLQuery implements CreateDatabas
 
   private final void accept0(Context<?> ctx) {
     ctx.visit(K_CREATE).sql(' ').visit(K_DATABASE);
-
     if (createDatabaseIfNotExists && supportsIfNotExists(ctx)) ctx.sql(' ').visit(K_IF_NOT_EXISTS);
-
     ctx.sql(' ').visit(database);
   }
 }

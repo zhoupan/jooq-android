@@ -50,11 +50,11 @@ import org.jooq.Select;
 final class FetchCount extends AbstractResultQuery<Record1<Integer>> {
 
   private final Field<?>[] count = {count().as("c")};
+
   private final Select<?> query;
 
   FetchCount(Configuration configuration, Select<?> query) {
     super(configuration);
-
     this.query = query;
   }
 

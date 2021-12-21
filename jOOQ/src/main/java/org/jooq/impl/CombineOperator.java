@@ -55,28 +55,23 @@ enum CombineOperator {
    * Unite the sets of rows produced by the two {@link Select}'s (disallowing duplicate records).
    */
   UNION("union", true),
-
   /** Unite the bags of rows produced by the two {@link Select}'s (allowing duplicate records). */
   UNION_ALL("union all", false),
-
   /**
    * Remove all rows in the set of rows produced by the second {@link Select} from the set of rows
    * produced by the first {@link Select} (disallowing duplicate records).
    */
   EXCEPT("except", true),
-
   /**
    * Remove all rows in the bag of rows produced by the second {@link Select} from the bag of rows
    * produced by the first {@link Select} (allowing duplicate records).
    */
   EXCEPT_ALL("except all", false),
-
   /**
    * Retain all rows in the sets of rows produced by both {@link Select}'s (disallowing duplicate
    * records).
    */
   INTERSECT("intersect", true),
-
   /**
    * Retain all rows in the bags of rows produced by both {@link Select}'s (allowing duplicate
    * records).
@@ -84,7 +79,9 @@ enum CombineOperator {
   INTERSECT_ALL("intersect all", false);
 
   private final String sql;
+
   private final Keyword keywordOptionalDistinct;
+
   private final Keyword keyword;
 
   private CombineOperator(String sql, boolean distinct) {
@@ -94,12 +91,10 @@ enum CombineOperator {
   }
 
   public final String toSQL(SQLDialect dialect) {
-
     return sql;
   }
 
   public final Keyword toKeyword(SQLDialect dialect) {
-
     return keyword;
   }
 }

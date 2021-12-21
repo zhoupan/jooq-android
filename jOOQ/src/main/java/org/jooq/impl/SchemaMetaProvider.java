@@ -53,6 +53,7 @@ import org.jooq.Schema;
 public class SchemaMetaProvider implements MetaProvider {
 
   private final Configuration configuration;
+
   private final Schema[] schemas;
 
   public SchemaMetaProvider(Configuration configuration, Schema... schemas) {

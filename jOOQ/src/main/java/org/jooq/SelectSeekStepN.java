@@ -348,7 +348,6 @@ public interface SelectSeekStepN<R extends Record> extends SelectLimitStep<R> {
   @NotNull
   @CheckReturnValue
   @Support
-  @Deprecated
   SelectSeekLimitStep<R> seekBefore(Object... values);
 
   /**
@@ -403,6 +402,5 @@ public interface SelectSeekStepN<R extends Record> extends SelectLimitStep<R> {
   @NotNull
   @CheckReturnValue
   @Support
-  @Deprecated
   SelectSeekLimitStep<R> seekBefore(Field<?>... fields);
 }

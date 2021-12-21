@@ -44,8 +44,11 @@ import org.jooq.File;
 class FileImpl implements File {
 
   private final String path;
+
   private final String name;
+
   private final String content;
+
   private final ContentType type;
 
   FileImpl(String path, String content, ContentType type) {

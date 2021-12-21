@@ -58,12 +58,13 @@ import org.jooq.tools.*;
 final class Xmlserialize<T> extends AbstractField<T> {
 
   private final boolean content;
+
   private final Field<XML> value;
+
   private final DataType<T> type;
 
   Xmlserialize(boolean content, Field<XML> value, DataType<T> type) {
     super(N_XMLSERIALIZE, type);
-
     this.content = content;
     this.value = value;
     this.type = type;
@@ -72,15 +73,11 @@ final class Xmlserialize<T> extends AbstractField<T> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
-
     ctx.visit(N_XMLSERIALIZE).sql('(');
-
     if (content) ctx.visit(K_CONTENT).sql(' ');
     else ctx.visit(K_DOCUMENT).sql(' ');
-
     ctx.visit(value)
         .sql(' ')
         .visit(K_AS)
@@ -92,7 +89,6 @@ final class Xmlserialize<T> extends AbstractField<T> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Xmlserialize) {

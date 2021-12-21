@@ -53,12 +53,13 @@ import org.jooq.Result;
 class DefaultRecordContext extends AbstractScope implements RecordContext {
 
   private final ExecuteType type;
+
   private final Record[] records;
+
   Exception exception;
 
   DefaultRecordContext(Configuration configuration, ExecuteType type, Record... records) {
     super(configuration);
-
     this.type = type;
     this.records = records;
   }

@@ -64,7 +64,6 @@ final class BitOrAgg<T extends Number> extends DefaultAggregateFunction<T> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   public static final Set<SQLDialect> NO_SUPPORT_NATIVE =
       SQLDialect.supportedUntil(CUBRID, DERBY, FIREBIRD, HSQLDB, SQLITE);
 
@@ -72,13 +71,11 @@ final class BitOrAgg<T extends Number> extends DefaultAggregateFunction<T> {
   public final void accept(Context<?> ctx) {
     if (NO_SUPPORT_NATIVE.contains(ctx.dialect())) {
       Field<?> field = getArguments().get(0);
-
       // TODO: Is 2's complement implemented correctly?
       if (field.getType() == Byte.class) {
         Field<Byte> f = (Field<Byte>) field;
         Field<Byte> b0 = inline((byte) 0);
         Field<Byte> b2 = inline((byte) 2);
-
         ctx.visit(
             when(fo(boolOr(DSL.bitAnd(f, inline((byte) 0x01)).ne(b0))), inline((byte) 0x01))
                 .else_(b0)
@@ -107,7 +104,6 @@ final class BitOrAgg<T extends Number> extends DefaultAggregateFunction<T> {
         Field<Short> f = (Field<Short>) field;
         Field<Short> s0 = inline((short) 0);
         Field<Short> s2 = inline((short) 2);
-
         ctx.visit(
             when(fo(boolOr(DSL.bitAnd(f, inline((short) 0x0001)).ne(s0))), inline((short) 0x0001))
                 .else_(s0)
@@ -190,7 +186,6 @@ final class BitOrAgg<T extends Number> extends DefaultAggregateFunction<T> {
         Field<Integer> f = (Field<Integer>) field;
         Field<Integer> i0 = inline(0);
         Field<Integer> i2 = inline(2);
-
         ctx.visit(
             when(fo(boolOr(DSL.bitAnd(f, inline(0x00000001)).ne(i0))), inline(0x00000001))
                 .else_(i0)
@@ -291,7 +286,6 @@ final class BitOrAgg<T extends Number> extends DefaultAggregateFunction<T> {
         Field<Long> f = (Field<Long>) field;
         Field<Long> l0 = inline(0L);
         Field<Long> l2 = inline(2L);
-
         ctx.visit(
             when(
                     fo(boolOr(DSL.bitAnd(f, inline(0x0000000000000001L)).ne(l0))),
@@ -612,9 +606,9 @@ final class BitOrAgg<T extends Number> extends DefaultAggregateFunction<T> {
                             fo(boolOr(DSL.bitAnd(f, inline(0x8000000000000000L)).ne(l0))),
                             inline(0x8000000000000000L))
                         .else_(l0)));
-      }
-      // Currently not supported
-      else super.accept(ctx);
+      } else
+        // Currently not supported
+        super.accept(ctx);
     } else super.accept(ctx);
   }
 
@@ -628,7 +622,6 @@ final class BitOrAgg<T extends Number> extends DefaultAggregateFunction<T> {
       case POSTGRES:
         ctx.visit(N_BIT_OR);
         break;
-
       default:
         super.acceptFunctionName(ctx);
         break;

@@ -61,14 +61,12 @@ final class Chr extends AbstractField<String> {
 
   Chr(Field<? extends Number> number) {
     super(N_CHR, allNotNull(VARCHAR, number));
-
     this.number = nullSafeNotNull(number, INTEGER);
   }
 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -78,11 +76,9 @@ final class Chr extends AbstractField<String> {
       case SQLITE:
         ctx.visit(function(N_CHAR, getDataType(), number));
         break;
-
       case FIREBIRD:
         ctx.visit(function(N_ASCII_CHAR, getDataType(), number));
         break;
-
       default:
         ctx.visit(function(N_CHR, getDataType(), number));
         break;
@@ -92,7 +88,6 @@ final class Chr extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Chr) {

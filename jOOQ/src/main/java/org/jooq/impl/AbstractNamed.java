@@ -51,6 +51,7 @@ import org.jooq.tools.StringUtils;
 abstract class AbstractNamed extends AbstractQueryPart implements Named {
 
   private final Name name;
+
   private final Comment comment;
 
   AbstractNamed(Name name, Comment comment) {
@@ -61,7 +62,6 @@ abstract class AbstractNamed extends AbstractQueryPart implements Named {
   // -------------------------------------------------------------------------
   // The Named API
   // -------------------------------------------------------------------------
-
   @Override
   public final String getName() {
     return StringUtils.defaultIfNull(getQualifiedName().last(), "");
@@ -91,10 +91,8 @@ abstract class AbstractNamed extends AbstractQueryPart implements Named {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public int hashCode() {
-
     // [#1938] This is a much more efficient hashCode() implementation
     // compared to that of standard QueryParts
     return getQualifiedName() == null ? 0 : getQualifiedName().hashCode();
@@ -104,27 +102,24 @@ abstract class AbstractNamed extends AbstractQueryPart implements Named {
   public boolean equals(Object that) {
     if (this == that) return true;
     if (that == null) return false;
-
     // [#2144] Non-equality can be decided early, without executing the
     // rather expensive implementation of AbstractQueryPart.equals()
     if (that instanceof AbstractNamed)
       if (!getQualifiedName().equals(((AbstractNamed) that).getQualifiedName())) return false;
-
     return super.equals(that);
   }
 
   // -------------------------------------------------------------------------
   // Utilities
   // -------------------------------------------------------------------------
-
   static final Name nameOrDefault(Named named) {
     return named == null ? NO_NAME : named.getUnqualifiedName();
   }
 
   static final Name qualify(Named qualifier, Name name) {
     // [#9820] [#11292] name == null || name.empty() are special cases that
-    //                  may appear when using unnamed constraint declarations.
-    //                  Their unnamedness must not be changed, nor qualified!
+    // may appear when using unnamed constraint declarations.
+    // Their unnamedness must not be changed, nor qualified!
     return qualifier == null || name == null || name.empty() || name.qualified()
         ? name
         : qualifier.getQualifiedName().append(name);
@@ -132,18 +127,14 @@ abstract class AbstractNamed extends AbstractQueryPart implements Named {
 
   static final <N extends Named> List<N> findAll(String name, Iterable<? extends N> in) {
     List<N> result = new ArrayList<>();
-
     for (N n : in) if (n.getName().equals(name)) result.add(n);
-
     return result;
   }
 
   static final <N extends Named> List<N> findAll(Name name, Iterable<? extends N> in) {
     List<N> result = new ArrayList<>();
-
     for (N n : in)
       if (n.getQualifiedName().equals(name) || n.getUnqualifiedName().equals(name)) result.add(n);
-
     return result;
   }
 
@@ -153,12 +144,10 @@ abstract class AbstractNamed extends AbstractQueryPart implements Named {
 
   static final <N extends Named> N find(Name name, Iterable<? extends N> in) {
     N unqualified = null;
-
     for (N n : in)
       if (n.getQualifiedName().equals(name)) return n;
       else if (unqualified == null && n.getUnqualifiedName().equals(name.unqualifiedName()))
         unqualified = n;
-
     return unqualified;
   }
 
@@ -168,12 +157,10 @@ abstract class AbstractNamed extends AbstractQueryPart implements Named {
 
   static final <N extends Named> N findIgnoreCase(Name name, Iterable<? extends N> in) {
     N unqualified = null;
-
     for (N n : in)
       if (n.getQualifiedName().equalsIgnoreCase(name)) return n;
       else if (unqualified == null
           && n.getUnqualifiedName().equalsIgnoreCase(name.unqualifiedName())) unqualified = n;
-
     return unqualified;
   }
 }

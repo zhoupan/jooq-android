@@ -59,10 +59,15 @@ final class AlterTypeImpl extends AbstractDDLQuery
     implements AlterTypeStep, AlterTypeRenameValueToStep, AlterTypeFinalStep {
 
   private final Name type;
+
   private Name renameTo;
+
   private Schema setSchema;
+
   private Field<String> addValue;
+
   private Field<String> renameValue;
+
   private Field<String> renameValueTo;
 
   AlterTypeImpl(Configuration configuration, Name type) {
@@ -78,7 +83,6 @@ final class AlterTypeImpl extends AbstractDDLQuery
       Field<String> renameValue,
       Field<String> renameValueTo) {
     super(configuration);
-
     this.type = type;
     this.renameTo = renameTo;
     this.setSchema = setSchema;
@@ -114,7 +118,6 @@ final class AlterTypeImpl extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: DSL API
   // -------------------------------------------------------------------------
-
   @Override
   public final AlterTypeImpl renameTo(String renameTo) {
     return renameTo(DSL.name(renameTo));
@@ -178,11 +181,9 @@ final class AlterTypeImpl extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     ctx.visit(K_ALTER).sql(' ').visit(K_TYPE).sql(' ').visit(type).sql(' ');
-
     if (renameTo != null) ctx.visit(K_RENAME_TO).sql(' ').qualify(false, c -> c.visit(renameTo));
     else if (setSchema != null) ctx.visit(K_SET).sql(' ').visit(K_SCHEMA).sql(' ').visit(setSchema);
     else if (addValue != null) ctx.visit(K_ADD).sql(' ').visit(K_VALUE).sql(' ').visit(addValue);

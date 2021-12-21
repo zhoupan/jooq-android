@@ -109,18 +109,15 @@ final class ResultImpl<R extends Record> extends AbstractResult<R> implements Re
 
   ResultImpl(Configuration configuration, AbstractRow fields) {
     super(configuration, fields);
-
     this.records = new ArrayList<>();
   }
 
   // -------------------------------------------------------------------------
   // XXX: Attachable API
   // -------------------------------------------------------------------------
-
   @Override
   public final void attach(Configuration c) {
     this.configuration = c;
-
     for (R record : records) if (record != null) record.attach(c);
   }
 
@@ -137,7 +134,6 @@ final class ResultImpl<R extends Record> extends AbstractResult<R> implements Re
   // -------------------------------------------------------------------------
   // XXX: Result API
   // -------------------------------------------------------------------------
-
   @Override
   public final <X, A> X collect(Collector<? super R, A, X> collector) {
     return stream().collect(collector);
@@ -764,7 +760,6 @@ final class ResultImpl<R extends Record> extends AbstractResult<R> implements Re
   }
 
   @Override
-  @Deprecated
   public final Object[][] intoArray() {
     return intoArrays();
   }
@@ -917,9 +912,7 @@ final class ResultImpl<R extends Record> extends AbstractResult<R> implements Re
   @Override
   public final Result<Record> into(Field<?>... f) {
     Result<Record> result = new ResultImpl<>(Tools.configuration(this), f);
-
     for (Record record : this) result.add(record.into(f));
-
     return result;
   }
 
@@ -1505,9 +1498,7 @@ final class ResultImpl<R extends Record> extends AbstractResult<R> implements Re
   @Override
   public final <Z extends Record> Result<Z> into(Table<Z> table) {
     Result<Z> list = new ResultImpl<>(Tools.configuration(this), (AbstractRow) table.fieldsRow());
-
     for (R record : this) list.add(record.into(table));
-
     return list;
   }
 
@@ -1628,7 +1619,6 @@ final class ResultImpl<R extends Record> extends AbstractResult<R> implements Re
     for (int fieldIndex : fieldIndexes)
       if (fields.field(fieldIndex).getType() == String.class)
         for (Record record : this) ((AbstractRecord) record).intern0(fieldIndex);
-
     return this;
   }
 
@@ -1646,6 +1636,7 @@ final class ResultImpl<R extends Record> extends AbstractResult<R> implements Re
   private static class RecordComparator<T, R extends Record> implements Comparator<R> {
 
     private final Comparator<? super T> comparator;
+
     private final int fieldIndex;
 
     RecordComparator(int fieldIndex, Comparator<? super T> comparator) {
@@ -1673,14 +1664,12 @@ final class ResultImpl<R extends Record> extends AbstractResult<R> implements Re
 
   private final int safeIndex(int index) {
     if (index >= 0 && index < fields.size()) return index;
-
     throw new IllegalArgumentException("No field at index " + index + " in Record type " + fields);
   }
 
   // -------------------------------------------------------------------------
   // XXX Fetching of parents or children
   // -------------------------------------------------------------------------
-
   @Override
   public final <O extends UpdatableRecord<O>> Result<O> fetchParents(ForeignKey<R, O> key) {
     return key.fetchParents(this);
@@ -1704,7 +1693,6 @@ final class ResultImpl<R extends Record> extends AbstractResult<R> implements Re
   // -------------------------------------------------------------------------
   // XXX Object API
   // -------------------------------------------------------------------------
-
   @Override
   public String toString() {
     return format(TXTFormat.DEFAULT.maxRows(50).maxColWidth(50));
@@ -1720,19 +1708,16 @@ final class ResultImpl<R extends Record> extends AbstractResult<R> implements Re
     if (this == obj) {
       return true;
     }
-
     if (obj instanceof ResultImpl) {
       ResultImpl<R> other = (ResultImpl<R>) obj;
       return records.equals(other.records);
     }
-
     return false;
   }
 
   // -------------------------------------------------------------------------
   // XXX: List API
   // -------------------------------------------------------------------------
-
   @Override
   public final int size() {
     return records.size();

@@ -51,8 +51,11 @@ import org.jooq.XMLExistsPassingStep;
 
 /** @author Lukas Eder */
 final class XMLExists extends AbstractCondition implements XMLExistsPassingStep {
+
   private final Field<String> xpath;
+
   private final Field<XML> passing;
+
   private final XMLPassingMechanism passingMechanism;
 
   XMLExists(Field<String> xpath) {
@@ -101,7 +104,6 @@ final class XMLExists extends AbstractCondition implements XMLExistsPassingStep 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     ctx.visit(K_XMLEXISTS).sqlIndentStart('(');

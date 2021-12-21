@@ -49,9 +49,11 @@ import org.jooq.Field;
 
 /** @author Lukas Eder */
 final class RegexpLike extends AbstractCondition {
+
   private static final Clause[] CLAUSES = {CONDITION, CONDITION_COMPARISON};
 
   private final Field<?> search;
+
   private final Field<String> pattern;
 
   RegexpLike(Field<?> search, Field<String> pattern) {
@@ -62,18 +64,14 @@ final class RegexpLike extends AbstractCondition {
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
-
         // [#620] These databases are compatible with the MySQL syntax
-
       case CUBRID:
       case H2:
       case MARIADB:
       case MYSQL:
       case SQLITE:
         ctx.visit(search).sql(' ').visit(K_REGEXP).sql(' ').visit(pattern);
-
         break;
-
         // [#620] HSQLDB has its own syntax
       case HSQLDB:
         ctx.visit(keyword("regexp_matches"))
@@ -83,19 +81,15 @@ final class RegexpLike extends AbstractCondition {
             .visit(pattern)
             .sql(')');
         break;
-
         // [#620] Postgres has its own syntax
-
       case POSTGRES:
         ctx.sql('(').visit(search).sql(" ~ ").visit(pattern).sql(')');
         break;
-
         // Render the SQL standard for those databases that do not support
         // regular expressions
       default:
         {
           ctx.sql('(').visit(search).sql(' ').visit(K_LIKE_REGEX).sql(' ').visit(pattern).sql(')');
-
           break;
         }
     }

@@ -60,27 +60,22 @@ final class TableMetaImpl extends AbstractMeta {
 
   TableMetaImpl(Configuration configuration, Table<?>[] tables) {
     super(configuration);
-
     this.tables = tables;
   }
 
   @Override
   final List<Catalog> getCatalogs0() {
     Set<Catalog> result = new LinkedHashSet<>();
-
     for (Table<?> table : tables)
       if (table.getSchema() != null)
         if (table.getSchema().getCatalog() != null) result.add(table.getSchema().getCatalog());
-
     return new ArrayList<>(result);
   }
 
   @Override
   final List<Schema> getSchemas0() {
     Set<Schema> result = new LinkedHashSet<>();
-
     for (Table<?> table : tables) if (table.getSchema() != null) result.add(table.getSchema());
-
     return new ArrayList<>(result);
   }
 
@@ -92,10 +87,8 @@ final class TableMetaImpl extends AbstractMeta {
   @Override
   final List<UniqueKey<?>> getPrimaryKeys0() {
     List<UniqueKey<?>> result = new ArrayList<>();
-
     for (Table<?> table : tables)
       if (table.getPrimaryKey() != null) result.add(table.getPrimaryKey());
-
     return result;
   }
 

@@ -53,6 +53,7 @@ import org.jooq.MetaProvider;
 public class CatalogMetaProvider implements MetaProvider {
 
   private final Configuration configuration;
+
   private final Catalog[] catalogs;
 
   public CatalogMetaProvider(Configuration configuration, Catalog... catalogs) {

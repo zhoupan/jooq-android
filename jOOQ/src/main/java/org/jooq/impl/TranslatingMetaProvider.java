@@ -73,9 +73,11 @@ import org.jooq.tools.jdbc.JDBCUtils;
 final class TranslatingMetaProvider implements MetaProvider {
 
   private static final JooqLogger log = JooqLogger.getLogger(TranslatingMetaProvider.class);
+
   private static final Pattern P_NAME = Pattern.compile("(?s:.*?\"([^\"]*)\".*)");
 
   private final Configuration configuration;
+
   private final Source[] scripts;
 
   public TranslatingMetaProvider(Configuration configuration, Source... scripts) {
@@ -87,7 +89,6 @@ final class TranslatingMetaProvider implements MetaProvider {
   public Meta provide() {
     try (DDLDatabaseInitializer initializer = new DDLDatabaseInitializer()) {
       for (Source script : scripts) initializer.loadScript(script);
-
       return new Snapshot(
           new DefaultMetaProvider(
                   configuration
@@ -99,22 +100,20 @@ final class TranslatingMetaProvider implements MetaProvider {
   }
 
   final class DDLDatabaseInitializer implements AutoCloseable {
+
     private Connection connection;
+
     private DSLContext ctx;
 
     private DDLDatabaseInitializer() {
       try {
         Settings settings = configuration.settings();
-
         connection = configuration.interpreterConnectionProvider().acquire();
         ctx = DSL.using(connection, settings.getInterpreterDialect(), settings);
-
         // [#7771] [#8011] Ignore all parsed storage clauses when executing the statements
         ctx.data("org.jooq.ddl.ignore-storage-clauses", true);
-
         // [#8910] Parse things a bit differently for use with the DDLDatabase
         ctx.data("org.jooq.ddl.parse-for-ddldatabase", true);
-
         final RenderNameCase nameCase = settings.getRenderNameCase();
         final Locale locale = SettingsTools.interpreterLocale(ctx.settings());
         if (nameCase != null && nameCase != RenderNameCase.AS_IS) {
@@ -125,7 +124,6 @@ final class TranslatingMetaProvider implements MetaProvider {
                         if (c.queryPart() instanceof Name) {
                           Name[] parts = ((Name) c.queryPart()).parts();
                           boolean changed = false;
-
                           for (int i = 0; i < parts.length; i++) {
                             Name replacement = parts[i];
                             switch (nameCase) {
@@ -134,13 +132,11 @@ final class TranslatingMetaProvider implements MetaProvider {
                               case LOWER:
                                 replacement = DSL.quotedName(parts[i].first().toLowerCase(locale));
                                 break;
-
                               case UPPER_IF_UNQUOTED:
                                 if (parts[i].quoted() == Quoted.QUOTED) break;
                               case UPPER:
                                 replacement = DSL.quotedName(parts[i].first().toUpperCase(locale));
                                 break;
-
                               default:
                                 break;
                             }
@@ -149,7 +145,6 @@ final class TranslatingMetaProvider implements MetaProvider {
                               changed = true;
                             }
                           }
-
                           if (changed) c.queryPart(DSL.name(parts));
                         }
                       }));
@@ -171,31 +166,26 @@ final class TranslatingMetaProvider implements MetaProvider {
      */
     private final void loadScript(Source source) {
       Reader r = null;
-
       try {
         Scanner s = new Scanner(r = source.reader()).useDelimiter("\\A");
         Queries queries = ctx.parser().parse(s.hasNext() ? s.next() : "");
-
         for (Query query : queries) {
-
           repeat:
           for (; ; ) {
             try {
               log.info(query);
-
               if (query instanceof ResultQuery) log.info("\n" + ((ResultQuery<?>) query).fetch());
               else log.info("Update count: " + query.execute());
-
               break repeat;
             } catch (DataAccessException e) {
-
               // [#7039] Auto create missing schemas. We're using the
-              if ("90079" /* ErrorCode.SCHEMA_NOT_FOUND_1 */.equals(e.sqlState())) {
+              if ("90079"
+                  .
+                  /* ErrorCode.SCHEMA_NOT_FOUND_1 */
+                  equals(e.sqlState())) {
                 SQLException cause = e.getCause(SQLException.class);
-
                 if (cause != null) {
                   Matcher m = P_NAME.matcher(cause.getMessage());
-
                   if (m.find()) {
                     Query createSchema = ctx.createSchemaIfNotExists(name(m.group(1)));
                     createSchema.execute();
@@ -204,13 +194,11 @@ final class TranslatingMetaProvider implements MetaProvider {
                   }
                 }
               }
-
               throw e;
             }
           }
         }
       } catch (DataAccessException e) {
-
         // [#9138] Make users aware of the new parse ignore comment syntax
         log.error(
             "DDL interpretation",
@@ -224,7 +212,6 @@ final class TranslatingMetaProvider implements MetaProvider {
                 + "As a workaround, you can use the Settings.parseIgnoreComments syntax documented here:\n"
                 + "https://www.jooq.org/doc/latest/manual/sql-building/dsl-context/custom-settings/settings-parser/\n"
                 + ""));
-
         throw e;
       } finally {
         JDBCUtils.safeClose(r);

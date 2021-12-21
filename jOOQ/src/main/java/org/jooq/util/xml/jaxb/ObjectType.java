@@ -65,6 +65,7 @@ public enum ObjectType {
   TABLE("TABLE"),
   @XmlEnumValue("USER-DEFINED TYPE")
   USER_DEFINED_TYPE("USER-DEFINED TYPE");
+
   private final String value;
 
   ObjectType(String v) {

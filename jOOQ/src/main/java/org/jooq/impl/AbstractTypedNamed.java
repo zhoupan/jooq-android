@@ -52,14 +52,12 @@ abstract class AbstractTypedNamed<T> extends AbstractNamed implements Typed<T> {
 
   AbstractTypedNamed(Name name, Comment comment, DataType<T> type) {
     super(name, comment);
-
     this.type = type;
   }
 
   // -------------------------------------------------------------------------
   // XXX: Typed API
   // -------------------------------------------------------------------------
-
   @Override
   public final Converter<?, T> getConverter() {
     return getDataType().getConverter();
@@ -76,7 +74,8 @@ abstract class AbstractTypedNamed<T> extends AbstractNamed implements Typed<T> {
   }
 
   /** [#11959] A workaround to get access to the actual data type of an expression. */
-  /* non-final */ DataType<?> getExpressionDataType() {
+  /* non-final */
+  DataType<?> getExpressionDataType() {
     return getDataType();
   }
 

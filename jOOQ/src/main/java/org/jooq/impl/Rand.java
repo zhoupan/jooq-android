@@ -65,7 +65,6 @@ final class Rand extends AbstractField<BigDecimal> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -74,7 +73,6 @@ final class Rand extends AbstractField<BigDecimal> {
       case SQLITE:
         ctx.visit(function(N_RANDOM, getDataType()));
         break;
-
       default:
         ctx.visit(function(N_RAND, getDataType()));
         break;
@@ -84,7 +82,6 @@ final class Rand extends AbstractField<BigDecimal> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Rand) {

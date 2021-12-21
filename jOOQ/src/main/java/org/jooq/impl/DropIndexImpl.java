@@ -59,8 +59,11 @@ final class DropIndexImpl extends AbstractDDLQuery
     implements DropIndexOnStep, DropIndexCascadeStep, DropIndexFinalStep {
 
   private final Index index;
+
   private final boolean dropIndexIfExists;
+
   private Table<?> on;
+
   private Cascade cascade;
 
   DropIndexImpl(Configuration configuration, Index index, boolean dropIndexIfExists) {
@@ -74,7 +77,6 @@ final class DropIndexImpl extends AbstractDDLQuery
       Table<?> on,
       Cascade cascade) {
     super(configuration);
-
     this.index = index;
     this.dropIndexIfExists = dropIndexIfExists;
     this.on = on;
@@ -100,7 +102,6 @@ final class DropIndexImpl extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: DSL API
   // -------------------------------------------------------------------------
-
   @Override
   public final DropIndexImpl on(String on) {
     return on(DSL.table(DSL.name(on)));
@@ -132,10 +133,11 @@ final class DropIndexImpl extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Clause[] CLAUSES = {Clause.DROP_INDEX};
+
   private static final Set<SQLDialect> NO_SUPPORT_IF_EXISTS =
       SQLDialect.supportedBy(CUBRID, DERBY, FIREBIRD);
+
   private static final Set<SQLDialect> REQUIRES_ON = SQLDialect.supportedBy(MARIADB, MYSQL);
 
   private final boolean supportsIfExists(Context<?> ctx) {
@@ -151,15 +153,11 @@ final class DropIndexImpl extends AbstractDDLQuery
 
   private void accept0(Context<?> ctx) {
     ctx.visit(K_DROP_INDEX).sql(' ');
-
     if (dropIndexIfExists && supportsIfExists(ctx)) ctx.visit(K_IF_EXISTS).sql(' ');
-
     ctx.visit(index);
-
     if (REQUIRES_ON.contains(ctx.dialect()))
       if (on != null) ctx.sql(' ').visit(K_ON).sql(' ').visit(on);
       else if (index.getTable() != null) ctx.sql(' ').visit(K_ON).sql(' ').visit(index.getTable());
-
     acceptCascade(ctx, cascade);
   }
 

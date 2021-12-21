@@ -60,7 +60,9 @@ import org.jooq.QueryPartInternal;
 final class Finder extends AbstractBindContext {
 
   private final Predicate<? super QueryPart> find;
+
   private final Predicate<? super QueryPart> enter;
+
   private QueryPart found;
 
   Finder(Configuration configuration, Predicate<? super QueryPart> find) {
@@ -72,7 +74,6 @@ final class Finder extends AbstractBindContext {
       Predicate<? super QueryPart> find,
       Predicate<? super QueryPart> enter) {
     super(configuration, null);
-
     this.find = find;
     this.enter = enter;
   }
@@ -80,12 +81,10 @@ final class Finder extends AbstractBindContext {
   @Override
   protected final void bindInternal(QueryPartInternal internal) {
     if (found != null) return;
-
     if (find.test(internal)) {
       found = internal;
       return;
     }
-
     if (enter.test(internal)) super.bindInternal(internal);
   }
 

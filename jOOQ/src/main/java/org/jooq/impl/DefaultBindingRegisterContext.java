@@ -47,6 +47,7 @@ import org.jooq.Converter;
 class DefaultBindingRegisterContext<U> extends AbstractScope implements BindingRegisterContext<U> {
 
   private final CallableStatement statement;
+
   private final int index;
 
   DefaultBindingRegisterContext(
@@ -55,7 +56,6 @@ class DefaultBindingRegisterContext<U> extends AbstractScope implements BindingR
       CallableStatement statement,
       int index) {
     super(configuration, data);
-
     this.statement = statement;
     this.index = index;
   }

@@ -47,7 +47,6 @@ final class DefaultCacheContext extends AbstractScope implements CacheContext {
 
   DefaultCacheContext(Configuration configuration, CacheType cacheType) {
     super(configuration);
-
     this.cacheType = cacheType;
   }
 

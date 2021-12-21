@@ -57,7 +57,6 @@ import org.jooq.ResourceManagingScope;
 import org.jooq.tools.jdbc.JDBCUtils;
 
 // ...
-
 /**
  * A binding that takes binary values but binds them as {@link NClob} to at the JDBC level.
  *
@@ -96,7 +95,6 @@ public class NClobBinding implements Binding<String, String> {
   @Override
   public final void get(BindingGetResultSetContext<String> ctx) throws SQLException {
     NClob clob = ctx.resultSet().getNClob(ctx.index());
-
     try {
       ctx.value(clob == null ? null : clob.getSubString(1, asInt(clob.length())));
     } finally {
@@ -107,7 +105,6 @@ public class NClobBinding implements Binding<String, String> {
   @Override
   public final void get(BindingGetStatementContext<String> ctx) throws SQLException {
     NClob clob = ctx.statement().getNClob(ctx.index());
-
     try {
       ctx.value(clob == null ? null : clob.getSubString(1, asInt(clob.length())));
     } finally {
@@ -118,7 +115,6 @@ public class NClobBinding implements Binding<String, String> {
   @Override
   public final void get(BindingGetSQLInputContext<String> ctx) throws SQLException {
     NClob clob = ctx.input().readNClob();
-
     try {
       ctx.value(clob == null ? null : clob.getSubString(1, asInt(clob.length())));
     } finally {
@@ -128,7 +124,6 @@ public class NClobBinding implements Binding<String, String> {
 
   static final NClob newNClob(ResourceManagingScope scope, String string) throws SQLException {
     NClob clob;
-
     switch (scope.dialect()) {
       default:
         {
@@ -136,7 +131,6 @@ public class NClobBinding implements Binding<String, String> {
           break;
         }
     }
-
     scope.autoFree(clob);
     clob.setString(1, string);
     return clob;

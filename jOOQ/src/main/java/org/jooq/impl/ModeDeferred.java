@@ -57,7 +57,6 @@ final class ModeDeferred implements OrderedAggregateFunctionOfDeferredType {
             : field instanceof Field
                 ? ((AbstractField<T>) field).getDataType()
                 : (DataType<T>) SQLDataType.NUMERIC;
-
     return new DefaultAggregateFunction<>(N_MODE, type).withinGroupOrderBy(field);
   }
 }

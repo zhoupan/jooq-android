@@ -99,7 +99,6 @@ public class DefaultPreparedStatement extends DefaultStatement implements Prepar
   // ------------------------------------------------------------------------
   // XXX Execution methods
   // ------------------------------------------------------------------------
-
   @Override
   public ResultSet executeQuery() throws SQLException {
     return wrap(getDelegatePreparedStatement().executeQuery());
@@ -113,7 +112,6 @@ public class DefaultPreparedStatement extends DefaultStatement implements Prepar
   // ------------------------------------------------------------------------
   // XXX Other methods
   // ------------------------------------------------------------------------
-
   @Override
   public void setNull(int parameterIndex, int sqlType) throws SQLException {
     getDelegatePreparedStatement().setNull(parameterIndex, sqlType);
@@ -190,7 +188,6 @@ public class DefaultPreparedStatement extends DefaultStatement implements Prepar
   }
 
   @Override
-  @Deprecated
   public void setUnicodeStream(int parameterIndex, InputStream x, int length) throws SQLException {
     getDelegatePreparedStatement().setUnicodeStream(parameterIndex, x, length);
   }
@@ -388,7 +385,6 @@ public class DefaultPreparedStatement extends DefaultStatement implements Prepar
   // ------------------------------------------------------------------------
   // JDBC 4.2
   // ------------------------------------------------------------------------
-
   @Override
   public void setObject(int parameterIndex, Object x, SQLType targetSqlType, int scaleOrLength)
       throws SQLException {

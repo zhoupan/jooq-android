@@ -64,16 +64,19 @@ import org.jooq.TableOptions;
  * @author Lukas Eder
  */
 final class Values<R extends Record> extends AbstractTable<R> {
+
   static final Set<SQLDialect> NO_SUPPORT_VALUES = SQLDialect.supportedUntil(FIREBIRD, MARIADB);
+
   static final Set<SQLDialect> REQUIRE_ROWTYPE_CAST = SQLDialect.supportedBy(FIREBIRD);
+
   static final Set<SQLDialect> NO_SUPPORT_PARENTHESES = SQLDialect.supportedBy();
 
   private final Row[] rows;
+
   private transient DataType<?>[] types;
 
   Values(Row[] rows) {
     super(TableOptions.expression(), N_VALUES);
-
     this.rows = assertNotEmpty(rows);
   }
 
@@ -81,22 +84,18 @@ final class Values<R extends Record> extends AbstractTable<R> {
     if (rows == null || rows.length == 0)
       throw new IllegalArgumentException(
           "Cannot create a VALUES() constructor with an empty set of rows");
-
     return rows;
   }
 
   private final DataType<?>[] rowType() {
     if (types == null) {
       types = new DataType[rows[0].size()];
-
       typeLoop:
       for (int i = 0; i < types.length; i++) {
         types[i] = rows[0].dataType(i);
-
         if (types[i].getType() == Object.class) {
           for (int j = 1; j < rows.length; j++) {
             DataType<?> type = rows[j].dataType(i);
-
             if (type.getType() != Object.class) {
               types[i] = type;
               continue typeLoop;
@@ -105,18 +104,15 @@ final class Values<R extends Record> extends AbstractTable<R> {
         }
       }
     }
-
     return types;
   }
 
   private final Field<?>[] castToRowType(Field<?>[] fields) {
     Field<?>[] result = new Field[fields.length];
-
     for (int i = 0; i < result.length; i++) {
       DataType<?> type = rowType()[i];
       result[i] = fields[i].getDataType().equals(type) ? fields[i] : fields[i].cast(type);
     }
-
     return result;
   }
 
@@ -145,36 +141,24 @@ final class Values<R extends Record> extends AbstractTable<R> {
     if (NO_SUPPORT_VALUES.contains(ctx.dialect())) {
       Select<Record> selects = null;
       boolean cast = REQUIRE_ROWTYPE_CAST.contains(ctx.dialect());
-
       for (Row row : rows) {
         Select<Record> select = DSL.select(cast ? castToRowType(row.fields()) : row.fields());
-
         if (selects == null) selects = select;
         else selects = selects.unionAll(select);
       }
-
       visitSubquery(ctx, selects, false);
-    }
-
-    // [#915] Native support of VALUES(..)
-    else {
+    } else // [#915] Native support of VALUES(..)
+    {
       ctx.start(TABLE_VALUES);
-
       ctx.visit(K_VALUES);
-
       if (rows.length > 1) ctx.formatIndentStart().formatSeparator();
       else ctx.sql(' ');
-
       for (int i = 0; i < rows.length; i++) {
         if (i > 0) ctx.sql(',').formatSeparator();
-
         if (ctx.family() == MYSQL) ctx.visit(K_ROW).sql(" ");
-
         ctx.visit(rows[i]);
       }
-
       if (rows.length > 1) ctx.formatIndentEnd().formatNewLine();
-
       ctx.end(TABLE_VALUES);
     }
   }

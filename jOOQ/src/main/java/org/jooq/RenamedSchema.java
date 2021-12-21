@@ -51,7 +51,6 @@ final class RenamedSchema extends SchemaImpl {
 
   RenamedSchema(Catalog catalog, Schema delegate, String rename) {
     super(rename, catalog);
-
     this.delegate = delegate;
   }
 

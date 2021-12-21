@@ -57,33 +57,30 @@ enum ScopeMarker {
         TopLevelCte cte = (TopLevelCte) object;
         boolean single = cte.size() == 1;
         boolean noWith = afterLast != null && beforeFirst.positions[0] == afterLast.positions[0];
-
         if (noWith) {
           acceptWithRecursive(ctx, cte.recursive);
-
           if (single) ctx.formatIndentStart().formatSeparator();
           else ctx.sql(' ');
         }
-
         // [#11587] Recurse to allow for deeply nested CTE
         ctx.scopeStart().data(DATA_TOP_LEVEL_CTE, new TopLevelCte());
         ctx.declareCTE(true).visit(cte).declareCTE(false);
         ctx.scopeEnd();
-
         if (noWith) {
           if (single) ctx.formatIndentEnd();
-        }
-
-        // Top level CTE are inserted before all other CTEs
-        else if (!Tools.isRendersSeparator(cte)) ctx.sql(',');
-
+        } else // Top level CTE are inserted before all other CTEs
+        if (!Tools.isRendersSeparator(cte)) ctx.sql(',');
         ctx.formatSeparator().sql("");
       });
 
   final ReplacementRenderer renderer;
+
   final boolean topLevelOnly;
+
   final Object key;
+
   final Marker beforeFirst;
+
   final Marker afterLast;
 
   private ScopeMarker(boolean topLevelOnly, Object key, ReplacementRenderer renderer) {
@@ -96,6 +93,7 @@ enum ScopeMarker {
 
   @FunctionalInterface
   interface ReplacementRenderer {
+
     void render(
         DefaultRenderContext ctx,
         ScopeStackElement beforeFirst,
@@ -104,10 +102,12 @@ enum ScopeMarker {
   }
 
   interface ScopeContent {
+
     boolean isEmpty();
   }
 
   static class Marker implements QueryPartInternal {
+
     private final String marker;
 
     Marker(String marker) {

@@ -110,12 +110,17 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
     implements Table<R>, FieldsTrait {
 
   private static final JooqLogger log = JooqLogger.getLogger(AbstractTable.class);
+
   private static final Clause[] CLAUSES = {TABLE};
 
   private final TableOptions options;
+
   private Schema tableschema;
+
   private transient DataType<R> tabletype;
+
   private transient Identity<R, ?> identity;
+
   private transient Row fieldsRow;
 
   AbstractTable(TableOptions options, Name name) {
@@ -128,7 +133,6 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
 
   AbstractTable(TableOptions options, Name name, Schema schema, Comment comment) {
     super(qualify(schema, name), comment);
-
     this.options = options;
     this.tableschema = schema;
   }
@@ -136,7 +140,6 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
   // ------------------------------------------------------------------------
   // XXX: QueryPart API
   // ------------------------------------------------------------------------
-
   @Override
   public Clause[] clauses(Context<?> ctx) {
     return CLAUSES;
@@ -145,7 +148,6 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
   // ------------------------------------------------------------------------
   // [#5518] Record method inversions, e.g. for use as method references
   // ------------------------------------------------------------------------
-
   @Override
   public final R from(Record record) {
     return record.into(this);
@@ -154,7 +156,6 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
   // -------------------------------------------------------------------------
   // XXX: Expressions based on this table
   // -------------------------------------------------------------------------
-
   @Override
   public final QualifiedAsterisk asterisk() {
     return new QualifiedAsteriskImpl(this);
@@ -168,7 +169,6 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
   // ------------------------------------------------------------------------
   // XXX: TableLike API
   // ------------------------------------------------------------------------
-
   /**
    * Subclasses should override this method to provide the set of fields contained in the concrete
    * table implementation. For example, a <code>TableAlias</code> contains aliased fields of its
@@ -179,7 +179,6 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
   @Override
   public final DataType<R> getDataType() {
     if (tabletype == null) tabletype = new TableDataType<>(this);
-
     return tabletype;
   }
 
@@ -199,7 +198,6 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
   @Override
   public Row fieldsRow() {
     if (fieldsRow == null) fieldsRow = Tools.row0(fields0());
-
     return fieldsRow;
   }
 
@@ -302,7 +300,6 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
   // ------------------------------------------------------------------------
   // XXX: Table API
   // ------------------------------------------------------------------------
-
   @Override
   public final TableType getType() {
     return options.type();
@@ -328,7 +325,6 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
     if (tableschema == null)
       tableschema =
           getQualifiedName().qualified() ? DSL.schema(getQualifiedName().qualifier()) : null;
-
     return tableschema;
   }
 
@@ -350,10 +346,8 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
                 "There are multiple identity fields in table "
                     + this
                     + ", which is not supported by jOOQ");
-
       if (identity == null) identity = (Identity<R, ?>) IdentityImpl.NULL;
     }
-
     return identity == IdentityImpl.NULL ? null : identity;
   }
 
@@ -405,10 +399,8 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
   @Override
   public List<UniqueKey<R>> getKeys() {
     List<UniqueKey<R>> result = new ArrayList<>();
-
     UniqueKey<R> pk = getPrimaryKey();
     if (pk != null) result.add(pk);
-
     result.addAll(getUniqueKeys());
     return result;
   }
@@ -442,25 +434,20 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
   @Override
   public final <O extends Record> List<ForeignKey<R, O>> getReferencesTo(Table<O> other) {
     List<ForeignKey<R, O>> result = new ArrayList<>();
-
     for (ForeignKey<R, ?> reference : getReferences()) {
       traverseJoins(
           other,
           o -> {
             if (o.equals(reference.getKey().getTable())) {
               result.add((ForeignKey<R, O>) reference);
-            }
-
-            // [#1460] [#6304] In case the other table was aliased
-            else {
+            } else // [#1460] [#6304] In case the other table was aliased
+            {
               Table<?> aliased = Tools.aliased(o);
-
               if (aliased != null && aliased.equals(reference.getKey().getTable()))
                 result.add((ForeignKey<R, O>) reference);
             }
           });
     }
-
     return Collections.unmodifiableList(result);
   }
 
@@ -483,7 +470,6 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
    * @deprecated - 3.12.0 - [#8000] - Use {@link AbstractTable#createField(Name, DataType, Table)}
    *     instead.
    */
-  @Deprecated
   protected static final <R extends Record, T> TableField<R, T> createField(
       String name, DataType<T> type, Table<R> table) {
     return createField(DSL.name(name), type, table, null, null, null);
@@ -498,7 +484,6 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
    * @deprecated - 3.12.0 - [#8000] - Use {@link AbstractTable#createField(Name, DataType, Table,
    *     String)} instead.
    */
-  @Deprecated
   protected static final <R extends Record, T> TableField<R, T> createField(
       String name, DataType<T> type, Table<R> table, String comment) {
     return createField(DSL.name(name), type, table, comment, null, null);
@@ -513,7 +498,6 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
    * @deprecated - 3.12.0 - [#8000] - Use {@link AbstractTable#createField(Name, DataType, Table,
    *     String, Converter)} instead.
    */
-  @Deprecated
   protected static final <R extends Record, T, U> TableField<R, U> createField(
       String name, DataType<T> type, Table<R> table, String comment, Converter<T, U> converter) {
     return createField(DSL.name(name), type, table, comment, converter, null);
@@ -528,7 +512,6 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
    * @deprecated - 3.12.0 - [#8000] - Use {@link AbstractTable#createField(Name, DataType, Table,
    *     String, Binding)} instead.
    */
-  @Deprecated
   protected static final <R extends Record, T, U> TableField<R, U> createField(
       String name, DataType<T> type, Table<R> table, String comment, Binding<T, U> binding) {
     return createField(DSL.name(name), type, table, comment, null, binding);
@@ -543,7 +526,6 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
    * @deprecated - 3.12.0 - [#8000] - Use {@link AbstractTable#createField(Name, DataType, Table,
    *     String, Converter, Binding)} instead.
    */
-  @Deprecated
   protected static final <R extends Record, T, X, U> TableField<R, U> createField(
       String name,
       DataType<T> type,
@@ -562,7 +544,6 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
    * @param type The data type of the field
    * @deprecated - 3.12.0 - [#8000] - Use {@link #createField(Name, DataType)} instead.
    */
-  @Deprecated
   protected final <T> TableField<R, T> createField(String name, DataType<T> type) {
     return createField(DSL.name(name), type, this, null, null, null);
   }
@@ -575,7 +556,6 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
    * @param type The data type of the field
    * @deprecated - 3.12.0 - [#8000] - Use {@link #createField(Name, DataType, String)} instead.
    */
-  @Deprecated
   protected final <T> TableField<R, T> createField(String name, DataType<T> type, String comment) {
     return createField(DSL.name(name), type, this, comment, null, null);
   }
@@ -589,7 +569,6 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
    * @deprecated - 3.12.0 - [#8000] - Use {@link #createField(Name, DataType, String, Converter)}
    *     instead.
    */
-  @Deprecated
   protected final <T, U> TableField<R, U> createField(
       String name, DataType<T> type, String comment, Converter<T, U> converter) {
     return createField(DSL.name(name), type, this, comment, converter, null);
@@ -604,7 +583,6 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
    * @deprecated - 3.12.0 - [#8000] - Use {@link #createField(Name, DataType, String, Binding)}
    *     instead.
    */
-  @Deprecated
   protected final <T, U> TableField<R, U> createField(
       String name, DataType<T> type, String comment, Binding<T, U> binding) {
     return createField(DSL.name(name), type, this, comment, null, binding);
@@ -619,7 +597,6 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
    * @deprecated - 3.12.0 - [#8000] - Use {@link #createField(Name, DataType, String, Converter,
    *     Binding)} instead.
    */
-  @Deprecated
   protected final <T, X, U> TableField<R, U> createField(
       String name,
       DataType<T> type,
@@ -697,14 +674,11 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
         converter == null && binding == null
             ? (DataType<U>) type
             : type.asConvertedDataType(actualBinding);
-
     // [#5999] TODO: Allow for user-defined Names
     final TableFieldImpl<R, U> tableField =
         new TableFieldImpl<>(name, actualType, table, DSL.comment(comment), actualBinding);
-
     // [#1199] The public API of Table returns immutable field lists
     if (table instanceof TableImpl) ((TableImpl<?>) table).fields0().add(tableField);
-
     return tableField;
   }
 
@@ -773,7 +747,6 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
   // ------------------------------------------------------------------------
   // XXX: Convenience methods and synthetic methods
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition eq(Table<R> that) {
     return equal(that);
@@ -797,7 +770,6 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
   // ------------------------------------------------------------------------
   // XXX: Other API
   // ------------------------------------------------------------------------
-
   @Override
   public final Table<R> useIndex(String... indexes) {
     return new HintedTable<>(this, "use index", indexes);
@@ -861,7 +833,6 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
   // ------------------------------------------------------------------------
   // XXX: aliasing API
   // ------------------------------------------------------------------------
-
   @Override
   public final Table<R> as(Table<?> otherTable) {
     return as(otherTable.getUnqualifiedName());
@@ -891,7 +862,6 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
   // ------------------------------------------------------------------------
   // XXX: DIVISION API
   // ------------------------------------------------------------------------
-
   @Override
   public final DivideByOnStep divideBy(Table<?> divisor) {
     return new DivideBy(this, divisor);
@@ -912,7 +882,6 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
   // ------------------------------------------------------------------------
   // XXX: WHERE API
   // ------------------------------------------------------------------------
-
   @Override
   public /* non-final */ Table<R> where(Condition condition) {
     return new InlineDerivedTable<>(this, condition);
@@ -966,7 +935,6 @@ abstract class AbstractTable<R extends Record> extends AbstractNamed
   // ------------------------------------------------------------------------
   // XXX: JOIN API
   // ------------------------------------------------------------------------
-
   @Override
   public final TableOptionalOnStep<Record> join(TableLike<?> table, JoinType type) {
     return new JoinTable(this, table, type);

@@ -69,7 +69,9 @@ import java.util.function.Supplier;
 public class DefaultResultSet extends JDBC41ResultSet implements ResultSet {
 
   private final ResultSet delegate;
+
   private final Statement creator;
+
   private final Supplier<? extends SQLException> errorIfUnsupported;
 
   public DefaultResultSet(ResultSet delegate) {
@@ -158,7 +160,6 @@ public class DefaultResultSet extends JDBC41ResultSet implements ResultSet {
   }
 
   @Override
-  @Deprecated
   public BigDecimal getBigDecimal(int columnIndex, int scale) throws SQLException {
     return getDelegate().getBigDecimal(columnIndex, scale);
   }
@@ -189,7 +190,6 @@ public class DefaultResultSet extends JDBC41ResultSet implements ResultSet {
   }
 
   @Override
-  @Deprecated
   public InputStream getUnicodeStream(int columnIndex) throws SQLException {
     return getDelegate().getUnicodeStream(columnIndex);
   }
@@ -240,7 +240,6 @@ public class DefaultResultSet extends JDBC41ResultSet implements ResultSet {
   }
 
   @Override
-  @Deprecated
   public BigDecimal getBigDecimal(String columnLabel, int scale) throws SQLException {
     return getDelegate().getBigDecimal(columnLabel, scale);
   }
@@ -271,7 +270,6 @@ public class DefaultResultSet extends JDBC41ResultSet implements ResultSet {
   }
 
   @Override
-  @Deprecated
   public InputStream getUnicodeStream(String columnLabel) throws SQLException {
     return getDelegate().getUnicodeStream(columnLabel);
   }
@@ -1052,7 +1050,6 @@ public class DefaultResultSet extends JDBC41ResultSet implements ResultSet {
   // ------------------------------------------------------------------------
   // JDBC 4.1
   // ------------------------------------------------------------------------
-
   @Override
   public <T> T getObject(int columnIndex, Class<T> type) throws SQLException {
     return getDelegate().getObject(columnIndex, type);
@@ -1066,7 +1063,6 @@ public class DefaultResultSet extends JDBC41ResultSet implements ResultSet {
   // ------------------------------------------------------------------------
   // JDBC 4.2
   // ------------------------------------------------------------------------
-
   @Override
   public void updateObject(int columnIndex, Object x, SQLType targetSqlType, int scaleOrLength)
       throws SQLException {

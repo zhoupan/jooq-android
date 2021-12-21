@@ -58,11 +58,11 @@ import org.jooq.tools.*;
 final class Left extends AbstractField<String> {
 
   private final Field<String> string;
+
   private final Field<? extends Number> length;
 
   Left(Field<String> string, Field<? extends Number> length) {
     super(N_LEFT, allNotNull(VARCHAR, string, length));
-
     this.string = nullSafeNotNull(string, VARCHAR);
     this.length = nullSafeNotNull(length, INTEGER);
   }
@@ -70,7 +70,6 @@ final class Left extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -78,7 +77,6 @@ final class Left extends AbstractField<String> {
       case SQLITE:
         ctx.visit(DSL.substring(string, inline(1), length));
         break;
-
       default:
         ctx.visit(function(N_LEFT, getDataType(), string, length));
         break;
@@ -88,7 +86,6 @@ final class Left extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Left) {

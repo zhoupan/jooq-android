@@ -59,7 +59,9 @@ final class AlterSchemaImpl extends AbstractDDLQuery
     implements AlterSchemaStep, AlterSchemaFinalStep {
 
   private final Schema schema;
+
   private final boolean alterSchemaIfExists;
+
   private Schema renameTo;
 
   AlterSchemaImpl(Configuration configuration, Schema schema, boolean alterSchemaIfExists) {
@@ -69,7 +71,6 @@ final class AlterSchemaImpl extends AbstractDDLQuery
   AlterSchemaImpl(
       Configuration configuration, Schema schema, boolean alterSchemaIfExists, Schema renameTo) {
     super(configuration);
-
     this.schema = schema;
     this.alterSchemaIfExists = alterSchemaIfExists;
     this.renameTo = renameTo;
@@ -90,7 +91,6 @@ final class AlterSchemaImpl extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: DSL API
   // -------------------------------------------------------------------------
-
   @Override
   public final AlterSchemaImpl renameTo(String renameTo) {
     return renameTo(DSL.schema(DSL.name(renameTo)));
@@ -110,38 +110,30 @@ final class AlterSchemaImpl extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Clause[] CLAUSES = {Clause.ALTER_SCHEMA};
 
   @Override
   public final void accept(Context<?> ctx) {
-
     accept0(ctx);
   }
 
   private final void accept0(Context<?> ctx) {
     ctx.start(Clause.ALTER_SCHEMA_SCHEMA);
-
     boolean supportRename = false;
-
     if (supportRename) ctx.visit(K_RENAME).sql(' ').visit(K_SCHEMA);
     else ctx.visit(K_ALTER_SCHEMA);
-
     if (alterSchemaIfExists) ctx.sql(' ').visit(K_IF_EXISTS);
-
     ctx.sql(' ')
         .visit(schema)
         .end(Clause.ALTER_SCHEMA_SCHEMA)
         .formatIndentStart()
         .formatSeparator();
-
     if (renameTo != null)
       ctx.start(Clause.ALTER_SCHEMA_RENAME)
           .visit(supportRename ? K_TO : K_RENAME_TO)
           .sql(' ')
           .qualify(false, c -> c.visit(renameTo))
           .end(Clause.ALTER_SCHEMA_RENAME);
-
     ctx.formatIndentEnd();
   }
 

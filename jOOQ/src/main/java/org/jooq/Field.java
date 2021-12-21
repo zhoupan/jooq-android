@@ -127,7 +127,6 @@ public interface Field<T>
   // ------------------------------------------------------------------------
   // API
   // ------------------------------------------------------------------------
-
   /**
    * The name of the field.
    *
@@ -181,7 +180,6 @@ public interface Field<T>
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support
   Field<T> as(Function<? super Field<T>, ? extends String> aliasFunction);
@@ -197,7 +195,6 @@ public interface Field<T>
   // ------------------------------------------------------------------------
   // Type casts
   // ------------------------------------------------------------------------
-
   /**
    * Apply an ad-hoc data type {@link Binding} to this field expression.
    *
@@ -355,7 +352,6 @@ public interface Field<T>
   // ------------------------------------------------------------------------
   // Type coercion
   // ------------------------------------------------------------------------
-
   /**
    * Coerce this field to the type of another field.
    *
@@ -472,7 +468,6 @@ public interface Field<T>
   // ------------------------------------------------------------------------
   // Conversion of field into a sort field
   // ------------------------------------------------------------------------
-
   /**
    * Create an ascending sort field from this field.
    *
@@ -629,7 +624,6 @@ public interface Field<T>
   // ------------------------------------------------------------------------
   // Arithmetic operations
   // ------------------------------------------------------------------------
-
   /**
    * Negate this field to get its negative value.
    *
@@ -1026,7 +1020,6 @@ public interface Field<T>
   // ------------------------------------------------------------------------
   // Bitwise operations
   // ------------------------------------------------------------------------
-
   /**
    * The bitwise not operator.
    *
@@ -1193,7 +1186,6 @@ public interface Field<T>
   // ------------------------------------------------------------------------
   // XML predicates
   // ------------------------------------------------------------------------
-
   /** Create a condition to check if this field contains XML data. */
   @NotNull
   @Support({POSTGRES})
@@ -1207,7 +1199,6 @@ public interface Field<T>
   // ------------------------------------------------------------------------
   // JSON predicates
   // ------------------------------------------------------------------------
-
   /** Create a condition to check if this field contains JSON data. */
   @NotNull
   @Support({MYSQL})
@@ -1221,7 +1212,6 @@ public interface Field<T>
   // ------------------------------------------------------------------------
   // NULL predicates
   // ------------------------------------------------------------------------
-
   /**
    * Create a condition to check this field against <code>null</code>.
    *
@@ -1243,7 +1233,6 @@ public interface Field<T>
   // ------------------------------------------------------------------------
   // DISTINCT predicates
   // ------------------------------------------------------------------------
-
   /**
    * Create a condition to check if this field is <code>DISTINCT</code> from another value.
    *
@@ -1415,7 +1404,6 @@ public interface Field<T>
   // ------------------------------------------------------------------------
   // LIKE_REGEX predicates
   // ------------------------------------------------------------------------
-
   /**
    * Create a condition to regex-pattern-check this field against a pattern.
    *
@@ -1571,7 +1559,6 @@ public interface Field<T>
   // ------------------------------------------------------------------------
   // SIMILAR TO predicates
   // ------------------------------------------------------------------------
-
   /**
    * Create a condition to pattern-check this field against a value.
    *
@@ -1655,7 +1642,6 @@ public interface Field<T>
   // ------------------------------------------------------------------------
   // LIKE predicates
   // ------------------------------------------------------------------------
-
   /**
    * Create a condition to pattern-check this field against a value.
    *
@@ -2099,7 +2085,6 @@ public interface Field<T>
   // ------------------------------------------------------------------------
   // IN predicates
   // ------------------------------------------------------------------------
-
   /**
    * Create a condition to check this field against several values.
    *
@@ -2291,7 +2276,6 @@ public interface Field<T>
   // ------------------------------------------------------------------------
   // BETWEEN predicates
   // ------------------------------------------------------------------------
-
   /**
    * Create a condition to check this field against some bounds.
    *
@@ -2455,7 +2439,6 @@ public interface Field<T>
   // ------------------------------------------------------------------------
   // Dynamic comparison predicates
   // ------------------------------------------------------------------------
-
   /**
    * Compare this field with a value using a dynamic comparator.
    *
@@ -2509,7 +2492,6 @@ public interface Field<T>
   // ------------------------------------------------------------------------
   // Comparison predicates
   // ------------------------------------------------------------------------
-
   /** <code>this = value</code>. */
   @NotNull
   @Support
@@ -2973,12 +2955,10 @@ public interface Field<T>
   // be removed in the future. Consider using equivalent methods from
   // org.jooq.impl.DSL
   // ------------------------------------------------------------------------
-
   /**
    * @see DSL#sign(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#sign(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support
   Field<Integer> sign();
@@ -2987,7 +2967,6 @@ public interface Field<T>
    * @see DSL#abs(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#abs(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support
   Field<T> abs();
@@ -2996,7 +2975,6 @@ public interface Field<T>
    * @see DSL#round(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#round(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support
   Field<T> round();
@@ -3005,7 +2983,6 @@ public interface Field<T>
    * @see DSL#round(Field, int)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#round(Field, int)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support
   Field<T> round(int decimals);
@@ -3014,7 +2991,6 @@ public interface Field<T>
    * @see DSL#floor(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#floor(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support
   Field<T> floor();
@@ -3023,7 +2999,6 @@ public interface Field<T>
    * @see DSL#ceil(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#ceil(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support
   Field<T> ceil();
@@ -3032,7 +3007,6 @@ public interface Field<T>
    * @see DSL#sqrt(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#sqrt(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<BigDecimal> sqrt();
@@ -3041,7 +3015,6 @@ public interface Field<T>
    * @see DSL#exp(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#exp(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<BigDecimal> exp();
@@ -3050,7 +3023,6 @@ public interface Field<T>
    * @see DSL#ln(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#ln(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<BigDecimal> ln();
@@ -3059,7 +3031,6 @@ public interface Field<T>
    * @see DSL#log(Field, int)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#log(Field, int)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<BigDecimal> log(int base);
@@ -3068,7 +3039,6 @@ public interface Field<T>
    * @see DSL#acos(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#acos(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<BigDecimal> acos();
@@ -3077,7 +3047,6 @@ public interface Field<T>
    * @see DSL#asin(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#asin(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<BigDecimal> asin();
@@ -3086,7 +3055,6 @@ public interface Field<T>
    * @see DSL#atan(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#atan(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<BigDecimal> atan();
@@ -3095,7 +3063,6 @@ public interface Field<T>
    * @see DSL#atan2(Field, Number)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#atan2(Field, Number)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<BigDecimal> atan2(Number y);
@@ -3104,7 +3071,6 @@ public interface Field<T>
    * @see DSL#atan2(Field, Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#atan2(Field, Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<BigDecimal> atan2(Field<? extends Number> y);
@@ -3113,7 +3079,6 @@ public interface Field<T>
    * @see DSL#cos(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#cos(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<BigDecimal> cos();
@@ -3122,7 +3087,6 @@ public interface Field<T>
    * @see DSL#sin(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#sin(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<BigDecimal> sin();
@@ -3131,7 +3095,6 @@ public interface Field<T>
    * @see DSL#tan(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#tan(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<BigDecimal> tan();
@@ -3140,7 +3103,6 @@ public interface Field<T>
    * @see DSL#cot(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#cot(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<BigDecimal> cot();
@@ -3149,7 +3111,6 @@ public interface Field<T>
    * @see DSL#sinh(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#sinh(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<BigDecimal> sinh();
@@ -3158,7 +3119,6 @@ public interface Field<T>
    * @see DSL#cosh(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#cosh(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<BigDecimal> cosh();
@@ -3167,7 +3127,6 @@ public interface Field<T>
    * @see DSL#tanh(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#tanh(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<BigDecimal> tanh();
@@ -3176,7 +3135,6 @@ public interface Field<T>
    * @see DSL#coth(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#coth(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<BigDecimal> coth();
@@ -3185,7 +3143,6 @@ public interface Field<T>
    * @see DSL#deg(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#deg(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support
   Field<BigDecimal> deg();
@@ -3194,7 +3151,6 @@ public interface Field<T>
    * @see DSL#rad(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#rad(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support
   Field<BigDecimal> rad();
@@ -3203,7 +3159,6 @@ public interface Field<T>
    * @see DSL#count(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#count(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support
   Field<Integer> count();
@@ -3212,7 +3167,6 @@ public interface Field<T>
    * @see DSL#countDistinct(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#countDistinct(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support
   Field<Integer> countDistinct();
@@ -3221,7 +3175,6 @@ public interface Field<T>
    * @see DSL#max(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#max(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support
   Field<T> max();
@@ -3230,7 +3183,6 @@ public interface Field<T>
    * @see DSL#min(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#min(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support
   Field<T> min();
@@ -3239,7 +3191,6 @@ public interface Field<T>
    * @see DSL#sum(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#sum(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support
   Field<BigDecimal> sum();
@@ -3248,7 +3199,6 @@ public interface Field<T>
    * @see DSL#avg(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#avg(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support
   Field<BigDecimal> avg();
@@ -3257,7 +3207,6 @@ public interface Field<T>
    * @see DSL#median(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#median(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, HSQLDB})
   Field<BigDecimal> median();
@@ -3266,7 +3215,6 @@ public interface Field<T>
    * @see DSL#stddevPop(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#stddevPop(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<BigDecimal> stddevPop();
@@ -3275,7 +3223,6 @@ public interface Field<T>
    * @see DSL#stddevSamp(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#stddevSamp(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<BigDecimal> stddevSamp();
@@ -3284,7 +3231,6 @@ public interface Field<T>
    * @see DSL#varPop(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#varPop(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<BigDecimal> varPop();
@@ -3293,7 +3239,6 @@ public interface Field<T>
    * @see DSL#varSamp(Field)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#varSamp(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<BigDecimal> varSamp();
@@ -3303,7 +3248,6 @@ public interface Field<T>
    * @see AggregateFunction#over()
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#count(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, FIREBIRD, POSTGRES})
   WindowPartitionByStep<Integer> countOver();
@@ -3313,7 +3257,6 @@ public interface Field<T>
    * @see AggregateFunction#over()
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#max(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, FIREBIRD, POSTGRES})
   WindowPartitionByStep<T> maxOver();
@@ -3323,7 +3266,6 @@ public interface Field<T>
    * @see AggregateFunction#over()
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#min(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, FIREBIRD, POSTGRES})
   WindowPartitionByStep<T> minOver();
@@ -3333,7 +3275,6 @@ public interface Field<T>
    * @see AggregateFunction#over()
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#sum(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, FIREBIRD, POSTGRES})
   WindowPartitionByStep<BigDecimal> sumOver();
@@ -3343,7 +3284,6 @@ public interface Field<T>
    * @see AggregateFunction#over()
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#avg(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, FIREBIRD, POSTGRES})
   WindowPartitionByStep<BigDecimal> avgOver();
@@ -3353,7 +3293,6 @@ public interface Field<T>
    * @see AggregateFunction#over()
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#firstValue(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, FIREBIRD, POSTGRES})
   WindowIgnoreNullsStep<T> firstValue();
@@ -3363,7 +3302,6 @@ public interface Field<T>
    * @see AggregateFunction#over()
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#lastValue(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, FIREBIRD, POSTGRES})
   WindowIgnoreNullsStep<T> lastValue();
@@ -3373,7 +3311,6 @@ public interface Field<T>
    * @see AggregateFunction#over()
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#lead(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({FIREBIRD, POSTGRES})
   WindowIgnoreNullsStep<T> lead();
@@ -3383,7 +3320,6 @@ public interface Field<T>
    * @see AggregateFunction#over()
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#lead(Field, int)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({FIREBIRD, POSTGRES})
   WindowIgnoreNullsStep<T> lead(int offset);
@@ -3393,7 +3329,6 @@ public interface Field<T>
    * @see AggregateFunction#over()
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#lead(Field, int, Object)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({FIREBIRD, POSTGRES})
   WindowIgnoreNullsStep<T> lead(int offset, T defaultValue);
@@ -3403,7 +3338,6 @@ public interface Field<T>
    * @see AggregateFunction#over()
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#lead(Field, int, Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({FIREBIRD, POSTGRES})
   WindowIgnoreNullsStep<T> lead(int offset, Field<T> defaultValue);
@@ -3413,7 +3347,6 @@ public interface Field<T>
    * @see AggregateFunction#over()
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#lag(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({FIREBIRD, POSTGRES})
   WindowIgnoreNullsStep<T> lag();
@@ -3423,7 +3356,6 @@ public interface Field<T>
    * @see AggregateFunction#over()
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#lag(Field, int)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({FIREBIRD, POSTGRES})
   WindowIgnoreNullsStep<T> lag(int offset);
@@ -3433,7 +3365,6 @@ public interface Field<T>
    * @see AggregateFunction#over()
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#lag(Field, int, Object)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({FIREBIRD, POSTGRES})
   WindowIgnoreNullsStep<T> lag(int offset, T defaultValue);
@@ -3443,7 +3374,6 @@ public interface Field<T>
    * @see AggregateFunction#over()
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#lag(Field, int, Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({FIREBIRD, POSTGRES})
   WindowIgnoreNullsStep<T> lag(int offset, Field<T> defaultValue);
@@ -3453,7 +3383,6 @@ public interface Field<T>
    * @see AggregateFunction#over()
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#stddevPop(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, POSTGRES})
   WindowPartitionByStep<BigDecimal> stddevPopOver();
@@ -3463,7 +3392,6 @@ public interface Field<T>
    * @see AggregateFunction#over()
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#stddevSamp(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, POSTGRES})
   WindowPartitionByStep<BigDecimal> stddevSampOver();
@@ -3473,7 +3401,6 @@ public interface Field<T>
    * @see AggregateFunction#over()
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#varPop(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, POSTGRES})
   WindowPartitionByStep<BigDecimal> varPopOver();
@@ -3483,7 +3410,6 @@ public interface Field<T>
    * @see AggregateFunction#over()
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#varSamp(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support({CUBRID, POSTGRES})
   WindowPartitionByStep<BigDecimal> varSampOver();
@@ -3495,7 +3421,6 @@ public interface Field<T>
    * @see DSL#upper(Field)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#upper(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support
   Field<String> upper();
@@ -3507,7 +3432,6 @@ public interface Field<T>
    * @see DSL#lower(Field)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#lower(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support
   Field<String> lower();
@@ -3519,7 +3443,6 @@ public interface Field<T>
    * @see DSL#trim(Field)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#trim(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support
   Field<String> trim();
@@ -3531,7 +3454,6 @@ public interface Field<T>
    * @see DSL#rtrim(Field)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#rtrim(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support
   Field<String> rtrim();
@@ -3543,7 +3465,6 @@ public interface Field<T>
    * @see DSL#ltrim(Field)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#ltrim(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support
   Field<String> ltrim();
@@ -3555,7 +3476,6 @@ public interface Field<T>
    * @see DSL#rpad(Field, Field)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#rpad(Field, Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support({CUBRID, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<String> rpad(Field<? extends Number> length);
@@ -3567,7 +3487,6 @@ public interface Field<T>
    * @see DSL#rpad(Field, int)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#rpad(Field, int)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support({CUBRID, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<String> rpad(int length);
@@ -3579,7 +3498,6 @@ public interface Field<T>
    * @see DSL#rpad(Field, Field, Field)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#rpad(Field, Field, Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support({CUBRID, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<String> rpad(Field<? extends Number> length, Field<String> character);
@@ -3591,7 +3509,6 @@ public interface Field<T>
    * @see DSL#rpad(Field, int, char)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#rpad(Field, int, char)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support({CUBRID, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<String> rpad(int length, char character);
@@ -3603,7 +3520,6 @@ public interface Field<T>
    * @see DSL#lpad(Field, Field)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#lpad(Field, Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support({CUBRID, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<String> lpad(Field<? extends Number> length);
@@ -3615,7 +3531,6 @@ public interface Field<T>
    * @see DSL#lpad(Field, int)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#lpad(Field, int)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support({CUBRID, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<String> lpad(int length);
@@ -3627,7 +3542,6 @@ public interface Field<T>
    * @see DSL#lpad(Field, Field, Field)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#lpad(Field, Field, Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support({CUBRID, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<String> lpad(Field<? extends Number> length, Field<String> character);
@@ -3639,7 +3553,6 @@ public interface Field<T>
    * @see DSL#lpad(Field, int, char)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#lpad(Field, int, char)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support({CUBRID, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<String> lpad(int length, char character);
@@ -3651,7 +3564,6 @@ public interface Field<T>
    * @see DSL#repeat(Field, int)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#repeat(Field, int)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support({CUBRID, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<String> repeat(Number count);
@@ -3663,7 +3575,6 @@ public interface Field<T>
    * @see DSL#repeat(Field, Field)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#repeat(Field, Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support({CUBRID, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<String> repeat(Field<? extends Number> count);
@@ -3675,7 +3586,6 @@ public interface Field<T>
    * @see DSL#replace(Field, Field)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#replace(Field, Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support({CUBRID, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
   Field<String> replace(Field<String> search);
@@ -3687,7 +3597,6 @@ public interface Field<T>
    * @see DSL#replace(Field, String)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#replace(Field, String)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support({CUBRID, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
   Field<String> replace(String search);
@@ -3699,7 +3608,6 @@ public interface Field<T>
    * @see DSL#replace(Field, Field, Field)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#replace(Field, Field, Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support({CUBRID, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
   Field<String> replace(Field<String> search, Field<String> replace);
@@ -3711,7 +3619,6 @@ public interface Field<T>
    * @see DSL#replace(Field, String, String)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#replace(Field, String, String)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support({CUBRID, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE})
   Field<String> replace(String search, String replace);
@@ -3723,7 +3630,6 @@ public interface Field<T>
    * @see DSL#position(Field, String)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#position(Field, String)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<Integer> position(String search);
@@ -3735,7 +3641,6 @@ public interface Field<T>
    * @see DSL#position(Field, Field)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#position(Field, Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support({CUBRID, DERBY, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<Integer> position(Field<String> search);
@@ -3747,7 +3652,6 @@ public interface Field<T>
    * @see DSL#ascii(Field)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#ascii(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support({CUBRID, FIREBIRD, H2, HSQLDB, MARIADB, MYSQL, POSTGRES})
   Field<Integer> ascii();
@@ -3812,7 +3716,6 @@ public interface Field<T>
    * @see DSL#substring(Field, int)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#substring(Field, int)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support
   Field<String> substring(int startingPosition);
@@ -3824,7 +3727,6 @@ public interface Field<T>
    * @see DSL#substring(Field, Field)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#substring(Field, Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support
   Field<String> substring(Field<? extends Number> startingPosition);
@@ -3836,7 +3738,6 @@ public interface Field<T>
    * @see DSL#substring(Field, int, int)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#substring(Field, int, int)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support
   Field<String> substring(int startingPosition, int length);
@@ -3848,7 +3749,6 @@ public interface Field<T>
    * @see DSL#substring(Field, Field, Field)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#substring(Field, Field, Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support
   Field<String> substring(Field<? extends Number> startingPosition, Field<? extends Number> length);
@@ -3860,7 +3760,6 @@ public interface Field<T>
    * @see DSL#length(Field)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#length(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support
   Field<Integer> length();
@@ -3872,7 +3771,6 @@ public interface Field<T>
    * @see DSL#charLength(Field)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#charLength(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support
   Field<Integer> charLength();
@@ -3884,7 +3782,6 @@ public interface Field<T>
    * @see DSL#bitLength(Field)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#bitLength(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support
   Field<Integer> bitLength();
@@ -3896,7 +3793,6 @@ public interface Field<T>
    * @see DSL#octetLength(Field)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#octetLength(Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support
   Field<Integer> octetLength();
@@ -3905,7 +3801,6 @@ public interface Field<T>
    * @see DSL#extract(Field, DatePart)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#extract(Field, DatePart)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support
   Field<Integer> extract(DatePart datePart);
@@ -3914,7 +3809,6 @@ public interface Field<T>
    * @see DSL#greatest(Field, Field...)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#greatest(Field, Field...)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support
   Field<T> greatest(T... others);
@@ -3923,7 +3817,6 @@ public interface Field<T>
    * @see DSL#greatest(Field, Field...)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#greatest(Field, Field...)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support
   Field<T> greatest(Field<?>... others);
@@ -3932,7 +3825,6 @@ public interface Field<T>
    * @see DSL#least(Field, Field...)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#least(Field, Field...)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support
   Field<T> least(T... others);
@@ -3941,7 +3833,6 @@ public interface Field<T>
    * @see DSL#least(Field, Field...)
    * @deprecated - 3.11 - [#7538] - Use {@link DSL#least(Field, Field...)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.11")
   @NotNull
   @Support
   Field<T> least(Field<?>... others);
@@ -3953,7 +3844,6 @@ public interface Field<T>
    * @see DSL#nvl(Field, Object)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#nvl(Field, Object)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support
   Field<T> nvl(T defaultValue);
@@ -3965,7 +3855,6 @@ public interface Field<T>
    * @see DSL#nvl(Field, Field)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#nvl(Field, Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support
   Field<T> nvl(Field<T> defaultValue);
@@ -3977,7 +3866,6 @@ public interface Field<T>
    * @see DSL#nvl2(Field, Object, Object)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#nvl2(Field, Object, Object)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support
   <Z> Field<Z> nvl2(Z valueIfNotNull, Z valueIfNull);
@@ -3989,7 +3877,6 @@ public interface Field<T>
    * @see DSL#nvl2(Field, Field, Field)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#nvl2(Field, Field, Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support
   <Z> Field<Z> nvl2(Field<Z> valueIfNotNull, Field<Z> valueIfNull);
@@ -4001,7 +3888,6 @@ public interface Field<T>
    * @see DSL#nullif(Field, Object)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#nullif(Field, Object)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support
   Field<T> nullif(T other);
@@ -4013,7 +3899,6 @@ public interface Field<T>
    * @see DSL#nullif(Field, Field)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#nullif(Field, Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support
   Field<T> nullif(Field<T> other);
@@ -4025,7 +3910,6 @@ public interface Field<T>
    * @see DSL#decode(Object, Object, Object)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#decode(Object, Object, Object)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support
   <Z> Field<Z> decode(T search, Z result);
@@ -4038,7 +3922,6 @@ public interface Field<T>
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#decode(Object, Object, Object, Object...)}
    *     instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support
   <Z> Field<Z> decode(T search, Z result, Object... more);
@@ -4050,7 +3933,6 @@ public interface Field<T>
    * @see DSL#decode(Field, Field, Field)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#decode(Field, Field, Field)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support
   <Z> Field<Z> decode(Field<T> search, Field<Z> result);
@@ -4062,7 +3944,6 @@ public interface Field<T>
    * @see DSL#decode(Field, Field, Field, Field...)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#decode(Field, Field, Field, Field...)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support
   <Z> Field<Z> decode(Field<T> search, Field<Z> result, Field<?>... more);
@@ -4074,7 +3955,6 @@ public interface Field<T>
    * @see DSL#coalesce(Object, Object...)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#coalesce(Object, Object...)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support
   Field<T> coalesce(T option, T... options);
@@ -4086,7 +3966,6 @@ public interface Field<T>
    * @see DSL#coalesce(Field, Field...)
    * @deprecated - 3.13 - [#9407] - Use {@link DSL#coalesce(Field, Field...)} instead.
    */
-  @Deprecated(forRemoval = true, since = "3.13")
   @NotNull
   @Support
   Field<T> coalesce(Field<T> option, Field<?>... options);
@@ -4094,7 +3973,6 @@ public interface Field<T>
   // ------------------------------------------------------------------------
   // [#5518] Record method inversions, e.g. for use as method references
   // ------------------------------------------------------------------------
-
   /**
    * The inverse operation of {@link Record#field(Field)}.
    *

@@ -84,31 +84,26 @@ abstract class AbstractCursor<R extends Record> extends AbstractResult<R> implem
   }
 
   @Override
-  @Deprecated
   public final R fetchOne() {
     return fetchNext();
   }
 
   @Override
-  @Deprecated
   public final <E> E fetchOne(RecordMapper<? super R, E> mapper) {
     return fetchNext(mapper);
   }
 
   @Override
-  @Deprecated
   public final <H extends RecordHandler<? super R>> H fetchOneInto(H handler) {
     return fetchNextInto(handler);
   }
 
   @Override
-  @Deprecated
   public final <Z extends Record> Z fetchOneInto(Table<Z> table) {
     return fetchNextInto(table);
   }
 
   @Override
-  @Deprecated
   public final <E> E fetchOneInto(Class<? extends E> type) {
     return fetchNextInto(type);
   }
@@ -116,32 +111,26 @@ abstract class AbstractCursor<R extends Record> extends AbstractResult<R> implem
   @Override
   public final R fetchNext() {
     Result<R> result = fetch(1);
-
     if (result.size() == 1) return result.get(0);
-
     return null;
   }
 
   @Override
-  @Deprecated
   public final Optional<R> fetchOptional() {
     return fetchNextOptional();
   }
 
   @Override
-  @Deprecated
   public final <E> Optional<E> fetchOptional(RecordMapper<? super R, E> mapper) {
     return fetchNextOptional(mapper);
   }
 
   @Override
-  @Deprecated
   public final <E> Optional<E> fetchOptionalInto(Class<? extends E> type) {
     return fetchNextOptionalInto(type);
   }
 
   @Override
-  @Deprecated
   public final <Z extends Record> Optional<Z> fetchOptionalInto(Table<Z> table) {
     return fetchNextOptionalInto(table);
   }

@@ -62,14 +62,12 @@ final class Tanh extends AbstractField<BigDecimal> {
 
   Tanh(Field<? extends Number> number) {
     super(N_TANH, allNotNull(NUMERIC, number));
-
     this.number = nullSafeNotNull(number, INTEGER);
   }
 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -83,7 +81,6 @@ final class Tanh extends AbstractField<BigDecimal> {
                 isub(DSL.exp(imul(number, two())), one()),
                 iadd(DSL.exp(imul(number, two())), one())));
         break;
-
       default:
         ctx.visit(function(N_TANH, getDataType(), number));
         break;
@@ -93,7 +90,6 @@ final class Tanh extends AbstractField<BigDecimal> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Tanh) {

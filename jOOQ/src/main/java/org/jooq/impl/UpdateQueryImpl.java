@@ -137,6 +137,7 @@ final class UpdateQueryImpl<R extends Record> extends AbstractStoreQuery<R>
 
   private static final Set<SQLDialect> SUPPORT_RVE_SET =
       SQLDialect.supportedBy(H2, HSQLDB, POSTGRES);
+
   private static final Set<SQLDialect> REQUIRE_RVE_ROW_CLAUSE = SQLDialect.supportedBy(POSTGRES);
 
   // LIMIT is not supported at all
@@ -147,17 +148,23 @@ final class UpdateQueryImpl<R extends Record> extends AbstractStoreQuery<R>
   private static final Set<SQLDialect> NO_SUPPORT_ORDER_BY_LIMIT = SQLDialect.supportedBy(IGNITE);
 
   private final FieldMapForUpdate updateMap;
+
   private final TableList from;
+
   private final ConditionProviderImpl condition;
+
   private Row multiRow;
+
   private Row multiValue;
+
   private Select<?> multiSelect;
+
   private final SortFieldList orderBy;
+
   private Param<? extends Number> limit;
 
   UpdateQueryImpl(Configuration configuration, WithImpl with, Table<R> table) {
     super(configuration, with, table);
-
     this.updateMap = new FieldMapForUpdate(table, UPDATE_SET_ASSIGNMENT);
     this.from = new TableList();
     this.condition = new ConditionProviderImpl();
@@ -1073,30 +1080,23 @@ final class UpdateQueryImpl<R extends Record> extends AbstractStoreQuery<R>
     ctx.start(UPDATE_UPDATE)
         .visit(K_UPDATE)
         .sql(' ')
-
-        // [#4314] Not all SQL dialects support declaring aliased tables in
+        . // [#4314] Not all SQL dialects support declaring aliased tables in
         // UPDATE statements
-        .declareTables(true)
+        declareTables(true)
         .visit(table(ctx))
         .declareTables(declareTables)
         .end(UPDATE_UPDATE);
-
     ctx.formatSeparator().start(UPDATE_SET).visit(K_SET).separatorRequired(true);
-
     // A multi-row update was specified
     if (multiRow != null) {
-
       // [#6884] This syntax can be emulated trivially, if the RHS is not a SELECT subquery
       if (multiValue != null && !SUPPORT_RVE_SET.contains(ctx.dialect())) {
         FieldMapForUpdate map = new FieldMapForUpdate(table(), UPDATE_SET_ASSIGNMENT);
-
         for (int i = 0; i < multiRow.size(); i++) {
           Field<?> k = multiRow.field(i);
           Field<?> v = multiValue.field(i);
-
           map.put(k, Tools.field(v, k));
         }
-
         ctx.formatIndentStart().formatSeparator().visit(map).formatIndentEnd();
       } else {
         ctx.start(UPDATE_SET_ASSIGNMENT)
@@ -1104,44 +1104,31 @@ final class UpdateQueryImpl<R extends Record> extends AbstractStoreQuery<R>
             .formatSeparator()
             .qualify(false, c -> c.visit(multiRow))
             .sql(" = ");
-
         // Some dialects don't really support row value expressions on the
         // right hand side of a SET clause
         if (multiValue != null) {
-
           // [#6763] Incompatible change in PostgreSQL 10 requires ROW() constructor for
-          //         single-degree rows. Let's just always render it, here.
+          // single-degree rows. Let's just always render it, here.
           if (REQUIRE_RVE_ROW_CLAUSE.contains(ctx.dialect())) ctx.visit(K_ROW).sql(" ");
-
           ctx.visit(multiValue);
-        }
-
-        // Subselects or subselect emulations of row value expressions
-        else {
+        } else // Subselects or subselect emulations of row value expressions
+        {
           Select<?> select = multiSelect;
-
           if (multiValue != null) select = select(multiValue.fields());
-
           visitSubquery(ctx, select);
         }
-
         ctx.formatIndentEnd().end(UPDATE_SET_ASSIGNMENT);
       }
-    }
-
-    // A regular (non-multi-row) update was specified
-    else {
+    } else // A regular (non-multi-row) update was specified
+    {
       ctx.formatIndentStart().formatSeparator().visit(updateMap).formatIndentEnd();
     }
-
     ctx.end(UPDATE_SET);
-
     switch (ctx.family()) {
       default:
         acceptFrom(ctx);
         break;
     }
-
     if (limit != null && NO_SUPPORT_LIMIT.contains(ctx.dialect())
         || !orderBy.isEmpty() && NO_SUPPORT_ORDER_BY_LIMIT.contains(ctx.dialect())) {
       Field<?>[] keyFields =
@@ -1151,9 +1138,7 @@ final class UpdateQueryImpl<R extends Record> extends AbstractStoreQuery<R>
                       ? table().getPrimaryKey()
                       : table().getKeys().get(0))
                   .getFieldsArray();
-
       ctx.start(UPDATE_WHERE).formatSeparator().visit(K_WHERE).sql(' ');
-
       if (keyFields.length == 1)
         ctx.visit(
             keyFields[0].in(
@@ -1171,20 +1156,14 @@ final class UpdateQueryImpl<R extends Record> extends AbstractStoreQuery<R>
                         .where(getWhere())
                         .orderBy(orderBy)
                         .limit(limit)));
-
       ctx.end(UPDATE_WHERE);
     } else {
       ctx.start(UPDATE_WHERE);
-
       if (hasWhere()) ctx.formatSeparator().visit(K_WHERE).sql(' ').visit(getWhere());
-
       ctx.end(UPDATE_WHERE);
-
       if (!orderBy.isEmpty()) ctx.formatSeparator().visit(K_ORDER_BY).sql(' ').visit(orderBy);
-
       if (limit != null) ctx.formatSeparator().visit(K_LIMIT).sql(' ').visit(limit);
     }
-
     ctx.start(UPDATE_RETURNING);
     toSQLReturning(ctx);
     ctx.end(UPDATE_RETURNING);
@@ -1192,14 +1171,10 @@ final class UpdateQueryImpl<R extends Record> extends AbstractStoreQuery<R>
 
   private final void acceptFrom(Context<?> ctx) {
     ctx.start(UPDATE_FROM);
-
     TableList f;
-
     f = from;
-
     if (!f.isEmpty())
       ctx.formatSeparator().visit(K_FROM).sql(' ').declareTables(true, c -> c.visit(f));
-
     ctx.end(UPDATE_FROM);
   }
 
@@ -1210,12 +1185,10 @@ final class UpdateQueryImpl<R extends Record> extends AbstractStoreQuery<R>
 
   @Override
   public final boolean isExecutable() {
-
     // [#6771] Take action when UPDATE query has no WHERE clause
     if (!condition.hasWhere())
       executeWithoutWhere(
           "UPDATE without WHERE", getExecuteUpdateWithoutWhere(configuration().settings()));
-
     return updateMap.size() > 0 || multiRow != null;
   }
 }

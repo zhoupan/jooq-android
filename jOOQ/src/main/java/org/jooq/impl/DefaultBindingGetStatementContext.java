@@ -48,7 +48,9 @@ class DefaultBindingGetStatementContext<U> extends AbstractScope
     implements BindingGetStatementContext<U> {
 
   private final CallableStatement statement;
+
   private final int index;
+
   private U value;
 
   DefaultBindingGetStatementContext(
@@ -57,7 +59,6 @@ class DefaultBindingGetStatementContext<U> extends AbstractScope
       CallableStatement statement,
       int index) {
     super(configuration, data);
-
     this.statement = statement;
     this.index = index;
   }
@@ -85,8 +86,8 @@ class DefaultBindingGetStatementContext<U> extends AbstractScope
   public final <T> BindingGetStatementContext<T> convert(
       final Converter<? super T, ? extends U> converter) {
     final DefaultBindingGetStatementContext<U> outer = this;
-
     return new DefaultBindingGetStatementContext<T>(configuration, data, statement, index) {
+
       @Override
       public void value(T v) {
         outer.value(converter.from(v));

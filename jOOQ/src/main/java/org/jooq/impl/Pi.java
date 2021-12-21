@@ -65,14 +65,12 @@ final class Pi extends AbstractField<BigDecimal> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
       case SQLITE:
         ctx.visit(inline(Math.PI, BigDecimal.class));
         break;
-
       default:
         ctx.visit(function(N_PI, getDataType()));
         break;
@@ -82,7 +80,6 @@ final class Pi extends AbstractField<BigDecimal> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Pi) {

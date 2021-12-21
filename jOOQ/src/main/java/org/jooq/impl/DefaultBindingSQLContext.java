@@ -47,7 +47,9 @@ import org.jooq.RenderContext;
 class DefaultBindingSQLContext<U> extends AbstractScope implements BindingSQLContext<U> {
 
   private final RenderContext render;
+
   private final U value;
+
   private final String variable;
 
   DefaultBindingSQLContext(
@@ -62,7 +64,6 @@ class DefaultBindingSQLContext<U> extends AbstractScope implements BindingSQLCon
       U value,
       String variable) {
     super(configuration, data);
-
     this.render = render;
     this.value = value;
     this.variable = variable;

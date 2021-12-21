@@ -79,15 +79,18 @@ import org.jooq.tools.StringUtils;
  * @since 1.5.2, 1.6.0
  * @deprecated - 2.0.5 - Use runtime configuration {@link Settings} instead
  */
-@Deprecated(forRemoval = true, since = "2.0")
 public class SchemaMapping implements Serializable {
 
   private static final JooqLogger log = JooqLogger.getLogger(SchemaMapping.class);
+
   private static volatile boolean loggedDeprecation = false;
 
   private final Configuration configuration;
+
   private transient volatile Map<String, Catalog> catalogs;
+
   private transient volatile Map<String, Schema> schemata;
+
   private transient volatile Map<String, Table<?>> tables;
 
   /** Construct a mapping from a {@link Configuration} object */
@@ -109,7 +112,6 @@ public class SchemaMapping implements Serializable {
 
   private static void logDeprecation() {
     if (!loggedDeprecation) {
-
       // Log only once
       loggedDeprecation = true;
       log.warn(
@@ -142,7 +144,6 @@ public class SchemaMapping implements Serializable {
    */
   public void use(String schemaName) {
     logDeprecation();
-
     mapping().setDefaultSchema(schemaName);
   }
 
@@ -154,7 +155,6 @@ public class SchemaMapping implements Serializable {
    */
   public void add(String inputSchema, String outputSchema) {
     logDeprecation();
-
     // Find existing mapped schema
     MappedSchema schema = null;
     for (MappedSchema s : mapping().getSchemata()) {
@@ -163,12 +163,10 @@ public class SchemaMapping implements Serializable {
         break;
       }
     }
-
     if (schema == null) {
       schema = new MappedSchema().withInput(inputSchema);
       mapping().getSchemata().add(schema);
     }
-
     // Add new mapping
     schema.setOutput(outputSchema);
   }
@@ -221,14 +219,11 @@ public class SchemaMapping implements Serializable {
    */
   public void add(final Table<?> inputTable, final String outputTable) {
     logDeprecation();
-
     // Try to find a pre-existing schema mapping in the settings
     MappedSchema schema = null;
     MappedTable table = null;
-
     for (MappedSchema s : mapping().getSchemata()) {
       if (inputTable.getSchema().getName().equals(s.getInput())) {
-
         // Find existing mapped table
         tableLoop:
         for (MappedTable t : s.getTables()) {
@@ -237,57 +232,45 @@ public class SchemaMapping implements Serializable {
             break tableLoop;
           }
         }
-
         schema = s;
         break;
       }
     }
-
     if (schema == null) {
       schema = new MappedSchema().withInput(inputTable.getSchema().getName());
       mapping().getSchemata().add(schema);
     }
-
     if (table == null) {
       table = new MappedTable().withInput(inputTable.getName());
       schema.getTables().add(table);
     }
-
     // Add new mapping
     table.setOutput(outputTable);
   }
 
   @Nullable
   public Catalog map(Catalog catalog) {
-
     // [#1774] [#4795] The default Settings render schema flag takes
     // precedence over the DefaultConfiguration's ignoreMapping flag!
     if (!renderCatalog()) return null;
-    // Don't map an already mapped catalog again
-    else if (catalog instanceof RenamedCatalog) return catalog;
-
+    else // Don't map an already mapped catalog again
+    if (catalog instanceof RenamedCatalog) return catalog;
     Catalog result = catalog;
     if (result == null) result = DSL.catalog(name(""));
-
     // [#2089] DefaultCatalog has an empty schema name
     // But we're mapping those names as well
     String catalogName = result.getName();
-
     // [#4642] Don't initialise catalog mapping if not necessary
     if (!mapping().getCatalogs().isEmpty()) {
-
       // Lazy initialise catalog mapping
       if (!getCatalogs().containsKey(catalogName)) {
-
         // [#1857] thread-safe lazy initialisation for those users who
         // want to use a Configuration and dependent objects in a "thread-safe" manner
         synchronized (this) {
           if (!getCatalogs().containsKey(catalogName)) {
             for (MappedCatalog c : mapping().getCatalogs()) {
-
               // A configured mapping was found, add a renamed catalog
               if (matches(c, catalogName)) {
-
                 // Ignore self-mappings and void-mappings
                 if (!isBlank(c.getOutput()))
                   if (c.getInput() != null && !c.getOutput().equals(catalogName))
@@ -297,25 +280,20 @@ public class SchemaMapping implements Serializable {
                         new RenamedCatalog(
                             result,
                             c.getInputExpression().matcher(catalogName).replaceAll(c.getOutput()));
-
                 break;
               }
             }
-
             // Add mapped catalog or self if no mapping was found
             getCatalogs().put(catalogName, result);
           }
         }
       }
-
       result = getCatalogs().get(catalogName);
     }
-
     // The configured default catalog is mapped to "null". This prevents
     // it from being rendered to SQL
     if ("".equals(result.getName()) || result.getName().equals(mapping().getDefaultCatalog()))
       result = null;
-
     return result;
   }
 
@@ -327,42 +305,33 @@ public class SchemaMapping implements Serializable {
    */
   @Nullable
   public Schema map(Schema schema) {
-
     // [#1774] The default Settings render schema flag takes precedence over
     // The DefaultConfiguration's ignoreMapping flag!
     if (!renderSchema()) return null;
-    // [#9708] Don't map an already mapped schema again
-    else if (schema instanceof RenamedSchema) return schema;
-
+    else // [#9708] Don't map an already mapped schema again
+    if (schema instanceof RenamedSchema) return schema;
     Schema result = schema;
     if (result == null) result = schema(name(""));
-
     Catalog catalog = result.getCatalog();
     if (catalog == null) catalog = DSL.catalog(name(""));
-
     // [#2089] DefaultSchema has an empty schema name
     // [#7498] But we're mapping those names as well
     String catalogName = catalog.getName();
     String schemaName = result.getName();
     String key = StringUtils.isEmpty(catalogName) ? schemaName : catalogName + '.' + schemaName;
-
     // [#4642] Don't initialise schema mapping if not necessary
     if (!mapping().getSchemata().isEmpty() || !mapping().getCatalogs().isEmpty()) {
-
       // Lazy initialise schema mapping
       if (!getSchemata().containsKey(key)) {
-
         // [#1857] thread-safe lazy initialisation for those users who
         // want to use a Configuration and dependent objects in a "thread-safe" manner
         synchronized (this) {
           if (!getSchemata().containsKey(key)) {
-
             catalogLoop:
             for (MappedCatalog c : mapping().getCatalogs()) {
               if (matches(c, catalogName)) {
                 for (MappedSchema s : c.getSchemata()) {
                   if (matches(s, schemaName)) {
-
                     // Ignore self-mappings and void-mappings
                     if (!isBlank(s.getOutput()))
                       if (s.getInput() != null && !s.getOutput().equals(schemaName))
@@ -375,24 +344,19 @@ public class SchemaMapping implements Serializable {
                                 s.getInputExpression()
                                     .matcher(schemaName)
                                     .replaceAll(s.getOutput()));
-
                     break catalogLoop;
                   }
                 }
-
                 // [#7498] Even without schema mapping configuration, we may still need to map the
                 // catalog
                 result = new RenamedSchema(map(catalog), result, schemaName);
                 break catalogLoop;
               }
             }
-
             if (!(result instanceof RenamedSchema))
               for (MappedSchema s : mapping().getSchemata()) {
-
                 // A configured mapping was found, add a renamed schema
                 if (matches(s, schemaName)) {
-
                   // Ignore self-mappings and void-mappings
                   if (!isBlank(s.getOutput()))
                     if (s.getInput() != null && !s.getOutput().equals(schemaName))
@@ -403,20 +367,16 @@ public class SchemaMapping implements Serializable {
                               catalog,
                               result,
                               s.getInputExpression().matcher(schemaName).replaceAll(s.getOutput()));
-
                   break;
                 }
               }
-
             // Add mapped schema or self if no mapping was found
             getSchemata().put(key, result);
           }
         }
       }
-
       result = getSchemata().get(key);
     }
-
     // The configured default schema is mapped to "null". This prevents
     // it from being rendered to SQL
     if ("".equals(result.getName())
@@ -425,7 +385,6 @@ public class SchemaMapping implements Serializable {
                 || "".equals(result.getCatalog().getName())
                 || result.getCatalog().getName().equals(mapping().getDefaultCatalog())))
       result = null;
-
     return result;
   }
 
@@ -439,19 +398,16 @@ public class SchemaMapping implements Serializable {
   @Nullable
   public <R extends Record> Table<R> map(Table<R> table) {
     Table<R> result = table;
-
     // [#4652] Don't initialise table mapping if not necessary
     if (result != null
         && (!mapping().getSchemata().isEmpty() || !mapping().getCatalogs().isEmpty())) {
       Catalog catalog = result.getCatalog();
       Schema schema = result.getSchema();
-
       // [#1189] Schema can be null in SQLite
       // [#2089] DefaultSchema have empty schema names
       // [#1186] TODO: replace this by calling table.getQualifiedName()
       if (catalog == null) catalog = DSL.catalog(name(""));
       if (schema == null) schema = schema(name(""));
-
       String catalogName = catalog.getName();
       String schemaName = schema.getName();
       String tableName = result.getName();
@@ -459,25 +415,20 @@ public class SchemaMapping implements Serializable {
           StringUtils.isEmpty(catalogName)
               ? (StringUtils.isEmpty(schemaName) ? tableName : (schemaName + "." + tableName))
               : (catalogName + '.' + schemaName + '.' + tableName);
-
       // Lazy initialise table mapping
       if (!getTables().containsKey(key)) {
-
         // [#1857] thread-safe lazy initialisation for those users who
         // want to use Configuration and dependent objects in a "thread-safe" manner
         synchronized (this) {
           if (!getTables().containsKey(key)) {
-
             catalogLoop:
             for (MappedCatalog c : mapping().getCatalogs()) {
               if (matches(c, catalogName)) {
                 for (MappedSchema s : c.getSchemata()) {
                   if (matches(s, schemaName)) {
                     for (MappedTable t : s.getTables()) {
-
                       // A configured mapping was found, add a renamed table
                       if (matches(t, tableName)) {
-
                         // Ignore self-mappings and void-mappings
                         if (!isBlank(t.getOutput()))
                           if (t.getInput() != null && !t.getOutput().equals(tableName))
@@ -490,29 +441,24 @@ public class SchemaMapping implements Serializable {
                                     t.getInputExpression()
                                         .matcher(tableName)
                                         .replaceAll(t.getOutput()));
-
                         break catalogLoop;
                       }
                     }
                   }
                 }
-
                 // [#7498] Even without table mapping configuration, we may still need to map the
                 // schema
                 result = new RenamedTable<>(map(schema), result, tableName);
                 break catalogLoop;
               }
             }
-
             if (!(result instanceof RenamedTable))
               schemaLoop:
               for (MappedSchema s : mapping().getSchemata()) {
                 if (matches(s, schemaName)) {
                   for (MappedTable t : s.getTables()) {
-
                     // A configured mapping was found, add a renamed table
                     if (matches(t, tableName)) {
-
                       // Ignore self-mappings and void-mappings
                       if (!isBlank(t.getOutput()))
                         if (t.getInput() != null && !t.getOutput().equals(tableName))
@@ -525,27 +471,22 @@ public class SchemaMapping implements Serializable {
                                   t.getInputExpression()
                                       .matcher(tableName)
                                       .replaceAll(t.getOutput()));
-
                       break schemaLoop;
                     }
                   }
-
                   // [#7498] Even without table mapping configuration, we may still need to map the
                   // schema
                   result = new RenamedTable<>(map(schema), result, tableName);
                   break schemaLoop;
                 }
               }
-
             // Add mapped table or self if no mapping was found
             getTables().put(key, result);
           }
         }
       }
-
       result = (Table<R>) getTables().get(key);
     }
-
     return result;
   }
 
@@ -577,7 +518,6 @@ public class SchemaMapping implements Serializable {
 
   private final Map<String, Catalog> getCatalogs() {
     if (catalogs == null) {
-
       // [#1857] thread-safe lazy initialisation for those users who
       // want to use Configuration and dependent objects in a "thread-safe" manner
       synchronized (this) {
@@ -591,7 +531,6 @@ public class SchemaMapping implements Serializable {
 
   private final Map<String, Schema> getSchemata() {
     if (schemata == null) {
-
       // [#1857] thread-safe lazy initialisation for those users who
       // want to use Configuration and dependent objects in a "thread-safe" manner
       synchronized (this) {
@@ -605,7 +544,6 @@ public class SchemaMapping implements Serializable {
 
   private final Map<String, Table<?>> getTables() {
     if (tables == null) {
-
       // [#1857] thread-safe lazy initialisation for those users who
       // want to use Configuration and dependent objects in a "thread-safe" manner
       synchronized (this) {
@@ -620,7 +558,6 @@ public class SchemaMapping implements Serializable {
   // ------------------------------------------------------------------------
   // Object API
   // ------------------------------------------------------------------------
-
   @Override
   public String toString() {
     return "" + mapping();

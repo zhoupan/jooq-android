@@ -61,7 +61,6 @@ final class SetSchema extends AbstractDDLQuery {
 
   SetSchema(Configuration configuration, Schema schema) {
     super(configuration);
-
     this.schema = schema;
   }
 
@@ -72,7 +71,6 @@ final class SetSchema extends AbstractDDLQuery {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -80,11 +78,9 @@ final class SetSchema extends AbstractDDLQuery {
       case MYSQL:
         ctx.visit(K_USE).sql(' ').visit(schema);
         break;
-
       case POSTGRES:
         ctx.visit(K_SET).sql(' ').visit(K_SEARCH_PATH).sql(" = ").visit(schema);
         break;
-
       case DERBY:
       case H2:
       case HSQLDB:

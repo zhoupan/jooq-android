@@ -61,7 +61,6 @@ final class SetCatalog extends AbstractDDLQuery {
 
   SetCatalog(Configuration configuration, Catalog catalog) {
     super(configuration);
-
     this.catalog = catalog;
   }
 
@@ -72,7 +71,6 @@ final class SetCatalog extends AbstractDDLQuery {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -84,7 +82,6 @@ final class SetCatalog extends AbstractDDLQuery {
       case POSTGRES:
         ctx.visit(DSL.setSchema(catalog.getName()));
         break;
-
       default:
         ctx.visit(K_SET).sql(' ').visit(K_CATALOG).sql(' ').visit(catalog);
         break;

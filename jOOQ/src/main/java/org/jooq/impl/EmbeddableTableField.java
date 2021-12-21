@@ -54,11 +54,15 @@ import org.jooq.TableField;
 /** @author Lukas Eder */
 final class EmbeddableTableField<R extends Record, E extends EmbeddableRecord<E>>
     extends AbstractField<E> implements TableField<R, E> {
+
   final Class<E> recordType;
+
   final boolean replacesFields;
+
   final Table<R> table;
+
   /** @deprecated - [#11058] - 3.14.5 - This will be removed in the future. */
-  @Deprecated final TableField<R, ?>[] fields;
+  final TableField<R, ?>[] fields;
 
   EmbeddableTableField(
       Name name,
@@ -67,7 +71,6 @@ final class EmbeddableTableField<R extends Record, E extends EmbeddableRecord<E>
       Table<R> table,
       TableField<R, ?>[] fields) {
     super(name, new RecordDataType<>(Tools.row0(fields), recordType, name.last()));
-
     this.recordType = recordType;
     this.replacesFields = replacesFields;
     this.table = table;
@@ -77,12 +80,10 @@ final class EmbeddableTableField<R extends Record, E extends EmbeddableRecord<E>
   // -------------------------------------------------------------------------
   // TableField API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
-
     // [#12237] If a RowField is nested somewhere in MULTISET, we must apply
-    //          the MULTISET emulation as well, here
+    // the MULTISET emulation as well, here
     if (TRUE.equals(ctx.data(DATA_MULTISET_CONTENT)))
       acceptMultisetContent(ctx, getDataType().getRow(), this, this::acceptDefault);
     else acceptDefault(ctx);
@@ -100,10 +101,8 @@ final class EmbeddableTableField<R extends Record, E extends EmbeddableRecord<E>
   @Override
   int projectionSize() {
     int result = 0;
-
     for (Field<?> field : ((AbstractRow<?>) getDataType().getRow()).fields.fields)
       result += ((AbstractField<?>) field).projectionSize();
-
     return result;
   }
 }

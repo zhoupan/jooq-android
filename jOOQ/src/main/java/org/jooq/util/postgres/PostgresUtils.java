@@ -59,7 +59,6 @@ import org.jooq.types.YearToSecond;
 import org.postgresql.util.PGInterval;
 
 // ...
-
 /**
  * A collection of utilities to cover the Postgres JDBC driver's missing implementations.
  *
@@ -75,17 +74,21 @@ public class PostgresUtils {
 
   // PGobject parsing state machine
   private static final int PG_OBJECT_INIT = 0;
+
   private static final int PG_OBJECT_BEFORE_VALUE = 1;
+
   private static final int PG_OBJECT_QUOTED_VALUE = 2;
+
   private static final int PG_OBJECT_UNQUOTED_VALUE = 3;
+
   private static final int PG_OBJECT_AFTER_VALUE = 4;
+
   private static final int PG_OBJECT_END = 5;
 
   private static volatile Boolean pgIntervalAvailable;
 
   /** Parse a Postgres-encoded <code>bytea</code> string */
   public static byte[] toBytes(final String string) {
-
     // Hex encoding is the default since Postgres 9.0
     if (string.startsWith(POSTGRESQL_HEX_STRING_PREFIX)) return toBytesFromHexEncoding(string);
     else return toBytesFromOctalEncoding(string);
@@ -94,7 +97,6 @@ public class PostgresUtils {
   private static byte[] toBytesFromOctalEncoding(final String string) {
     final Reader reader = new StringReader(string);
     final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-
     try {
       convertOctalToBytes(reader, bytes);
       return bytes.toByteArray();
@@ -109,25 +111,19 @@ public class PostgresUtils {
     while ((ch = reader.read()) != -1) {
       if (ch == '\\') {
         ch = reader.read();
-
         if (ch == -1)
           throw new DataTypeException("unexpected end of stream after initial backslash");
         if (ch == '\\') {
           bytes.write('\\');
           continue;
         }
-
         int val = octalValue(ch);
         ch = reader.read();
-
         if (ch == -1) throw new DataTypeException("unexpected end of octal value");
-
         val <<= 3;
         val += octalValue(ch);
         ch = reader.read();
-
         if (ch == -1) throw new DataTypeException("unexpected end of octal value");
-
         val <<= 3;
         val += octalValue(ch);
         bytes.write(val);
@@ -139,28 +135,21 @@ public class PostgresUtils {
 
   private static byte[] toBytesFromHexEncoding(String string) {
     String hex = string.substring(POSTGRESQL_HEX_STRING_PREFIX.length());
-
     final StringReader input = new StringReader(hex);
     final ByteArrayOutputStream bytes = new ByteArrayOutputStream(hex.length() / 2);
     int hexDigit;
     int byteValue;
-
     try {
       while ((hexDigit = input.read()) != -1) {
         byteValue = (hexValue(hexDigit) << 4);
-
         if ((hexDigit = input.read()) == -1) break;
-
         byteValue += hexValue(hexDigit);
         bytes.write(byteValue);
       }
-    }
-
-    // should never happen for a string reader
+    } // should never happen for a string reader
     catch (IOException e) {
       throw new DataTypeException("Error while decoding hex string", e);
     }
-
     input.close();
     return bytes.toByteArray();
   }
@@ -170,7 +159,6 @@ public class PostgresUtils {
     if (hexDigit >= '0' && hexDigit <= '9') return hexDigit - '0';
     else if (hexDigit >= 'a' && hexDigit <= 'f') return hexDigit - 'a' + 10;
     else if (hexDigit >= 'A' && hexDigit <= 'F') return hexDigit - 'A' + 10;
-
     throw new DataTypeException("unknown postgresql character format for hexValue: " + hexDigit);
   }
 
@@ -179,7 +167,6 @@ public class PostgresUtils {
     if (octalDigit < '0' || octalDigit > '7')
       throw new DataTypeException(
           "unknown postgresql character format for octalValue: " + octalDigit);
-
     return octalDigit - '0';
   }
 
@@ -221,11 +208,9 @@ public class PostgresUtils {
   /** Convert a Postgres interval to a jOOQ <code>DAY TO SECOND</code> interval */
   public static DayToSecond toDayToSecond(Object pgInterval) {
     boolean negative = pgInterval.toString().contains("-");
-
     if (pgIntervalAvailable() && pgInterval instanceof PGInterval) {
       PGInterval i = (PGInterval) pgInterval;
       if (negative) i.scale(-1);
-
       Double seconds = i.getSeconds();
       DayToSecond result =
           new DayToSecond(
@@ -234,9 +219,7 @@ public class PostgresUtils {
               i.getMinutes(),
               seconds.intValue(),
               (int) (1000000000 * (seconds - seconds.intValue())));
-
       if (negative) result = result.neg();
-
       return result;
     } else
       throw new IllegalArgumentException(
@@ -247,15 +230,11 @@ public class PostgresUtils {
   /** Convert a Postgres interval to a jOOQ <code>YEAR TO MONTH</code> interval */
   public static YearToMonth toYearToMonth(Object pgInterval) {
     boolean negative = pgInterval.toString().contains("-");
-
     if (pgIntervalAvailable() && pgInterval instanceof PGInterval) {
       PGInterval i = (PGInterval) pgInterval;
       if (negative) i.scale(-1);
-
       YearToMonth result = new YearToMonth(i.getYears(), i.getMonths());
-
       if (negative) result = result.neg();
-
       return result;
     } else
       throw new IllegalArgumentException(
@@ -271,7 +250,6 @@ public class PostgresUtils {
   /** Tokenize a PGObject input string. */
   public static List<String> toPGArray(String input) {
     if ("{}".equals(input)) return Collections.emptyList();
-
     return toPGObjectOrArray(input, '{', '}');
   }
 
@@ -287,143 +265,101 @@ public class PostgresUtils {
     int i = 0;
     int state = PG_OBJECT_INIT;
     StringBuilder sb = null;
-
     while (i < input.length()) {
       char c = input.charAt(i);
-
       switch (state) {
           // Initial state
         case PG_OBJECT_INIT:
-
           // Consume the opening bracket
           if (c == open) {
             state = PG_OBJECT_BEFORE_VALUE;
           }
-
           break;
-
           // Before a new value
         case PG_OBJECT_BEFORE_VALUE:
           sb = new StringBuilder();
-
           // Consume "empty"
           if (c == ',') {
             values.add(null);
             state = PG_OBJECT_BEFORE_VALUE;
-          }
-
-          // Consume "empty"
-          else if (c == close) {
+          } else // Consume "empty"
+          if (c == close) {
             values.add(null);
             state = PG_OBJECT_END;
-          }
-
-          // Consume the opening quote
-          else if (c == '"') {
+          } else // Consume the opening quote
+          if (c == '"') {
             state = PG_OBJECT_QUOTED_VALUE;
-          }
-
-          // Consume "null"
-          else if ((c == 'n' || c == 'N')
+          } else // Consume "null"
+          if ((c == 'n' || c == 'N')
               && (i + 4 < input.length())
               && input.substring(i, i + 4).equalsIgnoreCase("null")) {
             values.add(null);
             i += 3;
             state = PG_OBJECT_AFTER_VALUE;
-          }
-
-          // Consume a character
-          else {
+          } else // Consume a character
+          {
             sb.append(c);
             state = PG_OBJECT_UNQUOTED_VALUE;
           }
-
           break;
-
           // A "value" is being created
         case PG_OBJECT_QUOTED_VALUE:
-
           // Consume a quote
           if (c == '"') {
-
             // Consume an escaped quote
             if (input.charAt(i + 1) == '"') {
               sb.append(c);
               i++;
-            }
-
-            // Consume the closing quote
-            else {
+            } else // Consume the closing quote
+            {
               values.add(sb.toString());
               state = PG_OBJECT_AFTER_VALUE;
             }
-          }
-
-          // Consume a backslash
-          else if (c == '\\') {
+          } else // Consume a backslash
+          if (c == '\\') {
             char n = input.charAt(i + 1);
-
             // [#10467] Consume an escaped backslash or quote
             if (n == '\\' || n == '"') {
               sb.append(n);
               i++;
-            }
-
-            // Consume an "illegal" backslash (?)
-            else {
+            } else // Consume an "illegal" backslash (?)
+            {
               sb.append(c);
             }
-          }
-
-          // Consume any other character
-          else {
+          } else // Consume any other character
+          {
             sb.append(c);
           }
-
           break;
-
           // A value is being created
         case PG_OBJECT_UNQUOTED_VALUE:
-
           // Consume the closing bracket
           if (c == close) {
             values.add(sb.toString());
             state = PG_OBJECT_END;
-          }
-
-          // Consume the value separator
-          else if (c == ',') {
+          } else // Consume the value separator
+          if (c == ',') {
             values.add(sb.toString());
             state = PG_OBJECT_BEFORE_VALUE;
-          }
-
-          // Consume any other character
-          else {
+          } else // Consume any other character
+          {
             sb.append(c);
           }
-
           break;
-
           // A value was just added
         case PG_OBJECT_AFTER_VALUE:
-
           // Consume the closing bracket
           if (c == close) {
             state = PG_OBJECT_END;
-          }
-
-          // Consume the value separator
-          else if (c == ',') {
+          } else // Consume the value separator
+          if (c == ',') {
             state = PG_OBJECT_BEFORE_VALUE;
           }
-
           break;
       }
-
       // Consume next character
       i++;
     }
-
     return values;
   }
 
@@ -431,11 +367,9 @@ public class PostgresUtils {
   public static String toPGArrayString(Object[] value) {
     StringBuilder sb = new StringBuilder();
     sb.append("{");
-
     String separator = "";
     for (Object o : value) {
       sb.append(separator);
-
       // [#753] null must be set as a literal
       if (o == null) sb.append(o);
       else if (o instanceof byte[]) sb.append(toPGString((byte[]) o));
@@ -444,10 +378,8 @@ public class PostgresUtils {
             .append(
                 StringUtils.replace(StringUtils.replace(toPGString(o), "\\", "\\\\"), "\"", "\\\""))
             .append("\"");
-
       separator = ",";
     }
-
     sb.append("}");
     return sb.toString();
   }
@@ -465,13 +397,11 @@ public class PostgresUtils {
   public static String toPGString(Record r) {
     StringBuilder sb = new StringBuilder();
     sb.append("(");
-
     String separator = "";
     for (int i = 0; i < r.size(); i++) {
       @SuppressWarnings({"unchecked", "rawtypes"})
       Object a = ((Converter) r.field(i).getConverter()).to(r.get(i));
       sb.append(separator);
-
       // [#753] null must not be set as a literal
       if (a != null) {
         if (a instanceof byte[]) sb.append(toPGString((byte[]) a));
@@ -482,10 +412,8 @@ public class PostgresUtils {
                       StringUtils.replace(toPGString(a), "\\", "\\\\"), "\"", "\\\""))
               .append("\"");
       }
-
       separator = ",";
     }
-
     sb.append(")");
     return sb.toString();
   }
@@ -493,14 +421,11 @@ public class PostgresUtils {
   /** Create a PostgreSQL string representation of a binary. */
   public static String toPGString(byte[] binary) {
     StringBuilder sb = new StringBuilder();
-
     for (byte b : binary) {
-
       // [#3924] Beware of signed vs unsigned bytes!
       sb.append("\\\\");
       sb.append(leftPad(toOctalString(b & 0x000000ff), 3, '0'));
     }
-
     return sb.toString();
   }
 
@@ -513,7 +438,6 @@ public class PostgresUtils {
         pgIntervalAvailable = false;
       }
     }
-
     return pgIntervalAvailable;
   }
 }

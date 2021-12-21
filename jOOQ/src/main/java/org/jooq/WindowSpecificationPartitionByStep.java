@@ -101,7 +101,6 @@ public interface WindowSpecificationPartitionByStep extends WindowSpecificationO
    * @deprecated - 3.10 - [#6427] - This synthetic clause is no longer supported, use {@link
    *     #partitionBy(Field...)} instead, or omit the clause entirely.
    */
-  @Deprecated(forRemoval = true, since = "3.10")
   @NotNull
   @Support({CUBRID, FIREBIRD, H2, MARIADB, MYSQL, POSTGRES, SQLITE})
   WindowSpecificationOrderByStep partitionByOne();

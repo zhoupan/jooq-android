@@ -48,6 +48,7 @@ import org.jooq.tools.JooqLogger;
  * @author Lukas Eder
  */
 abstract class AbstractParamX<T> extends AbstractField<T> implements Param<T> {
+
   private static final JooqLogger log = JooqLogger.getLogger(AbstractParam.class);
 
   AbstractParamX(Name name, DataType<T> type) {
@@ -57,9 +58,7 @@ abstract class AbstractParamX<T> extends AbstractField<T> implements Param<T> {
   // ------------------------------------------------------------------------
   // XXX: Param API
   // ------------------------------------------------------------------------
-
   @Override
-  @Deprecated
   public final void setValue(T value) {
     log.warn(
         "Deprecation",
@@ -73,7 +72,6 @@ abstract class AbstractParamX<T> extends AbstractField<T> implements Param<T> {
   }
 
   @Override
-  @Deprecated
   public final void setConverted(Object value) {
     log.warn(
         "Deprecation",
@@ -85,7 +83,6 @@ abstract class AbstractParamX<T> extends AbstractField<T> implements Param<T> {
   abstract void setConverted0(Object value);
 
   @Override
-  @Deprecated
   public final void setInline(boolean inline) {
     log.warn(
         "Deprecation",

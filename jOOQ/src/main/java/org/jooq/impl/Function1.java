@@ -44,11 +44,11 @@ import org.jooq.Name;
 
 /** @author Lukas Eder */
 final class Function1<T> extends AbstractField<T> {
+
   private final Field<?> argument;
 
   Function1(Name name, DataType<T> type, Field<?> argument) {
     super(name, type);
-
     this.argument = argument;
   }
 

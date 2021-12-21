@@ -68,11 +68,11 @@ import org.jooq.Keyword;
 final class Extract extends AbstractField<Integer> {
 
   private final Field<?> field;
+
   private final DatePart datePart;
 
   Extract(Field<?> field, DatePart datePart) {
     super(N_EXTRACT, INTEGER);
-
     this.field = field;
     this.datePart = datePart;
   }
@@ -100,7 +100,6 @@ final class Extract extends AbstractField<Integer> {
           case SECOND:
             ctx.visit(function(N_STRFTIME, VARCHAR, inline("%S"), field).cast(INTEGER));
             return;
-
             // See: https://www.sqlite.org/lang_datefunc.html
           case EPOCH:
             ctx.visit(function(N_STRFTIME, VARCHAR, inline("%s"), field).cast(INTEGER));
@@ -117,7 +116,6 @@ final class Extract extends AbstractField<Integer> {
             return;
         }
         break;
-
       case DERBY:
         switch (datePart) {
           case YEAR:
@@ -140,7 +138,6 @@ final class Extract extends AbstractField<Integer> {
             return;
         }
         break;
-
       case MARIADB:
       case MYSQL:
         switch (datePart) {
@@ -161,7 +158,6 @@ final class Extract extends AbstractField<Integer> {
             return;
         }
         break;
-
       case POSTGRES:
         switch (datePart) {
           case DAY_OF_WEEK:
@@ -190,7 +186,6 @@ final class Extract extends AbstractField<Integer> {
             return;
         }
         break;
-
       case HSQLDB:
         switch (datePart) {
           case EPOCH:
@@ -205,7 +200,6 @@ final class Extract extends AbstractField<Integer> {
             return;
         }
         break;
-
       case H2:
         switch (datePart) {
           case QUARTER:
@@ -217,7 +211,6 @@ final class Extract extends AbstractField<Integer> {
         }
         break;
     }
-
     acceptDefaultEmulation(ctx);
   }
 
@@ -238,7 +231,6 @@ final class Extract extends AbstractField<Integer> {
       case DECADE:
         ctx.visit(DSL.floor(idiv(DSL.year(field), inline(10))));
         break;
-
       case CENTURY:
         ctx.visit(
             DSL.floor(
@@ -246,7 +238,6 @@ final class Extract extends AbstractField<Integer> {
                     imul(DSL.sign(DSL.year(field)), iadd(DSL.abs(DSL.year(field)), inline(99))),
                     inline(100))));
         break;
-
       case MILLENNIUM:
         ctx.visit(
             DSL.floor(
@@ -254,18 +245,15 @@ final class Extract extends AbstractField<Integer> {
                     imul(DSL.sign(DSL.year(field)), iadd(DSL.abs(DSL.year(field)), inline(999))),
                     inline(1000))));
         break;
-
       case QUARTER:
         ctx.visit(DSL.floor(idiv(iadd(DSL.month(field), inline(2)), inline(3))));
         break;
-
       case TIMEZONE:
         ctx.visit(
             iadd(
                 imul(DSL.extract(field, DatePart.TIMEZONE_HOUR), inline(3600)),
                 imul(DSL.extract(field, DatePart.TIMEZONE_MINUTE), inline(60))));
         break;
-
       default:
         acceptNativeFunction(ctx);
         break;

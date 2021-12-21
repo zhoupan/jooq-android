@@ -59,7 +59,6 @@ final class ArrayAgg<T> extends DefaultAggregateFunction<T[]> {
         ctx.sql(')');
         break;
     }
-
     acceptFilterClause(ctx);
     acceptOverClause(ctx);
   }

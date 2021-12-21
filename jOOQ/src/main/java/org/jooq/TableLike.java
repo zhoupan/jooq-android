@@ -124,7 +124,6 @@ public interface TableLike<R extends Record> extends Fields, QueryPart {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support
   Table<R> asTable(String alias, Function<? super Field<?>, ? extends String> aliasFunction);
@@ -138,7 +137,6 @@ public interface TableLike<R extends Record> extends Fields, QueryPart {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support
   Table<R> asTable(

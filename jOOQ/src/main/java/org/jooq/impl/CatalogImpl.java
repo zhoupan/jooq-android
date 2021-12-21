@@ -61,7 +61,9 @@ import org.jooq.tools.StringUtils;
  */
 @org.jooq.Internal
 public class CatalogImpl extends AbstractNamed implements Catalog {
+
   private static final Clause[] CLAUSES = {CATALOG, CATALOG_REFERENCE};
+
   static final Catalog DEFAULT_CATALOG = new CatalogImpl("");
 
   public CatalogImpl(Name name) {
@@ -119,16 +121,13 @@ public class CatalogImpl extends AbstractNamed implements Catalog {
   // ------------------------------------------------------------------------
   // XXX: Object API
   // ------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (this == that) return true;
-
     // [#11078] CatalogImpl equality can be decided without executing the
     // rather expensive implementation of AbstractQueryPart.equals()
     if (that instanceof CatalogImpl)
       return StringUtils.equals(getName(), ((CatalogImpl) that).getName());
-
     return super.equals(that);
   }
 }

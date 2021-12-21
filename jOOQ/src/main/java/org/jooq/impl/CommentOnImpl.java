@@ -58,8 +58,11 @@ import org.jooq.tools.*;
 final class CommentOnImpl extends AbstractDDLQuery implements CommentOnIsStep, CommentOnFinalStep {
 
   private final Table<?> table;
+
   private final boolean isView;
+
   private final Field<?> field;
+
   private Comment comment;
 
   CommentOnImpl(Configuration configuration, Table<?> table, boolean isView, Field<?> field) {
@@ -77,7 +80,6 @@ final class CommentOnImpl extends AbstractDDLQuery implements CommentOnIsStep, C
       Field<?> field,
       Comment comment) {
     super(configuration);
-
     this.table = table;
     this.isView = isView;
     this.field = field;
@@ -103,7 +105,6 @@ final class CommentOnImpl extends AbstractDDLQuery implements CommentOnIsStep, C
   // -------------------------------------------------------------------------
   // XXX: DSL API
   // -------------------------------------------------------------------------
-
   @Override
   public final CommentOnImpl is(String comment) {
     return is(DSL.comment(comment));
@@ -118,7 +119,6 @@ final class CommentOnImpl extends AbstractDDLQuery implements CommentOnIsStep, C
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Set<SQLDialect> SUPPORTS_COMMENT_ON_VIEW =
       SQLDialect.supportedBy(FIREBIRD, POSTGRES);
 
@@ -130,10 +130,8 @@ final class CommentOnImpl extends AbstractDDLQuery implements CommentOnIsStep, C
         {
           if (table != null) acceptMySQL(ctx);
           else acceptDefault(ctx);
-
           break;
         }
-
       default:
         {
           acceptDefault(ctx);
@@ -154,14 +152,12 @@ final class CommentOnImpl extends AbstractDDLQuery implements CommentOnIsStep, C
 
   private final void acceptDefault(Context<?> ctx) {
     ctx.visit(K_COMMENT).sql(' ').visit(K_ON).sql(' ');
-
     if (table != null)
       ctx.visit(isView && SUPPORTS_COMMENT_ON_VIEW.contains(ctx.dialect()) ? K_VIEW : K_TABLE)
           .sql(' ')
           .visit(table);
     else if (field != null) ctx.visit(K_COLUMN).sql(' ').visit(field);
     else throw new IllegalStateException();
-
     ctx.sql(' ').visit(K_IS).sql(' ').visit(comment);
   }
 }

@@ -59,11 +59,11 @@ import org.jooq.tools.*;
 final class ToDate extends AbstractField<Date> {
 
   private final Field<String> value;
+
   private final Field<String> formatMask;
 
   ToDate(Field<String> value, Field<String> formatMask) {
     super(N_TO_DATE, allNotNull(DATE, value, formatMask));
-
     this.value = nullSafeNotNull(value, VARCHAR);
     this.formatMask = nullSafeNotNull(formatMask, VARCHAR);
   }
@@ -71,7 +71,6 @@ final class ToDate extends AbstractField<Date> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -84,7 +83,6 @@ final class ToDate extends AbstractField<Date> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof ToDate) {

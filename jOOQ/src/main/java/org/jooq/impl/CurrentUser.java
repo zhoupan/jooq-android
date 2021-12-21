@@ -64,7 +64,6 @@ final class CurrentUser extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -74,11 +73,9 @@ final class CurrentUser extends AbstractField<String> {
       case POSTGRES:
         ctx.visit(N_CURRENT_USER);
         break;
-
       case SQLITE:
         ctx.visit(DSL.inline(""));
         break;
-
       default:
         ctx.visit(N_CURRENT_USER).sql("()");
         break;
@@ -88,7 +85,6 @@ final class CurrentUser extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof CurrentUser) {

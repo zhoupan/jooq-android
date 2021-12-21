@@ -47,12 +47,12 @@ import org.jooq.Field;
 
 /** @author Lukas Eder */
 final class Coalesce<T> extends AbstractField<T> {
+
   private final Field<T>[] fields;
 
   @SuppressWarnings({"unchecked", "rawtypes"})
   Coalesce(Field<?>[] fields) {
     super(N_COALESCE, anyNotNull((DataType) OTHER, fields));
-
     this.fields = (Field[]) fields;
   }
 

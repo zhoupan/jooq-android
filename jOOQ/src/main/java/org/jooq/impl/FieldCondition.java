@@ -45,6 +45,7 @@ import org.jooq.Field;
 
 /** @author Lukas Eder */
 final class FieldCondition extends AbstractCondition {
+
   final Field<Boolean> field;
 
   FieldCondition(Field<Boolean> field) {
@@ -54,14 +55,11 @@ final class FieldCondition extends AbstractCondition {
   @Override
   public void accept(Context<?> ctx) {
     switch (ctx.family()) {
-
         // [#2485] Some of these don't work nicely, yet
-
       case CUBRID:
       case FIREBIRD:
         ctx.visit(field.eq(inline(true, field.getDataType())));
         break;
-
       default:
         ctx.visit(
             Tools.hasDefaultConverter(field) ? field : field.eq(inline(true, field.getDataType())));
@@ -69,7 +67,8 @@ final class FieldCondition extends AbstractCondition {
     }
   }
 
-  @Override // Avoid AbstractCondition implementation
+  // Avoid AbstractCondition implementation
+  @Override
   public final Clause[] clauses(Context<?> ctx) {
     return null;
   }

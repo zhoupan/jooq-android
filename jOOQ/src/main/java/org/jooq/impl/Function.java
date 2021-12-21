@@ -55,7 +55,6 @@ final class Function<T> extends AbstractField<T> {
 
   Function(Name name, DataType<T> type, Field<?>... arguments) {
     super(name, type);
-
     this.arguments = new QueryPartList<>(arguments);
   }
 
@@ -71,7 +70,6 @@ final class Function<T> extends AbstractField<T> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Function)

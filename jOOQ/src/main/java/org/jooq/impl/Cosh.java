@@ -62,14 +62,12 @@ final class Cosh extends AbstractField<BigDecimal> {
 
   Cosh(Field<? extends Number> number) {
     super(N_COSH, allNotNull(NUMERIC, number));
-
     this.number = nullSafeNotNull(number, INTEGER);
   }
 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -80,7 +78,6 @@ final class Cosh extends AbstractField<BigDecimal> {
       case POSTGRES:
         ctx.visit(idiv(iadd(DSL.exp(imul(number, two())), one()), imul(DSL.exp(number), two())));
         break;
-
       default:
         ctx.visit(function(N_COSH, getDataType(), number));
         break;
@@ -90,7 +87,6 @@ final class Cosh extends AbstractField<BigDecimal> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Cosh) {

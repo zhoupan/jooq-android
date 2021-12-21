@@ -58,11 +58,11 @@ import org.jooq.tools.*;
 final class Trunc<T extends Number> extends AbstractField<T> {
 
   private final Field<T> value;
+
   private final Field<Integer> decimals;
 
   Trunc(Field<T> value, Field<Integer> decimals) {
     super(N_TRUNC, allNotNull((DataType) dataType(INTEGER, value, false), value, decimals));
-
     this.value = nullSafeNotNull(value, INTEGER);
     this.decimals = nullSafeNotNull(decimals, INTEGER);
   }
@@ -70,14 +70,12 @@ final class Trunc<T extends Number> extends AbstractField<T> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
       case DERBY:
         {
           Field<?> power;
-
           // [#1334] if possible, calculate the power in Java to prevent
           // inaccurate arithmetics in the Derby database
           Integer decimalsVal = extractParamValue(decimals);
@@ -85,7 +83,6 @@ final class Trunc<T extends Number> extends AbstractField<T> {
             power =
                 inline(java.math.BigDecimal.TEN.pow(decimalsVal, java.math.MathContext.DECIMAL128));
           else power = DSL.power(inline(java.math.BigDecimal.TEN), decimals);
-
           ctx.visit(
               DSL.decode()
                   .when(
@@ -93,23 +90,19 @@ final class Trunc<T extends Number> extends AbstractField<T> {
                   .otherwise(idiv(imul(value, power).ceil(), power)));
           break;
         }
-
       case H2:
       case MARIADB:
       case MYSQL:
         ctx.visit(N_TRUNCATE).sql('(').visit(value).sql(", ").visit(decimals).sql(')');
         break;
-
         // Postgres TRUNC() only takes NUMERIC arguments, no
         // DOUBLE PRECISION ones
-
       case POSTGRES:
         ctx.visit(
             castIfNeeded(
                 DSL.function("trunc", NUMERIC, castIfNeeded(value, NUMERIC), decimals),
                 value.getDataType()));
         break;
-
       default:
         ctx.visit(N_TRUNC).sql('(').visit(value).sql(", ").visit(decimals).sql(')');
         break;
@@ -119,7 +112,6 @@ final class Trunc<T extends Number> extends AbstractField<T> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Trunc) {

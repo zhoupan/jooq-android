@@ -95,9 +95,10 @@ final class RowField<ROW extends Row, REC extends Record> extends AbstractField<
         binding(
             fromNullable(
                 Object.class,
-                (Class<REC>) Tools.recordType(row.size()),
-
-                // [#7100] In non-PostgreSQL style dialects, RowField is emulated,
+                (Class<REC>)
+                    Tools.recordType(
+                        row.size()), // [#7100] In non-PostgreSQL style dialects, RowField is
+                // emulated,
                 // and at conversion time, we already have a synthetic Record[N],
                 // so no further conversion is required.
                 t ->
@@ -105,7 +106,6 @@ final class RowField<ROW extends Row, REC extends Record> extends AbstractField<
                         (t instanceof InternalRecord
                             ? t
                             : pgNewRecord(Record.class, (AbstractRow) row, t)))));
-
     this.row = row;
   }
 
@@ -130,18 +130,15 @@ final class RowField<ROW extends Row, REC extends Record> extends AbstractField<
   @Override
   int projectionSize() {
     int result = 0;
-
     for (Field<?> field : ((AbstractRow<?>) row).fields.fields)
       result += ((AbstractField<?>) field).projectionSize();
-
     return result;
   }
 
   @Override
   public final void accept(Context<?> ctx) {
-
     // [#12021] If a RowField is nested somewhere in MULTISET, we must apply
-    //          the MULTISET emulation as well, here
+    // the MULTISET emulation as well, here
     if (TRUE.equals(ctx.data(DATA_MULTISET_CONTENT)))
       acceptMultisetContent(ctx, getDataType().getRow(), this, this::acceptDefault);
     else acceptDefault(ctx);
@@ -150,7 +147,6 @@ final class RowField<ROW extends Row, REC extends Record> extends AbstractField<
   static void acceptMultisetContent(
       Context<?> ctx, Row row, Field<?> field, Consumer<? super Context<?>> acceptDefault) {
     Name alias = field.getUnqualifiedName();
-
     switch (emulateMultiset(ctx.configuration())) {
       case JSON:
         switch (ctx.family()) {
@@ -158,18 +154,14 @@ final class RowField<ROW extends Row, REC extends Record> extends AbstractField<
             ctx.visit(alias(ctx, alias, returningClob(ctx, jsonArray(row.fields()).nullOnNull())));
             break;
         }
-
         break;
-
       case JSONB:
         switch (ctx.family()) {
           default:
             ctx.visit(alias(ctx, alias, returningClob(ctx, jsonbArray(row.fields()).nullOnNull())));
             break;
         }
-
         break;
-
       case XML:
         switch (ctx.family()) {
           default:
@@ -179,12 +171,9 @@ final class RowField<ROW extends Row, REC extends Record> extends AbstractField<
                     alias,
                     xmlelement(
                         N_RECORD, map(row.fields(), (f, i) -> xmlelement(fieldNameString(i), f)))));
-
             break;
         }
-
         break;
-
       case NATIVE:
         acceptDefault.accept(ctx);
         break;
@@ -201,10 +190,10 @@ final class RowField<ROW extends Row, REC extends Record> extends AbstractField<
           DATA_LIST_ALREADY_INDENTED,
           true,
           c -> c.visit(new SelectFieldList<>(emulatedFields(ctx.configuration()).fields.fields)));
-
-    // [#11812] RowField is mainly used for projections, in case of which an
-    //          explicit ROW keyword helps disambiguate (1) from ROW(1)
-    else ctx.visit(K_ROW).sql(' ').visit(row);
+    else
+      // [#11812] RowField is mainly used for projections, in case of which an
+      // explicit ROW keyword helps disambiguate (1) from ROW(1)
+      ctx.visit(K_ROW).sql(' ').visit(row);
   }
 
   @Override

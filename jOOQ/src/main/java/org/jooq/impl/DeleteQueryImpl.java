@@ -86,6 +86,7 @@ final class DeleteQueryImpl<R extends Record> extends AbstractDMLQuery<R>
     implements DeleteQuery<R> {
 
   private static final Clause[] CLAUSES = {DELETE};
+
   private static final Set<SQLDialect> SPECIAL_DELETE_AS_SYNTAX =
       SQLDialect.supportedBy(MARIADB, MYSQL);
 
@@ -95,21 +96,26 @@ final class DeleteQueryImpl<R extends Record> extends AbstractDMLQuery<R>
 
   // LIMIT is supported but not ORDER BY
   private static final Set<SQLDialect> NO_SUPPORT_ORDER_BY_LIMIT = SQLDialect.supportedBy(IGNITE);
+
   private static final Set<SQLDialect> SUPPORT_MULTITABLE_DELETE =
       SQLDialect.supportedBy(MARIADB, MYSQL);
+
   private static final Set<SQLDialect> REQUIRE_REPEAT_FROM_IN_USING =
       SQLDialect.supportedBy(MARIADB, MYSQL);
+
   private static final Set<SQLDialect> NO_SUPPORT_REPEAT_FROM_IN_USING =
       SQLDialect.supportedBy(POSTGRES);
 
   private final TableList using;
+
   private final ConditionProviderImpl condition;
+
   private final SortFieldList orderBy;
+
   private Param<? extends Number> limit;
 
   DeleteQueryImpl(Configuration configuration, WithImpl with, Table<R> table) {
     super(configuration, with, table);
-
     this.using = new TableList();
     this.condition = new ConditionProviderImpl();
     this.orderBy = new SortFieldList();
@@ -196,17 +202,13 @@ final class DeleteQueryImpl<R extends Record> extends AbstractDMLQuery<R>
   @Override
   final void accept0(Context<?> ctx) {
     ctx.start(DELETE_DELETE).visit(K_DELETE).sql(' ');
-
     Table<?> t = table(ctx);
-
     boolean multiTableJoin =
         (SUPPORT_MULTITABLE_DELETE.contains(ctx.dialect()) && t instanceof JoinTable);
     boolean specialDeleteAsSyntax = SPECIAL_DELETE_AS_SYNTAX.contains(ctx.dialect());
-
     // [#11924] Multiple tables listed in the FROM clause mean this is a
-    //          MySQL style multi table DELETE
+    // MySQL style multi table DELETE
     if (multiTableJoin)
-
       // No table declarations in this case, but references
       ctx.visit(K_FROM)
           .sql(' ')
@@ -220,14 +222,12 @@ final class DeleteQueryImpl<R extends Record> extends AbstractDMLQuery<R>
                     return r;
                   }))
           .formatSeparator();
-
-    // [#2464] Use the USING clause to declare aliases in MySQL
-    else ctx.visit(K_FROM).sql(' ').declareTables(!specialDeleteAsSyntax, c -> c.visit(t));
-
+    else
+      // [#2464] Use the USING clause to declare aliases in MySQL
+      ctx.visit(K_FROM).sql(' ').declareTables(!specialDeleteAsSyntax, c -> c.visit(t));
     // [#11925] In MySQL, the tables in FROM must be repeated in USING
     if (!using.isEmpty() || multiTableJoin || specialDeleteAsSyntax && Tools.alias(t) != null) {
       TableList u;
-
       if (REQUIRE_REPEAT_FROM_IN_USING.contains(ctx.dialect())
           && !containsDeclaredTable(using, t)) {
         u = new TableList(t);
@@ -237,14 +237,10 @@ final class DeleteQueryImpl<R extends Record> extends AbstractDMLQuery<R>
         u = new TableList(using);
         u.remove(t);
       } else u = using;
-
       ctx.formatSeparator().visit(K_USING).sql(' ').declareTables(true, c -> c.visit(u));
     }
-
     ctx.end(DELETE_DELETE);
-
     boolean noSupportParametersInWhere = false;
-
     if (limit != null && NO_SUPPORT_LIMIT.contains(ctx.dialect())
         || !orderBy.isEmpty() && NO_SUPPORT_ORDER_BY_LIMIT.contains(ctx.dialect())) {
       Field<?>[] keyFields =
@@ -254,9 +250,7 @@ final class DeleteQueryImpl<R extends Record> extends AbstractDMLQuery<R>
                       ? table().getPrimaryKey()
                       : table().getKeys().get(0))
                   .getFieldsArray();
-
       ctx.start(DELETE_WHERE).formatSeparator().visit(K_WHERE).sql(' ');
-
       ctx.paramTypeIf(
           ParamType.INLINED,
           noSupportParametersInWhere,
@@ -279,24 +273,18 @@ final class DeleteQueryImpl<R extends Record> extends AbstractDMLQuery<R>
                               .orderBy(orderBy)
                               .limit(limit)));
           });
-
       ctx.end(DELETE_WHERE);
     } else {
       ctx.start(DELETE_WHERE);
-
       if (hasWhere())
         ctx.paramTypeIf(
             ParamType.INLINED,
             noSupportParametersInWhere,
             c -> c.formatSeparator().visit(K_WHERE).sql(' ').visit(getWhere()));
-
       ctx.end(DELETE_WHERE);
-
       if (!orderBy.isEmpty()) ctx.formatSeparator().visit(K_ORDER_BY).sql(' ').visit(orderBy);
-
       if (limit != null) ctx.formatSeparator().visit(K_LIMIT).sql(' ').visit(limit);
     }
-
     ctx.start(DELETE_RETURNING);
     toSQLReturning(ctx);
     ctx.end(DELETE_RETURNING);
@@ -309,12 +297,10 @@ final class DeleteQueryImpl<R extends Record> extends AbstractDMLQuery<R>
 
   @Override
   public final boolean isExecutable() {
-
     // [#6771] Take action when DELETE query has no WHERE clause
     if (!condition.hasWhere())
       executeWithoutWhere(
           "DELETE without WHERE", getExecuteDeleteWithoutWhere(configuration().settings()));
-
     return super.isExecutable();
   }
 }

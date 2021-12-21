@@ -65,7 +65,6 @@ final class VarPop extends DefaultAggregateFunction<BigDecimal> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Set<SQLDialect> NO_SUPPORT_NATIVE =
       SQLDialect.supportedUntil(DERBY, IGNITE, SQLITE);
 
@@ -74,7 +73,6 @@ final class VarPop extends DefaultAggregateFunction<BigDecimal> {
   public void accept(Context<?> ctx) {
     if (NO_SUPPORT_NATIVE.contains(ctx.dialect())) {
       Field<? extends Number> x = (Field) getArguments().get(0);
-
       ctx.visit(
           fo(DSL.avg(DSL.square(x).cast(d(ctx)))).minus(DSL.square(fo(DSL.avg(x.cast(d(ctx)))))));
     } else super.accept(ctx);

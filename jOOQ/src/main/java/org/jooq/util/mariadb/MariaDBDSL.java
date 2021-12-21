@@ -55,7 +55,6 @@ public class MariaDBDSL extends DSL {
   // -------------------------------------------------------------------------
   // MariaDB-specific compression and encryption functions
   // -------------------------------------------------------------------------
-
   /**
    * Get the MariaDB-specific <code>DECODE()</code> function
    *
@@ -197,7 +196,6 @@ public class MariaDBDSL extends DSL {
   // -------------------------------------------------------------------------
   // Other utilities
   // -------------------------------------------------------------------------
-
   /**
    * Get a field based {@link EnumType} by its MariaDB-specific index.
    *
@@ -240,12 +238,10 @@ public class MariaDBDSL extends DSL {
     if (index <= 0) {
       return null;
     }
-
     E[] values = type.getEnumConstants();
     if (index > values.length) {
       return null;
     }
-
     return values[index - 1];
   }
 }

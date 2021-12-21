@@ -51,6 +51,7 @@ import org.jooq.exception.DataAccessException;
 final class ResultsImpl extends AbstractList<Result<Record>> implements Results {
 
   private Configuration configuration;
+
   final List<ResultOrRows> resultsOrRows;
 
   ResultsImpl(Configuration configuration) {
@@ -61,7 +62,6 @@ final class ResultsImpl extends AbstractList<Result<Record>> implements Results 
   // ------------------------------------------------------------------------
   // XXX: Additional, Results-specific methods
   // ------------------------------------------------------------------------
-
   @Override
   public final List<ResultOrRows> resultsOrRows() {
     return resultsOrRows;
@@ -70,11 +70,9 @@ final class ResultsImpl extends AbstractList<Result<Record>> implements Results 
   // -------------------------------------------------------------------------
   // XXX: Attachable API
   // -------------------------------------------------------------------------
-
   @Override
   public final void attach(Configuration c) {
     this.configuration = c;
-
     for (Result<?> result : this) if (result != null) result.attach(c);
   }
 
@@ -91,22 +89,18 @@ final class ResultsImpl extends AbstractList<Result<Record>> implements Results 
   // -------------------------------------------------------------------------
   // XXX Object API
   // -------------------------------------------------------------------------
-
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
     String separator = "";
-
     for (ResultOrRows result : resultsOrRows) {
       if (result.result() != null)
         sb.append(separator).append("Result set:\n").append(result.result());
       else if (result.exception() != null)
         sb.append(separator).append("Exception: ").append(result.exception().getMessage());
       else sb.append(separator).append("Update count: ").append(result.rows());
-
       separator = "\n";
     }
-
     return sb.toString();
   }
 
@@ -120,19 +114,16 @@ final class ResultsImpl extends AbstractList<Result<Record>> implements Results 
     if (this == obj) {
       return true;
     }
-
     if (obj instanceof ResultsImpl) {
       ResultsImpl other = (ResultsImpl) obj;
       return resultsOrRows.equals(other.resultsOrRows);
     }
-
     return false;
   }
 
   // -------------------------------------------------------------------------
   // XXX: List API
   // -------------------------------------------------------------------------
-
   @Override
   public final int size() {
     return list().size();
@@ -165,26 +156,25 @@ final class ResultsImpl extends AbstractList<Result<Record>> implements Results 
 
   private final List<Result<Record>> list() {
     List<Result<Record>> list = new ArrayList<>();
-
     for (ResultOrRows result : resultsOrRows)
       if (result.result() != null) list.add(result.result());
-
     return list;
   }
 
   private final int translatedIndex(int index) {
     int translated = 0;
-
     for (int i = 0; i < index; i++)
       while (resultsOrRows.get(translated++).result() == null)
         ;
-
     return translated;
   }
 
-  static final /* record */ class ResultOrRowsImpl implements ResultOrRows {
+  static final class /* record */ ResultOrRowsImpl implements ResultOrRows {
+
     private final Result<Record> result;
+
     private final int rows;
+
     private final DataAccessException exception;
 
     public ResultOrRowsImpl(Result<Record> result, int rows, DataAccessException exception) {

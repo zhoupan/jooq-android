@@ -56,7 +56,6 @@ public class SQLDialectNotSupportedException extends RuntimeException {
 
   public SQLDialectNotSupportedException(String message, boolean warn) {
     super(message);
-
     if (warn) {
       log.warn("Not supported by dialect", message);
     }

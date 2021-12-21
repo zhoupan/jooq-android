@@ -73,32 +73,37 @@ import org.jooq.Select;
  * @author Lukas Eder
  */
 final class ForLock extends AbstractQueryPart {
+
   private static final Set<SQLDialect> NO_SUPPORT_FOR_UPDATE_QUALIFIED =
       SQLDialect.supportedBy(DERBY, FIREBIRD, H2, HSQLDB);
+
   private static final Set<SQLDialect> NO_SUPPORT_STANDARD_FOR_SHARE =
       SQLDialect.supportedUntil(MARIADB);
 
   private static final Set<SQLDialect> EMULATE_FOR_UPDATE_WAIT_MY =
       SQLDialect.supportedUntil(MYSQL);
+
   private static final Set<SQLDialect> EMULATE_FOR_UPDATE_WAIT_PG =
       SQLDialect.supportedBy(POSTGRES);
 
   QueryPartList<Field<?>> forLockOf;
+
   TableList forLockOfTables;
+
   ForLockMode forLockMode;
+
   ForLockWaitMode forLockWaitMode;
+
   int forLockWait;
 
   @Override
   public final void accept(Context<?> ctx) {
-
     switch (forLockMode) {
       case SHARE:
         if (NO_SUPPORT_STANDARD_FOR_SHARE.contains(ctx.dialect()))
           ctx.formatSeparator().visit(K_LOCK_IN_SHARE_MODE);
         else ctx.formatSeparator().visit(K_FOR).sql(' ').visit(forLockMode.toKeyword());
         break;
-
       case UPDATE:
       case KEY_SHARE:
       case NO_KEY_UPDATE:
@@ -106,9 +111,7 @@ final class ForLock extends AbstractQueryPart {
         ctx.formatSeparator().visit(K_FOR).sql(' ').visit(forLockMode.toKeyword());
         break;
     }
-
     if (Tools.isNotEmpty(forLockOf)) {
-
       // [#4151] [#6117] Some databases don't allow for qualifying column
       // names here. Copy also to TableList
       ctx.qualify(
@@ -116,31 +119,24 @@ final class ForLock extends AbstractQueryPart {
           c -> c.sql(' ').visit(K_OF).sql(' ').visit(forLockOf));
     } else if (Tools.isNotEmpty(forLockOfTables)) {
       ctx.sql(' ').visit(K_OF).sql(' ');
-
       switch (ctx.family()) {
-
           // Some dialects don't allow for an OF [table-names] clause
           // It can be emulated by listing the table's fields, though
-
         case DERBY:
           {
             forLockOfTables.toSQLFields(ctx);
             break;
           }
-
           // Render the OF [table-names] clause
         default:
           ctx.visit(wrap(forLockOfTables).qualify(false));
           break;
       }
     }
-
     // [#3186] Firebird's FOR UPDATE clause has a different semantics. To achieve "regular"
     // FOR UPDATE semantics, we should use FOR UPDATE WITH LOCK
     if (ctx.family() == FIREBIRD) ctx.sql(' ').visit(K_WITH_LOCK);
-
     if (forLockWaitMode != null) {
-
       // [#11243] PostgreSQL FOR UPDATE WAIT <n> emulation
       if (forLockWaitMode == ForLockWaitMode.WAIT
           && EMULATE_FOR_UPDATE_WAIT_PG.contains(ctx.dialect())) {
@@ -150,7 +146,6 @@ final class ForLock extends AbstractQueryPart {
           && EMULATE_FOR_UPDATE_WAIT_MY.contains(ctx.dialect())) {
         if (ctx.data(DATA_LOCK_WAIT_TIMEOUT_SET) == null) {
           ctx.skipUpdateCounts(2).data(DATA_LOCK_WAIT_TIMEOUT_SET, true);
-
           prependSQL(
               ctx,
               ctx.dsl().query("{set} @t = @@innodb_lock_wait_timeout"),
@@ -159,7 +154,6 @@ final class ForLock extends AbstractQueryPart {
         }
       } else {
         ctx.sql(' ').visit(forLockWaitMode.toKeyword());
-
         if (forLockWaitMode == ForLockWaitMode.WAIT) ctx.sql(' ').sql(forLockWait);
       }
     }
@@ -170,8 +164,7 @@ final class ForLock extends AbstractQueryPart {
     UPDATE("update"),
     NO_KEY_UPDATE("no key update"),
     SHARE("share"),
-    KEY_SHARE("key share"),
-    ;
+    KEY_SHARE("key share");
 
     private final Keyword keyword;
 
@@ -188,8 +181,7 @@ final class ForLock extends AbstractQueryPart {
   static enum ForLockWaitMode {
     WAIT("wait"),
     NOWAIT("nowait"),
-    SKIP_LOCKED("skip locked"),
-    ;
+    SKIP_LOCKED("skip locked");
 
     private final Keyword keyword;
 

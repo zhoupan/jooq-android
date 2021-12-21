@@ -378,13 +378,11 @@ public final class Records {
    */
   public static final <K, V, R extends Record> Collector<R, ?, Map<K, V>> intoMap(
       Function<? super R, ? extends K> keyMapper, Function<? super R, ? extends V> valueMapper) {
-
     // [#12123] Can't use Collectors.toMap() with nulls
     return Collector.of(
         LinkedHashMap::new,
         (m, e) -> {
           K k = keyMapper.apply(e);
-
           if (m.containsKey(k))
             throw new InvalidResultException("Key " + k + " is not unique in Result");
           else m.put(k, valueMapper.apply(e));
@@ -548,9 +546,7 @@ public final class Records {
             () -> new Result[1],
             (x, r) -> {
               V v = valueMapper.apply(r);
-
               if (x[0] == null) x[0] = Internal.result(v);
-
               x[0].add(v);
             },
             (r1, r2) -> {
@@ -1655,7 +1651,6 @@ public final class Records {
   private static final <K, V> Function<Map<Object, V>, Map<K, V>> unwrapNulls() {
     return map -> {
       if (map.containsKey(NULL)) map.put(null, map.remove(NULL));
-
       return (Map) map;
     };
   }

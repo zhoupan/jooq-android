@@ -71,7 +71,6 @@ final class RowImplN extends AbstractRow<Record> implements RowN {
   // ------------------------------------------------------------------------
   // Generic comparison predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition compare(Comparator comparator, RowN row) {
     return new RowCondition(this, row, comparator);
@@ -105,7 +104,6 @@ final class RowImplN extends AbstractRow<Record> implements RowN {
   // ------------------------------------------------------------------------
   // Equal / Not equal comparison predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition equal(RowN row) {
     return compare(Comparator.EQUALS, row);
@@ -189,7 +187,6 @@ final class RowImplN extends AbstractRow<Record> implements RowN {
   // ------------------------------------------------------------------------
   // Ordering comparison predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition lessThan(RowN row) {
     return compare(Comparator.LESS, row);
@@ -353,7 +350,6 @@ final class RowImplN extends AbstractRow<Record> implements RowN {
   // ------------------------------------------------------------------------
   // [NOT] BETWEEN predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final BetweenAndStepN between(Object... values) {
     return between(row(Tools.fieldsArray(values, dataTypes())));
@@ -477,7 +473,6 @@ final class RowImplN extends AbstractRow<Record> implements RowN {
   // ------------------------------------------------------------------------
   // [NOT] DISTINCT predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition isNotDistinctFrom(RowN row) {
     return new RowIsDistinctFrom(this, row, true);
@@ -531,7 +526,6 @@ final class RowImplN extends AbstractRow<Record> implements RowN {
   // ------------------------------------------------------------------------
   // [NOT] IN predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition in(RowN... rows) {
     return in(Arrays.asList(rows));
@@ -540,9 +534,7 @@ final class RowImplN extends AbstractRow<Record> implements RowN {
   @Override
   public final Condition in(Record... records) {
     QueryPartList<Row> rows = new QueryPartList<>();
-
     for (Record record : records) rows.add(record.valuesRow());
-
     return new RowInCondition(this, rows, false);
   }
 
@@ -554,9 +546,7 @@ final class RowImplN extends AbstractRow<Record> implements RowN {
   @Override
   public final Condition notIn(Record... records) {
     QueryPartList<Row> rows = new QueryPartList<>();
-
     for (Record record : records) rows.add(record.valuesRow());
-
     return new RowInCondition(this, rows, true);
   }
 
@@ -583,7 +573,6 @@ final class RowImplN extends AbstractRow<Record> implements RowN {
   // ------------------------------------------------------------------------
   // Predicates involving subqueries
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition equal(Select<? extends Record> select) {
     return compare(Comparator.EQUALS, select);

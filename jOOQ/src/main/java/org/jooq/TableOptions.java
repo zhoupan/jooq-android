@@ -54,15 +54,23 @@ import org.jetbrains.annotations.Nullable;
 public final class TableOptions implements Serializable {
 
   private static final TableOptions C_EXPRESSION = new TableOptions(TableType.EXPRESSION);
+
   private static final TableOptions C_FUNCTION = new TableOptions(TableType.FUNCTION);
+
   private static final TableOptions C_MATERIALIZED_VIEW = materializedView(null);
+
   private static final TableOptions C_TABLE = new TableOptions(TableType.TABLE);
+
   private static final TableOptions C_TEMPORARY = new TableOptions(TableType.TEMPORARY);
+
   private static final TableOptions C_VIEW = view((String) null);
 
   private final TableType type;
+
   private final OnCommit onCommit;
+
   private final Select<?> select;
+
   private final String source;
 
   private TableOptions(TableType type) {
@@ -233,27 +241,21 @@ public final class TableOptions implements Serializable {
 
     /** An ordinary table that is stored in the schema. */
     TABLE,
-
     /** A global temporary table that is stored in the schema and visible to everyone. */
     TEMPORARY,
-
     /** A view that is defined by a {@link Select} statement. */
     VIEW,
-
     /**
      * A materialised view that is defined by a {@link Select} statement, and whose data is
      * materialised in the schema.
      */
     MATERIALIZED_VIEW,
-
     /** A table valued function that is defined by a {@link Routine}. */
     FUNCTION,
-
     /**
      * A table expression, such as a derived table, a joined table, a common table expression, etc.
      */
     EXPRESSION,
-
     /** A table type that is unknown to jOOQ. */
     UNKNOWN;
 
@@ -277,18 +279,15 @@ public final class TableOptions implements Serializable {
   public enum OnCommit {
     @Support({POSTGRES})
     DELETE_ROWS,
-
     @Support({POSTGRES})
     PRESERVE_ROWS,
-
     @Support({POSTGRES})
-    DROP;
+    DROP
   }
 
   // -------------------------------------------------------------------------
   // XXX: Object API
   // -------------------------------------------------------------------------
-
   @Override
   public int hashCode() {
     final int prime = 31;

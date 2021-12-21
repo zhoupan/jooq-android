@@ -65,7 +65,6 @@ final class RegrR2 extends DefaultAggregateFunction<BigDecimal> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Set<SQLDialect> NO_SUPPORT_NATIVE =
       SQLDialect.supportedUntil(
           CUBRID, DERBY, FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, SQLITE);
@@ -80,7 +79,6 @@ final class RegrR2 extends DefaultAggregateFunction<BigDecimal> {
   private final void acceptEmulation(Context<?> ctx) {
     Field<? extends Number> x = (Field) getArguments().get(0);
     Field<? extends Number> y = (Field) getArguments().get(1);
-
     ctx.visit(
         DSL.when(fo(DSL.varPop(y(x, y))).eq(inline(BigDecimal.ZERO)), (Field) DSL.NULL(d(ctx)))
             .when(fo(DSL.varPop(x(x, y))).eq(inline(BigDecimal.ZERO)), inline(BigDecimal.ONE))

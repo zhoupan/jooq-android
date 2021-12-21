@@ -46,6 +46,7 @@ import java.util.function.Supplier;
 final class ThreadGuard {
 
   static final class Guard {
+
     final ThreadLocal<Object> tl = new ThreadLocal<>();
   }
 
@@ -84,7 +85,6 @@ final class ThreadGuard {
       ThreadGuard.Guard guard, Supplier<V> unguardedOperation, Supplier<V> guardedOperation) {
     boolean unguarded = (guard.tl.get() == null);
     if (unguarded) guard.tl.set(ThreadGuard.Guard.class);
-
     try {
       if (unguarded) return unguardedOperation.get();
       else return guardedOperation.get();

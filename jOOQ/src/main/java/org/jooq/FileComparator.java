@@ -69,7 +69,6 @@ final class FileComparator implements Comparator<File> {
   public final int compare(File o1, File o2) {
     String s1 = o1 == null ? null : o1.getName();
     String s2 = o2 == null ? null : o2.getName();
-
     return FilenameComparator.INSTANCE.compare(s1, s2);
   }
 }

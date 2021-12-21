@@ -65,12 +65,12 @@ import org.reactivestreams.Subscription;
 
 /** @author Lukas Eder */
 final class ParsingConnectionFactory implements ConnectionFactory {
+
   final Configuration configuration;
 
   ParsingConnectionFactory(Configuration configuration) {
     if (configuration.connectionFactory() instanceof NoConnectionFactory)
       throw new DetachedException("ConnectionProvider did not provide an R2DBC ConnectionFactory");
-
     this.configuration =
         configuration.deriveSettings(s -> setParamType(configuration.dialect(), s));
   }
@@ -90,6 +90,7 @@ final class ParsingConnectionFactory implements ConnectionFactory {
   }
 
   private final class ParsingR2DBCConnectionSubscriber implements Subscriber<Connection> {
+
     private final Subscriber<? super Connection> subscriber;
 
     private ParsingR2DBCConnectionSubscriber(Subscriber<? super Connection> subscriber) {
@@ -118,6 +119,7 @@ final class ParsingConnectionFactory implements ConnectionFactory {
   }
 
   private final class ParsingR2DBCConnection implements Connection {
+
     private final Connection delegate;
 
     private ParsingR2DBCConnection(Connection delegate) {
@@ -206,6 +208,7 @@ final class ParsingConnectionFactory implements ConnectionFactory {
   }
 
   private final class ParsingR2DBCBatch implements Batch {
+
     private final Batch delegate;
 
     private ParsingR2DBCBatch(Batch b) {
@@ -225,24 +228,24 @@ final class ParsingConnectionFactory implements ConnectionFactory {
   }
 
   private final class ParsingR2DBCStatement implements Statement {
+
     private final Connection delegate;
+
     private final String input;
+
     private final List<List<Param<?>>> params;
 
     private ParsingR2DBCStatement(Connection delegate, String input) {
       this.delegate = delegate;
       this.input = input;
       this.params = new ArrayList<>();
-
       params.add(new ArrayList<>());
     }
 
     private final List<Param<?>> list(int index) {
       List<Param<?>> list = params.get(params.size() - 1);
-
       int reserve = index + 1 - list.size();
       if (reserve > 0) list.addAll(nCopies(reserve, null));
-
       return list;
     }
 
@@ -280,20 +283,15 @@ final class ParsingConnectionFactory implements ConnectionFactory {
     @Override
     public final Publisher<? extends Result> execute() {
       Statement statement = null;
-
       for (List<Param<?>> p : params) {
         if (statement != null) statement.add();
-
         Rendered rendered = translate(configuration, input, p.toArray(EMPTY_PARAM));
-
         if (statement == null) statement = delegate.createStatement(rendered.sql);
-
         int j = 0;
         for (Param<?> o : rendered.bindValues)
           if (o.getValue() == null) statement.bindNull(j++, o.getType());
           else statement.bind(j++, o.getValue());
       }
-
       return statement.execute();
     }
   }

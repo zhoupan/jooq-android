@@ -53,11 +53,11 @@ import org.jooq.types.DayToSecond;
 final class TimestampDiff extends AbstractField<DayToSecond> {
 
   private final Field<?> timestamp1;
+
   private final Field<?> timestamp2;
 
   TimestampDiff(Field<?> timestamp1, Field<?> timestamp2) {
     super(N_TIMESTAMPDIFF, INTERVALDAYTOSECOND);
-
     this.timestamp1 = timestamp1;
     this.timestamp2 = timestamp2;
   }
@@ -66,17 +66,14 @@ final class TimestampDiff extends AbstractField<DayToSecond> {
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
       case POSTGRES:
-
         // [#4481] Parentheses are important in case this expression is
-        //         placed in the context of other arithmetic
+        // placed in the context of other arithmetic
         ctx.sql('(').visit(timestamp1).sql(" - ").visit(timestamp2).sql(')');
         break;
-
         // CUBRID's datetime operations operate on a millisecond level
       case CUBRID:
         ctx.visit(timestamp1.sub(timestamp2));
         break;
-
       case DERBY:
         ctx.sql("1000 * {fn ")
             .visit(N_TIMESTAMPDIFF)
@@ -88,7 +85,6 @@ final class TimestampDiff extends AbstractField<DayToSecond> {
             .visit(timestamp1)
             .sql(") }");
         break;
-
       case FIREBIRD:
         ctx.visit(N_DATEDIFF)
             .sql('(')
@@ -99,14 +95,11 @@ final class TimestampDiff extends AbstractField<DayToSecond> {
             .visit(timestamp1)
             .sql(')');
         break;
-
       case H2:
       case HSQLDB:
         ctx.visit(N_DATEDIFF).sql("('ms', ").visit(timestamp2).sql(", ").visit(timestamp1).sql(')');
         break;
-
         // MySQL's datetime operations operate on a microsecond level
-
       case MARIADB:
       case MYSQL:
         ctx.visit(N_TIMESTAMPDIFF)
@@ -118,7 +111,6 @@ final class TimestampDiff extends AbstractField<DayToSecond> {
             .visit(timestamp1)
             .sql(") / 1000");
         break;
-
       case SQLITE:
         ctx.sql('(')
             .visit(N_STRFTIME)
@@ -130,7 +122,6 @@ final class TimestampDiff extends AbstractField<DayToSecond> {
             .visit(timestamp2)
             .sql(")) * 1000");
         break;
-
       default:
         // Default implementation for equals() and hashCode()
         ctx.visit(castIfNeeded(timestamp1.sub(timestamp2), DayToSecond.class));

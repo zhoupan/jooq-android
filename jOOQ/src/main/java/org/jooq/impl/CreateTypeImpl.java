@@ -56,25 +56,22 @@ import org.jooq.conf.ParamType;
 
 /** @author Lukas Eder */
 final class CreateTypeImpl extends AbstractDDLQuery
-    implements
-
-        // Cascading interface implementations for CREATE TYPE behaviour
+    implements // Cascading interface implementations for CREATE TYPE behaviour
         CreateTypeStep,
         CreateTypeFinalStep {
 
   private final Name type;
+
   private QueryPartList<?> values;
 
   CreateTypeImpl(Configuration configuration, Name type) {
     super(configuration);
-
     this.type = type;
   }
 
   // ------------------------------------------------------------------------
   // XXX: DSL API
   // ------------------------------------------------------------------------
-
   @Override
   public final CreateTypeFinalStep asEnum() {
     return asEnum(Collections.emptyList());
@@ -100,7 +97,6 @@ final class CreateTypeImpl extends AbstractDDLQuery
   // ------------------------------------------------------------------------
   // XXX: QueryPart API
   // ------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     ctx.visit(K_CREATE)

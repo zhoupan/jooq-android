@@ -54,11 +54,11 @@ import org.jooq.conf.ParamType;
 final class LazyVal<T> extends AbstractParamX<T> {
 
   private final Field<T> field;
+
   private transient AbstractParamX<T> delegate;
 
   LazyVal(Field<T> field) {
     super(Names.N_VALUE, field.getDataType());
-
     this.field = field;
   }
 
@@ -69,7 +69,6 @@ final class LazyVal<T> extends AbstractParamX<T> {
   // ------------------------------------------------------------------------
   // XXX: Field API
   // ------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     init();
@@ -79,11 +78,9 @@ final class LazyVal<T> extends AbstractParamX<T> {
   // ------------------------------------------------------------------------
   // XXX: Param API
   // ------------------------------------------------------------------------
-
   @Override
   public final String getParamName() {
     if (delegate == null) return null;
-
     init();
     return delegate.getParamName();
   }
@@ -91,7 +88,6 @@ final class LazyVal<T> extends AbstractParamX<T> {
   @Override
   public final T getValue() {
     if (delegate == null) return null;
-
     init();
     return delegate.getValue();
   }
@@ -111,7 +107,6 @@ final class LazyVal<T> extends AbstractParamX<T> {
   @Override
   public final boolean isInline() {
     if (delegate == null) return false;
-
     init();
     return delegate.isInline();
   }
@@ -119,7 +114,6 @@ final class LazyVal<T> extends AbstractParamX<T> {
   @Override
   public final ParamType getParamType() {
     if (delegate == null) return ParamType.INDEXED;
-
     init();
     return delegate.getParamType();
   }
@@ -127,7 +121,6 @@ final class LazyVal<T> extends AbstractParamX<T> {
   @Override
   public final ParamMode getParamMode() {
     if (delegate == null) return ParamMode.IN;
-
     init();
     return delegate.getParamMode();
   }

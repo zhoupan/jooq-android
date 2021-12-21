@@ -47,7 +47,9 @@ import org.jooq.Table;
 final class HintedTable<R extends Record> extends AbstractTable<R> {
 
   private final AbstractTable<R> delegate;
+
   private final Keyword keywords;
+
   private final QueryPartList<Name> arguments;
 
   HintedTable(AbstractTable<R> delegate, String keywords, String... arguments) {
@@ -64,7 +66,6 @@ final class HintedTable<R extends Record> extends AbstractTable<R> {
 
   HintedTable(AbstractTable<R> delegate, Keyword keywords, QueryPartList<Name> arguments) {
     super(delegate.getOptions(), delegate.getQualifiedName(), delegate.getSchema());
-
     this.delegate = delegate;
     this.keywords = keywords;
     this.arguments = arguments;

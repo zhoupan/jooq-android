@@ -85,13 +85,11 @@ public abstract class CustomTable<R extends TableRecord<R>> extends TableImpl<R>
   }
 
   /** @deprecated - 3.10 - [#5996] - Use {@link #CustomTable(Name)} instead. */
-  @Deprecated
   protected CustomTable(String name) {
     super(name);
   }
 
   /** @deprecated - 3.10 - [#5996] - Use {@link #CustomTable(Name, Schema)} instead. */
-  @Deprecated
   protected CustomTable(String name, Schema schema) {
     super(name, schema);
   }
@@ -99,7 +97,6 @@ public abstract class CustomTable<R extends TableRecord<R>> extends TableImpl<R>
   // -------------------------------------------------------------------------
   // Implementation required
   // -------------------------------------------------------------------------
-
   /** Subclasses must implement this method <hr/> {@inheritDoc} */
   @Override
   public abstract Class<? extends R> getRecordType();
@@ -107,7 +104,6 @@ public abstract class CustomTable<R extends TableRecord<R>> extends TableImpl<R>
   // -------------------------------------------------------------------------
   // Further overrides allowed
   // -------------------------------------------------------------------------
-
   @Override
   public Identity<R, ?> getIdentity() {
     return super.getIdentity();
@@ -131,7 +127,6 @@ public abstract class CustomTable<R extends TableRecord<R>> extends TableImpl<R>
   // -------------------------------------------------------------------------
   // No further overrides allowed
   // -------------------------------------------------------------------------
-
   @Override
   public final boolean declaresFields() {
     return super.declaresFields();

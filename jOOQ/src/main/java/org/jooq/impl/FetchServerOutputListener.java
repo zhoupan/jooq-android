@@ -48,12 +48,12 @@ import org.jooq.tools.JooqLogger;
  * @author Lukas Eder
  */
 final class FetchServerOutputListener extends DefaultExecuteListener {
+
   private static final JooqLogger log = JooqLogger.getLogger(FetchServerOutputListener.class);
 
   @Override
   public final void executeStart(ExecuteContext ctx) {
     super.executeStart(ctx);
-
     switch (ctx.family()) {
       default:
         break;
@@ -66,7 +66,6 @@ final class FetchServerOutputListener extends DefaultExecuteListener {
       default:
         break;
     }
-
     super.executeEnd(ctx);
   }
 }

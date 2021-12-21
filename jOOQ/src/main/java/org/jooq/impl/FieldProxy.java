@@ -72,7 +72,6 @@ final class FieldProxy<T> extends AbstractField<T> implements TableField<Record,
         new DataTypeProxy<>((AbstractDataType<T>) delegate.getDataType()),
         delegate.getCommentPart(),
         delegate.getBinding());
-
     this.delegate = delegate;
     this.position = position;
   }
@@ -84,14 +83,12 @@ final class FieldProxy<T> extends AbstractField<T> implements TableField<Record,
   final void delegate(AbstractField<T> newDelegate) {
     resolve();
     this.delegate = newDelegate;
-
     ((DataTypeProxy<T>) getDataType()).type((AbstractDataType<T>) newDelegate.getDataType());
   }
 
   final FieldProxy<T> resolve() {
     this.resolved = true;
     this.scopeOwner = null;
-
     return this;
   }
 

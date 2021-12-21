@@ -64,7 +64,6 @@ final class CurrentCatalog extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -72,7 +71,6 @@ final class CurrentCatalog extends AbstractField<String> {
       case SQLITE:
         ctx.visit(inline(""));
         break;
-
       default:
         ctx.visit(N_CURRENT_DATABASE).sql("()");
         break;
@@ -82,7 +80,6 @@ final class CurrentCatalog extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof CurrentCatalog) {

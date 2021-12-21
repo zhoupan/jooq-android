@@ -80,6 +80,7 @@ public class DefaultTransactionProvider implements TransactionProvider {
   private static final Savepoint IGNORED_SAVEPOINT = new DefaultSavepoint();
 
   private final ConnectionProvider connectionProvider;
+
   private final boolean nested;
 
   public DefaultTransactionProvider(ConnectionProvider connectionProvider) {
@@ -104,23 +105,19 @@ public class DefaultTransactionProvider implements TransactionProvider {
   private final Deque<Savepoint> savepoints(Configuration configuration) {
     Deque<Savepoint> savepoints =
         (Deque<Savepoint>) configuration.data(DATA_DEFAULT_TRANSACTION_PROVIDER_SAVEPOINTS);
-
     if (savepoints == null) {
       savepoints = new ArrayDeque<>();
       configuration.data(DATA_DEFAULT_TRANSACTION_PROVIDER_SAVEPOINTS, savepoints);
     }
-
     return savepoints;
   }
 
   private final boolean autoCommit(Configuration configuration) {
     Boolean autoCommit = (Boolean) configuration.data(DATA_DEFAULT_TRANSACTION_PROVIDER_AUTOCOMMIT);
-
     if (!TRUE.equals(autoCommit)) {
       autoCommit = connection(configuration).getAutoCommit();
       configuration.data(DATA_DEFAULT_TRANSACTION_PROVIDER_AUTOCOMMIT, autoCommit);
     }
-
     return autoCommit;
   }
 
@@ -128,23 +125,19 @@ public class DefaultTransactionProvider implements TransactionProvider {
     DefaultConnectionProvider connectionWrapper =
         (DefaultConnectionProvider)
             configuration.data(DATA_DEFAULT_TRANSACTION_PROVIDER_CONNECTION);
-
     if (connectionWrapper == null) {
       connectionWrapper = new DefaultConnectionProvider(connectionProvider.acquire());
       configuration.data(DATA_DEFAULT_TRANSACTION_PROVIDER_CONNECTION, connectionWrapper);
     }
-
     return connectionWrapper;
   }
 
   @Override
   public final void begin(TransactionContext ctx) {
     Deque<Savepoint> savepoints = savepoints(ctx.configuration());
-
     // This is the top-level transaction
     boolean topLevel = savepoints.isEmpty();
     if (topLevel) brace(ctx.configuration(), true);
-
     savepoints.push(setSavepoint(ctx.configuration(), topLevel));
   }
 
@@ -157,26 +150,20 @@ public class DefaultTransactionProvider implements TransactionProvider {
   public final void commit(TransactionContext ctx) {
     Deque<Savepoint> savepoints = savepoints(ctx.configuration());
     Savepoint savepoint = savepoints.pop();
-
     // [#3489] Explicitly release savepoints prior to commit
     if (savepoint != null && savepoint != IGNORED_SAVEPOINT)
       try {
         connection(ctx.configuration()).releaseSavepoint(savepoint);
-      }
-
-      // [#3537] Ignore those cases where the JDBC driver incompletely implements the API
+      } // [#3537] Ignore those cases where the JDBC driver incompletely implements the API
       // See also http://stackoverflow.com/q/10667292/521799
       catch (DataAccessException ignore) {
       }
-
     // This is the top-level transaction
     if (savepoints.isEmpty()) {
       connection(ctx.configuration()).commit();
       brace(ctx.configuration(), false);
-    }
-
-    // Nested commits have no effect
-    else {
+    } else // Nested commits have no effect
+    {
     }
   }
 
@@ -184,18 +171,14 @@ public class DefaultTransactionProvider implements TransactionProvider {
   public final void rollback(TransactionContext ctx) {
     Deque<Savepoint> savepoints = savepoints(ctx.configuration());
     Savepoint savepoint = null;
-
     // [#3537] If something went wrong with the savepoints per se
     if (!savepoints.isEmpty()) savepoint = savepoints.pop();
-
     try {
       if (savepoint == null) {
         connection(ctx.configuration()).rollback();
-      }
-
-      // [#3955] ROLLBACK is only effective if an exception reaches the
-      //         top-level transaction.
-      else if (savepoint == IGNORED_SAVEPOINT) {
+      } else // [#3955] ROLLBACK is only effective if an exception reaches the
+      // top-level transaction.
+      if (savepoint == IGNORED_SAVEPOINT) {
         if (savepoints.isEmpty()) connection(ctx.configuration()).rollback();
       } else connection(ctx.configuration()).rollback(savepoint);
     } finally {
@@ -209,18 +192,14 @@ public class DefaultTransactionProvider implements TransactionProvider {
    */
   private final void brace(Configuration configuration, boolean start) {
     DefaultConnectionProvider connection = connection(configuration);
-
     try {
       boolean autoCommit = autoCommit(configuration);
-
       // Transactions cannot run with autoCommit = true. Change the value for
       // the duration of a transaction
       if (autoCommit == true) connection.setAutoCommit(!start);
-    }
-
-    // [#3718] Chances are that the above JDBC interactions throw additional exceptions
-    //         try-finally will ensure that the ConnectionProvider.release() call is made
-    finally {
+    } finally // [#3718] Chances are that the above JDBC interactions throw additional exceptions
+    // try-finally will ensure that the ConnectionProvider.release() call is made
+    {
       if (!start) {
         connectionProvider.release(connection.connection);
         configuration.data().remove(DATA_DEFAULT_TRANSACTION_PROVIDER_CONNECTION);
@@ -229,6 +208,7 @@ public class DefaultTransactionProvider implements TransactionProvider {
   }
 
   private static class DefaultSavepoint implements Savepoint {
+
     @Override
     public int getSavepointId() throws SQLException {
       return 0;

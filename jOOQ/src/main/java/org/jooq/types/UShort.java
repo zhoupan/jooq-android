@@ -166,7 +166,6 @@ public final class UShort extends UNumber implements Comparable<UShort> {
   @Override
   public boolean equals(Object obj) {
     if (obj instanceof UShort) return value == ((UShort) obj).value;
-
     return false;
   }
 

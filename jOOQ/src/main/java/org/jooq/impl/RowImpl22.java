@@ -166,7 +166,6 @@ final class RowImpl22<
   // ------------------------------------------------------------------------
   // Mapping convenience methods
   // ------------------------------------------------------------------------
-
   @Override
   public final <U> SelectField<U> mapping(
       Function22<
@@ -231,7 +230,6 @@ final class RowImpl22<
   // ------------------------------------------------------------------------
   // XXX: Row accessor API
   // ------------------------------------------------------------------------
-
   @Override
   public final Field<T1> field1() {
     return (Field<T1>) fields.field(0);
@@ -345,7 +343,6 @@ final class RowImpl22<
   // ------------------------------------------------------------------------
   // Generic comparison predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition compare(
       Comparator comparator,
@@ -557,7 +554,6 @@ final class RowImpl22<
   // ------------------------------------------------------------------------
   // Equal / Not equal comparison predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition equal(
       Row22<
@@ -1109,7 +1105,6 @@ final class RowImpl22<
   // ------------------------------------------------------------------------
   // Ordering comparison predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition lessThan(
       Row22<
@@ -2209,7 +2204,6 @@ final class RowImpl22<
   // ------------------------------------------------------------------------
   // [NOT] BETWEEN predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final BetweenAndStep22<
           T1,
@@ -3557,7 +3551,6 @@ final class RowImpl22<
   // ------------------------------------------------------------------------
   // [NOT] DISTINCT predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition isNotDistinctFrom(
       Row22<
@@ -3897,7 +3890,6 @@ final class RowImpl22<
   // ------------------------------------------------------------------------
   // [NOT] IN predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition in(
       Row22<
@@ -3954,9 +3946,7 @@ final class RowImpl22<
               T22>...
           records) {
     QueryPartList<Row> rows = new QueryPartList<>();
-
     for (Record record : records) rows.add(record.valuesRow());
-
     return new RowInCondition(this, rows, false);
   }
 
@@ -4016,9 +4006,7 @@ final class RowImpl22<
               T22>...
           records) {
     QueryPartList<Row> rows = new QueryPartList<>();
-
     for (Record record : records) rows.add(record.valuesRow());
-
     return new RowInCondition(this, rows, true);
   }
 
@@ -4149,7 +4137,6 @@ final class RowImpl22<
   // ------------------------------------------------------------------------
   // Predicates involving subqueries
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition equal(
       Select<

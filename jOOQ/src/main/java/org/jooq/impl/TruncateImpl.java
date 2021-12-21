@@ -60,7 +60,9 @@ final class TruncateImpl<R extends Record> extends AbstractDDLQuery
     implements TruncateIdentityStep<R>, TruncateCascadeStep<R>, TruncateFinalStep<R>, Truncate<R> {
 
   private final Table<R> table;
+
   private Boolean restartIdentity;
+
   private Cascade cascade;
 
   TruncateImpl(Configuration configuration, Table<R> table) {
@@ -70,7 +72,6 @@ final class TruncateImpl<R extends Record> extends AbstractDDLQuery
   TruncateImpl(
       Configuration configuration, Table<R> table, Boolean restartIdentity, Cascade cascade) {
     super(configuration);
-
     this.table = table;
     this.restartIdentity = restartIdentity;
     this.cascade = cascade;
@@ -91,7 +92,6 @@ final class TruncateImpl<R extends Record> extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: DSL API
   // -------------------------------------------------------------------------
-
   @Override
   public final TruncateImpl<R> restartIdentity() {
     this.restartIdentity = true;
@@ -119,15 +119,12 @@ final class TruncateImpl<R extends Record> extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Clause[] CLAUSES = {Clause.TRUNCATE};
 
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
-
         // These dialects don't implement the TRUNCATE statement
-
       case FIREBIRD:
       case IGNITE:
       case SQLITE:
@@ -135,7 +132,6 @@ final class TruncateImpl<R extends Record> extends AbstractDDLQuery
           ctx.visit(delete(table));
           break;
         }
-
         // All other dialects do
       default:
         {
@@ -145,13 +141,10 @@ final class TruncateImpl<R extends Record> extends AbstractDDLQuery
               .visit(K_TABLE)
               .sql(' ')
               .visit(table);
-
           if (restartIdentity != null)
             ctx.formatSeparator().visit(restartIdentity ? K_RESTART_IDENTITY : K_CONTINUE_IDENTITY);
-
           if (cascade != null)
             ctx.formatSeparator().visit(cascade == Cascade.CASCADE ? K_CASCADE : K_RESTRICT);
-
           ctx.end(Clause.TRUNCATE_TRUNCATE);
           break;
         }

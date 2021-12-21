@@ -79,23 +79,27 @@ abstract class AbstractAggregateFunction<T> extends AbstractWindowFunction<T>
 
   static final Set<SQLDialect> SUPPORT_FILTER =
       SQLDialect.supportedBy(H2, HSQLDB, POSTGRES, SQLITE);
+
   static final Set<SQLDialect> SUPPORT_DISTINCT_RVE = SQLDialect.supportedBy(H2, POSTGRES);
 
   static final Field<Integer> ASTERISK = DSL.field("*", Integer.class);
 
   // Other attributes
   final QueryPartList<Field<?>> arguments;
+
   final boolean distinct;
+
   Condition filter;
 
   // Other attributes
   SortFieldList withinGroupOrderBy;
+
   SortFieldList keepDenseRankOrderBy;
+
   boolean first;
 
   AbstractAggregateFunction(boolean distinct, Name name, DataType<T> type, Field<?>... arguments) {
     super(name, type);
-
     this.distinct = distinct;
     this.arguments = new QueryPartList<>(arguments);
   }
@@ -103,28 +107,23 @@ abstract class AbstractAggregateFunction<T> extends AbstractWindowFunction<T>
   // -------------------------------------------------------------------------
   // XXX QueryPart API
   // -------------------------------------------------------------------------
-
-  /* non-final */ void acceptFunctionName(Context<?> ctx) {
-
+  /* non-final */
+  void acceptFunctionName(Context<?> ctx) {
     ctx.visit(getQualifiedName());
   }
 
   final void acceptArguments0(Context<?> ctx) {
-
     acceptArguments1(ctx, arguments);
   }
 
   final void acceptArguments1(Context<?> ctx, QueryPartCollectionView<Field<?>> args) {
     if (distinct) {
       ctx.visit(K_DISTINCT).sql(' ');
-
       // [#2883][#9109] PostgreSQL and H2 can use the DISTINCT keyword with formal row value
       // expressions.
       if (args.size() > 1 && SUPPORT_DISTINCT_RVE.contains(ctx.dialect())) ctx.sql('(');
     }
-
     if (!args.isEmpty()) acceptArguments2(ctx, args);
-
     if (distinct) if (args.size() > 1 && SUPPORT_DISTINCT_RVE.contains(ctx.dialect())) ctx.sql(')');
   }
 
@@ -168,7 +167,6 @@ abstract class AbstractAggregateFunction<T> extends AbstractWindowFunction<T>
   // -------------------------------------------------------------------------
   // XXX Aggregate function API
   // -------------------------------------------------------------------------
-
   final QueryPartList<Field<?>> getArguments() {
     return arguments;
   }
@@ -224,7 +222,6 @@ abstract class AbstractAggregateFunction<T> extends AbstractWindowFunction<T>
   @Override
   public final AggregateFunction<T> withinGroupOrderBy(Collection<? extends OrderField<?>> fields) {
     if (withinGroupOrderBy == null) withinGroupOrderBy = new SortFieldList();
-
     withinGroupOrderBy.addAll(Tools.sortFields(fields));
     return this;
   }
@@ -233,7 +230,6 @@ abstract class AbstractAggregateFunction<T> extends AbstractWindowFunction<T>
   public /* non-final */ AbstractAggregateFunction<T> orderBy(OrderField<?>... fields) {
     if (windowSpecification != null) super.orderBy(fields);
     else withinGroupOrderBy(fields);
-
     return this;
   }
 
@@ -242,7 +238,6 @@ abstract class AbstractAggregateFunction<T> extends AbstractWindowFunction<T>
       Collection<? extends OrderField<?>> fields) {
     if (windowSpecification != null) windowSpecification.orderBy(fields);
     else withinGroupOrderBy(fields);
-
     return this;
   }
 
@@ -295,15 +290,13 @@ abstract class AbstractAggregateFunction<T> extends AbstractWindowFunction<T>
   /** The data type to use in casts when emulating statistical functions. */
   final DataType<? extends Number> d(Context<?> ctx) {
     switch (ctx.family()) {
-
         // [#11547] These families default to NUMERIC(*, 0) when a scale is
-        //          not provided explicitly, hence resort to using floats
+        // not provided explicitly, hence resort to using floats
       case DERBY:
       case FIREBIRD:
       case HSQLDB:
       case SQLITE:
         return DOUBLE;
-
       default:
         return NUMERIC;
     }

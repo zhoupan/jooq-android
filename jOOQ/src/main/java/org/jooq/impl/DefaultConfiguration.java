@@ -101,34 +101,55 @@ public class DefaultConfiguration extends AbstractConfiguration {
 
   // Configuration objects
   private SQLDialect dialect;
+
   private Settings settings;
+
   private Clock clock;
 
   // These objects may be user defined and thus not necessarily serialisable
   private transient ConnectionProvider connectionProvider;
+
   private transient ConnectionProvider interpreterConnectionProvider;
+
   private transient ConnectionProvider systemConnectionProvider;
+
   private transient ConnectionFactory connectionFactory;
+
   private transient MetaProvider metaProvider;
+
   private transient CommitProvider commitProvider;
+
   private transient ExecutorProvider executorProvider;
+
   private transient CacheProvider cacheProvider;
+
   private transient TransactionProvider transactionProvider;
+
   private transient RecordMapperProvider recordMapperProvider;
+
   private transient RecordUnmapperProvider recordUnmapperProvider;
+
   private transient RecordListenerProvider[] recordListenerProviders;
+
   private transient ExecuteListenerProvider[] executeListenerProviders;
+
   private transient MigrationListenerProvider[] migrationListenerProviders;
+
   private transient VisitListenerProvider[] visitListenerProviders;
+
   private transient TransactionListenerProvider[] transactionListenerProviders;
+
   private transient DiagnosticsListenerProvider[] diagnosticsListenerProviders;
+
   private transient UnwrapperProvider unwrapperProvider;
+
   private transient CharsetProvider charsetProvider;
+
   private transient ConverterProvider converterProvider;
 
   // [#7062] Apart from the possibility of containing user defined objects, the data
-  //         map also contains the reflection cache, which isn't serializable (and
-  //         should not be serialized anyway).
+  // map also contains the reflection cache, which isn't serializable (and
+  // should not be serialized anyway).
   private transient ConcurrentHashMap<Object, Object> data;
 
   // Derived objects
@@ -137,7 +158,6 @@ public class DefaultConfiguration extends AbstractConfiguration {
   // -------------------------------------------------------------------------
   // XXX: Constructors
   // -------------------------------------------------------------------------
-
   /** Create a new configuration object. */
   public DefaultConfiguration() {
     this(DEFAULT);
@@ -265,18 +285,15 @@ public class DefaultConfiguration extends AbstractConfiguration {
     set(unwrapperProvider);
     set(charsetProvider);
     set(converterProvider);
-
     set(clock);
     set(dialect);
     set(settings);
-
     this.data = data != null ? new ConcurrentHashMap<>(data) : new ConcurrentHashMap<>();
   }
 
   // -------------------------------------------------------------------------
   // XXX: Wrap this Configuration
   // -------------------------------------------------------------------------
-
   @Override
   public final DSLContext dsl() {
     return DSL.using(this);
@@ -285,7 +302,6 @@ public class DefaultConfiguration extends AbstractConfiguration {
   // -------------------------------------------------------------------------
   // XXX: Deriving configurations
   // -------------------------------------------------------------------------
-
   @Override
   public final Configuration derive() {
     return new DefaultConfiguration(this);
@@ -941,7 +957,6 @@ public class DefaultConfiguration extends AbstractConfiguration {
   // -------------------------------------------------------------------------
   // XXX: Changing configurations
   // -------------------------------------------------------------------------
-
   @Override
   public final Configuration set(Connection newConnection) {
     return set(new DefaultConnectionProvider(newConnection));
@@ -955,19 +970,16 @@ public class DefaultConfiguration extends AbstractConfiguration {
   @Override
   public final Configuration set(ConnectionProvider newConnectionProvider) {
     if (newConnectionProvider != null) {
-
       // [#5388] TODO Factor out this API in a more formal contract between TransactionProvider and
       // ConnectionProvider
       if (transactionProvider instanceof ThreadLocalTransactionProvider
           && !(newConnectionProvider instanceof ThreadLocalConnectionProvider))
         throw new ConfigurationException(
             "Cannot specify custom ConnectionProvider when Configuration contains a ThreadLocalTransactionProvider");
-
       this.connectionProvider = newConnectionProvider;
     } else {
       this.connectionProvider = new NoConnectionProvider();
     }
-
     return this;
   }
 
@@ -1010,14 +1022,12 @@ public class DefaultConfiguration extends AbstractConfiguration {
   public final Configuration set(TransactionProvider newTransactionProvider) {
     if (newTransactionProvider != null) {
       this.transactionProvider = newTransactionProvider;
-
       if (newTransactionProvider instanceof ThreadLocalTransactionProvider)
         this.connectionProvider =
             ((ThreadLocalTransactionProvider) newTransactionProvider).localConnectionProvider;
     } else {
       this.transactionProvider = new NoTransactionProvider();
     }
-
     return this;
   }
 
@@ -1049,7 +1059,6 @@ public class DefaultConfiguration extends AbstractConfiguration {
         newRecordListenerProviders != null
             ? newRecordListenerProviders
             : new RecordListenerProvider[0];
-
     return this;
   }
 
@@ -1059,7 +1068,6 @@ public class DefaultConfiguration extends AbstractConfiguration {
         newExecuteListenerProviders != null
             ? newExecuteListenerProviders
             : new ExecuteListenerProvider[0];
-
     return this;
   }
 
@@ -1069,7 +1077,6 @@ public class DefaultConfiguration extends AbstractConfiguration {
         newMigrationListenerProviders != null
             ? newMigrationListenerProviders
             : new MigrationListenerProvider[0];
-
     return this;
   }
 
@@ -1079,7 +1086,6 @@ public class DefaultConfiguration extends AbstractConfiguration {
         newVisitListenerProviders != null
             ? newVisitListenerProviders
             : new VisitListenerProvider[0];
-
     return this;
   }
 
@@ -1089,7 +1095,6 @@ public class DefaultConfiguration extends AbstractConfiguration {
         newTransactionListenerProviders != null
             ? newTransactionListenerProviders
             : new TransactionListenerProvider[0];
-
     return this;
   }
 
@@ -1099,7 +1104,6 @@ public class DefaultConfiguration extends AbstractConfiguration {
         newDiagnosticsListenerProviders != null
             ? newDiagnosticsListenerProviders
             : new DiagnosticsListenerProvider[0];
-
     return this;
   }
 
@@ -1130,7 +1134,6 @@ public class DefaultConfiguration extends AbstractConfiguration {
 
   @Override
   public final Configuration set(Clock newClock) {
-
     // [#6447] Defaulting to UTC system time
     this.clock = newClock == null ? Clock.systemUTC() : newClock;
     return this;
@@ -1138,7 +1141,6 @@ public class DefaultConfiguration extends AbstractConfiguration {
 
   @Override
   public final Configuration set(SQLDialect newDialect) {
-
     // [#6274] The reported dialect should never be null
     this.dialect = newDialect == null ? SQLDialect.DEFAULT : newDialect;
     return this;
@@ -1148,7 +1150,6 @@ public class DefaultConfiguration extends AbstractConfiguration {
   public final Configuration set(Settings newSettings) {
     this.settings =
         newSettings != null ? SettingsTools.clone(newSettings) : SettingsTools.defaultSettings();
-
     this.mapping = new org.jooq.SchemaMapping(this);
     return this;
   }
@@ -1156,7 +1157,6 @@ public class DefaultConfiguration extends AbstractConfiguration {
   // -------------------------------------------------------------------------
   // XXX: Changing configurations via JavaBeans-style setters
   // -------------------------------------------------------------------------
-
   /** @see #set(Connection) */
   public final void setConnection(Connection newConnection) {
     set(newConnection);
@@ -1181,14 +1181,14 @@ public class DefaultConfiguration extends AbstractConfiguration {
   public final void setInterpreterConnectionProvider(
       ConnectionProvider newInterpreterConnectionProvider) {
     // TODO: [#9460] Should we have setters in the Configuration API as well?
-    //       See https://github.com/jOOQ/jOOQ/issues/9460#issuecomment-547973317
+    // See https://github.com/jOOQ/jOOQ/issues/9460#issuecomment-547973317
     this.interpreterConnectionProvider = newInterpreterConnectionProvider;
   }
 
   /** @see #set(ConnectionProvider) */
   public final void setSystemConnectionProvider(ConnectionProvider newSystemConnectionProvider) {
     // TODO: [#9460] Should we have setters in the Configuration API as well?
-    //       See https://github.com/jOOQ/jOOQ/issues/9460#issuecomment-547973317
+    // See https://github.com/jOOQ/jOOQ/issues/9460#issuecomment-547973317
     this.systemConnectionProvider = newSystemConnectionProvider;
   }
 
@@ -1324,10 +1324,8 @@ public class DefaultConfiguration extends AbstractConfiguration {
   // -------------------------------------------------------------------------
   // XXX: Getters
   // -------------------------------------------------------------------------
-
   @Override
   public final ConnectionProvider connectionProvider() {
-
     // [#3229] [#5377] If we're currently in a transaction, return that transaction's
     // local DefaultConnectionProvider, not the one from this configuration
     TransactionProvider tp = transactionProvider();
@@ -1335,7 +1333,6 @@ public class DefaultConfiguration extends AbstractConfiguration {
         tp instanceof ThreadLocalTransactionProvider
             ? ((ThreadLocalTransactionProvider) tp).localConnectionProvider
             : (ConnectionProvider) data(DATA_DEFAULT_TRANSACTION_PROVIDER_CONNECTION);
-
     return transactional != null
         ? transactional
         : connectionProvider != null ? connectionProvider : new NoConnectionProvider();
@@ -1382,18 +1379,15 @@ public class DefaultConfiguration extends AbstractConfiguration {
 
   @Override
   public final TransactionProvider transactionProvider() {
-
     // [#3229] If transactions are used in client code, the default behaviour
     // is assumed automatically, for convenience.
     if (transactionProvider == null || transactionProvider instanceof NoTransactionProvider)
       return new DefaultTransactionProvider(connectionProvider);
-
     return transactionProvider;
   }
 
   @Override
   public final RecordMapperProvider recordMapperProvider() {
-
     // [#3915] Avoid permanently referencing such a DefaultRecordMapperProvider from this
     // DefaultConfiguration to prevent memory leaks.
     return recordMapperProvider != null
@@ -1403,7 +1397,6 @@ public class DefaultConfiguration extends AbstractConfiguration {
 
   @Override
   public final RecordUnmapperProvider recordUnmapperProvider() {
-
     // [#3915] Avoid permanently referencing such a DefaultRecordUnmapperProvider from this
     // DefaultConfiguration to prevent memory leaks.
     return recordUnmapperProvider != null
@@ -1492,7 +1485,6 @@ public class DefaultConfiguration extends AbstractConfiguration {
   }
 
   @Override
-  @Deprecated
   public final org.jooq.SchemaMapping schemaMapping() {
     return mapping;
   }
@@ -1516,10 +1508,8 @@ public class DefaultConfiguration extends AbstractConfiguration {
   // -------------------------------------------------------------------------
   // XXX: Serialisation
   // -------------------------------------------------------------------------
-
   private void writeObject(ObjectOutputStream oos) throws IOException {
     oos.defaultWriteObject();
-
     // Allow these objects to be non-serializable
     oos.writeObject(connectionProvider instanceof Serializable ? connectionProvider : null);
     oos.writeObject(
@@ -1533,27 +1523,20 @@ public class DefaultConfiguration extends AbstractConfiguration {
     oos.writeObject(transactionProvider instanceof Serializable ? transactionProvider : null);
     oos.writeObject(recordMapperProvider instanceof Serializable ? recordMapperProvider : null);
     oos.writeObject(recordUnmapperProvider instanceof Serializable ? recordUnmapperProvider : null);
-
     oos.writeObject(cloneSerializables(executeListenerProviders));
     oos.writeObject(cloneSerializables(recordListenerProviders));
     oos.writeObject(cloneSerializables(visitListenerProviders));
     oos.writeObject(cloneSerializables(transactionListenerProviders));
     oos.writeObject(cloneSerializables(diagnosticsListenerProviders));
-
     oos.writeObject(unwrapperProvider instanceof Serializable ? unwrapperProvider : null);
-
     oos.writeObject(charsetProvider instanceof Serializable ? charsetProvider : null);
-
     oos.writeObject(converterProvider instanceof Serializable ? converterProvider : null);
-
     // [#7062] Exclude reflection cache from serialisation
     for (Entry<Object, Object> entry : data.entrySet()) {
       if (entry.getKey() instanceof CacheType) continue;
-
       oos.writeObject(entry.getKey());
       oos.writeObject(entry.getValue());
     }
-
     // [#7062] End of Map marker
     oos.writeObject(END_OF_MAP_MARKER);
   }
@@ -1562,15 +1545,12 @@ public class DefaultConfiguration extends AbstractConfiguration {
 
   private <E> E[] cloneSerializables(E[] array) {
     E[] clone = array.clone();
-
     for (int i = 0; i < clone.length; i++) if (!(clone[i] instanceof Serializable)) clone[i] = null;
-
     return clone;
   }
 
   private void readObject(ObjectInputStream ois) throws IOException, ClassNotFoundException {
     ois.defaultReadObject();
-
     connectionProvider = (ConnectionProvider) ois.readObject();
     interpreterConnectionProvider = (ConnectionProvider) ois.readObject();
     systemConnectionProvider = (ConnectionProvider) ois.readObject();
@@ -1584,15 +1564,12 @@ public class DefaultConfiguration extends AbstractConfiguration {
     visitListenerProviders = (VisitListenerProvider[]) ois.readObject();
     transactionListenerProviders = (TransactionListenerProvider[]) ois.readObject();
     diagnosticsListenerProviders = (DiagnosticsListenerProvider[]) ois.readObject();
-
     unwrapperProvider = (UnwrapperProvider) ois.readObject();
     charsetProvider = (CharsetProvider) ois.readObject();
     converterProvider = (ConverterProvider) ois.readObject();
     data = new ConcurrentHashMap<>();
-
     Object key;
     Object value;
-
     while (!END_OF_MAP_MARKER.equals(key = ois.readObject())) {
       value = ois.readObject();
       data.put(key, value);
@@ -1600,6 +1577,7 @@ public class DefaultConfiguration extends AbstractConfiguration {
   }
 
   private final class ExecutorWrapper implements ExecutorProvider {
+
     private final Executor newExecutor;
 
     private ExecutorWrapper(Executor newExecutor) {
@@ -1613,6 +1591,7 @@ public class DefaultConfiguration extends AbstractConfiguration {
   }
 
   private final class RecordMapperWrapper implements RecordMapperProvider {
+
     private final RecordMapper<?, ?> newRecordMapper;
 
     private RecordMapperWrapper(RecordMapper<?, ?> newRecordMapper) {
@@ -1628,6 +1607,7 @@ public class DefaultConfiguration extends AbstractConfiguration {
   }
 
   private final class RecordUnmapperWrapper implements RecordUnmapperProvider {
+
     private final RecordUnmapper<?, ?> newRecordUnmapper;
 
     private RecordUnmapperWrapper(RecordUnmapper<?, ?> newRecordUnmapper) {
@@ -1643,6 +1623,7 @@ public class DefaultConfiguration extends AbstractConfiguration {
   }
 
   private final class UnwrapperWrapper implements UnwrapperProvider {
+
     private final Unwrapper newUnwrapper;
 
     private UnwrapperWrapper(Unwrapper newUnwrapper) {

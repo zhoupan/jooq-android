@@ -61,14 +61,12 @@ final class BitLength extends AbstractField<Integer> {
 
   BitLength(Field<String> string) {
     super(N_BIT_LENGTH, allNotNull(INTEGER, string));
-
     this.string = nullSafeNotNull(string, VARCHAR);
   }
 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -76,7 +74,6 @@ final class BitLength extends AbstractField<Integer> {
       case SQLITE:
         ctx.visit(imul(inline(8), function(N_LENGTH, getDataType(), string)));
         break;
-
       default:
         ctx.visit(function(N_BIT_LENGTH, getDataType(), string));
         break;
@@ -86,7 +83,6 @@ final class BitLength extends AbstractField<Integer> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof BitLength) {

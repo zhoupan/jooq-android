@@ -78,9 +78,7 @@ final class QualifiedName extends AbstractName {
 
   private static final UnqualifiedName[] last(Name[] qualifiedName) {
     if (qualifiedName instanceof UnqualifiedName[]) return (UnqualifiedName[]) qualifiedName;
-
     UnqualifiedName[] result = new UnqualifiedName[qualifiedName.length];
-
     for (int i = 0; i < qualifiedName.length; i++)
       if (qualifiedName[i] instanceof QualifiedName) {
         QualifiedName q = (QualifiedName) qualifiedName[i];
@@ -88,55 +86,44 @@ final class QualifiedName extends AbstractName {
       } else if (qualifiedName[i] instanceof UnqualifiedName)
         result[i] = (UnqualifiedName) qualifiedName[i];
       else result[i] = new UnqualifiedName(qualifiedName[i].last());
-
     return result;
   }
 
   private static final String[] nonEmpty(String[] qualifiedName) {
     String[] result;
     int nulls = 0;
-
     for (String name : qualifiedName) if (StringUtils.isEmpty(name)) nulls++;
-
     if (nulls > 0) {
       result = new String[qualifiedName.length - nulls];
-
       for (int i = qualifiedName.length - 1; i >= 0; i--)
         if (StringUtils.isEmpty(qualifiedName[i])) nulls--;
         else result[i - nulls] = qualifiedName[i];
     } else {
       result = qualifiedName;
     }
-
     return result;
   }
 
   private static final Name[] nonEmpty(Name[] names) {
     Name[] result;
     int nulls = 0;
-
     for (Name name : names) if (name == null || name.equals(NO_NAME)) nulls++;
-
     if (nulls > 0) {
       result = new Name[names.length - nulls];
-
       for (int i = names.length - 1; i >= 0; i--)
         if (names[i] == null || names[i].equals(NO_NAME)) nulls--;
         else result[i - nulls] = names[i];
     } else {
       result = names;
     }
-
     return result;
   }
 
   @Override
   public final void accept(Context<?> ctx) {
-
     // [#3437] Fully qualify this field only if allowed in the current context
     if (ctx.qualify()) {
       String separator = "";
-
       for (UnqualifiedName name : qualifiedName) {
         ctx.sql(separator).visit(name);
         separator = ".";
@@ -175,7 +162,6 @@ final class QualifiedName extends AbstractName {
   public final Name qualifier() {
     if (qualifiedName.length <= 1) return null;
     if (qualifiedName.length == 2) return qualifiedName[0];
-
     UnqualifiedName[] qualifier = new UnqualifiedName[qualifiedName.length - 1];
     System.arraycopy(qualifiedName, 0, qualifier, 0, qualifier.length);
     return new QualifiedName(qualifier);
@@ -190,11 +176,9 @@ final class QualifiedName extends AbstractName {
   @Override
   public final Quoted quoted() {
     Quoted result = null;
-
     for (UnqualifiedName name : qualifiedName)
       if (result == null) result = name.quoted();
       else if (result != name.quoted()) return MIXED;
-
     return result == null ? DEFAULT : result;
   }
 

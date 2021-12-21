@@ -50,10 +50,8 @@ public enum ParamMode {
    * <p>This is the default parameter mode if no explicit mode was specified.
    */
   IN,
-
   /** An <code>OUT</code> parameter. */
   OUT,
-
   /** An <code>IN OUT</code> parameter. */
-  INOUT;
+  INOUT
 }

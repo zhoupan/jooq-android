@@ -80,7 +80,6 @@ public interface DeleteQuery<R extends Record> extends ConditionProvider, Delete
   // ------------------------------------------------------------------------
   // Methods from ConditionProvider, OrderProvider, LockProvider
   // ------------------------------------------------------------------------
-
   @Override
   @Support
   void addConditions(Condition condition);
@@ -140,7 +139,6 @@ public interface DeleteQuery<R extends Record> extends ConditionProvider, Delete
   // ------------------------------------------------------------------------
   // XXX: Methods for the DELETE .. RETURNING syntax
   // ------------------------------------------------------------------------
-
   /**
    * Configure the <code>DELETE</code> statement to return all fields in <code>R</code>.
    *

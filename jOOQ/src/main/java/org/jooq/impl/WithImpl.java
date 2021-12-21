@@ -148,16 +148,20 @@ final class WithImpl extends AbstractQueryPart
         WithAsStep21,
         WithAsStep22,
         WithStep {
+
   private static final Clause[] CLAUSES = {WITH};
 
   private final CommonTableExpressionList ctes;
+
   private final boolean recursive;
+
   private Configuration configuration;
 
   // Intermediary properties for CTE construction
-
   private Name alias;
+
   private Name[] fieldAliases;
+
   private BiFunction<? super Field<?>, ? super Integer, ? extends String> fieldNameFunction;
 
   WithImpl(Configuration configuration, boolean recursive) {
@@ -169,17 +173,12 @@ final class WithImpl extends AbstractQueryPart
   // -------------------------------------------------------------------------
   // XXX QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     CommonTableExpressionList list;
-
     list = ctes;
-
     if (!list.isEmpty()) {
-
       acceptWithRecursive(ctx, recursive);
-
       ctx.data(
           DATA_LIST_ALREADY_INDENTED,
           true,
@@ -194,7 +193,6 @@ final class WithImpl extends AbstractQueryPart
 
   static final void acceptWithRecursive(Context<?> ctx, boolean recursive) {
     ctx.visit(K_WITH);
-
     if (recursive) ctx.sql(' ').visit(K_RECURSIVE);
   }
 
@@ -206,24 +204,18 @@ final class WithImpl extends AbstractQueryPart
   // -------------------------------------------------------------------------
   // XXX With API
   // -------------------------------------------------------------------------
-
   private final WithStep as0(ResultQuery query, Boolean materialized) {
     DerivedColumnList dcl;
-
     if (fieldNameFunction != null) dcl = name(alias).fields(fieldNameFunction);
     else dcl = name(alias).fields(fieldAliases);
-
     CommonTableExpression cte;
-
     if (materialized == null) cte = dcl.as(query);
     else if (materialized) cte = dcl.asMaterialized(query);
     else cte = dcl.asNotMaterialized(query);
-
     this.ctes.add(cte);
     this.alias = null;
     this.fieldAliases = null;
     this.fieldNameFunction = null;
-
     return this;
   }
 
@@ -266,7 +258,6 @@ final class WithImpl extends AbstractQueryPart
   public final WithImpl with(Name a, Name... f) {
     this.alias = a;
     this.fieldAliases = f;
-
     return this;
   }
 
@@ -279,7 +270,6 @@ final class WithImpl extends AbstractQueryPart
   public final WithImpl with(String a, Function<? super Field<?>, ? extends String> f) {
     this.alias = DSL.name(a);
     this.fieldNameFunction = (field, i) -> f.apply(field);
-
     return this;
   }
 
@@ -288,7 +278,6 @@ final class WithImpl extends AbstractQueryPart
       String a, BiFunction<? super Field<?>, ? super Integer, ? extends String> f) {
     this.alias = DSL.name(a);
     this.fieldNameFunction = f;
-
     return this;
   }
 
@@ -1626,7 +1615,6 @@ final class WithImpl extends AbstractQueryPart
   @Override
   public final WithStep with(Collection<? extends CommonTableExpression<?>> tables) {
     for (CommonTableExpression<?> table : tables) ctes.add(table);
-
     return this;
   }
 
@@ -3480,34 +3468,29 @@ final class WithImpl extends AbstractQueryPart
   }
 
   @Override
-  @Deprecated(forRemoval = true, since = "3.14")
   public final <R extends Record, T1> MergeImpl mergeInto(Table<R> table, Field<T1> field1) {
     return mergeInto(table, Arrays.asList(field1));
   }
 
   @Override
-  @Deprecated(forRemoval = true, since = "3.14")
   public final <R extends Record, T1, T2> MergeImpl mergeInto(
       Table<R> table, Field<T1> field1, Field<T2> field2) {
     return mergeInto(table, Arrays.asList(field1, field2));
   }
 
   @Override
-  @Deprecated(forRemoval = true, since = "3.14")
   public final <R extends Record, T1, T2, T3> MergeImpl mergeInto(
       Table<R> table, Field<T1> field1, Field<T2> field2, Field<T3> field3) {
     return mergeInto(table, Arrays.asList(field1, field2, field3));
   }
 
   @Override
-  @Deprecated(forRemoval = true, since = "3.14")
   public final <R extends Record, T1, T2, T3, T4> MergeImpl mergeInto(
       Table<R> table, Field<T1> field1, Field<T2> field2, Field<T3> field3, Field<T4> field4) {
     return mergeInto(table, Arrays.asList(field1, field2, field3, field4));
   }
 
   @Override
-  @Deprecated(forRemoval = true, since = "3.14")
   public final <R extends Record, T1, T2, T3, T4, T5> MergeImpl mergeInto(
       Table<R> table,
       Field<T1> field1,
@@ -3519,7 +3502,6 @@ final class WithImpl extends AbstractQueryPart
   }
 
   @Override
-  @Deprecated(forRemoval = true, since = "3.14")
   public final <R extends Record, T1, T2, T3, T4, T5, T6> MergeImpl mergeInto(
       Table<R> table,
       Field<T1> field1,
@@ -3532,7 +3514,6 @@ final class WithImpl extends AbstractQueryPart
   }
 
   @Override
-  @Deprecated(forRemoval = true, since = "3.14")
   public final <R extends Record, T1, T2, T3, T4, T5, T6, T7> MergeImpl mergeInto(
       Table<R> table,
       Field<T1> field1,
@@ -3546,7 +3527,6 @@ final class WithImpl extends AbstractQueryPart
   }
 
   @Override
-  @Deprecated(forRemoval = true, since = "3.14")
   public final <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8> MergeImpl mergeInto(
       Table<R> table,
       Field<T1> field1,
@@ -3562,7 +3542,6 @@ final class WithImpl extends AbstractQueryPart
   }
 
   @Override
-  @Deprecated(forRemoval = true, since = "3.14")
   public final <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9> MergeImpl mergeInto(
       Table<R> table,
       Field<T1> field1,
@@ -3580,7 +3559,6 @@ final class WithImpl extends AbstractQueryPart
   }
 
   @Override
-  @Deprecated(forRemoval = true, since = "3.14")
   public final <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> MergeImpl mergeInto(
       Table<R> table,
       Field<T1> field1,
@@ -3600,7 +3578,6 @@ final class WithImpl extends AbstractQueryPart
   }
 
   @Override
-  @Deprecated(forRemoval = true, since = "3.14")
   public final <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> MergeImpl mergeInto(
       Table<R> table,
       Field<T1> field1,
@@ -3622,7 +3599,6 @@ final class WithImpl extends AbstractQueryPart
   }
 
   @Override
-  @Deprecated(forRemoval = true, since = "3.14")
   public final <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12>
       MergeImpl mergeInto(
           Table<R> table,
@@ -3646,7 +3622,6 @@ final class WithImpl extends AbstractQueryPart
   }
 
   @Override
-  @Deprecated(forRemoval = true, since = "3.14")
   public final <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13>
       MergeImpl mergeInto(
           Table<R> table,
@@ -3671,7 +3646,6 @@ final class WithImpl extends AbstractQueryPart
   }
 
   @Override
-  @Deprecated(forRemoval = true, since = "3.14")
   public final <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14>
       MergeImpl mergeInto(
           Table<R> table,
@@ -3697,7 +3671,6 @@ final class WithImpl extends AbstractQueryPart
   }
 
   @Override
-  @Deprecated(forRemoval = true, since = "3.14")
   public final <R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15>
       MergeImpl mergeInto(
           Table<R> table,
@@ -3724,7 +3697,6 @@ final class WithImpl extends AbstractQueryPart
   }
 
   @Override
-  @Deprecated(forRemoval = true, since = "3.14")
   public final <
           R extends Record, T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16>
       MergeImpl mergeInto(
@@ -3753,7 +3725,6 @@ final class WithImpl extends AbstractQueryPart
   }
 
   @Override
-  @Deprecated(forRemoval = true, since = "3.14")
   public final <
           R extends Record,
           T1,
@@ -3800,7 +3771,6 @@ final class WithImpl extends AbstractQueryPart
   }
 
   @Override
-  @Deprecated(forRemoval = true, since = "3.14")
   public final <
           R extends Record,
           T1,
@@ -3849,7 +3819,6 @@ final class WithImpl extends AbstractQueryPart
   }
 
   @Override
-  @Deprecated(forRemoval = true, since = "3.14")
   public final <
           R extends Record,
           T1,
@@ -3900,7 +3869,6 @@ final class WithImpl extends AbstractQueryPart
   }
 
   @Override
-  @Deprecated(forRemoval = true, since = "3.14")
   public final <
           R extends Record,
           T1,
@@ -3954,7 +3922,6 @@ final class WithImpl extends AbstractQueryPart
   }
 
   @Override
-  @Deprecated(forRemoval = true, since = "3.14")
   public final <
           R extends Record,
           T1,
@@ -4010,7 +3977,6 @@ final class WithImpl extends AbstractQueryPart
   }
 
   @Override
-  @Deprecated(forRemoval = true, since = "3.14")
   public final <
           R extends Record,
           T1,

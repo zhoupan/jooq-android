@@ -72,7 +72,6 @@ class TableFieldImpl<R extends Record, T> extends AbstractField<T>
   TableFieldImpl(
       Name name, DataType<T> type, Table<R> table, Comment comment, Binding<?, T> binding) {
     super(qualify(table, name), type, comment, binding);
-
     this.table = table;
   }
 
@@ -88,7 +87,6 @@ class TableFieldImpl<R extends Record, T> extends AbstractField<T>
   // ------------------------------------------------------------------------
   // XXX: QueryPart API
   // ------------------------------------------------------------------------
-
   @Override
   public final Clause[] clauses(Context<?> ctx) {
     return CLAUSES;
@@ -96,13 +94,11 @@ class TableFieldImpl<R extends Record, T> extends AbstractField<T>
 
   @Override
   public final void accept(Context<?> ctx) {
-
     ctx.data(
         DATA_OMIT_CLAUSE_EVENT_EMISSION,
         true,
         c -> {
           if (c.qualify() && getTable() != null) c.visit(getTable()).sql('.');
-
           c.visit(getUnqualifiedName());
         });
   }
@@ -110,11 +106,9 @@ class TableFieldImpl<R extends Record, T> extends AbstractField<T>
   // ------------------------------------------------------------------------
   // XXX: Object API
   // ------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (this == that) return true;
-
     // [#2144] TableFieldImpl equality can be decided without executing the
     // rather expensive implementation of AbstractQueryPart.equals()
     if (that instanceof TableField) {
@@ -122,7 +116,6 @@ class TableFieldImpl<R extends Record, T> extends AbstractField<T>
       return StringUtils.equals(getTable(), other.getTable())
           && StringUtils.equals(getName(), other.getName());
     }
-
     return super.equals(that);
   }
 }

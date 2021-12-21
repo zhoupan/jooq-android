@@ -60,28 +60,34 @@ import org.jooq.conf.ParamType;
 
 /** @author Lukas Eder */
 final class Limit extends AbstractQueryPart {
+
   private static final Param<Integer> ZERO = zero();
+
   private static final Param<Integer> ONE = one();
+
   private static final Param<Integer> MAX = DSL.inline(Integer.MAX_VALUE);
 
   Param<?> numberOfRows;
+
   private Param<?> numberOfRowsOrMax = MAX;
+
   Param<?> offset;
+
   private Param<?> offsetOrZero = ZERO;
+
   private Param<?> offsetPlusOne = ONE;
+
   boolean withTies;
+
   boolean percent;
 
   @Override
   public final void accept(Context<?> ctx) {
     ParamType paramType = ctx.paramType();
     CastMode castMode = ctx.castMode();
-
     switch (ctx.dialect()) {
-
         // True LIMIT / OFFSET support provided by the following dialects
         // -----------------------------------------------------------------
-
         // LIMIT [offset], [limit] supported by CUBRID
         // -------------------------------------------
       case CUBRID:
@@ -94,37 +100,29 @@ final class Limit extends AbstractQueryPart {
               .sql(", ")
               .visit(numberOfRowsOrMax)
               .castMode(castMode);
-
           break;
         }
-
         // ROWS .. TO ..
         // -------------
-
       case DERBY:
       case FIREBIRD:
       case H2:
       case POSTGRES:
         {
-
           // [#8415] For backwards compatibility reasons, we generate standard
-          //         OFFSET .. FETCH syntax on H2 only when strictly needed
+          // OFFSET .. FETCH syntax on H2 only when strictly needed
           if (ctx.family() == H2 && !withTies() && !percent()) acceptDefault(ctx, castMode);
           else acceptStandard(ctx, castMode);
-
           break;
         }
-
         // [#4785] OFFSET cannot be without LIMIT
       case MARIADB:
-
       case MYSQL:
       case SQLITE:
         {
           acceptDefaultLimitMandatory(ctx, castMode);
           break;
         }
-
       default:
         {
           acceptDefault(ctx, castMode);
@@ -135,36 +133,26 @@ final class Limit extends AbstractQueryPart {
 
   private final void acceptStandard(Context<?> ctx, CastMode castMode) {
     ctx.castMode(NEVER);
-
     if (!offsetZero())
       ctx.formatSeparator().visit(K_OFFSET).sql(' ').visit(offsetOrZero).sql(' ').visit(K_ROWS);
-
     if (!limitZero()) {
       ctx.formatSeparator().visit(K_FETCH_NEXT).sql(' ').visit(numberOfRows);
-
       if (percent) ctx.sql(' ').visit(K_PERCENT);
-
       ctx.sql(' ').visit(withTies ? K_ROWS_WITH_TIES : K_ROWS_ONLY);
     }
-
     ctx.castMode(castMode);
   }
 
   private final void acceptDefault(Context<?> ctx, CastMode castMode) {
     ctx.castMode(NEVER);
-
     if (!limitZero()) ctx.formatSeparator().visit(K_LIMIT).sql(' ').visit(numberOfRows);
-
     if (!offsetZero()) ctx.formatSeparator().visit(K_OFFSET).sql(' ').visit(offsetOrZero);
-
     ctx.castMode(castMode);
   }
 
   private void acceptDefaultLimitMandatory(Context<?> ctx, CastMode castMode) {
     ctx.castMode(NEVER).formatSeparator().visit(K_LIMIT).sql(' ').visit(numberOfRowsOrMax);
-
     if (!offsetZero()) ctx.formatSeparator().visit(K_OFFSET).sql(' ').visit(offsetOrZero);
-
     ctx.castMode(castMode);
   }
 
@@ -247,21 +235,17 @@ final class Limit extends AbstractQueryPart {
   }
 
   final Limit from(Limit limit) {
-
     // [#9017] Take the lower number of two LIMIT clauses, maintaining
-    //         inline flags and parameter names
+    // inline flags and parameter names
     if (limit.numberOfRows != null)
       if (numberOfRows == null) this.setNumberOfRows(limit.numberOfRows);
       else
         this.setNumberOfRows(
             ((Val<?>) limit.numberOfRows)
                 .copy(Math.min(getNumberOfRows(), limit.getNumberOfRows())));
-
     if (limit.offset != null) this.setOffset(limit.offset);
-
     this.setPercent(limit.percent);
     this.setWithTies(limit.withTies);
-
     return this;
   }
 

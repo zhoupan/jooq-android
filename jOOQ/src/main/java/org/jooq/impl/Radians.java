@@ -62,14 +62,12 @@ final class Radians extends AbstractField<BigDecimal> {
 
   Radians(Field<? extends Number> degrees) {
     super(N_RADIANS, allNotNull(NUMERIC, degrees));
-
     this.degrees = nullSafeNotNull(degrees, INTEGER);
   }
 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -77,7 +75,6 @@ final class Radians extends AbstractField<BigDecimal> {
       case SQLITE:
         ctx.visit(idiv(imul(castIfNeeded(degrees, BigDecimal.class), pi()), inline(180)));
         break;
-
       default:
         ctx.visit(function(N_RADIANS, getDataType(), degrees));
         break;
@@ -87,7 +84,6 @@ final class Radians extends AbstractField<BigDecimal> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Radians) {

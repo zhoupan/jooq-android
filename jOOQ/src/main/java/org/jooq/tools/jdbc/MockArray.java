@@ -63,7 +63,9 @@ import org.jooq.impl.DefaultDataType;
 public class MockArray<T> implements Array {
 
   private final SQLDialect dialect;
+
   private final T[] array;
+
   private final Class<? extends T[]> type;
 
   public MockArray(SQLDialect dialect, T[] array, Class<? extends T[]> type) {
@@ -97,7 +99,6 @@ public class MockArray<T> implements Array {
   public T[] getArray(long index, int count) throws SQLException {
     if (index - 1 > Integer.MAX_VALUE)
       throw new SQLException("Cannot access array indexes beyond Integer.MAX_VALUE");
-
     return array == null
         ? null
         : Arrays.asList(array)
@@ -134,20 +135,15 @@ public class MockArray<T> implements Array {
   @SuppressWarnings("unchecked")
   private ResultSet getResultSet0(T[] a) {
     DSLContext create = DSL.using(dialect);
-
     Field<Long> index = field(name("INDEX"), Long.class);
     Field<T> value = (Field<T>) field(name("VALUE"), type.getComponentType());
     Result<Record2<Long, T>> result = create.newResult(index, value);
-
     for (int i = 0; i < a.length; i++) {
       Record2<Long, T> record = create.newRecord(index, value);
-
       record.setValue(index, i + 1L);
       record.setValue(value, a[i]);
-
       result.add(record);
     }
-
     return new MockResultSet(result);
   }
 

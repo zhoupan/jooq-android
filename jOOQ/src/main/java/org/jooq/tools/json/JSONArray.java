@@ -77,21 +77,17 @@ public class JSONArray extends ArrayList {
       out.write("null");
       return;
     }
-
     boolean first = true;
     Iterator<?> iter = list.iterator();
-
     out.write('[');
     while (iter.hasNext()) {
       if (first) first = false;
       else out.write(',');
-
       Object value = iter.next();
       if (value == null) {
         out.write("null");
         continue;
       }
-
       JSONValue.writeJSONString(value, out);
     }
     out.write(']');
@@ -105,16 +101,13 @@ public class JSONArray extends ArrayList {
    */
   public static String toJSONString(List<?> list) {
     if (list == null) return "null";
-
     boolean first = true;
     StringBuffer sb = new StringBuffer();
     Iterator<?> iter = list.iterator();
-
     sb.append('[');
     while (iter.hasNext()) {
       if (first) first = false;
       else sb.append(',');
-
       Object value = iter.next();
       if (value == null) {
         sb.append("null");

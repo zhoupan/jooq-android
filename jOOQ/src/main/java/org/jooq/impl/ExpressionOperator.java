@@ -48,53 +48,41 @@ enum ExpressionOperator {
 
   /** Concatenation */
   CONCAT("||", true, false),
-
   /** Addition */
   ADD("+", true, true),
-
   /** Subtraction */
   SUBTRACT("-"),
-
   /** Multiplication */
   MULTIPLY("*", true, true),
-
   /** Division */
   DIVIDE("/"),
-
   /** Modulo */
   MODULO("%"),
-
   /** Bitwise not */
   BIT_NOT("~"),
-
   /** Bitwise and */
   BIT_AND("&", true, true),
-
   /** Bitwise or */
   BIT_OR("|", true, true),
-
   /** Bitwise xor */
   BIT_XOR("^", true, true),
-
   /** Bitwise nand */
   BIT_NAND("~&"),
-
   /** Bitwise nor */
   BIT_NOR("~|"),
-
   /** Bitwise xor */
   BIT_XNOR("~^"),
-
   /** Bitwise shift left */
   SHL("<<"),
-
   /** Bitwise shift right */
-  SHR(">>"),
-  ;
+  SHR(">>");
 
   private final String sql;
+
   private final Name name;
+
   private final boolean associative;
+
   private final boolean commutative;
 
   private ExpressionOperator(String sql) {

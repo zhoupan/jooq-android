@@ -66,42 +66,36 @@ interface FieldsTrait extends Fields {
   }
 
   /** @deprecated This method hides static import {@link DSL#field(String)}. */
-  @Deprecated
   @Override
   default Field<?> field(String name) {
     return fieldsRow().field(name);
   }
 
   /** @deprecated This method hides static import {@link DSL#field(String, Class)}. */
-  @Deprecated
   @Override
   default <T> Field<T> field(String name, Class<T> type) {
     return fieldsRow().field(name, type);
   }
 
   /** @deprecated This method hides static import {@link DSL#field(String, DataType)}. */
-  @Deprecated
   @Override
   default <T> Field<T> field(String name, DataType<T> dataType) {
     return fieldsRow().field(name, dataType);
   }
 
   /** @deprecated This method hides static import {@link DSL#field(Name)}. */
-  @Deprecated
   @Override
   default Field<?> field(Name name) {
     return fieldsRow().field(name);
   }
 
   /** @deprecated This method hides static import {@link DSL#field(Name, Class)}. */
-  @Deprecated
   @Override
   default <T> Field<T> field(Name name, Class<T> type) {
     return fieldsRow().field(name, type);
   }
 
   /** @deprecated This method hides static import {@link DSL#field(String, DataType)}. */
-  @Deprecated
   @Override
   default <T> Field<T> field(Name name, DataType<T> dataType) {
     return fieldsRow().field(name, dataType);

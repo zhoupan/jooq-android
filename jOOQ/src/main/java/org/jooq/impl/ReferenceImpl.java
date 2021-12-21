@@ -64,6 +64,7 @@ final class ReferenceImpl<R extends Record, O extends Record> extends AbstractKe
     implements ForeignKey<R, O> {
 
   private final UniqueKey<O> uk;
+
   private final TableField<O, ?>[] ukFields;
 
   ReferenceImpl(
@@ -74,7 +75,6 @@ final class ReferenceImpl<R extends Record, O extends Record> extends AbstractKe
       TableField<O, ?>[] ukFields,
       boolean enforced) {
     super(table, name, fkFields, enforced);
-
     this.uk = uk;
     this.ukFields = ukFields;
   }
@@ -169,10 +169,9 @@ final class ReferenceImpl<R extends Record, O extends Record> extends AbstractKe
       TableField<R1, ?>[] fields1,
       TableField<R2, ?>[] fields2) {
     // [#11580] Some dialects support foreign keys with shorter column lists
-    //          than their referenced primary keys
+    // than their referenced primary keys
     TableField<R1, ?>[] f1 = truncate(fields1, fields2);
     TableField<R2, ?>[] f2 = truncate(fields2, fields1);
-
     return new InlineDerivedTable<>(
         table,
         f1.length == 1
@@ -206,7 +205,6 @@ final class ReferenceImpl<R extends Record, O extends Record> extends AbstractKe
   /** Extract a configuration from the first record of a collection of records */
   private static <R extends Record> DSLContext extractDSLContext(Collection<? extends R> records) {
     R first = first(records);
-
     if (first != null) return DSL.using(first.configuration());
     else throw new DetachedException("Supply at least one attachable record");
   }

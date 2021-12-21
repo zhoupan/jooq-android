@@ -96,42 +96,34 @@ public class JDBCUtils {
   @NotNull
   public static final SQLDialect dialect(Connection connection) {
     SQLDialect result = SQLDialect.DEFAULT;
-
     if (connection != null) {
       try {
         DatabaseMetaData m = connection.getMetaData();
-
         String url = m.getURL();
         int majorVersion = 0;
         int minorVersion = 0;
         String productVersion = "";
-
         // [#6814] Better play safe with JDBC API
         try {
           majorVersion = m.getDatabaseMajorVersion();
         } catch (SQLException ignore) {
         }
-
         try {
           minorVersion = m.getDatabaseMinorVersion();
         } catch (SQLException ignore) {
         }
-
         try {
           productVersion = m.getDatabaseProductVersion();
         } catch (SQLException ignore) {
         }
-
         result = dialect(url, majorVersion, minorVersion, productVersion);
       } catch (SQLException ignore) {
       }
     }
-
     if (result == SQLDialect.DEFAULT) {
       // If the dialect cannot be guessed from the URL, take some other
       // measures, e.g. by querying DatabaseMetaData.getDatabaseProductName()
     }
-
     return result;
   }
 
@@ -149,14 +141,11 @@ public class JDBCUtils {
   @NotNull
   public static final SQLDialect dialect(ConnectionFactory connection) {
     SQLDialect result = SQLDialect.DEFAULT;
-
     if (connection != null) result = dialectFromProductName(connection.getMetadata().getName());
-
     if (result == SQLDialect.DEFAULT) {
       // If the dialect cannot be guessed from the URL, take some other
       // measures, e.g. by querying DatabaseMetaData.getDatabaseProductName()
     }
-
     return result;
   }
 
@@ -174,21 +163,17 @@ public class JDBCUtils {
   @NotNull
   public static final SQLDialect dialect(io.r2dbc.spi.Connection connection) {
     SQLDialect result = SQLDialect.DEFAULT;
-
     if (connection != null)
       result = dialectFromProductName(connection.getMetadata().getDatabaseProductName());
-
     if (result == SQLDialect.DEFAULT) {
       // If the dialect cannot be guessed from the URL, take some other
       // measures, e.g. by querying DatabaseMetaData.getDatabaseProductName()
     }
-
     return result;
   }
 
   private static SQLDialect dialectFromProductName(String product) {
     String p = product.toLowerCase().replace(" ", "");
-
     if (p.contains("h2")) return H2;
     else if (p.contains("mariadb")) return MARIADB;
     else if (p.contains("mysql")) return MYSQL;
@@ -200,10 +185,8 @@ public class JDBCUtils {
   private static final SQLDialect dialect(
       String url, int majorVersion, int minorVersion, String productVersion) {
     SQLDialect family = dialect(url).family();
-
     // [#6814] If the driver can't report the version, fall back to the dialect family
     if (majorVersion == 0) return family;
-
     switch (family) {
       case FIREBIRD:
         return firebirdDialect(majorVersion);
@@ -216,34 +199,28 @@ public class JDBCUtils {
       case POSTGRES:
         return postgresDialect(majorVersion, minorVersion);
     }
-
     return family;
   }
 
   private static final SQLDialect postgresDialect(int majorVersion, int minorVersion) {
-
     return POSTGRES;
   }
 
   private static final SQLDialect mariadbDialect(int majorVersion, int minorVersion) {
-
     return MARIADB;
   }
 
   private static final SQLDialect mysqlDialect(
       int majorVersion, int minorVersion, String productVersion) {
-
     return MYSQL;
   }
 
   private static final SQLDialect firebirdDialect(int majorVersion) {
-
     return FIREBIRD;
   }
 
   private static final SQLDialect h2Dialect(
       int majorVersion, int minorVersion, String productVersion) {
-
     return H2;
   }
 
@@ -256,16 +233,13 @@ public class JDBCUtils {
   @NotNull
   public static final SQLDialect dialect(String url) {
     if (url == null) return DEFAULT;
-
-    // The below list might not be accurate or complete. Feel free to
+    else // The below list might not be accurate or complete. Feel free to
     // contribute fixes related to new / different JDBC driver configurations
-
     // [#6035] Third-party JDBC proxies (e.g. www.testcontainers.org) often work
-    //         by inserting their names into the JDBC URL, e.g. jdbc:tc:mysql://...
-    //         This is why we no longer check for a URL to start with jdbc:mysql:
-    //         but to simply contain :mysql:
-
-    else if (url.contains(":cubrid:")) return CUBRID;
+    // by inserting their names into the JDBC URL, e.g. jdbc:tc:mysql://...
+    // This is why we no longer check for a URL to start with jdbc:mysql:
+    // but to simply contain :mysql:
+    if (url.contains(":cubrid:")) return CUBRID;
     else if (url.contains(":derby:")) return DERBY;
     else if (url.contains(":firebirdsql:")) return FIREBIRD;
     else if (url.contains(":h2:")) return H2;
@@ -275,7 +249,6 @@ public class JDBCUtils {
     else if (url.contains(":mysql:") || url.contains(":google:")) return MYSQL;
     else if (url.contains(":postgresql:") || url.contains(":pgsql:")) return POSTGRES;
     else if (url.contains(":sqlite:") || url.contains(":sqldroid:")) return SQLITE;
-
     return DEFAULT;
   }
 
@@ -309,7 +282,6 @@ public class JDBCUtils {
       case SQLITE:
         return "org.sqlite.JDBC";
     }
-
     return "java.sql.Driver";
   }
 
@@ -428,9 +400,7 @@ public class JDBCUtils {
         blob.free();
       } catch (Exception e) {
         log.warn("Error while freeing resource", e);
-      }
-
-      // [#3069] The free() method was added only in JDBC 4.0 / Java 1.6
+      } // [#3069] The free() method was added only in JDBC 4.0 / Java 1.6
       catch (AbstractMethodError ignore) {
       }
     }
@@ -448,9 +418,7 @@ public class JDBCUtils {
         clob.free();
       } catch (Exception e) {
         log.warn("Error while freeing resource", e);
-      }
-
-      // [#3069] The free() method was added only in JDBC 4.0 / Java 1.6
+      } // [#3069] The free() method was added only in JDBC 4.0 / Java 1.6
       catch (AbstractMethodError ignore) {
       }
     }
@@ -468,9 +436,7 @@ public class JDBCUtils {
         xml.free();
       } catch (Exception e) {
         log.warn("Error while freeing resource", e);
-      }
-
-      // [#3069] The free() method was added only in JDBC 4.0 / Java 1.6
+      } // [#3069] The free() method was added only in JDBC 4.0 / Java 1.6
       catch (AbstractMethodError ignore) {
       }
     }
@@ -488,9 +454,7 @@ public class JDBCUtils {
         array.free();
       } catch (Exception e) {
         log.warn("Error while freeing resource", e);
-      }
-
-      // [#3069] The free() method was added only in JDBC 4.0 / Java 1.6
+      } // [#3069] The free() method was added only in JDBC 4.0 / Java 1.6
       catch (AbstractMethodError ignore) {
       }
     }

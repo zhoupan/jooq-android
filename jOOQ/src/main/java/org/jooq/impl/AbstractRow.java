@@ -61,6 +61,7 @@ import org.jooq.SelectField;
 /** A common base class for the various degrees of {@link Row1}, {@link Row2}, etc. */
 abstract class AbstractRow<R extends Record> extends AbstractQueryPart
     implements Row, SelectField<R> {
+
   private static final Clause[] CLAUSES = {FIELD_ROW};
 
   final FieldsImpl<R> fields;
@@ -75,14 +76,12 @@ abstract class AbstractRow<R extends Record> extends AbstractQueryPart
 
   AbstractRow(FieldsImpl<R> fields) {
     super();
-
     this.fields = fields;
   }
 
   // ------------------------------------------------------------------------
   // XXX: SelectField API
   // ------------------------------------------------------------------------
-
   final RowField<Row, R> rf() {
     return new RowField<Row, R>(this);
   }
@@ -156,34 +155,27 @@ abstract class AbstractRow<R extends Record> extends AbstractQueryPart
   @SuppressWarnings("rawtypes")
   final AbstractRow convertTo(Row row) {
     int size = fields.size();
-
     findConversionCandidates:
     {
       for (int i = 0; i < size; i++)
         if (fields.field(i) instanceof Val && !(row.field(i) instanceof Val))
           break findConversionCandidates;
-
       return this;
     }
-
     Field<?>[] result = new Field[size];
     for (int i = 0; i < size; i++) {
       Field<?> f = fields.field(i);
-
       if (f instanceof Val) result[i] = ((Val) f).convertTo(row.field(i).getDataType());
       else result[i] = f;
     }
-
     return Tools.row0(result);
   }
 
   // ------------------------------------------------------------------------
   // XXX: QueryPart API
   // ------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
-
     ctx.sql("(").visit(wrap(fields.fields)).sql(")");
   }
 
@@ -195,7 +187,6 @@ abstract class AbstractRow<R extends Record> extends AbstractQueryPart
   // ------------------------------------------------------------------------
   // XXX: Row accessor API
   // ------------------------------------------------------------------------
-
   @Override
   public final int size() {
     return fields.size();
@@ -217,42 +208,36 @@ abstract class AbstractRow<R extends Record> extends AbstractQueryPart
   }
 
   /** @deprecated This method hides static import {@link DSL#field(String)}. */
-  @Deprecated
   @Override
   public final Field<?> field(String name) {
     return fields.field(name);
   }
 
   /** @deprecated This method hides static import {@link DSL#field(String, Class)}. */
-  @Deprecated
   @Override
   public final <T> Field<T> field(String name, Class<T> type) {
     return fields.field(name, type);
   }
 
   /** @deprecated This method hides static import {@link DSL#field(String, DataType)}. */
-  @Deprecated
   @Override
   public final <T> Field<T> field(String name, DataType<T> dataType) {
     return fields.field(name, dataType);
   }
 
   /** @deprecated This method hides static import {@link DSL#field(Name)}. */
-  @Deprecated
   @Override
   public final Field<?> field(Name name) {
     return fields.field(name);
   }
 
   /** @deprecated This method hides static import {@link DSL#field(Name, Class)}. */
-  @Deprecated
   @Override
   public final <T> Field<T> field(Name name, Class<T> type) {
     return fields.field(name, type);
   }
 
   /** @deprecated This method hides static import {@link DSL#field(Name, DataType)}. */
-  @Deprecated
   @Override
   public final <T> Field<T> field(Name name, DataType<T> dataType) {
     return fields.field(name, dataType);
@@ -356,7 +341,6 @@ abstract class AbstractRow<R extends Record> extends AbstractQueryPart
   // ------------------------------------------------------------------------
   // [NOT] NULL predicates
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition isNull() {
     return new RowIsNull(this, true);

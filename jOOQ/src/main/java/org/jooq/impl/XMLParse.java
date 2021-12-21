@@ -49,12 +49,13 @@ import org.jooq.XML;
 
 /** @author Lukas Eder */
 final class XMLParse extends AbstractField<XML> {
+
   private final Field<String> content;
+
   private final DocumentOrContent documentOrContent;
 
   XMLParse(Field<String> content, DocumentOrContent documentOrContent) {
     super(N_XMLPARSE, SQLDataType.XML);
-
     this.content = content;
     this.documentOrContent = documentOrContent;
   }
@@ -76,7 +77,6 @@ final class XMLParse extends AbstractField<XML> {
         .visit(documentOrContent == DOCUMENT ? K_DOCUMENT : K_CONTENT)
         .sql(' ')
         .visit(content);
-
     ctx.sql(')');
   }
 

@@ -85,22 +85,33 @@ import org.jooq.conf.RenderOptionalKeyword;
 final class Alias<Q extends QueryPart> extends AbstractQueryPart {
 
   private static final Clause[] CLAUSES_TABLE_REFERENCE = {TABLE, TABLE_REFERENCE};
+
   private static final Clause[] CLAUSES_TABLE_ALIAS = {TABLE, TABLE_ALIAS};
+
   private static final Clause[] CLAUSES_FIELD_REFERENCE = {FIELD, FIELD_REFERENCE};
+
   private static final Clause[] CLAUSES_FIELD_ALIAS = {FIELD, FIELD_ALIAS};
+
   private static final Set<SQLDialect> SUPPORT_AS_REQUIRED =
       SQLDialect.supportedBy(DERBY, HSQLDB, MARIADB, MYSQL, POSTGRES, SQLITE);
+
   private static final Set<SQLDialect> SUPPORT_DERIVED_COLUMN_NAMES_SPECIAL1 =
       SQLDialect.supportedBy(CUBRID, FIREBIRD, MYSQL);
+
   private static final Set<SQLDialect> SUPPORT_DERIVED_COLUMN_NAMES_SPECIAL2 =
       SQLDialect.supportedBy(IGNITE, MARIADB, MYSQL, SQLITE);
+
   private static final Set<SQLDialect> SUPPORT_DERIVED_COLUMN_NAMES_SPECIAL3 =
       SQLDialect.supportedBy(H2);
 
   final Q wrapped;
+
   final Q wrapping;
+
   final Name alias;
+
   final Name[] fieldAliases;
+
   final Predicate<Context<?>> wrapInParentheses;
 
   Alias(Q wrapped, Q wrapping, Name alias) {
@@ -126,10 +137,8 @@ final class Alias<Q extends QueryPart> extends AbstractQueryPart {
 
   @Override
   public final void accept(Context<?> ctx) {
-
     if (ctx.declareAliases() && (ctx.declareFields() || ctx.declareTables())) {
       ctx.declareAliases(false);
-
       acceptDeclareAliasStandard(ctx);
       ctx.declareAliases(true);
     } else ctx.qualify(false, c -> c.visit(alias));
@@ -142,35 +151,27 @@ final class Alias<Q extends QueryPart> extends AbstractQueryPart {
 
   private final void acceptDeclareAliasStandard(Context<?> context) {
     if (wrapped instanceof TableImpl) context.scopeMarkStart(wrapping);
-
     SQLDialect dialect = context.dialect();
     SQLDialect family = context.family();
     boolean emulatedDerivedColumnList = false;
-
     // [#454] [#1801] Some databases don't allow "derived column names" in
     // "simple class specifications", or "common table expression references".
     // Hence, wrap the table reference in a subselect
     if (fieldAliases != null
         && (SUPPORT_DERIVED_COLUMN_NAMES_SPECIAL1.contains(dialect))
         && (wrapped instanceof TableImpl || wrapped instanceof CommonTableExpressionImpl)) {
-
       visitSubquery(context, select(asterisk()).from(((Table<?>) wrapped).as(alias)));
-    }
-
-    // [#1801] Some databases do not support "derived column names".
+    } else // [#1801] Some databases do not support "derived column names".
     // They can be emulated by concatenating a dummy SELECT with no
     // results using UNION ALL
-    else if (fieldAliases != null
+    if (fieldAliases != null
         && (emulatedDerivedColumnList
             || SUPPORT_DERIVED_COLUMN_NAMES_SPECIAL2.contains(dialect)
             || SUPPORT_DERIVED_COLUMN_NAMES_SPECIAL3.contains(dialect))) {
-
       emulatedDerivedColumnList = true;
-
       if (wrapped instanceof Values && NO_SUPPORT_VALUES.contains(dialect)) {
         context.data(DATA_SELECT_ALIASES, fieldAliases, t -> toSQLWrapped(t));
       } else {
-
         // [#3156] Do not SELECT * from derived tables to prevent ambiguously defined columns
         // in those derived tables
         Select<? extends Record> wrappedAsSelect =
@@ -179,21 +180,17 @@ final class Alias<Q extends QueryPart> extends AbstractQueryPart {
                 : wrapped instanceof DerivedTable
                     ? ((DerivedTable<?>) wrapped).query()
                     : select(asterisk()).from(((Table<?>) wrapped).as(alias));
-
         List<Field<?>> select = wrappedAsSelect.getSelect();
-
         // [#9486] H2 cannot handle duplicate column names in derived tables, despite derived column
         // lists
-        //         See: https://github.com/h2database/h2database/issues/2532
+        // See: https://github.com/h2database/h2database/issues/2532
         if (SUPPORT_DERIVED_COLUMN_NAMES_SPECIAL3.contains(dialect)) {
           List<Name> names = map(select, Field::getUnqualifiedName);
-
           if (names.size() > 0 && names.size() == new HashSet<>(names).size()) {
             toSQLWrapped(context);
             emulatedDerivedColumnList = false;
           }
         }
-
         if (emulatedDerivedColumnList) {
           SelectFieldList<Field<?>> fields = new SelectFieldList<>();
           for (int i = 0; i < fieldAliases.length; i++) {
@@ -203,22 +200,16 @@ final class Alias<Q extends QueryPart> extends AbstractQueryPart {
                 break;
             }
           }
-
           visitSubquery(context, select(fields).where(falseCondition()).unionAll(wrappedAsSelect));
         }
       }
-    }
-
-    // The default behaviour
-    else {
+    } else // The default behaviour
+    {
       toSQLWrapped(context);
     }
-
     // [#291] some aliases cause trouble, if they are not explicitly marked using "as"
     toSQLAs(context);
-
     context.sql(' ').qualify(false, c -> c.visit(alias));
-
     // [#1801] Add field aliases to the table alias, if applicable
     if (fieldAliases != null && !emulatedDerivedColumnList) {
       toSQLDerivedColumnList(context);
@@ -228,7 +219,6 @@ final class Alias<Q extends QueryPart> extends AbstractQueryPart {
       // declaration. For example:
       //
       // SELECT t.column_value FROM UNNEST(ARRAY[1, 2]) AS t(column_value)
-
       // TODO: Is this still needed?
       switch (family) {
         case HSQLDB:
@@ -236,22 +226,18 @@ final class Alias<Q extends QueryPart> extends AbstractQueryPart {
           {
             // The javac compiler doesn't like casting of generics
             Object o = wrapped;
-
             if (context.declareTables() && o instanceof ArrayTable)
               context.sql('(').visit(wrap(((ArrayTable) o).fields()).qualify(false)).sql(')');
-
             break;
           }
       }
     }
-
     if (wrapped instanceof TableImpl) context.scopeMarkEnd(wrapping);
   }
 
   final void toSQLAs(Context<?> ctx) {
-
     // [#9925] In some cases, AS is always required, regardless
-    //         of the dialect or settings (e.g. XMLATTRIBUTES).
+    // of the dialect or settings (e.g. XMLATTRIBUTES).
     if (TRUE.equals(ctx.data(DATA_AS_REQUIRED))) {
       ctx.sql(' ').visit(K_AS);
     } else if (wrapped instanceof Field) {
@@ -271,7 +257,6 @@ final class Alias<Q extends QueryPart> extends AbstractQueryPart {
 
   private final void toSQLWrapped(Context<?> ctx) {
     boolean wrap = wrapInParentheses.test(ctx);
-
     ctx.sql(wrap ? "(" : "").visit(wrapped).sql(wrap ? ")" : "");
   }
 

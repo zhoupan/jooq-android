@@ -60,15 +60,15 @@ import org.jooq.Select;
 final class CaseConditionStepImpl<T> extends AbstractField<T> implements CaseConditionStep<T> {
 
   private final List<Condition> conditions;
+
   private final List<Field<T>> results;
+
   private Field<T> else_;
 
   CaseConditionStepImpl(Condition condition, Field<T> result) {
     super(N_CASE, result.getDataType());
-
     this.conditions = new ArrayList<>();
     this.results = new ArrayList<>();
-
     when(condition, result);
   }
 
@@ -81,7 +81,6 @@ final class CaseConditionStepImpl<T> extends AbstractField<T> implements CaseCon
   public final CaseConditionStep<T> when(Condition condition, Field<T> result) {
     conditions.add(condition);
     results.add(result);
-
     return this;
   }
 
@@ -129,7 +128,6 @@ final class CaseConditionStepImpl<T> extends AbstractField<T> implements CaseCon
   @Override
   public final Field<T> else_(Field<T> result) {
     this.else_ = result;
-
     return this;
   }
 
@@ -149,11 +147,9 @@ final class CaseConditionStepImpl<T> extends AbstractField<T> implements CaseCon
 
   private final void acceptNative(Context<?> ctx) {
     ctx.visit(K_CASE).formatIndentStart();
-
     int size = conditions.size();
     for (int i = 0; i < size; i++) {
       Condition c = conditions.get(i);
-
       ctx.formatSeparator()
           .visit(K_WHEN)
           .sql(' ')
@@ -163,11 +159,9 @@ final class CaseConditionStepImpl<T> extends AbstractField<T> implements CaseCon
           .sql(' ')
           .visit(results.get(i));
     }
-
     if (else_ != null) ctx.formatSeparator().visit(K_ELSE).sql(' ').visit(else_);
     else if (TRUE.equals(ctx.data(DATA_FORCE_CASE_ELSE_NULL)))
       ctx.formatSeparator().visit(K_ELSE).sql(' ').visit(K_NULL);
-
     ctx.formatIndentEnd().formatSeparator().visit(K_END);
   }
 }

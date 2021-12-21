@@ -55,7 +55,6 @@ final class CollationImpl extends AbstractQueryPart implements Collation {
 
   @Override
   public final void accept(Context<?> ctx) {
-
     ctx.visit(name);
   }
 

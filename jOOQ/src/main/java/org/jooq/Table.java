@@ -250,7 +250,6 @@ public interface Table<R extends Record> extends TableLike<R>, RecordQualifier<R
   // -------------------------------------------------------------------------
   // XXX: Expressions based on this table
   // -------------------------------------------------------------------------
-
   /**
    * Create a qualified asterisk expression from this table (<code>table.*</code>) for use with
    * <code>SELECT</code>.
@@ -296,7 +295,6 @@ public interface Table<R extends Record> extends TableLike<R>, RecordQualifier<R
   // -------------------------------------------------------------------------
   // XXX: Aliasing clauses
   // -------------------------------------------------------------------------
-
   /**
    * Create an alias for this table.
    *
@@ -385,7 +383,6 @@ public interface Table<R extends Record> extends TableLike<R>, RecordQualifier<R
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support
   Table<R> as(String alias, Function<? super Field<?>, ? extends String> aliasFunction);
@@ -408,7 +405,6 @@ public interface Table<R extends Record> extends TableLike<R>, RecordQualifier<R
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support
   Table<R> as(
@@ -510,7 +506,6 @@ public interface Table<R extends Record> extends TableLike<R>, RecordQualifier<R
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support
   Table<R> as(Name alias, Function<? super Field<?>, ? extends Name> aliasFunction);
@@ -533,7 +528,6 @@ public interface Table<R extends Record> extends TableLike<R>, RecordQualifier<R
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support
   Table<R> as(
@@ -578,7 +572,6 @@ public interface Table<R extends Record> extends TableLike<R>, RecordQualifier<R
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support
   Table<R> as(Table<?> otherTable, Function<? super Field<?>, ? extends Field<?>> aliasFunction);
@@ -601,7 +594,6 @@ public interface Table<R extends Record> extends TableLike<R>, RecordQualifier<R
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @Support
   Table<R> as(
@@ -611,7 +603,6 @@ public interface Table<R extends Record> extends TableLike<R>, RecordQualifier<R
   // -------------------------------------------------------------------------
   // XXX: WHERE clauses on tables
   // -------------------------------------------------------------------------
-
   /**
    * Add a <code>WHERE</code> clause to the table, connecting them with each other with {@link
    * Operator#AND}.
@@ -762,7 +753,6 @@ public interface Table<R extends Record> extends TableLike<R>, RecordQualifier<R
   // -------------------------------------------------------------------------
   // XXX: JOIN clauses on tables
   // -------------------------------------------------------------------------
-
   /**
    * Join a table to this table using a {@link JoinType}
    *
@@ -1987,7 +1977,6 @@ public interface Table<R extends Record> extends TableLike<R>, RecordQualifier<R
   // -------------------------------------------------------------------------
   // XXX: APPLY clauses on tables
   // -------------------------------------------------------------------------
-
   /** <code>CROSS APPLY</code> a table to this table. */
   @NotNull
   @Support({POSTGRES})
@@ -2220,7 +2209,6 @@ public interface Table<R extends Record> extends TableLike<R>, RecordQualifier<R
   // -------------------------------------------------------------------------
   // XXX: Convenience methods and synthetic methods
   // -------------------------------------------------------------------------
-
   /**
    * Create a predicate comparing records from self-joined tables.
    *
@@ -2311,7 +2299,6 @@ public interface Table<R extends Record> extends TableLike<R>, RecordQualifier<R
   // -------------------------------------------------------------------------
   // XXX: Exotic and vendor-specific clauses on tables
   // -------------------------------------------------------------------------
-
   /**
    * Specify a MySQL style table hint for query optimisation.
    *
@@ -2637,7 +2624,6 @@ public interface Table<R extends Record> extends TableLike<R>, RecordQualifier<R
   // ------------------------------------------------------------------------
   // [#5518] Record method inversions, e.g. for use as method references
   // ------------------------------------------------------------------------
-
   /**
    * The inverse operation of {@link Record#into(Table)}.
    *

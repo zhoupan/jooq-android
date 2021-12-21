@@ -91,6 +91,7 @@ import org.jooq.types.UNumber;
 /** @author Lukas Eder */
 @SuppressWarnings({"rawtypes", "unchecked"})
 abstract class AbstractDataType<T> extends AbstractNamed implements DataType<T> {
+
   static final Set<SQLDialect> NO_SUPPORT_TIMESTAMP_PRECISION =
       SQLDialect.supportedBy(DERBY, FIREBIRD);
 
@@ -154,7 +155,6 @@ abstract class AbstractDataType<T> extends AbstractNamed implements DataType<T> 
   public abstract DataType<T> default_(Field<T> d);
 
   @Override
-  @Deprecated
   public final DataType<T> defaulted(boolean d) {
     return defaultValue(d ? Tools.field(null, this) : null);
   }
@@ -182,9 +182,8 @@ abstract class AbstractDataType<T> extends AbstractNamed implements DataType<T> 
 
   final AbstractDataType<T> precision0(Integer p, Integer s) {
     if (eq(precision0(), p) && eq(scale0(), s)) return this;
-
-    // [#4120] LOB types are not allowed to have precision
-    else if (isLob()) return this;
+    else // [#4120] LOB types are not allowed to have precision
+    if (isLob()) return this;
     else return precision1(p, s);
   }
 
@@ -193,7 +192,6 @@ abstract class AbstractDataType<T> extends AbstractNamed implements DataType<T> 
   @Override
   public final boolean hasPrecision() {
     Class<?> tType = tType0();
-
     return tType == BigInteger.class
         || tType == BigDecimal.class
         || tType == Timestamp.class
@@ -223,9 +221,8 @@ abstract class AbstractDataType<T> extends AbstractNamed implements DataType<T> 
 
   final AbstractDataType<T> scale0(Integer s) {
     if (eq(scale0(), s)) return this;
-
-    // [#4120] LOB types are not allowed to have scale
-    else if (isLob()) return this;
+    else // [#4120] LOB types are not allowed to have scale
+    if (isLob()) return this;
     else return scale1(s);
   }
 
@@ -248,9 +245,8 @@ abstract class AbstractDataType<T> extends AbstractNamed implements DataType<T> 
 
   final AbstractDataType<T> length0(Integer l) {
     if (eq(length0(), l)) return this;
-
-    // [#4120] LOB types are not allowed to have length
-    else if (isLob()) return this;
+    else // [#4120] LOB types are not allowed to have length
+    if (isLob()) return this;
     else return length1(l);
   }
 
@@ -283,7 +279,6 @@ abstract class AbstractDataType<T> extends AbstractNamed implements DataType<T> 
     // TODO [#1227] There is some confusion with these types, especially
     // when it comes to byte[] which can be mapped to BLOB, BINARY, VARBINARY
     Class<?> tType = tType0();
-
     if (tType == Blob.class) return Types.BLOB;
     else if (tType == Boolean.class) return Types.BOOLEAN;
     else if (tType == BigInteger.class) return Types.BIGINT;
@@ -304,21 +299,19 @@ abstract class AbstractDataType<T> extends AbstractNamed implements DataType<T> 
     else if (tType == String.class) return Types.VARCHAR;
     else if (Tools.isTime(tType)) return Types.TIME;
     else if (Tools.isTimestamp(tType)) return Types.TIMESTAMP;
-
-    // [#5779] Few JDBC drivers support the JDBC 4.2 TIME[STAMP]_WITH_TIMEZONE types.
-    else if (tType == OffsetTime.class) return Types.VARCHAR;
+    else // [#5779] Few JDBC drivers support the JDBC 4.2 TIME[STAMP]_WITH_TIMEZONE types.
+    if (tType == OffsetTime.class) return Types.VARCHAR;
     else if (tType == OffsetDateTime.class) return Types.VARCHAR;
     else if (tType == Instant.class) return Types.VARCHAR;
-
-    // The type byte[] is handled earlier.
-    else if (tType.isArray()) return Types.ARRAY;
+    else // The type byte[] is handled earlier.
+    if (tType.isArray()) return Types.ARRAY;
     else if (EnumType.class.isAssignableFrom(tType)) return Types.VARCHAR;
     else if (QualifiedRecord.class.isAssignableFrom(tType)) return Types.STRUCT;
     else if (Result.class.isAssignableFrom(tType)) {
       switch (configuration.family()) {
         case H2:
-          return -10; // OracleTypes.CURSOR;
-
+          // OracleTypes.CURSOR;
+          return -10;
         case POSTGRES:
         default:
           return Types.OTHER;
@@ -352,16 +345,14 @@ abstract class AbstractDataType<T> extends AbstractNamed implements DataType<T> 
   }
 
   private String getCastTypeName0(SQLDialect dialect) {
-
     // [#9958] We should be able to avoid checking for x > 0, but there may
-    //         be a lot of data types constructed with a 0 value instead of
-    //         a null value, historically, so removing this check would
-    //         introduce a lot of regressions!
+    // be a lot of data types constructed with a 0 value instead of
+    // a null value, historically, so removing this check would
+    // introduce a lot of regressions!
     if (lengthDefined() && length() > 0) {
       if (isBinary() && NO_SUPPORT_BINARY_TYPE_LENGTH.contains(dialect)) return castTypeName0();
       else return castTypePrefix0() + "(" + length() + ")" + castTypeSuffix0();
     } else if (precisionDefined() && (isTimestamp() || precision() > 0)) {
-
       // [#8029] Not all dialects support precision on timestamp
       // syntax, possibly despite there being explicit or implicit
       // precision support in DDL.
@@ -428,22 +419,25 @@ abstract class AbstractDataType<T> extends AbstractNamed implements DataType<T> 
   }
 
   @Override
-  public /* non-final */ <U> DataType<U> asConvertedDataType(Converter<? super T, U> converter) {
+  public <
+          /* non-final */
+          U>
+      DataType<U> asConvertedDataType(Converter<? super T, U> converter) {
     return asConvertedDataType(DefaultBinding.newBinding(converter, this, null));
   }
 
   @Override
-  public /* non-final */ <U> DataType<U> asConvertedDataType(Binding<? super T, U> newBinding) {
+  public <
+          /* non-final */
+          U>
+      DataType<U> asConvertedDataType(Binding<? super T, U> newBinding) {
     if (getBinding() == newBinding) return (DataType<U>) this;
-
     if (newBinding == null) newBinding = (Binding<? super T, U>) DefaultBinding.binding(this);
-
     return new ConvertedDataType<>((AbstractDataTypeX) this, newBinding);
   }
 
   @Override
   public /* final */ T convert(Object object) {
-
     // [#1441] Avoid unneeded type conversions to improve performance
     if (object == null) return null;
     else if (object.getClass() == getType()) return (T) object;
@@ -486,9 +480,8 @@ abstract class AbstractDataType<T> extends AbstractNamed implements DataType<T> 
     return t == NCHAR
         || t == NCLOB
         || t == NVARCHAR
-
-        // [#9540] [#10368] In case the constant literals haven't been initialised yet
-        || NCHAR == null && "nchar".equals(t.getTypeName())
+        || // [#9540] [#10368] In case the constant literals haven't been initialised yet
+        NCHAR == null && "nchar".equals(t.getTypeName())
         || NCLOB == null && "nclob".equals(t.getTypeName())
         || NVARCHAR == null && "nvarchar".equals(t.getTypeName());
   }
@@ -534,15 +527,13 @@ abstract class AbstractDataType<T> extends AbstractNamed implements DataType<T> 
   @Override
   public final boolean isLob() {
     DataType<T> t = getSQLDataType();
-
     if (t == this) return getTypeName().endsWith("lob");
     else
       return t == BLOB
           || t == CLOB
           || t == NCLOB
-
-          // [#9540] [#10368] In case the constant literals haven't been initialised yet
-          || BLOB == null && "blob".equals(t.getTypeName())
+          || // [#9540] [#10368] In case the constant literals haven't been initialised yet
+          BLOB == null && "blob".equals(t.getTypeName())
           || CLOB == null && "clob".equals(t.getTypeName())
           || NCLOB == null && "nclob".equals(t.getTypeName());
   }
@@ -628,7 +619,6 @@ abstract class AbstractDataType<T> extends AbstractNamed implements DataType<T> 
   // ------------------------------------------------------------------------
   // The Object API
   // ------------------------------------------------------------------------
-
   @Override
   public String toString() {
     return getCastTypeName() + (isArray() ? " array" : "") + " /* " + getType().getName() + " */";

@@ -47,17 +47,16 @@ import org.jooq.XML;
 
 /** @author Lukas Eder */
 final class XMLConcat extends AbstractField<XML> {
+
   private final QueryPartList<Field<?>> args;
 
   XMLConcat(Collection<? extends Field<?>> args) {
     super(N_XMLCONCAT, SQLDataType.XML);
-
     this.args = new QueryPartList<>(args);
   }
 
   @Override
   public final void accept(Context<?> ctx) {
-
     ctx.visit(N_XMLCONCAT).sql('(').visit(args).sql(')');
   }
 }

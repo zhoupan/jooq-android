@@ -58,6 +58,7 @@ import org.reactivestreams.Publisher;
 final class DefaultConnectionFactory implements ConnectionFactory {
 
   Connection connection;
+
   final boolean finalize;
 
   DefaultConnectionFactory(Connection connection) {
@@ -93,6 +94,7 @@ final class DefaultConnectionFactory implements ConnectionFactory {
   }
 
   private final class NonClosingConnection implements Connection {
+
     @Override
     public Publisher<Void> beginTransaction() {
       return connectionOrThrow().beginTransaction();

@@ -57,14 +57,12 @@ abstract class AbstractQueryPartMap<K extends QueryPart, V extends QueryPart>
   // -------------------------------------------------------------------------
   // The QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public abstract void accept(Context<?> context);
 
   // -------------------------------------------------------------------------
   // The Map API
   // -------------------------------------------------------------------------
-
   @Override
   public final int size() {
     return map.size();

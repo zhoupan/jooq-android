@@ -74,7 +74,6 @@ public interface Formattable {
   // -------------------------------------------------------------------------
   // Formatting methods
   // -------------------------------------------------------------------------
-
   /**
    * Get a simple formatted representation of this result.
    *

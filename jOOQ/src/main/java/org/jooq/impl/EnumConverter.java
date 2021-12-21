@@ -51,16 +51,15 @@ import java.util.Map;
 public class EnumConverter<T, U extends Enum<U>> extends AbstractConverter<T, U> {
 
   private final Map<T, U> lookup;
+
   private final EnumType enumType;
 
   public EnumConverter(Class<T> fromType, Class<U> toType) {
     super(fromType, toType);
-
     // [#8045] Also support Kotlin Int type (which translates to int.class)
     this.enumType =
         Number.class.isAssignableFrom(wrapper(fromType)) ? EnumType.ORDINAL : EnumType.STRING;
     this.lookup = new LinkedHashMap<>();
-
     for (U u : toType.getEnumConstants()) this.lookup.put(to(u), u);
   }
 
@@ -90,7 +89,6 @@ public class EnumConverter<T, U extends Enum<U>> extends AbstractConverter<T, U>
 
     /** Ordinal enum type */
     ORDINAL,
-
     /** String enum type */
     STRING
   }

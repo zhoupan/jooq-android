@@ -44,7 +44,9 @@ import org.jooq.Context;
 
 /** @author Lukas Eder */
 final class CommentImpl extends AbstractQueryPart implements Comment {
+
   static final CommentImpl NO_COMMENT = new CommentImpl("");
+
   private final String comment;
 
   CommentImpl(String comment) {

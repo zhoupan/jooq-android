@@ -48,7 +48,6 @@ import org.jooq.Converter;
  *     Converter.ofNullable(Timestamp.class, LocalDateTime.class, Timestamp::toLocalDateTime, Timestamp::valueOf)
  *     </code>.
  */
-@Deprecated
 public final class TimestampToLocalDateTimeConverter
     extends AbstractConverter<Timestamp, LocalDateTime> {
 

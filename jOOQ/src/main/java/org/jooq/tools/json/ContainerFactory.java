@@ -48,6 +48,7 @@ import java.util.Map;
  */
 @SuppressWarnings({"rawtypes"})
 public interface ContainerFactory {
+
   /**
    * @return A Map instance to store JSON object, or null if you want to use
    *     org.json.simple.JSONObject.

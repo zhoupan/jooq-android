@@ -153,9 +153,7 @@ final class RowBetweenCondition<
         T21,
         T22>
     extends AbstractCondition
-    implements
-
-        // This BetweenAndStep implementation implements all types. Type-safety is
+    implements // This BetweenAndStep implementation implements all types. Type-safety is
         // being checked through the type-safe API. No need for further checks here
         BetweenAndStep1<T1>,
         BetweenAndStep2<T1, T2>,
@@ -248,22 +246,31 @@ final class RowBetweenCondition<
         BetweenAndStepN {
 
   private static final Clause[] CLAUSES_BETWEEN = {CONDITION, CONDITION_BETWEEN};
+
   private static final Clause[] CLAUSES_BETWEEN_SYMMETRIC = {
     CONDITION, CONDITION_BETWEEN_SYMMETRIC
   };
+
   private static final Clause[] CLAUSES_NOT_BETWEEN = {CONDITION, CONDITION_NOT_BETWEEN};
+
   private static final Clause[] CLAUSES_NOT_BETWEEN_SYMMETRIC = {
     CONDITION, CONDITION_NOT_BETWEEN_SYMMETRIC
   };
+
   private static final Set<SQLDialect> NO_SUPPORT_SYMMETRIC =
       SQLDialect.supportedBy(CUBRID, DERBY, FIREBIRD, H2, IGNITE, MARIADB, MYSQL, SQLITE);
+
   private static final Set<SQLDialect> EMULATE_BETWEEN =
       SQLDialect.supportedBy(CUBRID, DERBY, FIREBIRD, MARIADB, MYSQL);
 
   private final boolean symmetric;
+
   private final boolean not;
+
   private final Row row;
+
   private final Row minValue;
+
   private Row maxValue;
 
   RowBetweenCondition(Row row, Row minValue, boolean not, boolean symmetric) {
@@ -275,14 +282,12 @@ final class RowBetweenCondition<
 
   RowBetweenCondition(Row row, Row minValue, boolean not, boolean symmetric, Row maxValue) {
     this(row, minValue, not, symmetric);
-
     this.maxValue = maxValue;
   }
 
   // ------------------------------------------------------------------------
   // XXX: BetweenAndStep API
   // ------------------------------------------------------------------------
-
   @Override
   public final Condition and(Field f) {
     if (maxValue == null) return and(row(f));
@@ -1364,10 +1369,8 @@ final class RowBetweenCondition<
   // ------------------------------------------------------------------------
   // XXX: QueryPart API
   // ------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
-
     // These dialects don't support the SYMMETRIC keyword at all
     if (symmetric && NO_SUPPORT_SYMMETRIC.contains(ctx.dialect())) {
       ctx.visit(
@@ -1376,17 +1379,13 @@ final class RowBetweenCondition<
                   .and(new RowBetweenCondition<>(row, maxValue, true, false, minValue))
               : new RowBetweenCondition<>(row, minValue, false, false, maxValue)
                   .or(new RowBetweenCondition<>(row, maxValue, false, false, minValue)));
-    }
-
-    // These dialects either don't support row value expressions, or they
+    } else // These dialects either don't support row value expressions, or they
     // Can't handle row value expressions with the BETWEEN predicate
-    else if (row.size() > 1 && EMULATE_BETWEEN.contains(ctx.dialect())) {
+    if (row.size() > 1 && EMULATE_BETWEEN.contains(ctx.dialect())) {
       Condition result =
           new RowCondition(row, minValue, Comparator.GREATER_OR_EQUAL)
               .and(new RowCondition(row, maxValue, Comparator.LESS_OR_EQUAL));
-
       if (not) result = result.not();
-
       ctx.visit(result);
     } else {
       ctx.visit(row);

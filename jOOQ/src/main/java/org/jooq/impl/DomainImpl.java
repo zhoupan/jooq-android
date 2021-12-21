@@ -54,13 +54,15 @@ import org.jooq.Schema;
 
 /** @author Lukas Eder */
 class DomainImpl<T> extends AbstractNamed implements Domain<T> {
+
   private final Schema schema;
+
   private final Check<?>[] checks;
+
   private final DataType<T> type;
 
   DomainImpl(Schema schema, Name name, DataType<T> type, Check<?>... checks) {
     super(qualify(schema, name), null);
-
     this.schema = schema;
     this.checks = checks;
     this.type = new DomainDataType<>(this, type);

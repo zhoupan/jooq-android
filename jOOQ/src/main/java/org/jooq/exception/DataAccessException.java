@@ -77,10 +77,8 @@ public class DataAccessException extends RuntimeException {
   public String sqlState() {
     SQLException s = getCause(SQLException.class);
     if (s != null) return s.getSQLState();
-
     R2dbcException r = getCause(R2dbcException.class);
     if (r != null) return r.getSqlState();
-
     return "00000";
   }
 
@@ -96,10 +94,8 @@ public class DataAccessException extends RuntimeException {
       else if (s.getSQLState() == null
           && "org.sqlite.SQLiteException".equals(s.getClass().getName()))
         return SQLStateClass.fromSQLiteVendorCode(s.getErrorCode());
-
     R2dbcException r = getCause(R2dbcException.class);
     if (r != null) if (r.getSqlState() != null) return SQLStateClass.fromCode(r.getSqlState());
-
     return SQLStateClass.NONE;
   }
 

@@ -48,12 +48,13 @@ import org.jooq.Name;
 final class Iif<T> extends AbstractField<T> {
 
   private final Condition condition;
+
   private final Field<T> ifTrue;
+
   private final Field<T> ifFalse;
 
   Iif(Name name, Condition condition, Field<T> ifTrue, Field<T> ifFalse) {
     super(name, ifTrue.getDataType());
-
     this.condition = condition;
     this.ifTrue = ifTrue;
     this.ifFalse = ifFalse;
@@ -73,7 +74,6 @@ final class Iif<T> extends AbstractField<T> {
             .visit(ifFalse)
             .sql(')');
         break;
-
       default:
         ctx.visit(DSL.when(condition, ifTrue).otherwise(ifFalse));
         break;

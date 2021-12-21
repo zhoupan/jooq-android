@@ -58,11 +58,11 @@ import org.jooq.tools.*;
 final class Right extends AbstractField<String> {
 
   private final Field<String> string;
+
   private final Field<? extends Number> length;
 
   Right(Field<String> string, Field<? extends Number> length) {
     super(N_RIGHT, allNotNull(VARCHAR, string, length));
-
     this.string = nullSafeNotNull(string, VARCHAR);
     this.length = nullSafeNotNull(length, INTEGER);
   }
@@ -70,18 +70,15 @@ final class Right extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
       case DERBY:
         ctx.visit(DSL.substring(string, iadd(DSL.length(string), isub(one(), length))));
         break;
-
       case SQLITE:
         ctx.visit(DSL.substring(string, ineg(length)));
         break;
-
       default:
         ctx.visit(function(N_RIGHT, getDataType(), string, length));
         break;
@@ -91,7 +88,6 @@ final class Right extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Right) {

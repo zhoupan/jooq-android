@@ -54,6 +54,7 @@ import org.jooq.Source;
 final class SourceMetaProvider implements MetaProvider {
 
   private final Configuration configuration;
+
   private final Source[] sources;
 
   SourceMetaProvider(Configuration configuration, Source... sources) {
@@ -66,23 +67,19 @@ final class SourceMetaProvider implements MetaProvider {
     if (sources.length > 0) {
       String s = sources[0].readString();
       sources[0] = Source.of(s);
-
       // TODO: Implement more thorough and reusable "isXML()" check in MiniJAXB
       if (s.startsWith("<?xml") || s.startsWith("<information_schema") || s.startsWith("<!--"))
         return new InformationSchemaMetaProvider(configuration, sources).provide();
     }
-
     SQLDialect dialect = configuration.settings().getInterpreterDialect();
     switch (defaultIfNull(dialect, DEFAULT).family()) {
       case DEFAULT:
         return new InterpreterMetaProvider(configuration, sources).provide();
-
       case DERBY:
       case H2:
       case HSQLDB:
       case SQLITE:
         return new TranslatingMetaProvider(configuration, sources).provide();
-
       default:
         throw new UnsupportedOperationException(
             "Interpreter dialect not yet supported: " + dialect);

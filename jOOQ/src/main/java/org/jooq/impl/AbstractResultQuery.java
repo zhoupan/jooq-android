@@ -74,23 +74,36 @@ import org.jooq.tools.jdbc.MockResultSet;
  */
 abstract class AbstractResultQuery<R extends Record> extends AbstractQuery<R>
     implements ResultQueryTrait<R> {
+
   private static final JooqLogger log = JooqLogger.getLogger(AbstractResultQuery.class);
 
   private static final Set<SQLDialect> REPORT_FETCH_SIZE_WITH_AUTOCOMMIT =
       SQLDialect.supportedBy(POSTGRES);
 
   private int maxRows;
+
   private int fetchSize;
+
   private int resultSetConcurrency;
+
   private int resultSetType;
+
   private int resultSetHoldability;
+
   private Table<?> coerceTable;
+
   private Collection<? extends Field<?>> coerceFields;
+
   private transient boolean lazy;
+
   private transient boolean many;
+
   private transient Cursor<R> cursor;
+
   private transient boolean autoclosing = true;
+
   private Result<R> result;
+
   private ResultsImpl results;
 
   // Some temp variables for String interning
@@ -191,14 +204,12 @@ abstract class AbstractResultQuery<R extends Record> extends AbstractQuery<R>
   @Override
   protected final void prepare(ExecuteContext ctx) throws SQLException {
     if (ctx.statement() == null) {
-
       // [#1846] [#2265] [#2299] Users may explicitly specify how ResultSets
       // created by jOOQ behave. This will override any other default behaviour
       if (resultSetConcurrency != 0 || resultSetType != 0 || resultSetHoldability != 0) {
         int type = resultSetType != 0 ? resultSetType : ResultSet.TYPE_FORWARD_ONLY;
         int concurrency =
             resultSetConcurrency != 0 ? resultSetConcurrency : ResultSet.CONCUR_READ_ONLY;
-
         // Sybase doesn't support holdability. Avoid setting it!
         if (resultSetHoldability == 0)
           ctx.statement(ctx.connection().prepareStatement(ctx.sql(), type, concurrency));
@@ -206,14 +217,11 @@ abstract class AbstractResultQuery<R extends Record> extends AbstractQuery<R>
           ctx.statement(
               ctx.connection()
                   .prepareStatement(ctx.sql(), type, concurrency, resultSetHoldability));
-      }
-
-      // Regular behaviour
-      else ctx.statement(ctx.connection().prepareStatement(ctx.sql()));
+      } else
+        // Regular behaviour
+        ctx.statement(ctx.connection().prepareStatement(ctx.sql()));
     }
-
     Tools.setFetchSize(ctx, fetchSize);
-
     // [#1854] [#4753] Set the max number of rows for this result query
     int m = SettingsTools.getMaxRows(maxRows, ctx.settings());
     if (m != 0) ctx.statement().setMaxRows(m);
@@ -222,7 +230,6 @@ abstract class AbstractResultQuery<R extends Record> extends AbstractQuery<R>
   @Override
   protected final int execute(ExecuteContext ctx, ExecuteListener listener) throws SQLException {
     listener.executeStart(ctx);
-
     // [#4511] [#4753] PostgreSQL doesn't like fetchSize with autoCommit == true
     int f = SettingsTools.getFetchSize(fetchSize, ctx.settings());
     if (REPORT_FETCH_SIZE_WITH_AUTOCOMMIT.contains(ctx.dialect())
@@ -233,28 +240,24 @@ abstract class AbstractResultQuery<R extends Record> extends AbstractQuery<R>
           "A fetch size of "
               + f
               + " was set on a auto-commit PostgreSQL connection, which is not recommended. See http://jdbc.postgresql.org/documentation/head/query.html#query-with-cursor");
-
     SQLException e = executeStatementAndGetFirstResultSet(ctx, rendered.skipUpdateCounts);
     listener.executeEnd(ctx);
-
     // Fetch a single result set
     notManyIf:
     if (!many) {
-
       // [#6413] If the first execution yielded an exception, rather than an update count or result
       // set
-      //         and that exception is not thrown because of Settings.throwExceptions == THROW_NONE,
-      // we can stop
+      // and that exception is not thrown because of Settings.throwExceptions == THROW_NONE, we can
+      // stop
       if (e != null) break notManyIf;
-
       // [#5617] This may happen when using plain SQL API or a MockConnection and expecting a result
       // set where
-      //         there is none. The cursor / result is patched into the ctx only for single result
-      // sets, where
-      //         access to the cursor / result is possible.
+      // there is none. The cursor / result is patched into the ctx only for single result sets,
+      // where
+      // access to the cursor / result is possible.
       // [#5818] It may also happen in case we're fetching from a batch and the first result is an
       // update count,
-      //         not a result set.
+      // not a result set.
       if (ctx.resultSet() == null) {
         DSLContext dsl = DSL.using(ctx.configuration());
         Field<Integer> c = DSL.field(name("UPDATE_COUNT"), int.class);
@@ -262,7 +265,6 @@ abstract class AbstractResultQuery<R extends Record> extends AbstractQuery<R>
         r.add(dsl.newRecord(c).values(ctx.rows()));
         ctx.resultSet(new MockResultSet(r));
       }
-
       Field<?>[] fields = getFields(ctx.resultSet().getMetaData());
       cursor =
           new CursorImpl<>(
@@ -275,19 +277,15 @@ abstract class AbstractResultQuery<R extends Record> extends AbstractQuery<R>
               getRecordType(),
               SettingsTools.getMaxRows(maxRows, ctx.settings()),
               autoclosing);
-
       if (!lazy) {
         result = cursor.fetch();
         cursor = null;
       }
-    }
-
-    // Fetch several result sets
-    else {
+    } else // Fetch several result sets
+    {
       results = new ResultsImpl(ctx.configuration());
       consumeResultSets(ctx, listener, results, intern, e);
     }
-
     return result != null ? result.size() : 0;
   }
 
@@ -308,16 +306,13 @@ abstract class AbstractResultQuery<R extends Record> extends AbstractQuery<R>
 
   @Override
   public final Cursor<R> fetchLazy() {
-
     // [#3515] TODO: Avoid modifying a Query's per-execution state
     lazy = true;
-
     try {
       execute();
     } finally {
       lazy = false;
     }
-
     return cursor;
   }
 
@@ -328,10 +323,8 @@ abstract class AbstractResultQuery<R extends Record> extends AbstractQuery<R>
   @Override
   public final Cursor<R> fetchLazyNonAutoClosing() {
     final boolean previousAutoClosing = autoclosing;
-
     // [#3515] TODO: Avoid modifying a Query's per-execution state
     autoclosing = false;
-
     try {
       return fetchLazy();
     } finally {
@@ -341,16 +334,13 @@ abstract class AbstractResultQuery<R extends Record> extends AbstractQuery<R>
 
   @Override
   public final Results fetchMany() {
-
     // [#3515] TODO: Avoid modifying a Query's per-execution state
     many = true;
-
     try {
       execute();
     } finally {
       many = false;
     }
-
     return results;
   }
 
@@ -358,7 +348,6 @@ abstract class AbstractResultQuery<R extends Record> extends AbstractQuery<R>
   @Override
   public final Class<? extends R> getRecordType() {
     if (coerceTable != null) return (Class<? extends R>) coerceTable.getRecordType();
-
     return getRecordType0();
   }
 

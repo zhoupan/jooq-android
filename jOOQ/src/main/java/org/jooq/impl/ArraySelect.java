@@ -57,7 +57,6 @@ final class ArraySelect<T> extends AbstractField<T[]> {
   @SuppressWarnings({"rawtypes", "unchecked"})
   ArraySelect(Select<? extends Record1<T>> select) {
     super(N_ARRAY, (DataType) select.getSelect().get(0).getDataType().getArrayDataType());
-
     this.select = select;
   }
 
@@ -68,19 +67,16 @@ final class ArraySelect<T> extends AbstractField<T[]> {
         {
           Table<?> t = select.asTable("t", "c");
           Field<?> c = t.field("c");
-
           // [#11053] TODO: Move ORDER BY clause from subquery to ARRAY_AGG
           // See https://github.com/jOOQ/jOOQ/issues/11053#issuecomment-735773248
           visitSubquery(ctx, DSL.select(arrayAgg(c)).from(t));
           break;
         }
-
       case HSQLDB:
       case POSTGRES:
       default:
         ctx.visit(K_ARRAY);
         visitSubquery(ctx, select);
-
         break;
     }
   }

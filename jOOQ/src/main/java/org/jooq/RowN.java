@@ -85,7 +85,6 @@ public interface RowN extends Row, SelectField<Record> {
   // ------------------------------------------------------------------------
   // Generic comparison predicates
   // ------------------------------------------------------------------------
-
   /**
    * Compare this row value expression with another row value expression using a dynamic comparator.
    *
@@ -191,7 +190,6 @@ public interface RowN extends Row, SelectField<Record> {
   // ------------------------------------------------------------------------
   // Equal / Not equal comparison predicates
   // ------------------------------------------------------------------------
-
   /**
    * Compare this row value expression with another row value expression for equality.
    *
@@ -435,7 +433,6 @@ public interface RowN extends Row, SelectField<Record> {
   // ------------------------------------------------------------------------
   // [NOT] DISTINCT predicates
   // ------------------------------------------------------------------------
-
   /** Compare this row value expression with another row value expression for distinctness. */
   @NotNull
   @Support
@@ -489,7 +486,6 @@ public interface RowN extends Row, SelectField<Record> {
   // ------------------------------------------------------------------------
   // Ordering comparison predicates
   // ------------------------------------------------------------------------
-
   /**
    * Compare this row value expression with another row value expression for order.
    *
@@ -973,7 +969,6 @@ public interface RowN extends Row, SelectField<Record> {
   // ------------------------------------------------------------------------
   // [NOT] BETWEEN predicates
   // ------------------------------------------------------------------------
-
   /**
    * Check if this row value expression is within a range of two other row value expressions.
    *
@@ -1225,11 +1220,9 @@ public interface RowN extends Row, SelectField<Record> {
   // ------------------------------------------------------------------------
   // [NOT] DISTINCT predicates
   // ------------------------------------------------------------------------
-
   // ------------------------------------------------------------------------
   // [NOT] IN predicates
   // ------------------------------------------------------------------------
-
   /**
    * Compare this row value expression with a set of row value expressions for equality.
    *

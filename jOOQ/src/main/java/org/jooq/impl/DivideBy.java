@@ -62,14 +62,16 @@ import org.jooq.Table;
 final class DivideBy implements DivideByOnStep, DivideByOnConditionStep {
 
   private final Table<?> dividend;
+
   private final Table<?> divisor;
+
   private final ConditionProviderImpl condition;
+
   private final QueryPartList<Field<?>> returning;
 
   DivideBy(Table<?> dividend, Table<?> divisor) {
     this.dividend = dividend;
     this.divisor = divisor;
-
     this.condition = new ConditionProviderImpl();
     this.returning = new QueryPartList<>();
   }
@@ -77,7 +79,6 @@ final class DivideBy implements DivideByOnStep, DivideByOnConditionStep {
   // ------------------------------------------------------------------------
   // XXX: Table API
   // ------------------------------------------------------------------------
-
   /**
    * Transform the relational division operation into SQL.
    *
@@ -90,24 +91,19 @@ final class DivideBy implements DivideByOnStep, DivideByOnConditionStep {
     ConditionProviderImpl selfJoin = new ConditionProviderImpl();
     List<Field<?>> select = new ArrayList<>(returning.size());
     Table<?> outer = dividend.as("dividend");
-
     for (Field<?> field : returning) {
       Field<?> outerField = outer.field(field);
-
       // Fields from the RETURNING clause are added AS-IS to the SELECT
       // statement, if they're not contained in the dividend table
       if (outerField == null) {
         select.add(field);
-      }
-
-      // Fields from the RETURNING clause need proper aliasing if they're
+      } else // Fields from the RETURNING clause need proper aliasing if they're
       // contained in the dividend table
-      else {
+      {
         select.add(outerField);
         selfJoin(selfJoin, outer, dividend, field);
       }
     }
-
     // Apply relational division using double-nested NOT EXISTS clauses
     // There are more efficient ways to express division in SQL, but those
     // are hard to emulate with jOOQ
@@ -125,7 +121,6 @@ final class DivideBy implements DivideByOnStep, DivideByOnConditionStep {
       org.jooq.ConditionProvider selfJoin, Table<?> outer, Table<?> inner, Field<T> field) {
     Field<T> outerField = outer.field(field);
     Field<T> innerField = inner.field(field);
-
     if (outerField != null && innerField != null)
       selfJoin.addConditions(outerField.equal(innerField));
   }
@@ -133,7 +128,6 @@ final class DivideBy implements DivideByOnStep, DivideByOnConditionStep {
   // ------------------------------------------------------------------------
   // XXX: DivideBy API
   // ------------------------------------------------------------------------
-
   @Override
   public final DivideByOnConditionStep on(Condition conditions) {
     condition.addConditions(conditions);

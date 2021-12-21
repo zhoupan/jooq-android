@@ -76,11 +76,14 @@ import org.jooq.SQLDialect;
 public final class YearToMonth extends Number implements Interval, Comparable<YearToMonth> {
 
   private static final Pattern PATTERN_SQL = Pattern.compile("^([+-])?(\\d+)-(\\d+)$");
+
   private static final Pattern PATTERN_ISO =
       Pattern.compile("^([+-])?P(?:([+-]?\\d+)Y)?(?:([+-]?\\d+)M)?$", Pattern.CASE_INSENSITIVE);
 
   private final boolean negative;
+
   private final int years;
+
   private final int months;
 
   /** Create a new year-month interval. */
@@ -99,14 +102,12 @@ public final class YearToMonth extends Number implements Interval, Comparable<Ye
   }
 
   YearToMonth(int years, int months, boolean negative) {
-
     // Perform normalisation. Specifically, Postgres may return intervals
     // such as 0-13
     if (Math.abs(months) >= 12) {
       years += (months / 12);
       months %= 12;
     }
-
     this.negative = negative;
     this.years = years;
     this.months = months;
@@ -122,24 +123,17 @@ public final class YearToMonth extends Number implements Interval, Comparable<Ye
   public static YearToMonth valueOf(String string) {
     if (string != null) {
       Matcher matcher;
-
       if ((matcher = PATTERN_SQL.matcher(string)).find()) return YearToSecond.parseYM(matcher, 0);
-
       if ((matcher = PATTERN_ISO.matcher(string)).find()) {
         boolean negative = "-".equals(matcher.group(1));
-
         String group2 = matcher.group(2);
         String group3 = matcher.group(3);
-
         int years = group2 == null ? 0 : Integer.parseInt(group2);
         int months = group3 == null ? 0 : Integer.parseInt(group3);
-
         return new YearToMonth(years, months, negative);
       }
-
       return yearToMonth(string);
     }
-
     return null;
   }
 
@@ -168,10 +162,8 @@ public final class YearToMonth extends Number implements Interval, Comparable<Ye
   public static YearToMonth yearToMonth(String string) {
     if (string != null) {
       Matcher matcher;
-
       if ((matcher = PATTERN_SQL.matcher(string)).find()) return YearToSecond.parseYM(matcher, 0);
     }
-
     return null;
   }
 
@@ -192,19 +184,17 @@ public final class YearToMonth extends Number implements Interval, Comparable<Ye
 
   @Override
   public final Duration toDuration() {
-    long hours =
-        years * 8766L // 365.25 * 24
-            + months * 720L; // 30 * 24
-
+    long hours = // 365.25 * 24
+        years * 8766L
+            + // 30 * 24
+            months * 720L;
     if (negative) hours = -hours;
-
     return Duration.ofHours(hours);
   }
 
   // -------------------------------------------------------------------------
   // XXX Interval API
   // -------------------------------------------------------------------------
-
   @Override
   public final YearToMonth neg() {
     return new YearToMonth(years, months, !negative);
@@ -231,7 +221,6 @@ public final class YearToMonth extends Number implements Interval, Comparable<Ye
   // -------------------------------------------------------------------------
   // XXX Number API
   // -------------------------------------------------------------------------
-
   @Override
   public final int intValue() {
     return (negative ? -1 : 1) * (12 * years + months);
@@ -255,7 +244,6 @@ public final class YearToMonth extends Number implements Interval, Comparable<Ye
   // -------------------------------------------------------------------------
   // XXX Comparable and Object API
   // -------------------------------------------------------------------------
-
   @Override
   public final int compareTo(YearToMonth that) {
     if (years < that.years) {
@@ -264,14 +252,12 @@ public final class YearToMonth extends Number implements Interval, Comparable<Ye
     if (years > that.years) {
       return 1;
     }
-
     if (months < that.months) {
       return -1;
     }
     if (months > that.months) {
       return 1;
     }
-
     return 0;
   }
 
@@ -301,12 +287,10 @@ public final class YearToMonth extends Number implements Interval, Comparable<Ye
   @Override
   public final String toString() {
     StringBuilder sb = new StringBuilder();
-
     sb.append(negative ? "-" : "+");
     sb.append(years);
     sb.append("-");
     sb.append(months);
-
     return sb.toString();
   }
 }

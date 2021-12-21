@@ -41,6 +41,7 @@ import java.sql.Timestamp;
 
 /** @author Lukas Eder */
 final class TimestampToJavaUtilDateConverter extends AbstractConverter<Timestamp, java.util.Date> {
+
   static final TimestampToJavaUtilDateConverter INSTANCE = new TimestampToJavaUtilDateConverter();
 
   private TimestampToJavaUtilDateConverter() {

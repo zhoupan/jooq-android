@@ -98,7 +98,6 @@ class QueryPartListView<T extends QueryPart> extends QueryPartCollectionView<T> 
   // -------------------------------------------------------------------------
   // Implementations from the List API
   // -------------------------------------------------------------------------
-
   @Override
   public final boolean addAll(int index, Collection<? extends T> c) {
     return wrapped().addAll(index, removeNulls(c));
@@ -112,7 +111,6 @@ class QueryPartListView<T extends QueryPart> extends QueryPartCollectionView<T> 
   @Override
   public final T set(int index, T element) {
     if (element != null) return wrapped().set(index, element);
-
     return null;
   }
 

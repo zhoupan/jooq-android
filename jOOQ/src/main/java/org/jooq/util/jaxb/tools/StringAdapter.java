@@ -61,17 +61,13 @@ public class StringAdapter extends XmlAdapter<String, String> {
   @Override
   public final String unmarshal(String v) throws Exception {
     if (v == null) return null;
-
     String result = v.trim();
-
     Matcher matcher = PROPERTY_PATTERN.matcher(result);
     while (matcher.find()) {
       String group0 = matcher.group(0);
       String group1 = matcher.group(1);
-
       result = StringUtils.replace(result, group0, System.getProperty(group1, group0));
     }
-
     return result;
   }
 

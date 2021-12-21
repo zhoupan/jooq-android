@@ -85,7 +85,6 @@ public interface WithStep extends QueryPart {
   // -------------------------------------------------------------------------
   // XXX Add additional common table expressions
   // -------------------------------------------------------------------------
-
   /** Add another common table expression to the <code>WITH</code> clause. */
   @NotNull
   @CheckReturnValue
@@ -133,7 +132,6 @@ public interface WithStep extends QueryPart {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, POSTGRES, SQLITE})
@@ -151,7 +149,6 @@ public interface WithStep extends QueryPart {
    *     functionality that would not be possible otherwise - yet they add complexity in jOOQ's
    *     internals.
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({FIREBIRD, H2, HSQLDB, IGNITE, MARIADB, MYSQL, POSTGRES, SQLITE})
@@ -982,7 +979,6 @@ public interface WithStep extends QueryPart {
   // -------------------------------------------------------------------------
   // XXX Continue with the actual INSERT, UPDATE, DELETE, SELECT statement type
   // -------------------------------------------------------------------------
-
   /**
    * Create a new DSL select statement, projecting the known columns from a table.
    *
@@ -4564,7 +4560,6 @@ public interface WithStep extends QueryPart {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({H2})
@@ -4594,7 +4589,6 @@ public interface WithStep extends QueryPart {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({H2})
@@ -4625,7 +4619,6 @@ public interface WithStep extends QueryPart {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({H2})
@@ -4656,7 +4649,6 @@ public interface WithStep extends QueryPart {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({H2})
@@ -4687,7 +4679,6 @@ public interface WithStep extends QueryPart {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({H2})
@@ -4723,7 +4714,6 @@ public interface WithStep extends QueryPart {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({H2})
@@ -4760,7 +4750,6 @@ public interface WithStep extends QueryPart {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({H2})
@@ -4799,7 +4788,6 @@ public interface WithStep extends QueryPart {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({H2})
@@ -4839,7 +4827,6 @@ public interface WithStep extends QueryPart {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({H2})
@@ -4880,7 +4867,6 @@ public interface WithStep extends QueryPart {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({H2})
@@ -4922,7 +4908,6 @@ public interface WithStep extends QueryPart {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({H2})
@@ -4965,7 +4950,6 @@ public interface WithStep extends QueryPart {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({H2})
@@ -5009,7 +4993,6 @@ public interface WithStep extends QueryPart {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({H2})
@@ -5054,7 +5037,6 @@ public interface WithStep extends QueryPart {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({H2})
@@ -5100,7 +5082,6 @@ public interface WithStep extends QueryPart {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({H2})
@@ -5147,7 +5128,6 @@ public interface WithStep extends QueryPart {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({H2})
@@ -5196,7 +5176,6 @@ public interface WithStep extends QueryPart {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({H2})
@@ -5246,7 +5225,6 @@ public interface WithStep extends QueryPart {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({H2})
@@ -5317,7 +5295,6 @@ public interface WithStep extends QueryPart {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({H2})
@@ -5409,7 +5386,6 @@ public interface WithStep extends QueryPart {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({H2})
@@ -5504,7 +5480,6 @@ public interface WithStep extends QueryPart {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({H2})
@@ -5602,7 +5577,6 @@ public interface WithStep extends QueryPart {
    * @deprecated - [#10045] - 3.14.0 - Use the standard SQL MERGE API instead, via {@link
    *     #mergeInto(Table)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @NotNull
   @CheckReturnValue
   @Support({H2})

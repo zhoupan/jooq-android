@@ -86,6 +86,7 @@ public final class YearToSecond extends Number implements Interval, Comparable<Y
           "^([+-])?(\\d+)-(\\d+) ([+-])?(?:(\\d+) )?(\\d+):(\\d+):(\\d+)(?:\\.(\\d+))?$");
 
   private final YearToMonth yearToMonth;
+
   private final DayToSecond dayToSecond;
 
   public YearToSecond(YearToMonth yearToMonth, DayToSecond dayToSecond) {
@@ -102,16 +103,12 @@ public final class YearToSecond extends Number implements Interval, Comparable<Y
    */
   public static YearToSecond valueOf(double milli) {
     double abs = Math.abs(milli);
-
     int y = (int) (abs / (365.25 * 86400000.0));
     abs = abs % (365.25 * 86400000.0);
     int m = (int) (abs / (30.0 * 86400000.0));
     abs = abs % (30.0 * 86400000.0);
-
     YearToSecond result = new YearToSecond(new YearToMonth(y, m), DayToSecond.valueOf(abs));
-
     if (milli < 0) result = result.neg();
-
     return result;
   }
 
@@ -147,13 +144,11 @@ public final class YearToSecond extends Number implements Interval, Comparable<Y
    */
   public static YearToSecond valueOf(String string) {
     if (string != null) {
-
       // Accept also doubles as the number of milliseconds
       try {
         return valueOf(Double.parseDouble(string));
       } catch (NumberFormatException e) {
         Matcher matcher = PATTERN.matcher(string);
-
         if (matcher.find()) {
           return new YearToSecond(parseYM(matcher, 0), parseDS(matcher, 3));
         } else {
@@ -164,7 +159,6 @@ public final class YearToSecond extends Number implements Interval, Comparable<Y
         }
       }
     }
-
     return null;
   }
 
@@ -172,27 +166,23 @@ public final class YearToSecond extends Number implements Interval, Comparable<Y
     boolean negativeYM = "-".equals(matcher.group(groupOffset + 1));
     int years = Integer.parseInt(matcher.group(groupOffset + 2));
     int months = Integer.parseInt(matcher.group(groupOffset + 3));
-
     return new YearToMonth(years, months, negativeYM);
   }
 
   static DayToSecond parseDS(Matcher matcher, int groupOffset) {
     boolean negativeDS = "-".equals(matcher.group(groupOffset + 1));
-
     int days = Convert.convert(matcher.group(groupOffset + 2), int.class);
     int hours = Convert.convert(matcher.group(groupOffset + 3), int.class);
     int minutes = Convert.convert(matcher.group(groupOffset + 4), int.class);
     int seconds = Convert.convert(matcher.group(groupOffset + 5), int.class);
     int nano =
         Convert.convert(StringUtils.rightPad(matcher.group(groupOffset + 6), 9, "0"), int.class);
-
     return new DayToSecond(days, hours, minutes, seconds, nano, negativeDS);
   }
 
   // -------------------------------------------------------------------------
   // XXX Interval API
   // -------------------------------------------------------------------------
-
   @Override
   public final YearToSecond neg() {
     return new YearToSecond(yearToMonth.neg(), dayToSecond.neg());
@@ -257,14 +247,12 @@ public final class YearToSecond extends Number implements Interval, Comparable<Y
   @Override
   public final int getSign() {
     double value = doubleValue();
-
     return value > 0 ? 1 : value < 0 ? -1 : 0;
   }
 
   // -------------------------------------------------------------------------
   // XXX Number API
   // -------------------------------------------------------------------------
-
   @Override
   public final int intValue() {
     return (int) doubleValue();
@@ -291,7 +279,6 @@ public final class YearToSecond extends Number implements Interval, Comparable<Y
   // -------------------------------------------------------------------------
   // XXX Comparable and Object API
   // -------------------------------------------------------------------------
-
   @Override
   public final int compareTo(YearToSecond that) {
     return Double.compare(doubleValue(), that.doubleValue());
@@ -333,11 +320,9 @@ public final class YearToSecond extends Number implements Interval, Comparable<Y
   @Override
   public final String toString() {
     StringBuilder sb = new StringBuilder();
-
     sb.append(yearToMonth);
     sb.append(' ');
     sb.append(dayToSecond);
-
     return sb.toString();
   }
 }

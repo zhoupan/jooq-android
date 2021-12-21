@@ -60,7 +60,6 @@ class DefaultAggregateFunction<T> extends AbstractAggregateFunction<T> {
   // -------------------------------------------------------------------------
   // XXX Constructors
   // -------------------------------------------------------------------------
-
   DefaultAggregateFunction(String name, DataType<T> type, Field<?>... arguments) {
     this(false, name, type, arguments);
   }
@@ -80,7 +79,6 @@ class DefaultAggregateFunction<T> extends AbstractAggregateFunction<T> {
   // -------------------------------------------------------------------------
   // XXX QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public /* final */ void accept(Context<?> ctx) {
     toSQLArguments(ctx);
@@ -93,7 +91,6 @@ class DefaultAggregateFunction<T> extends AbstractAggregateFunction<T> {
   /** Render <code>KEEP (DENSE_RANK [FIRST | LAST] ORDER BY {...})</code> clause */
   private final void acceptKeepDenseRankOrderByClause(Context<?> ctx) {
     if (!Tools.isEmpty(keepDenseRankOrderBy)) {
-
       switch (ctx.family()) {
         default:
           ctx.sql(' ')
@@ -118,10 +115,8 @@ class DefaultAggregateFunction<T> extends AbstractAggregateFunction<T> {
       switch (ctx.family()) {
         default:
           ctx.sql(' ').visit(K_WITHIN_GROUP).sql(" (").visit(K_ORDER_BY).sql(' ');
-
           if (withinGroupOrderBy.isEmpty()) ctx.visit(K_NULL);
           else ctx.visit(withinGroupOrderBy);
-
           ctx.sql(')');
           break;
       }

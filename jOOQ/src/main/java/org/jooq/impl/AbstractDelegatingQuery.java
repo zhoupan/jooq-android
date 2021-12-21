@@ -51,6 +51,7 @@ import org.jooq.conf.ParamType;
 /** @author Lukas Eder */
 abstract class AbstractDelegatingQuery<R extends Record, Q extends Query> extends AbstractQueryPart
     implements Query {
+
   private final Q delegate;
 
   AbstractDelegatingQuery(Q delegate) {

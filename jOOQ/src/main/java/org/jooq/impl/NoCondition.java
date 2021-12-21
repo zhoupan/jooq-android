@@ -47,6 +47,7 @@ import org.jooq.Context;
 final class NoCondition extends AbstractCondition {
 
   private static final Clause[] CLAUSES = {CONDITION, CONDITION_COMPARISON};
+
   static final NoCondition INSTANCE = new NoCondition();
 
   @Override

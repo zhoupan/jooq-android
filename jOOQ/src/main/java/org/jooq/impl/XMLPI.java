@@ -49,11 +49,11 @@ import org.jooq.XML;
 final class XMLPI extends AbstractField<XML> {
 
   private final Name target;
+
   private final Field<?> content;
 
   XMLPI(Name target, Field<?> content) {
     super(N_XMLPI, SQLDataType.XML);
-
     this.target = target;
     this.content = content;
   }
@@ -61,9 +61,7 @@ final class XMLPI extends AbstractField<XML> {
   @Override
   public final void accept(Context<?> ctx) {
     ctx.visit(N_XMLPI).sql('(').visit(K_NAME).sql(' ').visit(target);
-
     if (content != null) ctx.sql(", ").visit(content);
-
     ctx.sql(')');
   }
 }

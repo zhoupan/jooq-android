@@ -1583,7 +1583,6 @@ public interface SelectJoinStep<R extends Record> extends SelectWhereStep<R> {
   // -------------------------------------------------------------------------
   // XXX: SEMI and ANTI JOIN
   // -------------------------------------------------------------------------
-
   /**
    * A synthetic <code>LEFT SEMI JOIN</code> clause that translates to an equivalent <code>EXISTS
    * </code> predicate.
@@ -1647,7 +1646,6 @@ public interface SelectJoinStep<R extends Record> extends SelectWhereStep<R> {
   // -------------------------------------------------------------------------
   // XXX: APPLY clauses on tables
   // -------------------------------------------------------------------------
-
   /**
    * <code>CROSS APPLY</code> a table to this table.
    *

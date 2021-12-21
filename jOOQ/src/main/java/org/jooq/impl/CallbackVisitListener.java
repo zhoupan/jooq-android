@@ -55,8 +55,11 @@ import org.jooq.VisitListener;
 public final class CallbackVisitListener implements VisitListener {
 
   private final Consumer<? super VisitContext> onClauseStart;
+
   private final Consumer<? super VisitContext> onClauseEnd;
+
   private final Consumer<? super VisitContext> onVisitStart;
+
   private final Consumer<? super VisitContext> onVisitEnd;
 
   public CallbackVisitListener() {

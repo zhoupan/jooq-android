@@ -61,14 +61,12 @@ final class ToHex extends AbstractField<String> {
 
   ToHex(Field<? extends Number> value) {
     super(N_TO_HEX, allNotNull(VARCHAR, value));
-
     this.value = nullSafeNotNull(value, INTEGER);
   }
 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -76,7 +74,6 @@ final class ToHex extends AbstractField<String> {
       case MYSQL:
         ctx.visit(function(N_HEX, getDataType(), value));
         break;
-
       case H2:
         ctx.visit(
             DSL.trim(
@@ -84,11 +81,9 @@ final class ToHex extends AbstractField<String> {
                     value,
                     inline("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"))));
         break;
-
       case SQLITE:
         ctx.visit(function(N_PRINTF, getDataType(), inline("%X"), value));
         break;
-
       default:
         ctx.visit(function(N_TO_HEX, getDataType(), value));
         break;
@@ -98,7 +93,6 @@ final class ToHex extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof ToHex) {

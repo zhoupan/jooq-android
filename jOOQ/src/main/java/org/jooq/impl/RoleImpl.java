@@ -51,6 +51,7 @@ import org.jooq.Role;
  * @author Timur Shaidullin
  */
 final class RoleImpl extends AbstractNamed implements Role {
+
   private static final Clause[] CLAUSES = {ROLE};
 
   RoleImpl(Name name) {
@@ -60,7 +61,6 @@ final class RoleImpl extends AbstractNamed implements Role {
   // ------------------------------------------------------------------------
   // XXX: QueryPart API
   // ------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     ctx.visit(getQualifiedName());

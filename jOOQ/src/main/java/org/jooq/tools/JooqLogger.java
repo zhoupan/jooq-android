@@ -83,39 +83,31 @@ public final class JooqLogger implements Log {
   /** Get a logger wrapper for a class. */
   public static JooqLogger getLogger(Class<?> clazz) {
     JooqLogger result = new JooqLogger();
-
     // Prioritise slf4j
     try {
       result.slf4j = org.slf4j.LoggerFactory.getLogger(clazz);
-    }
-
-    // If that's not on the classpath, log using the JDK logger
+    } // If that's not on the classpath, log using the JDK logger
     catch (Throwable e2) {
       result.util = java.util.logging.Logger.getLogger(clazz.getName());
     }
-
     // [#2085] Check if any of the INFO, DEBUG, TRACE levels might be
     // unavailable, e.g. because client code isn't using the latest version
     // of log4j or any other logger
-
     try {
       result.isInfoEnabled();
     } catch (Throwable e) {
       result.supportsInfo = false;
     }
-
     try {
       result.isDebugEnabled();
     } catch (Throwable e) {
       result.supportsDebug = false;
     }
-
     try {
       result.isTraceEnabled();
     } catch (Throwable e) {
       result.supportsTrace = false;
     }
-
     return result;
   }
 
@@ -480,14 +472,11 @@ public final class JooqLogger implements Log {
   /** Get a formatted message. */
   private String getMessage(Object message, Object details) {
     StringBuilder sb = new StringBuilder();
-
     sb.append(StringUtils.rightPad("" + message, 25));
-
     if (details != null) {
       sb.append(": ");
       sb.append(details);
     }
-
     return sb.toString();
   }
 
@@ -525,7 +514,6 @@ public final class JooqLogger implements Log {
    *
    * @deprecated - Use {@link org.jooq.Log.Level} instead
    */
-  @Deprecated
   public static enum Level {
     TRACE,
     DEBUG,

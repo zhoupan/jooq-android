@@ -56,7 +56,9 @@ import java.util.function.Supplier;
 final class ScopeStack<K, V> implements Iterable<V> {
 
   private int scopeLevel = -1;
+
   private Map<K, List<V>> stack;
+
   private final ObjIntFunction<K, V> constructor;
 
   ScopeStack(V defaultValue) {
@@ -69,7 +71,6 @@ final class ScopeStack<K, V> implements Iterable<V> {
 
   private final Map<K, List<V>> stack() {
     if (stack == null) stack = new LinkedHashMap<>();
-
     return stack;
   }
 
@@ -104,8 +105,10 @@ final class ScopeStack<K, V> implements Iterable<V> {
     return () -> new ScopeStackIterator<>(list -> list.get(list.size() - 1), filter);
   }
 
-  static final /* record */ class Value<V> {
+  static final class /* record */ Value<V> {
+
     private final int scopeLevel;
+
     private final V value;
 
     public Value(int scopeLevel, V value) {
@@ -158,9 +161,13 @@ final class ScopeStack<K, V> implements Iterable<V> {
   }
 
   private final class ScopeStackIterator<U> implements Iterator<U> {
+
     final Iterator<List<V>> it = stack().values().iterator();
+
     final Function<List<V>, U> valueExtractor;
+
     final Predicate<? super U> filter;
+
     U next;
 
     ScopeStackIterator(Function<List<V>, U> valueExtractor, Predicate<? super U> filter) {
@@ -192,7 +199,6 @@ final class ScopeStack<K, V> implements Iterable<V> {
                   || !filter.test(next));
           next = null)
         ;
-
       return next;
     }
 
@@ -212,7 +218,6 @@ final class ScopeStack<K, V> implements Iterable<V> {
 
   private final V get0(List<V> list) {
     int i;
-
     if (list == null) return null;
     else if ((i = list.size()) == 0) return null;
     else return list.get(i - 1);

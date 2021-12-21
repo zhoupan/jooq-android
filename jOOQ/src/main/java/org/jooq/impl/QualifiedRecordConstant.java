@@ -66,9 +66,7 @@ final class QualifiedRecordConstant<R extends QualifiedRecord<R>> extends Abstra
   final void toSQL0(RenderContext ctx) {
     ParamType paramType = ctx.paramType();
     if (isInline()) ctx.paramType(INLINED);
-
     switch (ctx.family()) {
-
         // Due to lack of UDT support in the Postgres JDBC drivers, all UDT's
         // have to be inlined
       case POSTGRES:
@@ -76,13 +74,11 @@ final class QualifiedRecordConstant<R extends QualifiedRecord<R>> extends Abstra
           toSQLInline(ctx);
           break;
         }
-
         // Assume default behaviour if dialect is not available
       default:
         toSQLInline(ctx);
         break;
     }
-
     if (isInline()) ctx.paramType(paramType);
   }
 
@@ -91,32 +87,26 @@ final class QualifiedRecordConstant<R extends QualifiedRecord<R>> extends Abstra
       case POSTGRES:
         ctx.visit(K_ROW);
         break;
-
       default:
         {
           ctx.visit(value.getQualifier());
           break;
         }
     }
-
     ctx.sql('(');
-
     String separator = "";
     for (Field<?> field : value.fields()) {
       ctx.sql(separator);
       ctx.visit(val(value.get(field), field));
       separator = ", ";
     }
-
     ctx.sql(')');
   }
 
-  @Deprecated
   private final String getInlineConstructor(RenderContext ctx) {
     switch (ctx.family()) {
       case POSTGRES:
         return "ROW";
-
       default:
         return getMappedUDTName(ctx, value);
     }
@@ -124,16 +114,13 @@ final class QualifiedRecordConstant<R extends QualifiedRecord<R>> extends Abstra
 
   final void bind0(BindContext ctx) {
     switch (ctx.family()) {
-
         // Postgres cannot bind a complete structured type. The type is
         // inlined instead: ROW(.., .., ..)
       case POSTGRES:
         {
           for (Field<?> field : value.fields()) ctx.visit(val(value.get(field)));
-
           break;
         }
-
       default:
         throw new SQLDialectNotSupportedException("UDTs not supported in dialect " + ctx.dialect());
     }

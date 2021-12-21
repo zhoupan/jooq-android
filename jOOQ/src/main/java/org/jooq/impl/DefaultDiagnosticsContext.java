@@ -56,18 +56,31 @@ final class DefaultDiagnosticsContext implements DiagnosticsContext {
   private static final JooqLogger log = JooqLogger.getLogger(DefaultDiagnosticsContext.class);
 
   ResultSet resultSet;
+
   DiagnosticsResultSet resultSetWrapper;
+
   boolean resultSetClosing;
+
   int resultSetFetchedColumnCount;
+
   int resultSetConsumedColumnCount;
+
   int resultSetFetchedRows;
+
   int resultSetConsumedRows;
+
   final String actualStatement;
+
   final String normalisedStatement;
+
   final Set<String> duplicateStatements;
+
   final List<String> repeatedStatements;
+
   boolean resultSetUnnecessaryWasNullCall;
+
   boolean resultSetMissingWasNullCall;
+
   int resultSetColumnIndex;
 
   DefaultDiagnosticsContext(String actualStatement) {
@@ -102,16 +115,13 @@ final class DefaultDiagnosticsContext implements DiagnosticsContext {
   @Override
   public final int resultSetFetchedRows() {
     if (resultSet == null) return -1;
-
     try {
       if (resultSetClosing || resultSet.getType() != ResultSet.TYPE_FORWARD_ONLY) {
         while (resultSet.next()) resultSetFetchedRows++;
-
         resultSet.absolute(resultSetConsumedRows);
       }
     } catch (SQLException ignore) {
     }
-
     return resultSetFetchedRows;
   }
 
@@ -137,18 +147,15 @@ final class DefaultDiagnosticsContext implements DiagnosticsContext {
 
   private final List<String> resultSetColumnNames(boolean fetched) {
     List<String> result = new ArrayList<>();
-
     if (resultSet != null) {
       try {
         ResultSetMetaData meta = resultSet.getMetaData();
-
         for (int i = 1; i <= meta.getColumnCount(); i++)
           if (fetched || resultSetWrapper.read.get(i - 1)) result.add(meta.getColumnLabel(i));
       } catch (SQLException e) {
         log.info(e);
       }
     }
-
     return Collections.unmodifiableList(result);
   }
 

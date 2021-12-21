@@ -93,7 +93,6 @@ public interface Results extends List<Result<Record>>, Attachable {
   // ------------------------------------------------------------------------
   // XXX: Additional, Results-specific methods
   // ------------------------------------------------------------------------
-
   /**
    * All the results or update counts in their order as fetched via JDBC.
    *
@@ -116,7 +115,6 @@ public interface Results extends List<Result<Record>>, Attachable {
   // ------------------------------------------------------------------------
   // XXX: Specialisations of Attachable methods
   // ------------------------------------------------------------------------
-
   /**
    * Attach all results and all of their contained records to a new {@link Configuration}.
    *

@@ -50,7 +50,6 @@ class RenamedTable<R extends Record> extends TableImpl<R> {
 
   RenamedTable(Schema schema, Table<R> delegate, String rename) {
     super(name(rename), schema);
-
     for (Field<?> field : delegate.fields())
       createField(field.getUnqualifiedName(), field.getDataType(), this);
   }

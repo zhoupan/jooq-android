@@ -49,14 +49,16 @@ class DefaultBindingGetResultSetContext<U> extends AbstractScope
     implements BindingGetResultSetContext<U> {
 
   private final ResultSet resultSet;
+
   private int index;
+
   private Field<U> field;
+
   private U value;
 
   DefaultBindingGetResultSetContext(
       Configuration configuration, Map<Object, Object> data, ResultSet resultSet, int index) {
     super(configuration, data);
-
     this.resultSet = resultSet;
     this.index = index;
   }
@@ -97,8 +99,8 @@ class DefaultBindingGetResultSetContext<U> extends AbstractScope
   public final <T> BindingGetResultSetContext<T> convert(
       final Converter<? super T, ? extends U> converter) {
     final DefaultBindingGetResultSetContext<U> outer = this;
-
     return new DefaultBindingGetResultSetContext<T>(configuration, data, resultSet, index) {
+
       @Override
       public void value(T v) {
         outer.value(converter.from(v));

@@ -64,7 +64,6 @@ final class CurrentSchema extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -73,25 +72,20 @@ final class CurrentSchema extends AbstractField<String> {
       case SQLITE:
         ctx.visit(inline(""));
         break;
-
       case DERBY:
         ctx.visit(K_CURRENT).sql(' ').visit(K_SCHEMA);
         break;
-
       case H2:
         ctx.visit(K_SCHEMA).sql("()");
         break;
-
       case MARIADB:
       case MYSQL:
         ctx.visit(K_DATABASE).sql("()");
         break;
-
       case HSQLDB:
       case POSTGRES:
         ctx.visit(K_CURRENT_SCHEMA);
         break;
-
       default:
         ctx.visit(K_CURRENT_SCHEMA).sql("()");
         break;
@@ -101,7 +95,6 @@ final class CurrentSchema extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof CurrentSchema) {

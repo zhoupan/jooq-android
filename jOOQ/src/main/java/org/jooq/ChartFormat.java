@@ -52,17 +52,29 @@ public final class ChartFormat {
   public static final ChartFormat DEFAULT = new ChartFormat();
 
   final Output output;
+
   final Type type;
+
   final Display display;
+
   final int width;
+
   final int height;
+
   final int category;
+
   final boolean categoryAsText;
+
   final int[] values;
+
   final char[] shades;
+
   final boolean showHorizontalLegend;
+
   final boolean showVerticalLegend;
+
   final String newline;
+
   final DecimalFormat numericFormat;
 
   public ChartFormat() {
@@ -397,24 +409,13 @@ public final class ChartFormat {
   public enum Output {
 
     /** An ASCII chart. */
-    ASCII,
-
-    //        /**
-    //         * An ANSI escape sequenced chart.
-    //         */
-    //        ANSI,
-    //
-    //        /**
-    //         * An SVG chart.
-    //         */
-    //        SVG,
-
+    ASCII
   }
 
   public static enum Type {
 
     /** An area chart. */
-    AREA,
+    AREA
   }
 
   public static enum Display {
@@ -422,10 +423,8 @@ public final class ChartFormat {
     /** The areas are located in front of one another. */
     @SuppressWarnings("hiding")
     DEFAULT,
-
     /** The areas are stacked on top of one another. */
     STACKED,
-
     /** The areas stack up to 100%. */
     HUNDRED_PERCENT_STACKED
   }

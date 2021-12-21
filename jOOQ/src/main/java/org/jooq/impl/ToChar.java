@@ -58,18 +58,17 @@ import org.jooq.tools.*;
 final class ToChar extends AbstractField<String> {
 
   private final Field<?> value;
+
   private final Field<String> formatMask;
 
   ToChar(Field<?> value) {
     super(N_TO_CHAR, allNotNull(VARCHAR, value));
-
     this.value = nullSafeNotNull(value, OTHER);
     this.formatMask = null;
   }
 
   ToChar(Field<?> value, Field<String> formatMask) {
     super(N_TO_CHAR, allNotNull(VARCHAR, value, formatMask));
-
     this.value = nullSafeNotNull(value, OTHER);
     this.formatMask = nullSafeNotNull(formatMask, VARCHAR);
   }
@@ -77,10 +76,10 @@ final class ToChar extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Set<SQLDialect> NO_SUPPORT_NATIVE_WITHOUT_MASK =
       SQLDialect.supportedBy(
           CUBRID, DERBY, FIREBIRD, HSQLDB, IGNITE, MARIADB, MYSQL, POSTGRES, SQLITE);
+
   private static final Set<SQLDialect> NO_SUPPORT_NATIVE_WITH_MASK =
       SQLDialect.supportedBy(CUBRID, DERBY, FIREBIRD, HSQLDB, IGNITE, MARIADB, MYSQL, SQLITE);
 
@@ -95,9 +94,7 @@ final class ToChar extends AbstractField<String> {
 
   private final void acceptNative(Context<?> ctx) {
     ctx.visit(N_TO_CHAR).sql('(').visit(value);
-
     if (formatMask != null) ctx.sql(", ").visit(formatMask);
-
     ctx.sql(')');
   }
 
@@ -108,7 +105,6 @@ final class ToChar extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof ToChar) {

@@ -51,7 +51,6 @@ final class RenamedCatalog extends CatalogImpl {
 
   RenamedCatalog(Catalog delegate, String rename) {
     super(rename, delegate.getComment());
-
     this.delegate = delegate;
   }
 

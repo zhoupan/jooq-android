@@ -76,13 +76,11 @@ final class MultisetAgg<R extends Record> extends DefaultAggregateFunction<Resul
         N_MULTISET_AGG,
         new MultisetDataType<>((AbstractRow<R>) row, null),
         (((AbstractRow<R>) row).fields()));
-
     this.row = (AbstractRow<R>) row;
   }
 
   @Override
   public final void accept(Context<?> ctx) {
-
     if (TRUE.equals(ctx.data(DATA_MULTISET_CONDITION))) {
       ctx.data().remove(DATA_MULTISET_CONDITION);
       ctx.data(DATA_MULTISET_CONTENT, true, c -> accept0(c, true));
@@ -95,57 +93,45 @@ final class MultisetAgg<R extends Record> extends DefaultAggregateFunction<Resul
       case JSON:
         {
           JSONArrayAggOrderByStep<JSON> order = jsonArrayaggEmulation(ctx, row, true);
-
           Field<?> f =
               multisetCondition
                   ? fo(
                       (AbstractAggregateFunction<?>)
                           returningClob(ctx, order.orderBy(row.fields())))
                   : ofo((AbstractAggregateFunction<?>) returningClob(ctx, order));
-
           if (multisetCondition && NO_SUPPORT_JSON_COMPARE.contains(ctx.dialect()))
             ctx.visit(f.cast(VARCHAR));
           else ctx.visit(f);
-
           break;
         }
-
       case JSONB:
         {
           JSONArrayAggOrderByStep<JSONB> order = jsonbArrayaggEmulation(ctx, row, true);
-
           Field<?> f =
               multisetCondition
                   ? fo(
                       (AbstractAggregateFunction<?>)
                           returningClob(ctx, order.orderBy(row.fields())))
                   : ofo((AbstractAggregateFunction<?>) returningClob(ctx, order));
-
           if (multisetCondition && NO_SUPPORT_JSONB_COMPARE.contains(ctx.dialect()))
             ctx.visit(f.cast(VARCHAR));
           else ctx.visit(f);
-
           break;
         }
-
       case XML:
         {
           XMLAggOrderByStep<XML> order = xmlaggEmulation(row, true);
-
           Field<XML> f =
               xmlelement(
                   N_RESULT,
                   multisetCondition
                       ? fo((AbstractAggregateFunction<?>) order.orderBy(row.fields()))
                       : ofo((AbstractAggregateFunction<?>) order));
-
           if (multisetCondition && NO_SUPPORT_XML_COMPARE.contains(ctx.dialect()))
             ctx.visit(xmlserializeContent(f, VARCHAR));
           else ctx.visit(f);
-
           break;
         }
-
       case NATIVE:
         ctx.visit(N_MULTISET_AGG).sql('(');
         acceptArguments1(ctx, new QueryPartListView<>(arguments.get(0)));

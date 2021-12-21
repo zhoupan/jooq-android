@@ -45,11 +45,11 @@ import org.jooq.Table;
 
 /** @author Lukas Eder */
 final class RowIdField extends AbstractField<RowId> {
+
   private final Table<?> table;
 
   RowIdField(Table<?> table) {
     super(table.getQualifiedName().append(unquotedName("rowid")), SQLDataType.ROWID);
-
     this.table = table;
   }
 
@@ -59,11 +59,9 @@ final class RowIdField extends AbstractField<RowId> {
       case H2:
         ctx.visit(table.getQualifiedName().append(unquotedName("_rowid_")));
         break;
-
       case POSTGRES:
         ctx.visit(table.getQualifiedName().append(unquotedName("ctid")));
         break;
-
       default:
         ctx.visit(getQualifiedName());
         break;

@@ -59,15 +59,17 @@ import org.jooq.conf.TransformUnneededArithmeticExpressions;
 final class Neg<T> extends AbstractTransformable<T> {
 
   private static final Set<SQLDialect> EMULATE_BIT_NOT = SQLDialect.supportedBy(HSQLDB);
+
   private static final Set<SQLDialect> SUPPORT_BIT_NOT = SQLDialect.supportedBy(H2);
 
   private final Field<T> field;
+
   private final boolean internal;
+
   private final ExpressionOperator operator;
 
   Neg(Field<T> field, boolean internal, ExpressionOperator operator) {
     super(operator.toName(), field.getDataType());
-
     this.field = field;
     this.internal = internal;
     this.operator = operator;
@@ -75,14 +77,12 @@ final class Neg<T> extends AbstractTransformable<T> {
 
   @Override
   public final Field<?> transform(TransformUnneededArithmeticExpressions transform) {
-
     return this;
   }
 
   @Override
   public final void accept0(Context<?> ctx) {
     SQLDialect family = ctx.family();
-
     if (operator == BIT_NOT && EMULATE_BIT_NOT.contains(ctx.dialect()))
       ctx.visit(isub(isub(zero(), field), one()));
     else if (operator == BIT_NOT && SUPPORT_BIT_NOT.contains(ctx.dialect()))

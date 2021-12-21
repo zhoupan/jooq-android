@@ -57,10 +57,8 @@ public interface RenderContext extends Context<RenderContext> {
 
     /** Cast all bind values to their respective type. */
     ALWAYS,
-
     /** Cast no bind values to their respective type. */
     NEVER,
-
     /** Cast when needed. This is the default mode if not specified otherwise. */
     DEFAULT
   }

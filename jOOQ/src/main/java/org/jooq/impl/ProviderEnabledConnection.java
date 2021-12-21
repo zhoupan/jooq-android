@@ -61,18 +61,15 @@ final class ProviderEnabledConnection extends DefaultConnection {
 
   ProviderEnabledConnection(ConnectionProvider connectionProvider, Connection connection) {
     super(connection);
-
     this.connectionProvider = connectionProvider;
   }
 
   // ------------------------------------------------------------------------
   // XXX Closing the connection
   // ------------------------------------------------------------------------
-
   @Override
   public final void close() throws SQLException {
     Connection connection = getDelegate();
-
     if (connection != null) {
       connectionProvider.release(connection);
     }
@@ -81,7 +78,6 @@ final class ProviderEnabledConnection extends DefaultConnection {
   // ------------------------------------------------------------------------
   // XXX Creation of Statements
   // ------------------------------------------------------------------------
-
   @Override
   public final Statement createStatement() throws SQLException {
     return new ProviderEnabledStatement(this, getDelegate().createStatement());
@@ -105,7 +101,6 @@ final class ProviderEnabledConnection extends DefaultConnection {
   // ------------------------------------------------------------------------
   // XXX Creation of PreparedStatements
   // ------------------------------------------------------------------------
-
   @Override
   public final PreparedStatement prepareStatement(String sql) throws SQLException {
     return new ProviderEnabledPreparedStatement(this, getDelegate().prepareStatement(sql));
@@ -152,7 +147,6 @@ final class ProviderEnabledConnection extends DefaultConnection {
   // ------------------------------------------------------------------------
   // XXX Creation of CallableStatements
   // ------------------------------------------------------------------------
-
   @Override
   public final CallableStatement prepareCall(String sql) throws SQLException {
     return new ProviderEnabledCallableStatement(this, getDelegate().prepareCall(sql));

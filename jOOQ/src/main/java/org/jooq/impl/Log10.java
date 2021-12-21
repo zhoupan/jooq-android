@@ -62,14 +62,12 @@ final class Log10 extends AbstractField<BigDecimal> {
 
   Log10(Field<? extends Number> value) {
     super(N_LOG10, allNotNull(NUMERIC, value));
-
     this.value = nullSafeNotNull(value, INTEGER);
   }
 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
@@ -78,7 +76,6 @@ final class Log10 extends AbstractField<BigDecimal> {
           ctx.visit(N_LOG10).sql('(').visit(value).sql(')');
           break;
         }
-
       default:
         ctx.visit(function(N_LOG10, getDataType(), value));
         break;
@@ -88,7 +85,6 @@ final class Log10 extends AbstractField<BigDecimal> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Log10) {

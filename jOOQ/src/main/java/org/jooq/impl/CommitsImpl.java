@@ -60,14 +60,15 @@ import org.jooq.migrations.xml.jaxb.ParentType;
 final class CommitsImpl implements Commits {
 
   final Configuration configuration;
+
   final Commit root;
+
   final Map<String, Commit> commits;
 
   CommitsImpl(Configuration configuration, Commit root) {
     this.configuration = configuration;
     this.commits = new LinkedHashMap<>();
     this.root = root;
-
     add(root);
   }
 
@@ -104,47 +105,35 @@ final class CommitsImpl implements Commits {
   @Override
   public final Commits load(MigrationsType migrations) {
     Map<String, CommitType> map = new HashMap<>();
-
     for (CommitType commit : migrations.getCommits()) map.put(commit.getId(), commit);
-
     for (CommitType commit : migrations.getCommits()) load(map, commit);
-
     return this;
   }
 
   private final Commit load(Map<String, CommitType> map, CommitType commit) {
     Commit result = commits.get(commit.getId());
-
     if (result != null) return result;
-
     Commit p1 = root;
     Commit p2 = null;
-
     List<ParentType> parents = commit.getParents();
     int size = parents.size();
     if (size > 0) {
       CommitType c1 = map.get(parents.get(0).getId());
-
       if (c1 == null)
         throw new UnsupportedOperationException("Parent not found: " + parents.get(0).getId());
-
       p1 = load(map, c1);
       if (size == 2) {
         CommitType c2 = map.get(parents.get(1).getId());
-
         if (c2 == null)
           throw new UnsupportedOperationException("Parent not found: " + parents.get(0).getId());
-
         p2 = load(map, c2);
       } else if (size > 2)
         throw new UnsupportedOperationException("Merging more than two parents not yet supported");
     }
-
     result =
         p2 == null
             ? p1.commit(commit.getId(), commit.getMessage(), files(commit))
             : p1.merge(commit.getId(), commit.getMessage(), p2, files(commit));
-
     commits.put(commit.getId(), result);
     return result;
   }

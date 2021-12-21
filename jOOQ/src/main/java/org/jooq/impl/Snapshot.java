@@ -74,7 +74,6 @@ final class Snapshot extends AbstractMeta {
 
   Snapshot(Meta meta) {
     super(meta.configuration());
-
     delegate = meta;
     getCatalogs();
     delegate = null;
@@ -91,6 +90,7 @@ final class Snapshot extends AbstractMeta {
   }
 
   private class SnapshotCatalog extends CatalogImpl {
+
     private final List<SnapshotSchema> schemas;
 
     SnapshotCatalog(Catalog catalog) {
@@ -111,13 +111,15 @@ final class Snapshot extends AbstractMeta {
   private class SnapshotSchema extends SchemaImpl {
 
     private final List<SnapshotDomain<?>> domains;
+
     private final List<SnapshotTable<?>> tables;
+
     private final List<SnapshotSequence<?>> sequences;
+
     private final List<SnapshotUDT<?>> udts;
 
     SnapshotSchema(SnapshotCatalog catalog, Schema schema) {
       super(schema.getQualifiedName(), catalog, schema.getCommentPart());
-
       domains = map(schema.getDomains(), d -> new SnapshotDomain<>(this, d));
       tables = map(schema.getTables(), t -> new SnapshotTable<>(this, t));
       sequences = map(schema.getSequences(), s -> new SnapshotSequence<>(this, s));
@@ -150,6 +152,7 @@ final class Snapshot extends AbstractMeta {
   }
 
   private class SnapshotDomain<T> extends DomainImpl<T> {
+
     SnapshotDomain(SnapshotSchema schema, Domain<T> domain) {
       super(
           schema,
@@ -160,19 +163,22 @@ final class Snapshot extends AbstractMeta {
   }
 
   private class SnapshotTable<R extends Record> extends TableImpl<R> {
+
     private final List<Index> indexes;
+
     private final List<UniqueKey<R>> uniqueKeys;
+
     private UniqueKey<R> primaryKey;
+
     private final List<ForeignKey<R, ?>> foreignKeys;
+
     private final List<Check<R>> checks;
 
     SnapshotTable(SnapshotSchema schema, Table<R> table) {
       super(
           table.getQualifiedName(), schema, null, null, table.getCommentPart(), table.getOptions());
-
       for (Field<?> field : table.fields())
         createField(field.getUnqualifiedName(), field.getDataType(), this, field.getComment());
-
       indexes =
           map(
               table.getIndexes(),
@@ -183,31 +189,26 @@ final class Snapshot extends AbstractMeta {
                       map(
                           index.getFields(),
                           field -> {
-
                             // [#10804] Use this table's field reference if possible.
-                            //          Otherwise (e.g. for function based indexes), use the actual
-                            // field expression
+                            // Otherwise (e.g. for function based indexes), use the actual field
+                            // expression
                             Field<?> f = field(field.getName());
                             return f != null ? f.sort(field.getOrder()) : field;
-
                             // [#9009] TODO NULLS FIRST / NULLS LAST
                           },
                           SortField[]::new),
                       index.getUnique()));
-
       uniqueKeys =
           map(
               table.getUniqueKeys(),
               uk ->
                   Internal.createUniqueKey(
                       this, uk.getQualifiedName(), fields(uk.getFieldsArray()), uk.enforced()));
-
       UniqueKey<R> pk = table.getPrimaryKey();
       if (pk != null)
         primaryKey =
             Internal.createUniqueKey(
                 this, pk.getQualifiedName(), fields(pk.getFieldsArray()), pk.enforced());
-
       foreignKeys = new ArrayList<>(table.getReferences());
       checks = new ArrayList<>(table.getChecks());
     }
@@ -215,20 +216,17 @@ final class Snapshot extends AbstractMeta {
     @SuppressWarnings("unchecked")
     @Deprecated
     private final TableField<R, ?>[] fields(TableField<R, ?>[] tableFields) {
-
       // TODO: [#9456] This auxiliary method should not be necessary
-      //               We should be able to call TableLike.fields instead.
+      // We should be able to call TableLike.fields instead.
       return map(tableFields, f -> (TableField<R, ?>) field(f.getName()), TableField[]::new);
     }
 
     final void resolveReferences() {
-
       // TODO: Is there a better way than temporarily keeping the wrong
-      //       ReferenceImpl in this list until we "know better"?
+      // ReferenceImpl in this list until we "know better"?
       for (int i = 0; i < foreignKeys.size(); i++) {
         ForeignKey<R, ?> fk = foreignKeys.get(i);
         UniqueKey<?> uk = lookupUniqueKey(fk);
-
         // [#10823] [#11287] There are numerous reasons why a UNIQUE
         // constraint may not be known to our meta model. Let's just
         // prevent exceptions here
@@ -264,6 +262,7 @@ final class Snapshot extends AbstractMeta {
   }
 
   private class SnapshotSequence<T extends Number> extends SequenceImpl<T> {
+
     SnapshotSequence(SnapshotSchema schema, Sequence<T> sequence) {
       super(
           sequence.getQualifiedName(),
@@ -280,6 +279,7 @@ final class Snapshot extends AbstractMeta {
   }
 
   private class SnapshotUDT<R extends UDTRecord<R>> extends UDTImpl<R> {
+
     SnapshotUDT(SnapshotSchema schema, UDT<R> udt) {
       super(udt.getName(), schema, udt.getPackage(), udt.isSynthetic());
     }

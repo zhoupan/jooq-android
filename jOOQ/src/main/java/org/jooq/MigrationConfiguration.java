@@ -48,11 +48,17 @@ package org.jooq;
 public final class MigrationConfiguration {
 
   private final boolean alterTableAddMultiple;
+
   private final boolean alterTableDropMultiple;
+
   private final boolean dropSchemaCascade;
+
   private final boolean dropTableCascade;
+
   private final boolean alterTableDropCascade;
+
   private final boolean createOrReplaceView;
+
   private final boolean respectColumnOrder;
 
   /** Create a new default export configuration instance. */

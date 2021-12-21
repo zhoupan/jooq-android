@@ -84,14 +84,19 @@ import org.jooq.conf.ParamType;
 final class CompareCondition extends AbstractCondition implements LikeEscapeStep {
 
   private static final Clause[] CLAUSES = {CONDITION, CONDITION_COMPARISON};
+
   private static final Set<SQLDialect> REQUIRES_CAST_ON_LIKE =
       SQLDialect.supportedBy(DERBY, POSTGRES);
+
   private static final Set<SQLDialect> NO_SUPPORT_ILIKE =
       SQLDialect.supportedBy(CUBRID, DERBY, FIREBIRD, HSQLDB, MARIADB, MYSQL, SQLITE);
 
   final Field<?> field1;
+
   final Field<?> field2;
+
   final Comparator comparator;
+
   private Character escape;
 
   CompareCondition(Field<?> field1, Field<?> field2, Comparator comparator) {
@@ -111,7 +116,6 @@ final class CompareCondition extends AbstractCondition implements LikeEscapeStep
   public final void accept(Context<?> ctx) {
     boolean field1Embeddable = field1.getDataType().isEmbeddable();
     SelectQueryImpl<?> s;
-
     if (field1Embeddable && field2 instanceof ScalarSubquery)
       ctx.visit(
           row(embeddedFields(field1)).compare(comparator, ((ScalarSubquery<?>) field2).query));
@@ -120,7 +124,6 @@ final class CompareCondition extends AbstractCondition implements LikeEscapeStep
     else if ((comparator == IN || comparator == NOT_IN)
         && (s = subqueryWithLimit(field2)) != null
         && transformInConditionSubqueryWithLimitToDerivedTable(ctx.configuration())) {
-
     } else if (field1.getDataType().isMultiset()
         && field2.getDataType().isMultiset()
         && !TRUE.equals(ctx.data(DATA_MULTISET_CONDITION)))
@@ -129,41 +132,32 @@ final class CompareCondition extends AbstractCondition implements LikeEscapeStep
   }
 
   private final void accept0(Context<?> ctx) {
-
     SQLDialect family = ctx.family();
     Field<?> lhs = field1;
     Field<?> rhs = field2;
     Comparator op = comparator;
-
     // [#1159] [#1725] Some dialects cannot auto-convert the LHS operand to a
     // VARCHAR when applying a LIKE predicate
     if ((op == LIKE || op == NOT_LIKE || op == SIMILAR_TO || op == NOT_SIMILAR_TO)
         && field1.getType() != String.class
         && REQUIRES_CAST_ON_LIKE.contains(ctx.dialect())) {
-
       lhs = castIfNeeded(lhs, String.class);
-    }
-
-    // [#1423] [#9889] PostgreSQL and H2 support ILIKE natively. Other dialects
+    } else // [#1423] [#9889] PostgreSQL and H2 support ILIKE natively. Other dialects
     // need to emulate this as LOWER(lhs) LIKE LOWER(rhs)
-    else if ((op == LIKE_IGNORE_CASE || op == NOT_LIKE_IGNORE_CASE)
+    if ((op == LIKE_IGNORE_CASE || op == NOT_LIKE_IGNORE_CASE)
         && NO_SUPPORT_ILIKE.contains(ctx.dialect())) {
       lhs = lhs.lower();
       rhs = rhs.lower();
       op = (op == LIKE_IGNORE_CASE ? LIKE : NOT_LIKE);
     }
-
     ctx.visit(lhs).sql(' ');
-
     boolean castRhs = false;
     ParamType previousParamType = ctx.paramType();
     ParamType forcedParamType = previousParamType;
-
     ctx.visit(op.toKeyword()).sql(' ');
     if (castRhs) ctx.visit(K_CAST).sql('(');
     ctx.visit(rhs, forcedParamType);
     if (castRhs) ctx.sql(' ').visit(K_AS).sql(' ').visit(K_VARCHAR).sql("(4000))");
-
     if (escape != null) {
       ctx.sql(' ').visit(K_ESCAPE).sql(' ').visit(inline(escape));
     }

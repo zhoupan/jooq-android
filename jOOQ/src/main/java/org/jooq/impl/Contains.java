@@ -52,12 +52,17 @@ import org.jooq.Field;
  * @author Lukas Eder
  */
 final class Contains<T> extends AbstractCondition {
+
   private static final Clause[] CLAUSES = {CONDITION, CONDITION_COMPARISON};
 
   private final Field<T> lhs;
+
   private final Field<T> rhs;
+
   private final T value;
+
   private final boolean leftWildcard;
+
   private final boolean rightWildcard;
 
   Contains(Field<T> field, T value, boolean leftWildcard, boolean rightWildcard) {
@@ -84,21 +89,16 @@ final class Contains<T> extends AbstractCondition {
         || (rhs != null && rhs.getDataType().isArray())
         || (rhs == null && value != null && value.getClass().isArray()))
       ctx.visit(new PostgresArrayContains());
-
-    // "contains" operations on Strings
-    else {
+    else // "contains" operations on Strings
+    {
       switch (ctx.family()) {
         default:
           Field<?>[] array = new Field[1 + (leftWildcard ? 1 : 0) + (rightWildcard ? 1 : 0)];
-
           int i = 0;
           if (leftWildcard) array[i++] = inline("%");
-
           array[i++] =
               Tools.escapeForLike(rhs == null ? Tools.field(value, lhs) : rhs, ctx.configuration());
-
           if (rightWildcard) array[i++] = inline("%");
-
           ctx.visit(lhs.like(DSL.concat(array), Tools.ESCAPE));
           break;
       }

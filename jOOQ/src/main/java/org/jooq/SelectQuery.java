@@ -455,7 +455,6 @@ public interface SelectQuery<R extends Record> extends Select<R>, ConditionProvi
   // ------------------------------------------------------------------------
   // Methods from ConditionProvider, OrderProvider, LockProvider
   // ------------------------------------------------------------------------
-
   @Override
   @Support
   void addConditions(Condition condition);
@@ -531,7 +530,6 @@ public interface SelectQuery<R extends Record> extends Select<R>, ConditionProvi
    * @param fields The seeking fields
    * @deprecated - [#7461] - SEEK BEFORE is not implemented correctly
    */
-  @Deprecated
   @Support
   void addSeekBefore(Field<?>... fields);
 
@@ -541,7 +539,6 @@ public interface SelectQuery<R extends Record> extends Select<R>, ConditionProvi
    * @param fields The seeking fields
    * @deprecated - [#7461] - SEEK BEFORE is not implemented correctly
    */
-  @Deprecated
   @Support
   void addSeekBefore(Collection<? extends Field<?>> fields);
 
@@ -818,7 +815,6 @@ public interface SelectQuery<R extends Record> extends Select<R>, ConditionProvi
    * @param fields The fields that should be locked
    * @deprecated [#5218] - 3.14.0 - Use {@link #setForLockModeOf(Field...)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Support({DERBY, FIREBIRD, H2, HSQLDB})
   void setForUpdateOf(Field<?>... fields);
 
@@ -831,7 +827,6 @@ public interface SelectQuery<R extends Record> extends Select<R>, ConditionProvi
    * @see #setForUpdateOf(Field...)
    * @deprecated [#5218] - 3.14.0 - Use {@link #setForLockModeOf(Collection)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Support({DERBY, FIREBIRD, H2, HSQLDB})
   void setForUpdateOf(Collection<? extends Field<?>> fields);
 
@@ -864,7 +859,6 @@ public interface SelectQuery<R extends Record> extends Select<R>, ConditionProvi
    * @param tables The tables that should be locked
    * @deprecated [#5218] - 3.14.0 - Use {@link #setForLockModeOf(Table...)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Support({DERBY, FIREBIRD, H2, HSQLDB, MYSQL, POSTGRES})
   void setForUpdateOf(Table<?>... tables);
 
@@ -885,7 +879,6 @@ public interface SelectQuery<R extends Record> extends Select<R>, ConditionProvi
    * @param seconds The number of seconds to wait for a lock
    * @deprecated [#5218] - 3.14.0 - Use {@link #setForLockModeWait(int)}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Support({MARIADB})
   void setForUpdateWait(int seconds);
 
@@ -905,7 +898,6 @@ public interface SelectQuery<R extends Record> extends Select<R>, ConditionProvi
    *
    * @deprecated [#5218] - 3.14.0 - Use {@link #setForLockModeNoWait()}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Support({MARIADB, MYSQL, POSTGRES})
   void setForUpdateNoWait();
 
@@ -925,7 +917,6 @@ public interface SelectQuery<R extends Record> extends Select<R>, ConditionProvi
    *
    * @deprecated [#5218] - 3.14.0 - Use {@link #setForLockModeSkipLocked()}
    */
-  @Deprecated(forRemoval = true, since = "3.14")
   @Support({MYSQL, POSTGRES})
   void setForUpdateSkipLocked();
 

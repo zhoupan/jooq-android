@@ -73,12 +73,11 @@ public final class DefaultConverterProvider implements ConverterProvider, Serial
   public final <T, U> Converter<T, U> provide(final Class<T> tType, final Class<U> uType) {
     Class<T> tWrapper = wrapper(tType);
     Class<U> uWrapper = wrapper(uType);
-
     // TODO: [#10071] These checks are required to be able to return null in
-    //                case this implementation cannot produce a Converter.
-    //                It corresponds to a super set of what org.jooq.tools.Convert
-    //                can do. There is certainly room for refactoring the two
-    //                classes.
+    // case this implementation cannot produce a Converter.
+    // It corresponds to a super set of what org.jooq.tools.Convert
+    // can do. There is certainly room for refactoring the two
+    // classes.
     if (tWrapper == uWrapper
         || uWrapper.isAssignableFrom(tWrapper)
         || isCollection(tWrapper) && isCollection(uWrapper)
@@ -86,8 +85,10 @@ public final class DefaultConverterProvider implements ConverterProvider, Serial
         || uWrapper == Optional.class
         || uWrapper == String.class
         || uWrapper == byte[].class
-        || Number.class.isAssignableFrom(uWrapper) // No fail-fast implemented yet!
-        || Boolean.class.isAssignableFrom(uWrapper) // No fail-fast implemented yet!
+        || // No fail-fast implemented yet!
+        Number.class.isAssignableFrom(uWrapper)
+        || // No fail-fast implemented yet!
+        Boolean.class.isAssignableFrom(uWrapper)
         || Character.class.isAssignableFrom(uWrapper)
         || uWrapper == URI.class && tWrapper == String.class
         || uWrapper == URL.class && tWrapper == String.class
@@ -95,22 +96,18 @@ public final class DefaultConverterProvider implements ConverterProvider, Serial
         || isDate(tWrapper) && isDate(uWrapper)
         || isEnum(tWrapper) && isEnum(uWrapper)
         || isUUID(tWrapper) && isUUID(uWrapper)
-
-        // [#10072] out of the box JSON binding is supported via Jackson or Gson
-        || isJSON(tWrapper)
-
-        // [#10072] out of the box XML binding is supported via JAXB
-        || isXML(tWrapper)
+        || // [#10072] out of the box JSON binding is supported via Jackson or Gson
+        isJSON(tWrapper)
+        || // [#10072] out of the box XML binding is supported via JAXB
+        isXML(tWrapper)
         || Record.class.isAssignableFrom(tWrapper)
         || Struct.class.isAssignableFrom(tWrapper)
             && QualifiedRecord.class.isAssignableFrom(uWrapper)
-
-        // [#10229] Any type A can be converted into its wrapper B if a constructor B(A) exists.
-        || findAny(
+        || // [#10229] Any type A can be converted into its wrapper B if a constructor B(A) exists.
+        findAny(
                 uWrapper.getDeclaredConstructors(),
                 c -> {
                   Class<?>[] types = c.getParameterTypes();
-
                   // [#11183] Prevent StackOverflowError when recursing into UDT POJOs
                   return types.length == 1
                       && types[0] != uWrapper
@@ -129,12 +126,10 @@ public final class DefaultConverterProvider implements ConverterProvider, Serial
           return Convert.convert(u, tType);
         }
       };
-    }
-
-    // [#11762] Make sure possibly legal downcasts / upcasts are working
-    //          This is especially important if we don't know the data type
-    //          (SQLDataType.OTHER)
-    else if (tWrapper.isAssignableFrom(uWrapper)) {
+    } else // [#11762] Make sure possibly legal downcasts / upcasts are working
+    // This is especially important if we don't know the data type
+    // (SQLDataType.OTHER)
+    if (tWrapper.isAssignableFrom(uWrapper)) {
       return Converter.ofNullable(
           tWrapper,
           uWrapper,
@@ -182,8 +177,7 @@ public final class DefaultConverterProvider implements ConverterProvider, Serial
   private final boolean isCollection(Class<?> type) {
     return type.isArray()
         || Collection.class.isAssignableFrom(type)
-
-        // [#3443] Conversion from Object[] to JDBC Array
-        || type == java.sql.Array.class;
+        || // [#3443] Conversion from Object[] to JDBC Array
+        type == java.sql.Array.class;
   }
 }

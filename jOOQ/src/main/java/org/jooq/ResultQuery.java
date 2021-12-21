@@ -4410,7 +4410,6 @@ public interface ResultQuery<R extends Record> extends Fields, Query, Iterable<R
    * @deprecated - 3.15.0 - [#11902] - Use {@link Iterable#forEach(Consumer)} based methods,
    *     instead.
    */
-  @Deprecated(forRemoval = true, since = "3.15")
   @NotNull
   <H extends RecordHandler<? super R>> H fetchInto(H handler) throws DataAccessException;
 
@@ -4472,7 +4471,6 @@ public interface ResultQuery<R extends Record> extends Fields, Query, Iterable<R
   // ------------------------------------------------------------------------
   // JDBC methods
   // ------------------------------------------------------------------------
-
   @NotNull
   @Override
   ResultQuery<R> poolable(boolean poolable);
@@ -4590,7 +4588,6 @@ public interface ResultQuery<R extends Record> extends Fields, Query, Iterable<R
    *     4.0
    */
   @NotNull
-  @Deprecated(forRemoval = true, since = "3.10")
   ResultQuery<R> intern(Field<?>... fields);
 
   /**
@@ -4607,7 +4604,6 @@ public interface ResultQuery<R extends Record> extends Fields, Query, Iterable<R
    *     4.0
    */
   @NotNull
-  @Deprecated(forRemoval = true, since = "3.10")
   ResultQuery<R> intern(int... fieldIndexes);
 
   /**
@@ -4625,7 +4621,6 @@ public interface ResultQuery<R extends Record> extends Fields, Query, Iterable<R
    *     4.0
    */
   @NotNull
-  @Deprecated(forRemoval = true, since = "3.10")
   ResultQuery<R> intern(String... fieldNames);
 
   /**
@@ -4643,7 +4638,6 @@ public interface ResultQuery<R extends Record> extends Fields, Query, Iterable<R
    *     4.0
    */
   @NotNull
-  @Deprecated(forRemoval = true, since = "3.10")
   ResultQuery<R> intern(Name... fieldNames);
 
   /** Coerce the result record type of this query to that of a table. */

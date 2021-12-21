@@ -63,7 +63,6 @@ public class PostgresDSL extends DSL {
   // -------------------------------------------------------------------------
   // PostgreSQL-specific array functions
   // -------------------------------------------------------------------------
-
   /**
    * The PostgreSQL <code>array1 &amp;&amp; array2</code> overlap operator.
    *
@@ -704,7 +703,6 @@ public class PostgresDSL extends DSL {
   // -------------------------------------------------------------------------
   // Other PostgreSQL-specific functions / clauses
   // -------------------------------------------------------------------------
-
   /**
    * Get the PostgreSQL-specific <code>ONLY [table]</code> clause for use with table inheritance.
    *

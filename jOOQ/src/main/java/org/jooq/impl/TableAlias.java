@@ -53,6 +53,7 @@ import org.jooq.UniqueKey;
 final class TableAlias<R extends Record> extends AbstractTable<R> {
 
   final Alias<Table<R>> alias;
+
   final FieldsImpl<R> aliasedFields;
 
   TableAlias(Table<R> table, Name alias) {
@@ -70,7 +71,6 @@ final class TableAlias<R extends Record> extends AbstractTable<R> {
   TableAlias(
       Table<R> table, Name alias, Name[] fieldAliases, Predicate<Context<?>> wrapInParentheses) {
     super(table.getOptions(), alias, table.getSchema());
-
     this.alias = new Alias<>(table, this, alias, fieldAliases, wrapInParentheses);
     this.aliasedFields = init(fieldAliases);
   }
@@ -90,14 +90,12 @@ final class TableAlias<R extends Record> extends AbstractTable<R> {
                     this,
                     f.getCommentPart(),
                     f.getBinding()));
-
     return new FieldsImpl<>(result);
   }
 
   /** Get the aliased table wrapped by this table. */
   Table<R> getAliasedTable() {
     if (alias != null) return alias.wrapped();
-
     return null;
   }
 
@@ -131,7 +129,8 @@ final class TableAlias<R extends Record> extends AbstractTable<R> {
     ctx.visit(alias);
   }
 
-  @Override // Avoid AbstractTable implementation
+  // Avoid AbstractTable implementation
+  @Override
   public final Clause[] clauses(Context<?> ctx) {
     return null;
   }
@@ -169,7 +168,6 @@ final class TableAlias<R extends Record> extends AbstractTable<R> {
   // ------------------------------------------------------------------------
   // XXX: Object API
   // ------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof TableAlias)

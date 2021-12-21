@@ -89,7 +89,9 @@ import org.jooq.XMLAggOrderByStep;
 final class Multiset<R extends Record> extends AbstractField<Result<R>> {
 
   static final Set<SQLDialect> NO_SUPPORT_JSON_COMPARE = SQLDialect.supportedBy(POSTGRES);
+
   static final Set<SQLDialect> NO_SUPPORT_JSONB_COMPARE = SQLDialect.supportedBy();
+
   static final Set<SQLDialect> NO_SUPPORT_XML_COMPARE = SQLDialect.supportedBy(POSTGRES);
 
   final Select<R> select;
@@ -101,13 +103,11 @@ final class Multiset<R extends Record> extends AbstractField<Result<R>> {
         N_MULTISET,
         new MultisetDataType<>(
             (AbstractRow<R>) DSL.row(select.getSelect()), select.getRecordType()));
-
     this.select = select;
   }
 
   @Override
   public final void accept(Context<?> ctx) {
-
     if (TRUE.equals(ctx.data(DATA_MULTISET_CONDITION))) {
       ctx.data().remove(DATA_MULTISET_CONDITION);
       ctx.data(DATA_MULTISET_CONTENT, true, c -> accept0(c, true));
@@ -122,18 +122,14 @@ final class Multiset<R extends Record> extends AbstractField<Result<R>> {
           Table<?> t =
               new AliasedSelect<>(select, true, false, fieldNames(select.getSelect().size()))
                   .as(DSL.name("t"), (Name[]) null);
-
           switch (ctx.family()) {
             default:
               {
                 JSONArrayAggOrderByStep<JSON> order;
                 JSONArrayAggReturningStep<JSON> returning;
-
                 returning = order = jsonArrayaggEmulation(ctx, select, false);
-
                 // TODO: Re-apply derived table's ORDER BY clause as aggregate ORDER BY
                 if (multisetCondition) returning = order.orderBy(t.fields());
-
                 Select<Record1<JSON>> s =
                     patchOracleArrayAggBug(
                         ctx,
@@ -141,35 +137,27 @@ final class Multiset<R extends Record> extends AbstractField<Result<R>> {
                                 DSL.coalesce(
                                     returningClob(ctx, returning), returningClob(ctx, jsonArray())))
                             .from(t));
-
                 if (multisetCondition && NO_SUPPORT_JSON_COMPARE.contains(ctx.dialect()))
                   ctx.visit(DSL.field(s).cast(VARCHAR));
                 else visitSubquery(ctx, s, true);
-
                 break;
               }
           }
-
           break;
         }
-
       case JSONB:
         {
           Table<?> t =
               new AliasedSelect<>(select, true, false, fieldNames(select.getSelect().size()))
                   .as(DSL.name("t"), (Name[]) null);
-
           switch (ctx.family()) {
             default:
               {
                 JSONArrayAggOrderByStep<JSONB> order;
                 JSONArrayAggReturningStep<JSONB> returning;
-
                 returning = order = jsonbArrayaggEmulation(ctx, select, false);
-
                 // TODO: Re-apply derived table's ORDER BY clause as aggregate ORDER BY
                 if (multisetCondition) returning = order.orderBy(t.fields());
-
                 Select<Record1<JSONB>> s =
                     patchOracleArrayAggBug(
                         ctx,
@@ -178,49 +166,37 @@ final class Multiset<R extends Record> extends AbstractField<Result<R>> {
                                     returningClob(ctx, returning),
                                     returningClob(ctx, jsonbArray())))
                             .from(t));
-
                 if (multisetCondition && NO_SUPPORT_JSONB_COMPARE.contains(ctx.dialect()))
                   ctx.visit(DSL.field(s).cast(VARCHAR));
                 else visitSubquery(ctx, s, true);
-
                 break;
               }
           }
-
           break;
         }
-
       case XML:
         {
           List<Field<?>> fields = select.getSelect();
           Table<?> t =
               new AliasedSelect<>(select, true, false, fieldNames(fields.size()))
                   .as(DSL.name("t"), (Name[]) null);
-
           switch (ctx.family()) {
             default:
               {
                 XMLAggOrderByStep<XML> order;
                 AggregateFilterStep<XML> filter;
-
                 filter = order = xmlaggEmulation(select, false);
-
                 // TODO: Re-apply derived table's ORDER BY clause as aggregate ORDER BY
                 if (multisetCondition) filter = order.orderBy(t.fields());
-
                 Select<Record1<XML>> s = select(xmlelement(N_RESULT, filter)).from(t);
-
                 if (multisetCondition && NO_SUPPORT_XML_COMPARE.contains(ctx.dialect()))
                   ctx.visit(xmlserializeContent(DSL.field(s), VARCHAR));
                 else visitSubquery(ctx, s, true);
-
                 break;
               }
           }
-
           break;
         }
-
       case NATIVE:
         visitSubquery(ctx.visit(K_MULTISET), select, true);
         break;
@@ -252,7 +228,6 @@ final class Multiset<R extends Record> extends AbstractField<Result<R>> {
   // - It uses less bandwidth
   // - It is column name agnostic (supporting ambiguous column names)
   // - The JSON never leaks outside of the emulation into user code
-
   static final JSONArrayAggOrderByStep<JSON> jsonArrayaggEmulation(
       Scope ctx, Fields fields, boolean agg) {
     switch (ctx.family()) {

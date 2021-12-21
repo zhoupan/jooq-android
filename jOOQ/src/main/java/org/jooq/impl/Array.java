@@ -55,13 +55,13 @@ import org.jooq.SQLDialect;
 
 /** @author Lukas Eder */
 final class Array<T> extends AbstractField<T[]> {
+
   private static final Set<SQLDialect> REQUIRES_CAST = SQLDialect.supportedBy(POSTGRES);
 
   private final FieldsImpl<Record> fields;
 
   Array(Collection<? extends Field<T>> fields) {
     super(N_ARRAY, type(fields));
-
     this.fields = new FieldsImpl<>(fields);
   }
 
@@ -79,15 +79,12 @@ final class Array<T> extends AbstractField<T[]> {
       case POSTGRES:
       default:
         boolean squareBrackets = true;
-
         ctx.visit(K_ARRAY)
             .sql(squareBrackets ? '[' : '(')
             .visit(fields)
             .sql(squareBrackets ? ']' : ')');
-
         if (fields.fields.length == 0 && REQUIRES_CAST.contains(ctx.dialect()))
           ctx.sql("::").visit(K_INT).sql("[]");
-
         break;
     }
   }

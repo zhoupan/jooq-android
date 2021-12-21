@@ -63,11 +63,11 @@ import org.jooq.UniqueKey;
 public final class LazySchema extends AbstractNamed implements Schema {
 
   final LazySupplier<Schema> supplier;
+
   transient Schema schema;
 
   public LazySchema(Name name, Comment comment, LazySupplier<Schema> supplier) {
     super(name, comment);
-
     this.supplier = supplier;
   }
 
@@ -79,14 +79,12 @@ public final class LazySchema extends AbstractNamed implements Schema {
         throw new RuntimeException(e);
       }
     }
-
     return schema;
   }
 
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   @Override
   public final void accept(Context<?> ctx) {
     ctx.visit(schema());
@@ -95,7 +93,6 @@ public final class LazySchema extends AbstractNamed implements Schema {
   // -------------------------------------------------------------------------
   // XXX: Schema API
   // -------------------------------------------------------------------------
-
   @Override
   public final Catalog getCatalog() {
     return schema().getCatalog();

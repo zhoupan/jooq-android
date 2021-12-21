@@ -58,11 +58,11 @@ import org.jooq.tools.*;
 final class DropDatabaseImpl extends AbstractDDLQuery implements DropDatabaseFinalStep {
 
   private final Catalog database;
+
   private final boolean dropDatabaseIfExists;
 
   DropDatabaseImpl(Configuration configuration, Catalog database, boolean dropDatabaseIfExists) {
     super(configuration);
-
     this.database = database;
     this.dropDatabaseIfExists = dropDatabaseIfExists;
   }
@@ -78,7 +78,6 @@ final class DropDatabaseImpl extends AbstractDDLQuery implements DropDatabaseFin
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Set<SQLDialect> NO_SUPPORT_IF_EXISTS =
       SQLDialect.supportedBy(DERBY, FIREBIRD);
 
@@ -95,9 +94,7 @@ final class DropDatabaseImpl extends AbstractDDLQuery implements DropDatabaseFin
 
   private void accept0(Context<?> ctx) {
     ctx.visit(K_DROP).sql(' ').visit(K_DATABASE);
-
     if (dropDatabaseIfExists && supportsIfExists(ctx)) ctx.sql(' ').visit(K_IF_EXISTS);
-
     ctx.sql(' ').visit(database);
   }
 }

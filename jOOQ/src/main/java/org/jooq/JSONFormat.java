@@ -68,16 +68,25 @@ import static org.jooq.tools.StringUtils.rightPad;
 public final class JSONFormat {
 
   public static final JSONFormat DEFAULT_FOR_RESULTS = new JSONFormat();
+
   public static final JSONFormat DEFAULT_FOR_RECORDS = new JSONFormat().header(false);
 
   final boolean format;
+
   final String newline;
+
   final int globalIndent;
+
   final int indent;
+
   final String[] indented;
+
   final boolean header;
+
   final RecordFormat recordFormat;
+
   final boolean wrapSingleColumnRecords;
+
   final boolean quoteNested;
 
   public JSONFormat() {
@@ -192,7 +201,6 @@ public final class JSONFormat {
   /** Convenience method to get an indentation string at a given level. */
   public final String indentString(int level) {
     int i = level + globalIndent / indent;
-
     if (i < indented.length) return indented[i];
     else if (format) return rightPad("", globalIndent + indent * level);
     else return "";
@@ -291,12 +299,11 @@ public final class JSONFormat {
      * equal to <code>true</code>.
      */
     ARRAY,
-
     /**
      * A record is a JSON object.
      *
      * <p>This format allows for accessing columns by name, repeating column names in each record.
      */
-    OBJECT,
+    OBJECT
   }
 }

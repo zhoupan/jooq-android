@@ -58,12 +58,13 @@ import org.jooq.tools.*;
 final class Rpad extends AbstractField<String> {
 
   private final Field<String> string;
+
   private final Field<? extends Number> length;
+
   private final Field<String> character;
 
   Rpad(Field<String> string, Field<? extends Number> length) {
     super(N_RPAD, allNotNull(VARCHAR, string, length));
-
     this.string = nullSafeNotNull(string, VARCHAR);
     this.length = nullSafeNotNull(length, INTEGER);
     this.character = null;
@@ -71,7 +72,6 @@ final class Rpad extends AbstractField<String> {
 
   Rpad(Field<String> string, Field<? extends Number> length, Field<String> character) {
     super(N_RPAD, allNotNull(VARCHAR, string, length, character));
-
     this.string = nullSafeNotNull(string, VARCHAR);
     this.length = nullSafeNotNull(length, INTEGER);
     this.character = nullSafeNotNull(character, VARCHAR);
@@ -80,7 +80,6 @@ final class Rpad extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private final Field<String> character() {
     return character == null ? inline(" ") : character;
   }
@@ -88,7 +87,6 @@ final class Rpad extends AbstractField<String> {
   @Override
   public final void accept(Context<?> ctx) {
     switch (ctx.family()) {
-
         // This beautiful expression was contributed by "Ludo", here:
         // http://stackoverflow.com/questions/6576343/how-to-simulate-lpad-rpad-with-sqlite
       case SQLITE:
@@ -114,7 +112,6 @@ final class Rpad extends AbstractField<String> {
             .sql(')')
             .sql(')');
         break;
-
       default:
         ctx.visit(function(N_RPAD, getDataType(), string, length, character()));
         break;
@@ -124,7 +121,6 @@ final class Rpad extends AbstractField<String> {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public boolean equals(Object that) {
     if (that instanceof Rpad) {

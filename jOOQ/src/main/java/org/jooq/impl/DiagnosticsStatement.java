@@ -50,7 +50,6 @@ final class DiagnosticsStatement extends DefaultCallableStatement {
 
   DiagnosticsStatement(DiagnosticsConnection connection, Statement statement) {
     super(statement);
-
     this.connection = connection;
   }
 

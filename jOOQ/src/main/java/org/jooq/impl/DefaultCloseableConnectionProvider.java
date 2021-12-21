@@ -58,7 +58,6 @@ class DefaultCloseableConnectionProvider extends DefaultConnectionProvider {
   // -------------------------------------------------------------------------
   // XXX: ConnectionProvider API
   // -------------------------------------------------------------------------
-
   @Override
   protected void finalize() throws Throwable {
     JDBCUtils.safeClose(connection);

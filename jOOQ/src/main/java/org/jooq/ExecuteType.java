@@ -47,7 +47,6 @@ public enum ExecuteType {
    * table expressions), <code>FETCH</code> queries and other types of vendor-specific queries.
    */
   READ,
-
   /**
    * An <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code>, <code>MERGE</code> query is
    * being executed.
@@ -56,16 +55,12 @@ public enum ExecuteType {
    * vendor-specific queries.
    */
   WRITE,
-
   /** A DDL statement is being executed. */
   DDL,
-
   /** A batch statement is being executed. */
   BATCH,
-
   /** A routine (stored procedure or function) is being executed. */
   ROUTINE,
-
   /** An other (unknown) type of database interaction is being executed. */
-  OTHER,
+  OTHER
 }

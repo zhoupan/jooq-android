@@ -102,9 +102,7 @@ import org.xml.sax.InputSource;
  * @author Johannes Bühler
  */
 final class LoaderImpl<R extends Record>
-    implements
-
-        // Cascading interface implementations for Loader behaviour
+    implements // Cascading interface implementations for Loader behaviour
         LoaderOptionsStep<R>,
         LoaderRowsStep<R>,
         LoaderXMLStep<R>,
@@ -115,74 +113,116 @@ final class LoaderImpl<R extends Record>
         Loader<R> {
 
   private static final JooqLogger log = JooqLogger.getLogger(LoaderImpl.class);
+
   private static final Set<SQLDialect> NO_SUPPORT_ROWCOUNT_ON_DUPLICATE =
       SQLDialect.supportedBy(MARIADB, MYSQL);
 
   // Configuration constants
   // -----------------------
   private static final int ON_DUPLICATE_KEY_ERROR = 0;
+
   private static final int ON_DUPLICATE_KEY_IGNORE = 1;
+
   private static final int ON_DUPLICATE_KEY_UPDATE = 2;
 
   private static final int ON_ERROR_ABORT = 0;
+
   private static final int ON_ERROR_IGNORE = 1;
 
   private static final int COMMIT_NONE = 0;
+
   private static final int COMMIT_AFTER = 1;
+
   private static final int COMMIT_ALL = 2;
 
   private static final int BATCH_NONE = 0;
+
   private static final int BATCH_AFTER = 1;
+
   private static final int BATCH_ALL = 2;
 
   private static final int BULK_NONE = 0;
+
   private static final int BULK_AFTER = 1;
+
   private static final int BULK_ALL = 2;
 
   private static final int CONTENT_CSV = 0;
+
   private static final int CONTENT_XML = 1;
+
   private static final int CONTENT_JSON = 2;
+
   private static final int CONTENT_ARRAYS = 3;
 
   // Configuration data
   // ------------------
   private final Configuration configuration;
+
   private final Table<R> table;
+
   private int onDuplicate = ON_DUPLICATE_KEY_ERROR;
+
   private int onError = ON_ERROR_ABORT;
+
   private int commit = COMMIT_NONE;
+
   private int commitAfter = 1;
+
   private int batch = BATCH_NONE;
+
   private int batchAfter = 1;
+
   private int bulk = BULK_NONE;
+
   private int bulkAfter = 1;
+
   private int content = CONTENT_CSV;
+
   private Source input;
+
   private Iterator<? extends Object[]> arrays;
 
   // CSV configuration data
   // ----------------------
   private int ignoreRows = 1;
+
   private char quote = CSVParser.DEFAULT_QUOTE_CHARACTER;
+
   private char separator = CSVParser.DEFAULT_SEPARATOR;
+
   private String nullString = null;
+
   private Field<?>[] source;
+
   private Field<?>[] fields;
+
   private LoaderFieldMapper fieldMapper;
+
   private boolean fieldsCorresponding;
+
   private BitSet primaryKey;
 
   // Result data
   // -----------
   private LoaderRowListener onRowStart;
+
   private LoaderRowListener onRowEnd;
+
   private final LoaderContext rowCtx = new DefaultLoaderContext();
+
   private int ignored;
+
   private int processed;
+
   private int stored;
+
   private int executed;
+
   private int unexecuted;
+
   private int uncommitted;
+
   private final List<LoaderError> errors;
 
   LoaderImpl(Configuration configuration, Table<R> table) {
@@ -194,7 +234,6 @@ final class LoaderImpl<R extends Record>
   // -------------------------------------------------------------------------
   // Configuration setup
   // -------------------------------------------------------------------------
-
   @Override
   public final LoaderImpl<R> onDuplicateKeyError() {
     onDuplicate = ON_DUPLICATE_KEY_ERROR;
@@ -208,7 +247,6 @@ final class LoaderImpl<R extends Record>
           "ON DUPLICATE KEY IGNORE only works on tables with explicit primary keys. Table is not updatable : "
               + table);
     }
-
     onDuplicate = ON_DUPLICATE_KEY_IGNORE;
     return this;
   }
@@ -219,7 +257,6 @@ final class LoaderImpl<R extends Record>
       throw new IllegalStateException(
           "ON DUPLICATE KEY UPDATE only works on tables with explicit primary keys. Table is not updatable : "
               + table);
-
     onDuplicate = ON_DUPLICATE_KEY_UPDATE;
     return this;
   }
@@ -333,9 +370,7 @@ final class LoaderImpl<R extends Record>
             records,
             value -> {
               if (value == null) return null;
-
               if (source == null) source = value.fields();
-
               return value.intoArray();
             }));
   }
@@ -530,17 +565,14 @@ final class LoaderImpl<R extends Record>
   // -------------------------------------------------------------------------
   // CSV configuration
   // -------------------------------------------------------------------------
-
   @Override
   public final LoaderImpl<R> fields(Field<?>... f) {
     this.fields = f;
     this.primaryKey = new BitSet(f.length);
-
     if (table.getPrimaryKey() != null)
       for (int i = 0; i < fields.length; i++)
         if (fields[i] != null && table.getPrimaryKey().getFields().contains(fields[i]))
           primaryKey.set(i);
-
     return this;
   }
 
@@ -556,7 +588,6 @@ final class LoaderImpl<R extends Record>
   }
 
   @Override
-  @Deprecated
   public LoaderImpl<R> fieldsFromSource() {
     return fieldsCorresponding();
   }
@@ -569,7 +600,6 @@ final class LoaderImpl<R extends Record>
 
   private final void fields0(Object[] row) {
     Field<?>[] f = new Field[row.length];
-
     // [#5145] When loading arrays, or when CSV headers are ignored,
     // the source is still null at this stage.
     if (source == null)
@@ -577,14 +607,13 @@ final class LoaderImpl<R extends Record>
         throw new LoaderConfigurationException(
             "Using fieldsCorresponding() requires field names to be available in source.");
       else source = Tools.fields(row.length);
-
     if (fieldMapper != null)
       for (int i = 0; i < row.length; i++) {
         final int index = i;
-
         f[i] =
             fieldMapper.map(
                 new LoaderFieldContext() {
+
                   @Override
                   public int index() {
                     return index;
@@ -602,7 +631,6 @@ final class LoaderImpl<R extends Record>
         if (f[i] == null)
           log.info("No column in target table " + table + " found for input field " + source[i]);
       }
-
     fields(f);
   }
 
@@ -633,13 +661,10 @@ final class LoaderImpl<R extends Record>
   // -------------------------------------------------------------------------
   // XML configuration
   // -------------------------------------------------------------------------
-
   // [...] to be specified
-
   // -------------------------------------------------------------------------
   // Listening
   // -------------------------------------------------------------------------
-
   @Override
   public final LoaderImpl<R> onRow(LoaderRowListener l) {
     return onRowEnd(l);
@@ -660,17 +685,14 @@ final class LoaderImpl<R extends Record>
   // -------------------------------------------------------------------------
   // Execution
   // -------------------------------------------------------------------------
-
   @Override
   public final LoaderImpl<R> execute() throws IOException {
     checkFlags();
-
     if (content == CONTENT_CSV) executeCSV();
     else if (content == CONTENT_XML) throw new UnsupportedOperationException();
     else if (content == CONTENT_JSON) executeJSON();
     else if (content == CONTENT_ARRAYS) executeRows();
     else throw new IllegalStateException();
-
     return this;
   }
 
@@ -682,12 +704,10 @@ final class LoaderImpl<R extends Record>
 
   private final void executeJSON() {
     Reader reader = null;
-
     try {
       reader = input.reader();
       Result<Record> r = new JSONReader<>(configuration.dsl(), null, null).read(reader);
       source = r.fields();
-
       // The current json format is not designed for streaming. Thats why
       // all records are loaded at once.
       List<Object[]> allRecords = Arrays.asList(r.intoArrays());
@@ -699,7 +719,6 @@ final class LoaderImpl<R extends Record>
 
   private final void executeCSV() {
     CSVReader reader = null;
-
     try {
       if (ignoreRows == 1) {
         reader = new CSVReader(input.reader(), separator, quote, 0);
@@ -707,7 +726,6 @@ final class LoaderImpl<R extends Record>
       } else {
         reader = new CSVReader(input.reader(), separator, quote, ignoreRows);
       }
-
       executeSQL(reader);
     } finally {
       safeClose(reader);
@@ -726,7 +744,6 @@ final class LoaderImpl<R extends Record>
     @Override
     public void prepareStart(ExecuteContext ctx) {
       CachedPS ps = map.get(ctx.sql());
-
       if (ps != null) ctx.statement(ps);
     }
 
@@ -746,6 +763,7 @@ final class LoaderImpl<R extends Record>
   }
 
   private static class CachedPS extends DefaultPreparedStatement {
+
     CachedPS(PreparedStatement delegate) {
       super(delegate);
     }
@@ -760,7 +778,6 @@ final class LoaderImpl<R extends Record>
         .connection(
             connection -> {
               Configuration c = configuration.derive(new DefaultConnectionProvider(connection));
-
               if (FALSE.equals(c.settings().isCachePreparedStatementInLoader())) {
                 executeSQL(iterator, c.dsl());
               } else {
@@ -782,21 +799,17 @@ final class LoaderImpl<R extends Record>
     BatchBindStep bind = null;
     InsertQuery<R> insert = null;
     boolean newRecord = false;
-
     execution:
     {
       rows:
       while (iterator.hasNext() && ((row = iterator.next()) != null)) {
         try {
-
           // [#5858] Work with non String[] types from here on (e.g. after CSV import)
           if (row.getClass() != Object[].class)
             row = Arrays.copyOf(row, row.length, Object[].class);
-
           // [#5145][#8755] Lazy initialisation of fields from the first row
           // in case fields(LoaderFieldMapper) or fieldsCorresponding() was used
           if (fields == null) fields0(row);
-
           // [#1627] [#5858] Handle NULL values and base64 encodings
           // [#2741]         TODO: This logic will be externalised in new SPI
           // [#8829]         JSON binary data has already been decoded at this point
@@ -805,16 +818,13 @@ final class LoaderImpl<R extends Record>
             else if (i < fields.length && fields[i] != null)
               if (fields[i].getType() == byte[].class && row[i] instanceof String)
                 row[i] = DatatypeConverter.parseBase64Binary((String) row[i]);
-
           // [#10583] Pad row to the fields length
           if (row.length < fields.length) row = Arrays.copyOf(row, fields.length);
-
           rowCtx.row(row);
           if (onRowStart != null) {
             onRowStart.row(rowCtx);
             row = rowCtx.row();
           }
-
           // TODO: In batch mode, we can probably optimise this by not creating
           // new statements every time, just to convert bind values to their
           // appropriate target types. But beware of SQL dialects that tend to
@@ -822,39 +832,29 @@ final class LoaderImpl<R extends Record>
           processed++;
           unexecuted++;
           uncommitted++;
-
           if (insert == null) insert = ctx.insertQuery(table);
-
           if (newRecord) {
             newRecord = false;
             insert.newRecord();
           }
-
           for (int i = 0; i < row.length; i++)
             if (i < fields.length && fields[i] != null) addValue0(insert, fields[i], row[i]);
-
           // TODO: This is only supported by some dialects. Let other
           // dialects execute a SELECT and then either an INSERT or UPDATE
           if (onDuplicate == ON_DUPLICATE_KEY_UPDATE) {
             insert.onDuplicateKeyUpdate(true);
-
             for (int i = 0; i < row.length; i++)
               if (i < fields.length && fields[i] != null && !primaryKey.get(i))
                 addValueForUpdate0(insert, fields[i], row[i]);
-          }
-
-          // [#5200]  When the primary key is not supplied in the data,
-          //          we'll assume it uses an identity, and there will never be duplicates
+          } else // [#5200]  When the primary key is not supplied in the data,
+          // we'll assume it uses an identity, and there will never be duplicates
           // [#10358] TODO: The above should be moved inside InsertQueryImpl
           // [#7253]  Use native onDuplicateKeyIgnore() support
-          else if (onDuplicate == ON_DUPLICATE_KEY_IGNORE && primaryKey.cardinality() > 0) {
+          if (onDuplicate == ON_DUPLICATE_KEY_IGNORE && primaryKey.cardinality() > 0) {
             insert.onDuplicateKeyIgnore(true);
+          } else // Don't do anything. Let the execution fail
+          if (onDuplicate == ON_DUPLICATE_KEY_ERROR) {
           }
-
-          // Don't do anything. Let the execution fail
-          else if (onDuplicate == ON_DUPLICATE_KEY_ERROR) {
-          }
-
           try {
             if (bulk != BULK_NONE) {
               if (bulk == BULK_ALL || processed % bulkAfter != 0) {
@@ -862,38 +862,29 @@ final class LoaderImpl<R extends Record>
                 continue rows;
               }
             }
-
             if (batch != BATCH_NONE) {
               if (bind == null) bind = ctx.batch(insert);
-
               bind.bind(insert.getBindValues().toArray());
               insert = null;
-
               if (batch == BATCH_ALL || processed % (bulkAfter * batchAfter) != 0) continue rows;
             }
-
             int[] rowcounts = {0};
             int totalRowCounts = 0;
-
             if (bind != null) rowcounts = bind.execute();
             else if (insert != null) rowcounts = new int[] {insert.execute()};
-
             // [#10358] The MySQL dialect category doesn't return rowcounts
-            //          in INSERT .. ON DUPLICATE KEY UPDATE statements, but
-            //          1 = INSERT, 2 = UPDATE, instead
+            // in INSERT .. ON DUPLICATE KEY UPDATE statements, but
+            // 1 = INSERT, 2 = UPDATE, instead
             if (onDuplicate == ON_DUPLICATE_KEY_UPDATE
                 && NO_SUPPORT_ROWCOUNT_ON_DUPLICATE.contains(ctx.dialect()))
               totalRowCounts = unexecuted;
             else for (int rowCount : rowcounts) totalRowCounts += rowCount;
-
             stored += totalRowCounts;
             ignored += unexecuted - totalRowCounts;
             executed++;
-
             unexecuted = 0;
             bind = null;
             insert = null;
-
             if (commit == COMMIT_AFTER)
               if ((processed % (bulkAfter * batchAfter) == 0)
                   && ((processed / (bulkAfter * batchAfter)) % commitAfter == 0)) commit();
@@ -901,25 +892,20 @@ final class LoaderImpl<R extends Record>
             errors.add(new LoaderErrorImpl(e, row, processed - 1, insert));
             ignored += unexecuted;
             unexecuted = 0;
-
             if (onError == ON_ERROR_ABORT) break execution;
           }
-
         } finally {
           if (onRowEnd != null) onRowEnd.row(rowCtx);
         }
         // rows:
       }
-
       // Execute remaining batch
       if (unexecuted != 0) {
         try {
           if (bind != null) bind.execute();
           if (insert != null) insert.execute();
-
           stored += unexecuted;
           executed++;
-
           unexecuted = 0;
         } catch (DataAccessException e) {
           errors.add(new LoaderErrorImpl(e, row, processed - 1, insert));
@@ -927,15 +913,11 @@ final class LoaderImpl<R extends Record>
           unexecuted = 0;
         }
       }
-
       // Commit remaining elements in COMMIT_AFTER mode
       if (commit == COMMIT_AFTER && uncommitted != 0) commit();
-
       if (onError == ON_ERROR_ABORT) break execution;
-
       // execution:
     }
-
     // Rollback on errors in COMMIT_ALL mode
     try {
       if (commit == COMMIT_ALL) {
@@ -971,7 +953,6 @@ final class LoaderImpl<R extends Record>
   // -------------------------------------------------------------------------
   // Outcome
   // -------------------------------------------------------------------------
-
   @Override
   public final List<LoaderError> errors() {
     return errors;
@@ -1003,6 +984,7 @@ final class LoaderImpl<R extends Record>
   }
 
   private class DefaultLoaderContext implements LoaderContext {
+
     Object[] row;
 
     @Override

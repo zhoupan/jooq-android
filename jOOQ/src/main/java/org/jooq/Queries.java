@@ -55,7 +55,6 @@ public interface Queries extends AttachableQueryPart, Iterable<Query> {
   // ------------------------------------------------------------------------
   // Access API
   // ------------------------------------------------------------------------
-
   /** Return a new instance combining both sets of queries. */
   @NotNull
   Queries concat(Queries other);
@@ -74,7 +73,6 @@ public interface Queries extends AttachableQueryPart, Iterable<Query> {
    * @deprecated - 3.10 - [#6143] - Use {@link #queryStream()} instead.
    */
   @NotNull
-  @Deprecated(forRemoval = true, since = "3.10")
   Stream<Query> stream();
 
   /** The wrapped collection of queries. */
@@ -84,7 +82,6 @@ public interface Queries extends AttachableQueryPart, Iterable<Query> {
   // ------------------------------------------------------------------------
   // Execution API
   // ------------------------------------------------------------------------
-
   /**
    * Execute all queries one-by-one and return all results.
    *

@@ -46,9 +46,13 @@ import org.jooq.Name;
 
 /** @author Lukas Eder */
 final class PositionalWindowFunction<T> extends AbstractWindowFunction<T> {
+
   private final PositionalFunctionType functionType;
+
   private final Field<T> arg;
+
   private final Field<Integer> offset;
+
   private final Field<T> defaultValue;
 
   PositionalWindowFunction(PositionalFunctionType functionType, Field<T> arg) {
@@ -61,7 +65,6 @@ final class PositionalWindowFunction<T> extends AbstractWindowFunction<T> {
       Field<Integer> offset,
       Field<T> defaultValue) {
     super(functionType.name, arg.getDataType().null_());
-
     this.functionType = functionType;
     this.arg = arg;
     this.offset = offset;
@@ -87,9 +90,7 @@ final class PositionalWindowFunction<T> extends AbstractWindowFunction<T> {
         ctx.visit(functionType.name).sql('(');
         break;
     }
-
     ctx.visit(arg);
-
     if (offset != null) {
       switch (ctx.family()) {
         default:
@@ -97,7 +98,6 @@ final class PositionalWindowFunction<T> extends AbstractWindowFunction<T> {
           break;
       }
     }
-
     if (defaultValue != null) {
       switch (ctx.family()) {
         default:
@@ -105,9 +105,7 @@ final class PositionalWindowFunction<T> extends AbstractWindowFunction<T> {
           break;
       }
     }
-
     ctx.sql(')');
-
     acceptFromFirstOrLast(ctx);
     acceptNullTreatment(ctx);
     acceptOverClause(ctx);

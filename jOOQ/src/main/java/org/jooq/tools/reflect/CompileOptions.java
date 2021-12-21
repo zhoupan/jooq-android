@@ -46,6 +46,7 @@ import javax.annotation.processing.Processor;
 public final class CompileOptions {
 
   final List<? extends Processor> processors;
+
   final List<String> options;
 
   public CompileOptions() {

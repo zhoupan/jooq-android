@@ -56,7 +56,7 @@ class Yylex {
    * the DFA for the lexical state l at the beginning of a line l is of the form l = 2*k, k a non
    * negative integer
    */
-  private static final int ZZ_LEXSTATE[] = {0, 0, 1, 1};
+  private static final int[] ZZ_LEXSTATE = {0, 0, 1, 1};
 
   /** Translates characters to character classes */
   private static final String ZZ_CMAP_PACKED =
@@ -87,8 +87,10 @@ class Yylex {
   }
 
   private static int zzUnpackAction(String packed, int offset, int[] result) {
-    int i = 0; /* index in packed string  */
-    int j = offset; /* index in unpacked array */
+    int i = 0;
+    /* index in packed string  */
+    int j = offset;
+    /* index in unpacked array */
     int l = packed.length();
     while (i < l) {
       int count = packed.charAt(i++);
@@ -118,8 +120,10 @@ class Yylex {
   }
 
   private static int zzUnpackRowMap(String packed, int offset, int[] result) {
-    int i = 0; /* index in packed string  */
-    int j = offset; /* index in unpacked array */
+    int i = 0;
+    /* index in packed string  */
+    int j = offset;
+    /* index in unpacked array */
     int l = packed.length();
     while (i < l) {
       int high = packed.charAt(i++) << 16;
@@ -129,84 +133,46 @@ class Yylex {
   }
 
   /** The transition table of the DFA */
-  private static final int ZZ_TRANS[] = {
-    2, 2, 3, 4, 2, 2, 2, 5, 2, 6,
-    2, 2, 7, 8, 2, 9, 2, 2, 2, 2,
-    2, 10, 11, 12, 13, 14, 15, 16, 16, 16,
-    16, 16, 16, 16, 16, 17, 18, 16, 16, 16,
-    16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
-    16, 16, 16, 16, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, 4, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, 4, 19, 20, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, 20, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, 5, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    21, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, 22, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    23, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, 16, 16, 16, 16, 16, 16, 16,
-    16, -1, -1, 16, 16, 16, 16, 16, 16, 16,
-    16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
-    -1, -1, -1, -1, -1, -1, -1, -1, 24, 25,
-    26, 27, 28, 29, 30, 31, 32, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    33, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, 34, 35, -1, -1,
-    34, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    36, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, 37, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, 38, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, 39, -1, 39, -1, 39, -1, -1,
-    -1, -1, -1, 39, 39, -1, -1, -1, -1, 39,
-    39, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, 33, -1, 20, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, 20, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, 35,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, 38, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, 40,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, 41, -1, -1, -1, -1, -1,
-    -1, -1, -1, -1, -1, 42, -1, 42, -1, 42,
-    -1, -1, -1, -1, -1, 42, 42, -1, -1, -1,
-    -1, 42, 42, -1, -1, -1, -1, -1, -1, -1,
-    -1, -1, 43, -1, 43, -1, 43, -1, -1, -1,
-    -1, -1, 43, 43, -1, -1, -1, -1, 43, 43,
-    -1, -1, -1, -1, -1, -1, -1, -1, -1, 44,
-    -1, 44, -1, 44, -1, -1, -1, -1, -1, 44,
-    44, -1, -1, -1, -1, 44, 44, -1, -1, -1,
-    -1, -1, -1, -1, -1,
+  private static final int[] ZZ_TRANS = {
+    2, 2, 3, 4, 2, 2, 2, 5, 2, 6, 2, 2, 7, 8, 2, 9, 2, 2, 2, 2, 2, 10, 11, 12, 13, 14, 15, 16, 16,
+    16, 16, 16, 16, 16, 16, 17, 18, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
+    16, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, 4, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 4, 19, 20, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    20, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 5, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, 21, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, 22, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, 23, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 16, 16,
+    16, 16, 16, 16, 16, 16, -1, -1, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
+    16, -1, -1, -1, -1, -1, -1, -1, -1, 24, 25, 26, 27, 28, 29, 30, 31, 32, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, 33, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, 34, 35, -1, -1, 34, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, 36, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, 37, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, 38, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 39, -1, 39, -1,
+    39, -1, -1, -1, -1, -1, 39, 39, -1, -1, -1, -1, 39, 39, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, 33, -1, 20, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 20, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, 35, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    38, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, 40, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
+    -1, -1, -1, 41, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 42, -1, 42, -1, 42, -1, -1, -1, -1, -1,
+    42, 42, -1, -1, -1, -1, 42, 42, -1, -1, -1, -1, -1, -1, -1, -1, -1, 43, -1, 43, -1, 43, -1, -1,
+    -1, -1, -1, 43, 43, -1, -1, -1, -1, 43, 43, -1, -1, -1, -1, -1, -1, -1, -1, -1, 44, -1, 44, -1,
+    44, -1, -1, -1, -1, -1, 44, 44, -1, -1, -1, -1, 44, 44, -1, -1, -1, -1, -1, -1, -1, -1
   };
 
   /* error codes */
   private static final int ZZ_UNKNOWN_ERROR = 0;
+
   private static final int ZZ_NO_MATCH = 1;
+
   private static final int ZZ_PUSHBACK_2BIG = 2;
 
   /* error messages for the codes above */
-  private static final String ZZ_ERROR_MSG[] = {
+  private static final String[] ZZ_ERROR_MSG = {
     "Unkown internal scanner error",
     "Error: could not match input",
     "Error: pushback value was too large"
@@ -226,8 +192,10 @@ class Yylex {
   }
 
   private static int zzUnpackAttribute(String packed, int offset, int[] result) {
-    int i = 0; /* index in packed string  */
-    int j = offset; /* index in unpacked array */
+    int i = 0;
+    /* index in packed string  */
+    int j = offset;
+    /* index in unpacked array */
     int l = packed.length();
     while (i < l) {
       int count = packed.charAt(i++);
@@ -250,7 +218,7 @@ class Yylex {
   /**
    * this buffer contains the current text to be matched and is the source of the yytext() string
    */
-  private char zzBuffer[] = new char[ZZ_BUFFERSIZE];
+  private char[] zzBuffer = new char[ZZ_BUFFERSIZE];
 
   /** the textposition at the last accepting state */
   private int zzMarkedPos;
@@ -312,8 +280,10 @@ class Yylex {
    */
   private static char[] zzUnpackCMap(String packed) {
     char[] map = new char[0x10000];
-    int i = 0; /* index in packed string  */
-    int j = 0; /* index in unpacked array */
+    int i = 0;
+    /* index in packed string  */
+    int j = 0;
+    /* index in unpacked array */
     while (i < 90) {
       int count = packed.charAt(i++);
       char value = packed.charAt(i++);
@@ -330,29 +300,24 @@ class Yylex {
    * @exception java.io.IOException if any I/O-Error occurs
    */
   private boolean zzRefill() throws java.io.IOException {
-
     /* first: make room (if you can) */
     if (zzStartRead > 0) {
       System.arraycopy(zzBuffer, zzStartRead, zzBuffer, 0, zzEndRead - zzStartRead);
-
       /* translate stored positions */
       zzEndRead -= zzStartRead;
       zzCurrentPos -= zzStartRead;
       zzMarkedPos -= zzStartRead;
       zzStartRead = 0;
     }
-
     /* is the buffer big enough? */
     if (zzCurrentPos >= zzBuffer.length) {
       /* if not: blow it up */
-      char newBuffer[] = new char[zzCurrentPos * 2];
+      char[] newBuffer = new char[zzCurrentPos * 2];
       System.arraycopy(zzBuffer, 0, newBuffer, 0, zzBuffer.length);
       zzBuffer = newBuffer;
     }
-
     /* finally: fill the buffer with new input */
     int numRead = zzReader.read(zzBuffer, zzEndRead, zzBuffer.length - zzEndRead);
-
     if (numRead > 0) {
       zzEndRead += numRead;
       return false;
@@ -367,16 +332,16 @@ class Yylex {
         return false;
       }
     }
-
     // numRead < 0
     return true;
   }
 
   /** Closes the input stream. */
   public final void yyclose() throws java.io.IOException {
-    zzAtEOF = true; /* indicate end of file */
-    zzEndRead = zzStartRead; /* invalidate buffer    */
-
+    zzAtEOF = true;
+    /* indicate end of file */
+    zzEndRead = zzStartRead;
+    /* invalidate buffer    */
     if (zzReader != null) zzReader.close();
   }
 
@@ -453,7 +418,6 @@ class Yylex {
     } catch (ArrayIndexOutOfBoundsException e) {
       message = ZZ_ERROR_MSG[ZZ_UNKNOWN_ERROR];
     }
-
     throw new Error(message);
   }
 
@@ -467,7 +431,6 @@ class Yylex {
    */
   public void yypushback(int number) {
     if (number > yylength()) zzScanError(ZZ_PUSHBACK_2BIG);
-
     zzMarkedPos -= number;
   }
 
@@ -481,33 +444,24 @@ class Yylex {
   public Yytoken yylex() throws java.io.IOException, ParseException {
     int zzInput;
     int zzAction;
-
     // cached fields:
     int zzCurrentPosL;
     int zzMarkedPosL;
     int zzEndReadL = zzEndRead;
     char[] zzBufferL = zzBuffer;
     char[] zzCMapL = ZZ_CMAP;
-
     int[] zzTransL = ZZ_TRANS;
     int[] zzRowMapL = ZZ_ROWMAP;
     int[] zzAttrL = ZZ_ATTRIBUTE;
-
     while (true) {
       zzMarkedPosL = zzMarkedPos;
-
       yychar += zzMarkedPosL - zzStartRead;
-
       zzAction = -1;
-
       zzCurrentPosL = zzCurrentPos = zzStartRead = zzMarkedPosL;
-
       zzState = ZZ_LEXSTATE[zzLexicalState];
-
       zzForAction:
       {
         while (true) {
-
           if (zzCurrentPosL < zzEndReadL) zzInput = zzBufferL[zzCurrentPosL++];
           else if (zzAtEOF) {
             zzInput = YYEOF;
@@ -532,7 +486,6 @@ class Yylex {
           int zzNext = zzTransL[zzRowMapL[zzState] + zzCMapL[zzInput]];
           if (zzNext == -1) break zzForAction;
           zzState = zzNext;
-
           int zzAttributes = zzAttrL[zzState];
           if ((zzAttributes & 1) == 1) {
             zzAction = zzState;
@@ -541,10 +494,8 @@ class Yylex {
           }
         }
       }
-
       // store back cached position
       zzMarkedPos = zzMarkedPosL;
-
       switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
         case 11:
           {

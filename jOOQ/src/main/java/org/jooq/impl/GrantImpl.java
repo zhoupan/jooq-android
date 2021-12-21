@@ -59,9 +59,13 @@ final class GrantImpl extends AbstractDDLQuery
     implements GrantOnStep, GrantToStep, GrantWithGrantOptionStep, GrantFinalStep {
 
   private final Collection<? extends Privilege> privileges;
+
   private Table<?> on;
+
   private Role to;
+
   private Boolean toPublic;
+
   private Boolean withGrantOption;
 
   GrantImpl(Configuration configuration, Collection<? extends Privilege> privileges) {
@@ -76,7 +80,6 @@ final class GrantImpl extends AbstractDDLQuery
       Boolean toPublic,
       Boolean withGrantOption) {
     super(configuration);
-
     this.privileges = privileges;
     this.on = on;
     this.to = to;
@@ -107,7 +110,6 @@ final class GrantImpl extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: DSL API
   // -------------------------------------------------------------------------
-
   @Override
   public final GrantImpl on(String on) {
     return on(DSL.table(DSL.name(on)));
@@ -150,7 +152,6 @@ final class GrantImpl extends AbstractDDLQuery
   // -------------------------------------------------------------------------
   // XXX: QueryPart API
   // -------------------------------------------------------------------------
-
   private static final Clause[] CLAUSE = {Clause.GRANT};
 
   @Override
@@ -170,12 +171,9 @@ final class GrantImpl extends AbstractDDLQuery
         .start(Clause.GRANT_TO)
         .visit(K_TO)
         .sql(' ');
-
     if (to != null) ctx.visit(to);
     else if (Boolean.TRUE.equals(toPublic)) ctx.visit(K_PUBLIC);
-
     if (Boolean.TRUE.equals(withGrantOption)) ctx.sql(' ').visit(K_WITH_GRANT_OPTION);
-
     ctx.end(Clause.GRANT_TO);
   }
 

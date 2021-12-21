@@ -65,24 +65,19 @@ final class DefaultInterpreterConnectionProvider implements ConnectionProvider {
   public Connection acquire() throws DataAccessException {
     SQLDialect family =
         defaultIfNull(configuration.settings().getInterpreterDialect(), DEFAULT).family();
-
     try {
       switch (family) {
         case DERBY:
           return DriverManager.getConnection("jdbc:derby:memory:db;create=true");
-
         case H2:
         case DEFAULT:
           return DriverManager.getConnection(
               "jdbc:h2:mem:jooq-ddl-interpretation-" + UUID.randomUUID(), "sa", "");
-
         case HSQLDB:
           // The newer form jdbc:hsqldb:mem:. is not necessarily supported by the driver version yet
           return DriverManager.getConnection("jdbc:hsqldb:.");
-
         case SQLITE:
           return DriverManager.getConnection("jdbc:sqlite::memory:");
-
         default:
           throw new DataAccessException("Unsupported interpretation dialect family: " + family);
       }
@@ -91,7 +86,6 @@ final class DefaultInterpreterConnectionProvider implements ConnectionProvider {
         throw new DataAccessException(
             "The JDBC driver's JAR file was not found on the classpath, which is required for this feature",
             e);
-
       throw new DataAccessException("Error while exporting schema", e);
     }
   }

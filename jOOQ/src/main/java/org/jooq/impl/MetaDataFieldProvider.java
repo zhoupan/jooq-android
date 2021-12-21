@@ -68,6 +68,7 @@ import org.jooq.tools.StringUtils;
  * @author Lukas Eder
  */
 final class MetaDataFieldProvider implements Serializable {
+
   private static final JooqLogger log = JooqLogger.getLogger(MetaDataFieldProvider.class);
 
   private final FieldsImpl<Record> fields;
@@ -79,40 +80,31 @@ final class MetaDataFieldProvider implements Serializable {
   private static FieldsImpl<Record> init(Configuration configuration, ResultSetMetaData meta) {
     Field<?>[] fields;
     int columnCount = 0;
-
     try {
       columnCount = meta.getColumnCount();
       fields = new Field[columnCount];
-    }
-
-    // This happens in Oracle for empty cursors returned from stored
+    } // This happens in Oracle for empty cursors returned from stored
     // procedures / functions
     catch (SQLException e) {
       log.info("Cannot fetch column count for cursor : " + e.getMessage());
       fields = new Field[] {field("dummy")};
     }
-
     try {
       for (int i = 1; i <= columnCount; i++) {
         Name name;
-
         String columnLabel = meta.getColumnLabel(i);
         String columnName = meta.getColumnName(i);
-
         if (columnName.equals(columnLabel)) {
           try {
             String columnSchema = meta.getSchemaName(i);
             String columnTable = meta.getTableName(i);
-
             // [#6691] Prevent excessive String[] allocations if names are unqualified / partially
             // qualified
             if (!StringUtils.isEmpty(columnSchema))
               name = name(columnSchema, columnTable, columnName);
             else if (!StringUtils.isEmpty(columnTable)) name = name(columnTable, columnName);
             else name = name(columnName);
-          }
-
-          // [#4939] Some JDBC drivers such as Teradata and Cassandra don't implement
+          } // [#4939] Some JDBC drivers such as Teradata and Cassandra don't implement
           // ResultSetMetaData.getSchemaName and/or ResultSetMetaData.getTableName methods
           catch (SQLException e) {
             name = name(columnLabel);
@@ -120,12 +112,10 @@ final class MetaDataFieldProvider implements Serializable {
         } else {
           name = name(columnLabel);
         }
-
         int precision = meta.getPrecision(i);
         int scale = meta.getScale(i);
         DataType<?> dataType = SQLDataType.OTHER;
         String type = meta.getColumnTypeName(i);
-
         try {
           dataType =
               DefaultDataType.getDataType(
@@ -134,27 +124,21 @@ final class MetaDataFieldProvider implements Serializable {
                   precision,
                   scale,
                   !FALSE.equals(configuration.settings().isForceIntegerTypesOnZeroScaleDecimals()));
-
           if (dataType.hasPrecision()) dataType = dataType.precision(precision);
           if (dataType.hasScale()) dataType = dataType.scale(scale);
-
           // JDBC doesn't distinguish between precision and length
           if (dataType.hasLength()) dataType = dataType.length(precision);
-        }
-
-        // [#650, #667] All types should be known at this point, but in plain
+        } // [#650, #667] All types should be known at this point, but in plain
         // SQL environments, it is possible that user-defined types, or vendor-specific
         // types (e.g. such as PostgreSQL's json type) will cause this exception.
         catch (SQLDialectNotSupportedException e) {
           log.debug("Not supported by dialect", e.getMessage());
         }
-
         fields[i - 1] = field(name, dataType);
       }
     } catch (SQLException e) {
       throw Tools.translate(null, e);
     }
-
     return new FieldsImpl<>(fields);
   }
 
@@ -165,7 +149,6 @@ final class MetaDataFieldProvider implements Serializable {
   // -------------------------------------------------------------------------
   // The Object API
   // -------------------------------------------------------------------------
-
   @Override
   public String toString() {
     return fields.toString();

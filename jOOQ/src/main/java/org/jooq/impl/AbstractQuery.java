@@ -80,10 +80,15 @@ abstract class AbstractQuery<R extends Record> extends AbstractAttachableQueryPa
   private static final JooqLogger log = JooqLogger.getLogger(AbstractQuery.class);
 
   private int timeout;
+
   private QueryPoolable poolable = QueryPoolable.DEFAULT;
+
   private boolean keepStatement;
+
   transient PreparedStatement statement;
+
   transient int statementExecutionCount;
+
   transient Rendered rendered;
 
   AbstractQuery(Configuration configuration) {
@@ -93,13 +98,11 @@ abstract class AbstractQuery<R extends Record> extends AbstractAttachableQueryPa
   // -------------------------------------------------------------------------
   // The QueryPart API
   // -------------------------------------------------------------------------
-
   final void toSQLSemiColon(RenderContext ctx) {}
 
   // -------------------------------------------------------------------------
   // The Query API
   // -------------------------------------------------------------------------
-
   /**
    * Subclasses may override this for covariant result types
    *
@@ -109,19 +112,15 @@ abstract class AbstractQuery<R extends Record> extends AbstractAttachableQueryPa
   public Query bind(String param, Object value) {
     Integer index = Ints.tryParse(param);
     if (index != null) return bind(index, value);
-
     ParamCollector collector = new ParamCollector(configuration(), true);
     collector.visit(this);
     List<Param<?>> params = collector.result.get(param);
-
     if (params == null || params.size() == 0)
       throw new IllegalArgumentException("No such parameter : " + param);
-
     for (Param<?> p : params) {
       ((AbstractParamX<?>) p).setConverted0(value);
       closeIfNecessary(p);
     }
-
     return this;
   }
 
@@ -133,10 +132,8 @@ abstract class AbstractQuery<R extends Record> extends AbstractAttachableQueryPa
   @Override
   public Query bind(int index, Object value) {
     Param<?>[] params = getParams().values().toArray(EMPTY_PARAM);
-
     if (index < 1 || index > params.length)
       throw new IllegalArgumentException("Index out of range for Query parameters : " + index);
-
     AbstractParamX<?> param = (AbstractParamX<?>) params[index - 1];
     param.setConverted0(value);
     closeIfNecessary(param);
@@ -152,19 +149,15 @@ abstract class AbstractQuery<R extends Record> extends AbstractAttachableQueryPa
    * @param param The param that was changed
    */
   private final void closeIfNecessary(Param<?> param) {
-
     // This is relevant when there is an open statement, only
     if (keepStatement() && statement != null) {
-
       // When an inlined param is being changed, the previous statement
       // has to be closed, regardless if variable binding is performed
       if (param.isInline()) {
         close();
-      }
-
-      // If all params are inlined, the previous statement always has to
+      } else // If all params are inlined, the previous statement always has to
       // be closed
-      else if (getParamType(configuration().settings()) == INLINED) {
+      if (getParamType(configuration().settings()) == INLINED) {
         close();
       }
     }
@@ -233,43 +226,33 @@ abstract class AbstractQuery<R extends Record> extends AbstractAttachableQueryPa
   @Override
   public final int execute() {
     if (isExecutable()) {
-
       // Get the attached configuration of this query
       Configuration c = configuration();
-
       // [#1191] The following triggers a start event on all listeners.
-      //         This may be used to provide jOOQ with a JDBC connection,
-      //         in case this Query / Configuration was previously
-      //         deserialised
+      // This may be used to provide jOOQ with a JDBC connection,
+      // in case this Query / Configuration was previously
+      // deserialised
       DefaultExecuteContext ctx = new DefaultExecuteContext(c, this);
       ExecuteListener listener = ExecuteListeners.get(ctx);
-
       int result = 0;
       try {
-
         // [#8968] Keep start() event inside of lifecycle management
         listener.start(ctx);
-
         // [#385] If a statement was previously kept open
         if (keepStatement() && statement != null) {
           ctx.sql(rendered.sql);
           ctx.statement(statement);
-
           // [#3191] Pre-initialise the ExecuteContext with a previous connection, if available.
           ctx.connection(c.connectionProvider(), statement.getConnection());
-
           // [#6903] Increment and set the new statement execution count on re-execution
           ctx.withStatementExecutionCount(++statementExecutionCount);
-        }
-
-        // [#385] First time statement preparing
-        else {
+        } else // [#385] First time statement preparing
+        {
           listener.renderStart(ctx);
           rendered = getSQL0(ctx);
           ctx.sql(rendered.sql);
           listener.renderEnd(ctx);
           rendered.sql = ctx.sql();
-
           // [#3234] Defer initialising of a connection until the prepare step
           // This optimises unnecessary ConnectionProvider.acquire() calls when
           // ControlFlowSignals are thrown
@@ -279,44 +262,31 @@ abstract class AbstractQuery<R extends Record> extends AbstractAttachableQueryPa
             else
               throw new DetachedException(
                   "Attempt to execute a blocking method (e.g. Query.execute() or ResultQuery.fetch()) when only an R2BDC ConnectionFactory was configured");
-
           listener.prepareStart(ctx);
           prepare(ctx);
           listener.prepareEnd(ctx);
-
           statement = ctx.statement();
         }
-
         // [#1856] [#4753] Set the query timeout onto the Statement
         int t = SettingsTools.getQueryTimeout(timeout, ctx.settings());
         if (t != 0) ctx.statement().setQueryTimeout(t);
-
         QueryPoolable p = SettingsTools.getQueryPoolable(poolable, ctx.settings());
         if (p == QueryPoolable.TRUE) ctx.statement().setPoolable(true);
         else if (p == QueryPoolable.FALSE) ctx.statement().setPoolable(false);
-
-        if (
-
-        // [#1145] Bind variables only for true prepared statements
+        if ( // [#1145] Bind variables only for true prepared statements
         // [#2414] Even if parameters are inlined here, child
-        //         QueryParts may override this behaviour!
+        // QueryParts may override this behaviour!
         executePreparedStatements(c.settings())
-            &&
-
-            // [#1520] Renderers may enforce static statements, too
+            && // [#1520] Renderers may enforce static statements, too
             !TRUE.equals(ctx.data(DATA_FORCE_STATIC_STATEMENT))) {
-
           listener.bindStart(ctx);
           if (rendered.bindValues != null)
             using(c).bindContext(ctx.statement()).visit(rendered.bindValues);
           listener.bindEnd(ctx);
         }
-
         result = execute(ctx, listener);
         return result;
-      }
-
-      // [#3427] ControlFlowSignals must not be passed on to ExecuteListners
+      } // [#3427] ControlFlowSignals must not be passed on to ExecuteListners
       catch (ControlFlowSignal e) {
         throw e;
       } catch (RuntimeException e) {
@@ -328,12 +298,10 @@ abstract class AbstractQuery<R extends Record> extends AbstractAttachableQueryPa
         listener.exception(ctx);
         throw ctx.exception();
       } finally {
-
         // [#2385] Successful fetchLazy() needs to keep open resources
         if (!keepResultSet() || ctx.exception() != null) {
           Tools.safeClose(listener, ctx, keepStatement());
         }
-
         if (!keepStatement()) {
           statement = null;
           rendered = null;
@@ -341,7 +309,6 @@ abstract class AbstractQuery<R extends Record> extends AbstractAttachableQueryPa
       }
     } else {
       if (log.isDebugEnabled()) log.debug("Query is not executable", this);
-
       return 0;
     }
   }
@@ -377,25 +344,19 @@ abstract class AbstractQuery<R extends Record> extends AbstractAttachableQueryPa
   protected int execute(ExecuteContext ctx, ExecuteListener listener) throws SQLException {
     int result = 0;
     PreparedStatement stmt = ctx.statement();
-
     try {
       listener.executeStart(ctx);
-
       // [#1829] Statement.execute() is preferred over Statement.executeUpdate(), as
       // we might be executing plain SQL and returning results.
       if (!stmt.execute()) {
         result = stmt.getUpdateCount();
         ctx.rows(result);
       }
-
       listener.executeEnd(ctx);
       return result;
-    }
-
-    // [#3011] [#3054] [#6390] [#6413] Consume additional exceptions if there are any
+    } // [#3011] [#3054] [#6390] [#6413] Consume additional exceptions if there are any
     catch (SQLException e) {
       consumeExceptions(ctx.configuration(), stmt, e);
-
       if (ctx.settings().getThrowExceptions() != THROW_NONE) throw e;
       else return stmt.getUpdateCount();
     }
@@ -411,7 +372,6 @@ abstract class AbstractQuery<R extends Record> extends AbstractAttachableQueryPa
     Rendered result;
     DefaultRenderContext render;
     Configuration c = configurationOrThrow();
-
     // [#3542] [#4977] Some dialects do not support bind values in DDL statements
     // [#6474] [#6929] Can this be communicated in a leaner way?
     if (ctx.type() == DDL) {
@@ -440,7 +400,6 @@ abstract class AbstractQuery<R extends Record> extends AbstractAttachableQueryPa
           new Rendered(
               render.paramType(INLINED).visit(this).render(), null, render.skipUpdateCounts());
     }
-
     return result;
   }
 }

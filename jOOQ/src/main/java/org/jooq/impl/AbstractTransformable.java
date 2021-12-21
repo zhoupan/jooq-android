@@ -49,7 +49,6 @@ abstract class AbstractTransformable<T> extends AbstractField<T> implements Tran
 
   @Override
   public final void accept(Context<?> ctx) {
-
     accept0(ctx);
   }
 

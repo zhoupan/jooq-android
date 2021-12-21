@@ -87,7 +87,6 @@ public class DefaultCallableStatement extends DefaultPreparedStatement
   // ------------------------------------------------------------------------
   // XXX Other methods
   // ------------------------------------------------------------------------
-
   @Override
   public void registerOutParameter(int parameterIndex, int sqlType) throws SQLException {
     getDelegateCallableStatement().registerOutParameter(parameterIndex, sqlType);
@@ -144,7 +143,6 @@ public class DefaultCallableStatement extends DefaultPreparedStatement
   }
 
   @Override
-  @Deprecated
   public BigDecimal getBigDecimal(int parameterIndex, int scale) throws SQLException {
     return getDelegateCallableStatement().getBigDecimal(parameterIndex, scale);
   }
@@ -656,7 +654,6 @@ public class DefaultCallableStatement extends DefaultPreparedStatement
   // ------------------------------------------------------------------------
   // JDBC 4.1
   // ------------------------------------------------------------------------
-
   @Override
   public <T> T getObject(int parameterIndex, Class<T> type) throws SQLException {
     return getDelegate().getObject(parameterIndex, type);
@@ -670,7 +667,6 @@ public class DefaultCallableStatement extends DefaultPreparedStatement
   // ------------------------------------------------------------------------
   // JDBC 4.2
   // ------------------------------------------------------------------------
-
   @Override
   public void setObject(String parameterName, Object x, SQLType targetSqlType, int scaleOrLength)
       throws SQLException {

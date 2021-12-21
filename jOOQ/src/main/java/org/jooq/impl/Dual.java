@@ -59,7 +59,9 @@ final class Dual extends AbstractTable<Record> {
       select(new Field[] {inline("X").as("DUMMY")}).asTable("DUAL");
 
   private static final Name DUAL_FIREBIRD = DSL.unquotedName("RDB$DATABASE");
+
   private static final Name DUAL_CUBRID = DSL.unquotedName("db_root");
+
   private static final Name DUAL_DERBY = DSL.unquotedName("SYSIBM", "SYSDUMMY1");
 
   private final boolean force;
@@ -70,7 +72,6 @@ final class Dual extends AbstractTable<Record> {
 
   Dual(boolean force) {
     super(TableOptions.expression(), N_DUAL, (Schema) null);
-
     this.force = force;
   }
 
@@ -106,11 +107,9 @@ final class Dual extends AbstractTable<Record> {
         case POSTGRES:
         case SQLITE:
           break;
-
         case FIREBIRD:
           ctx.visit(DUAL_FIREBIRD);
           break;
-
         case HSQLDB:
           ctx.sql('(')
               .visit(K_VALUES)
@@ -122,18 +121,14 @@ final class Dual extends AbstractTable<Record> {
               .visit(N_DUAL)
               .sql(')');
           break;
-
         case CUBRID:
           ctx.visit(DUAL_CUBRID);
           break;
-
           // These dialects don't have a DUAL table. But emulation is needed
           // for queries like SELECT 1 WHERE 1 = 1
-
         case DERBY:
           ctx.visit(DUAL_DERBY);
           break;
-
           // [#11790] Default to rendering a keyword, not a name
         default:
           ctx.visit(K_DUAL);

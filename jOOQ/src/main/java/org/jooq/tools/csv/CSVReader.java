@@ -53,9 +53,13 @@ import java.util.List;
 public class CSVReader implements Closeable, Iterator<String[]> {
 
   private BufferedReader br;
+
   private boolean hasNext = true;
+
   private CSVParser parser;
+
   private int skipLines;
+
   private boolean linesSkiped;
 
   /** The default line to start reading. */
@@ -217,7 +221,6 @@ public class CSVReader implements Closeable, Iterator<String[]> {
    * @throws IOException if bad things happen during the read
    */
   public List<String[]> readAll() throws IOException {
-
     List<String[]> allElements = new ArrayList<>();
     while (hasNext) {
       String[] nextLineAsTokens = readNext();
@@ -237,7 +240,8 @@ public class CSVReader implements Closeable, Iterator<String[]> {
     do {
       String nextLine = getNextLine();
       if (!hasNext) {
-        return result; // should throw if still pending?
+        // should throw if still pending?
+        return result;
       }
       String[] r = parser.parseLineMulti(nextLine);
       if (r.length > 0) {
@@ -287,7 +291,6 @@ public class CSVReader implements Closeable, Iterator<String[]> {
   // ------------------------------------------------------------------------
   // XXX: Iterator implementation added by Johannes Buehler
   // ------------------------------------------------------------------------
-
   @Override
   public boolean hasNext() {
     return hasNext;
