@@ -169,7 +169,6 @@ public class PgConstraint extends TableImpl<Record> {
    *     how this type should be handled. Deprecation can be turned off using {@literal
    *     <deprecationOnUnknownTypes/>} in your code generator configuration.
    */
-  @Deprecated
   public final TableField<Record, Object> CONBIN =
       createField(
           DSL.name("conbin"),
@@ -217,6 +216,7 @@ public class PgConstraint extends TableImpl<Record> {
   }
 
   private transient PgNamespace _pgNamespace;
+
   private transient PgClass _pgClass;
 
   public PgNamespace pgNamespace() {
@@ -224,7 +224,6 @@ public class PgConstraint extends TableImpl<Record> {
       _pgNamespace =
           new PgNamespace(
               this, Keys.PG_CONSTRAINT__SYNTHETIC_FK_PG_CONSTRAINT__SYNTHETIC_PK_PG_NAMESPACE);
-
     return _pgNamespace;
   }
 
@@ -232,7 +231,6 @@ public class PgConstraint extends TableImpl<Record> {
     if (_pgClass == null)
       _pgClass =
           new PgClass(this, Keys.PG_CONSTRAINT__SYNTHETIC_FK_PG_CONSTRAINT__SYNTHETIC_PK_PG_CLASS);
-
     return _pgClass;
   }
 

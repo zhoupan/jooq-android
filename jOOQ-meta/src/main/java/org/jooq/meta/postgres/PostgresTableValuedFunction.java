@@ -80,6 +80,7 @@ import org.jooq.meta.postgres.pg_catalog.tables.PgType;
 public class PostgresTableValuedFunction extends AbstractTableDefinition {
 
   private final PostgresRoutineDefinition routine;
+
   private final String specificName;
 
   public PostgresTableValuedFunction(
@@ -90,7 +91,6 @@ public class PostgresTableValuedFunction extends AbstractTableDefinition {
   public PostgresTableValuedFunction(
       SchemaDefinition schema, String name, String specificName, String comment, String source) {
     super(schema, name, comment, TableType.FUNCTION, source);
-
     this.routine =
         new PostgresRoutineDefinition(
             schema.getDatabase(), schema.getInputName(), name, specificName);
@@ -100,25 +100,21 @@ public class PostgresTableValuedFunction extends AbstractTableDefinition {
   @Override
   public List<ColumnDefinition> getElements0() throws SQLException {
     List<ColumnDefinition> result = new ArrayList<>();
-
     Routines r = ROUTINES;
     Parameters p = PARAMETERS;
     PgNamespace pg_n = PG_NAMESPACE;
     PgProc pg_p = PG_PROC;
     Columns c = COLUMNS;
     PgType pg_t = PG_TYPE;
-
     Field<Integer> pPrecision = pNumericPrecision(p);
     Field<Integer> cPrecision = nvl(c.DATETIME_PRECISION, c.NUMERIC_PRECISION);
     Field<Integer> rPrecision = nvl(r.DATETIME_PRECISION, r.NUMERIC_PRECISION);
-
     for (Record record :
         create()
-
-            // [#3375] The first subselect is expected to return only those
+            . // [#3375] The first subselect is expected to return only those
             // table-valued functions that return a TABLE type, as that TABLE
             // type is reported implicitly via PARAMETERS.PARAMETER_MODE = 'OUT'
-            .select(
+            select(
                 p.PARAMETER_NAME,
                 rowNumber()
                     .over(partitionBy(p.SPECIFIC_NAME).orderBy(p.ORDINAL_POSITION))
@@ -147,9 +143,7 @@ public class PostgresTableValuedFunction extends AbstractTableDefinition {
             .where(r.SPECIFIC_NAME.eq(specificName))
             .and(p.PARAMETER_MODE.ne("IN"))
             .and(pg_p.PRORETSET)
-            .unionAll(
-
-                // [#3376] The second subselect is expected to return only those
+            .unionAll( // [#3376] The second subselect is expected to return only those
                 // table-valued functions that return a SETOF [ table type ], as that
                 // table reference is reported via a TYPE_UDT that matches a table
                 // from INFORMATION_SCHEMA.TABLES
@@ -173,11 +167,10 @@ public class PostgresTableValuedFunction extends AbstractTableDefinition {
                                         .where(oid(pg_t).eq(pg_p.PRORETTYPE))))
                             .as(c.UDT_NAME))
                     .from(r)
-
-                    // [#4269] SETOF [ scalar type ] routines don't have any corresponding
+                    . // [#4269] SETOF [ scalar type ] routines don't have any corresponding
                     // entries in INFORMATION_SCHEMA.COLUMNS. Their single result table
                     // column type is contained in ROUTINES
-                    .leftOuterJoin(c)
+                    leftOuterJoin(c)
                     .on(
                         row(r.TYPE_UDT_CATALOG, r.TYPE_UDT_SCHEMA, r.TYPE_UDT_NAME)
                             .eq(c.TABLE_CATALOG, c.TABLE_SCHEMA, c.TABLE_NAME))
@@ -187,26 +180,21 @@ public class PostgresTableValuedFunction extends AbstractTableDefinition {
                     .on(pg_p.PRONAMESPACE.eq(oid(pg_n)))
                     .and(pg_p.PRONAME.concat("_").concat(oid(pg_p)).eq(r.SPECIFIC_NAME))
                     .where(r.SPECIFIC_NAME.eq(specificName))
-
-                    // [#4269] Exclude TABLE [ some type ] routines from the first UNION ALL
+                    . // [#4269] Exclude TABLE [ some type ] routines from the first UNION ALL
                     // subselect
                     // Can this be done more elegantly?
-                    .and(
+                    and(
                         row(r.SPECIFIC_CATALOG, r.SPECIFIC_SCHEMA, r.SPECIFIC_NAME)
                             .notIn(
                                 select(p.SPECIFIC_CATALOG, p.SPECIFIC_SCHEMA, p.SPECIFIC_NAME)
                                     .from(p)
                                     .where(p.PARAMETER_MODE.eq("OUT"))))
                     .and(pg_p.PRORETSET))
-
-            // Either subselect can be ordered by their ORDINAL_POSITION
-            .orderBy(2)) {
-
+            . // Either subselect can be ordered by their ORDINAL_POSITION
+            orderBy(2)) {
       SchemaDefinition typeSchema = null;
-
       String schemaName = record.get(p.UDT_SCHEMA);
       if (schemaName != null) typeSchema = getDatabase().getSchema(schemaName);
-
       DataTypeDefinition type =
           new DefaultDataTypeDefinition(
               getDatabase(),
@@ -218,7 +206,6 @@ public class PostgresTableValuedFunction extends AbstractTableDefinition {
               record.get(c.IS_NULLABLE, boolean.class),
               record.get(c.COLUMN_DEFAULT),
               name(record.get(p.UDT_SCHEMA), record.get(p.UDT_NAME)));
-
       result.add(
           new DefaultColumnDefinition(
               getDatabase().getTable(getSchema(), getName()),
@@ -228,7 +215,6 @@ public class PostgresTableValuedFunction extends AbstractTableDefinition {
               defaultString(record.get(c.COLUMN_DEFAULT)).startsWith("nextval"),
               null));
     }
-
     return result;
   }
 

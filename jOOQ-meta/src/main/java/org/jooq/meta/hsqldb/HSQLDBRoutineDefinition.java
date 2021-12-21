@@ -64,7 +64,8 @@ import org.jooq.tools.StringUtils;
  */
 public class HSQLDBRoutineDefinition extends AbstractRoutineDefinition {
 
-  private final String specificName; // internal name for the function used by HSQLDB
+  // internal name for the function used by HSQLDB
+  private final String specificName;
 
   public HSQLDBRoutineDefinition(
       SchemaDefinition schema,
@@ -85,7 +86,6 @@ public class HSQLDBRoutineDefinition extends AbstractRoutineDefinition {
       Number scale,
       boolean aggregate) {
     super(schema, null, name, null, null, aggregate);
-
     if (!StringUtils.isBlank(dataType)) {
       DataTypeDefinition type =
           new DefaultDataTypeDefinition(
@@ -97,10 +97,8 @@ public class HSQLDBRoutineDefinition extends AbstractRoutineDefinition {
               scale,
               null,
               (String) null);
-
       this.returnValue = new DefaultParameterDefinition(this, "RETURN_VALUE", -1, type);
     }
-
     this.specificName = specificName;
   }
 
@@ -126,16 +124,13 @@ public class HSQLDBRoutineDefinition extends AbstractRoutineDefinition {
             .and(PARAMETERS.DTD_IDENTIFIER.equal(ELEMENT_TYPES.COLLECTION_TYPE_IDENTIFIER))
             .where(PARAMETERS.SPECIFIC_SCHEMA.equal(getSchema().getName()))
             .and(PARAMETERS.SPECIFIC_NAME.equal(this.specificName))
-
-            // [#3015] HSQLDB user-defined AGGREGATE functions have four parameters, but only one
+            . // [#3015] HSQLDB user-defined AGGREGATE functions have four parameters, but only one
             // is relevant to client code
-            .and(condition(val(!isAggregate())).or(PARAMETERS.ORDINAL_POSITION.eq(1L)))
+            and(condition(val(!isAggregate())).or(PARAMETERS.ORDINAL_POSITION.eq(1L)))
             .orderBy(PARAMETERS.ORDINAL_POSITION.asc())
             .fetch();
-
     for (Record record : result) {
       String inOut = record.get(PARAMETERS.PARAMETER_MODE);
-
       DataTypeDefinition type =
           new DefaultDataTypeDefinition(
               getDatabase(),
@@ -146,14 +141,12 @@ public class HSQLDBRoutineDefinition extends AbstractRoutineDefinition {
               record.get(PARAMETERS.NUMERIC_SCALE),
               null,
               (String) null);
-
       ParameterDefinition parameter =
           new DefaultParameterDefinition(
               this,
               record.get(PARAMETERS.PARAMETER_NAME).replaceAll("@", ""),
               record.get(PARAMETERS.ORDINAL_POSITION, int.class),
               type);
-
       addParameter(InOutDefinition.getFromString(inOut), parameter);
     }
   }

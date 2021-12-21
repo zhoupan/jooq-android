@@ -52,8 +52,11 @@ public class DefaultColumnDefinition extends AbstractTypedElementDefinition<Tabl
     implements ColumnDefinition {
 
   private static final JooqLogger log = JooqLogger.getLogger(DefaultColumnDefinition.class);
+
   private final int position;
+
   private final boolean isIdentity;
+
   private transient List<EmbeddableDefinition> replacedByEmbeddables;
 
   public DefaultColumnDefinition(
@@ -63,12 +66,9 @@ public class DefaultColumnDefinition extends AbstractTypedElementDefinition<Tabl
       DataTypeDefinition type,
       boolean isIdentity,
       String comment) {
-
     super(table, name, position, type, comment);
-
     this.position = position;
     this.isIdentity = isIdentity || isSyntheticIdentity(this);
-
     // [#6222] Copy the column's identity flag to the data type definition
     if (type instanceof DefaultDataTypeDefinition)
       ((DefaultDataTypeDefinition) type).identity(this.isIdentity);
@@ -77,7 +77,6 @@ public class DefaultColumnDefinition extends AbstractTypedElementDefinition<Tabl
   @SuppressWarnings("unused")
   private static boolean isSyntheticIdentity(DefaultColumnDefinition column) {
     AbstractDatabase db = (AbstractDatabase) column.getDatabase();
-
     for (SyntheticIdentityType id : db.getConfiguredSyntheticIdentities()) {
       for (TableDefinition t : db.filter(singletonList(column.getContainer()), id.getTables())) {
         for (ColumnDefinition c : db.filter(singletonList(column), id.getFields())) {
@@ -87,7 +86,6 @@ public class DefaultColumnDefinition extends AbstractTypedElementDefinition<Tabl
         }
       }
     }
-
     return false;
   }
 

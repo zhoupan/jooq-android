@@ -46,13 +46,10 @@ public enum InOutDefinition {
 
   /** An in parameter. Default if the in/out keyword is absent. */
   IN,
-
   /** An out parameter */
   OUT,
-
   /** An in/out parameter */
   INOUT,
-
   /** A return value for a function */
   RETURN;
 

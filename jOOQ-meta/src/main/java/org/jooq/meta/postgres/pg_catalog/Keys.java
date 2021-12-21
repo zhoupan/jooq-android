@@ -58,19 +58,20 @@ public class Keys {
   // -------------------------------------------------------------------------
   // UNIQUE and PRIMARY KEY definitions
   // -------------------------------------------------------------------------
-
   public static final UniqueKey<Record> SYNTHETIC_PK_PG_CLASS =
       Internal.createUniqueKey(
           PgClass.PG_CLASS,
           DSL.name("SYNTHETIC_PK_pg_class"),
           new TableField[] {PgClass.PG_CLASS.OID},
           true);
+
   public static final UniqueKey<Record> SYNTHETIC_PK_PG_NAMESPACE =
       Internal.createUniqueKey(
           PgNamespace.PG_NAMESPACE,
           DSL.name("SYNTHETIC_PK_pg_namespace"),
           new TableField[] {PgNamespace.PG_NAMESPACE.OID},
           true);
+
   public static final UniqueKey<Record> SYNTHETIC_PK_PG_TYPE =
       Internal.createUniqueKey(
           PgType.PG_TYPE,
@@ -81,7 +82,6 @@ public class Keys {
   // -------------------------------------------------------------------------
   // FOREIGN KEY definitions
   // -------------------------------------------------------------------------
-
   public static final ForeignKey<Record, Record>
       PG_CLASS__SYNTHETIC_FK_PG_CLASS__SYNTHETIC_PK_PG_NAMESPACE =
           Internal.createForeignKey(
@@ -91,6 +91,7 @@ public class Keys {
               Keys.SYNTHETIC_PK_PG_NAMESPACE,
               new TableField[] {PgNamespace.PG_NAMESPACE.OID},
               true);
+
   public static final ForeignKey<Record, Record>
       PG_CONSTRAINT__SYNTHETIC_FK_PG_CONSTRAINT__SYNTHETIC_PK_PG_CLASS =
           Internal.createForeignKey(
@@ -100,6 +101,7 @@ public class Keys {
               Keys.SYNTHETIC_PK_PG_CLASS,
               new TableField[] {PgClass.PG_CLASS.OID},
               true);
+
   public static final ForeignKey<Record, Record>
       PG_CONSTRAINT__SYNTHETIC_FK_PG_CONSTRAINT__SYNTHETIC_PK_PG_NAMESPACE =
           Internal.createForeignKey(
@@ -109,6 +111,7 @@ public class Keys {
               Keys.SYNTHETIC_PK_PG_NAMESPACE,
               new TableField[] {PgNamespace.PG_NAMESPACE.OID},
               true);
+
   public static final ForeignKey<Record, Record>
       PG_ENUM__SYNTHETIC_FK_PG_ENUM__SYNTHETIC_PK_PG_TYPE =
           Internal.createForeignKey(
@@ -118,6 +121,7 @@ public class Keys {
               Keys.SYNTHETIC_PK_PG_TYPE,
               new TableField[] {PgType.PG_TYPE.OID},
               true);
+
   public static final ForeignKey<Record, Record> PG_INDEX__INDEX_CLASS =
       Internal.createForeignKey(
           PgIndex.PG_INDEX,
@@ -126,6 +130,7 @@ public class Keys {
           Keys.SYNTHETIC_PK_PG_CLASS,
           new TableField[] {PgClass.PG_CLASS.OID},
           true);
+
   public static final ForeignKey<Record, Record> PG_INDEX__TABLE_CLASS =
       Internal.createForeignKey(
           PgIndex.PG_INDEX,
@@ -134,6 +139,7 @@ public class Keys {
           Keys.SYNTHETIC_PK_PG_CLASS,
           new TableField[] {PgClass.PG_CLASS.OID},
           true);
+
   public static final ForeignKey<Record, Record>
       PG_SEQUENCE__SYNTHETIC_FK_PG_SEQUENCE__SYNTHETIC_PK_PG_CLASS =
           Internal.createForeignKey(
@@ -143,6 +149,7 @@ public class Keys {
               Keys.SYNTHETIC_PK_PG_CLASS,
               new TableField[] {PgClass.PG_CLASS.OID},
               true);
+
   public static final ForeignKey<Record, Record>
       PG_SEQUENCE__SYNTHETIC_FK_PG_SEQUENCE__SYNTHETIC_PK_PG_TYPE =
           Internal.createForeignKey(
@@ -152,6 +159,7 @@ public class Keys {
               Keys.SYNTHETIC_PK_PG_TYPE,
               new TableField[] {PgType.PG_TYPE.OID},
               true);
+
   public static final ForeignKey<Record, Record>
       PG_TYPE__SYNTHETIC_FK_PG_TYPE__SYNTHETIC_PK_PG_NAMESPACE =
           Internal.createForeignKey(

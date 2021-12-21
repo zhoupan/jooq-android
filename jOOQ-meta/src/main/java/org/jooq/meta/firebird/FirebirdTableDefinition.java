@@ -77,10 +77,8 @@ public class FirebirdTableDefinition extends AbstractTableDefinition {
   @Override
   protected List<ColumnDefinition> getElements0() throws SQLException {
     List<ColumnDefinition> result = new ArrayList<>();
-
     Rdb$relationFields r = RDB$RELATION_FIELDS.as("r");
     Rdb$fields f = RDB$FIELDS.as("f");
-
     // Inspiration for the below query was taken from jaybird's
     // DatabaseMetaData implementation
     for (Record record :
@@ -94,9 +92,7 @@ public class FirebirdTableDefinition extends AbstractTableDefinition {
                         f.RDB$NULL_FLAG.nvl(inline((short) 0)))
                     .as(r.RDB$NULL_FLAG),
                 r.RDB$DEFAULT_SOURCE,
-                r.RDB$FIELD_POSITION,
-
-                // [#3342] FIELD_LENGTH should be ignored for LOBs
+                r.RDB$FIELD_POSITION, // [#3342] FIELD_LENGTH should be ignored for LOBs
                 CHARACTER_LENGTH(f).as("CHAR_LEN"),
                 f.RDB$FIELD_PRECISION,
                 FIELD_SCALE(f).as("FIELD_SCALE"),
@@ -112,12 +108,10 @@ public class FirebirdTableDefinition extends AbstractTableDefinition {
             .on(r.RDB$FIELD_SOURCE.eq(f.RDB$FIELD_NAME))
             .where(r.RDB$RELATION_NAME.eq(getName()))
             .orderBy(r.RDB$FIELD_POSITION)) {
-
       // [#9411] Firebird reports the DEFAULT keyword in this column, which
-      //         we do not want to reproduce in generated code.
+      // we do not want to reproduce in generated code.
       String defaultValue = record.get(r.RDB$DEFAULT_SOURCE);
       if (defaultValue != null) defaultValue = P_DEFAULT.matcher(defaultValue).replaceFirst("");
-
       DefaultDataTypeDefinition type =
           new DefaultDataTypeDefinition(
               getDatabase(),
@@ -131,7 +125,6 @@ public class FirebirdTableDefinition extends AbstractTableDefinition {
               record.get("DOMAIN_NAME") == null
                   ? null
                   : DSL.name(record.get("DOMAIN_NAME", String.class)));
-
       result.add(
           new DefaultColumnDefinition(
               getDatabase().getTable(getSchema(), getName()),
@@ -141,7 +134,6 @@ public class FirebirdTableDefinition extends AbstractTableDefinition {
               record.get(r.RDB$IDENTITY_TYPE, boolean.class),
               record.get(r.RDB$DESCRIPTION)));
     }
-
     return result;
   }
 }

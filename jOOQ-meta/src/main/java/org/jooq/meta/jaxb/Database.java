@@ -1125,7 +1125,6 @@ public class Database implements Serializable, XMLAppendable {
    * @deprecated This feature is deprecated as of jOOQ 3.6.0 and will be removed again in jOOQ 4.0.
    * @return possible object is {@link Boolean }
    */
-  @Deprecated
   public Boolean isIgnoreProcedureReturnValues() {
     return ignoreProcedureReturnValues;
   }
@@ -1135,7 +1134,6 @@ public class Database implements Serializable, XMLAppendable {
    *
    * @param value allowed object is {@link Boolean }
    */
-  @Deprecated
   public void setIgnoreProcedureReturnValues(Boolean value) {
     this.ignoreProcedureReturnValues = value;
   }
@@ -1602,7 +1600,6 @@ public class Database implements Serializable, XMLAppendable {
     this.embeddables = embeddables;
   }
 
-  @Deprecated
   public List<CustomType> getCustomTypes() {
     if (customTypes == null) {
       customTypes = new ArrayList<CustomType>();
@@ -1610,12 +1607,10 @@ public class Database implements Serializable, XMLAppendable {
     return customTypes;
   }
 
-  @Deprecated
   public void setCustomTypes(List<CustomType> customTypes) {
     this.customTypes = customTypes;
   }
 
-  @Deprecated
   public List<EnumType> getEnumTypes() {
     if (enumTypes == null) {
       enumTypes = new ArrayList<EnumType>();
@@ -1623,7 +1618,6 @@ public class Database implements Serializable, XMLAppendable {
     return enumTypes;
   }
 
-  @Deprecated
   public void setEnumTypes(List<EnumType> enumTypes) {
     this.enumTypes = enumTypes;
   }
@@ -2284,7 +2278,6 @@ public class Database implements Serializable, XMLAppendable {
     return this;
   }
 
-  @Deprecated
   public Database withCustomTypes(CustomType... values) {
     if (values != null) {
       for (CustomType value : values) {
@@ -2294,7 +2287,6 @@ public class Database implements Serializable, XMLAppendable {
     return this;
   }
 
-  @Deprecated
   public Database withCustomTypes(Collection<CustomType> values) {
     if (values != null) {
       getCustomTypes().addAll(values);
@@ -2302,13 +2294,11 @@ public class Database implements Serializable, XMLAppendable {
     return this;
   }
 
-  @Deprecated
   public Database withCustomTypes(List<CustomType> customTypes) {
     setCustomTypes(customTypes);
     return this;
   }
 
-  @Deprecated
   public Database withEnumTypes(EnumType... values) {
     if (values != null) {
       for (EnumType value : values) {
@@ -2318,7 +2308,6 @@ public class Database implements Serializable, XMLAppendable {
     return this;
   }
 
-  @Deprecated
   public Database withEnumTypes(Collection<EnumType> values) {
     if (values != null) {
       getEnumTypes().addAll(values);
@@ -2326,7 +2315,6 @@ public class Database implements Serializable, XMLAppendable {
     return this;
   }
 
-  @Deprecated
   public Database withEnumTypes(List<EnumType> enumTypes) {
     setEnumTypes(enumTypes);
     return this;

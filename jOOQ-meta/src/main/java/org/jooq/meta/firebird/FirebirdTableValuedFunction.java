@@ -70,17 +70,14 @@ public class FirebirdTableValuedFunction extends AbstractTableDefinition {
   public FirebirdTableValuedFunction(
       SchemaDefinition schema, String name, String comment, String source) {
     super(schema, name, comment, TableType.FUNCTION, source);
-
     routine = new FirebirdRoutineDefinition(schema, name);
   }
 
   @Override
   protected List<ColumnDefinition> getElements0() throws SQLException {
     List<ColumnDefinition> result = new ArrayList<>();
-
     Rdb$procedureParameters p = RDB$PROCEDURE_PARAMETERS.as("p");
     Rdb$fields f = RDB$FIELDS.as("f");
-
     // Inspiration for the below query was taken from jaybird's
     // DatabaseMetaData implementation
     for (Record record :
@@ -92,9 +89,7 @@ public class FirebirdTableValuedFunction extends AbstractTableDefinition {
                 p.RDB$DEFAULT_VALUE,
                 DSL.bitOr(p.RDB$NULL_FLAG.nvl((short) 0), f.RDB$NULL_FLAG.nvl((short) 0))
                     .as(p.RDB$NULL_FLAG),
-                p.RDB$DEFAULT_SOURCE,
-
-                // [#3342] FIELD_LENGTH should be ignored for LOBs
+                p.RDB$DEFAULT_SOURCE, // [#3342] FIELD_LENGTH should be ignored for LOBs
                 CHARACTER_LENGTH(f).as("CHAR_LEN"),
                 f.RDB$FIELD_PRECISION,
                 FIELD_SCALE(f).as("FIELD_SCALE"),
@@ -106,7 +101,6 @@ public class FirebirdTableValuedFunction extends AbstractTableDefinition {
             .where(p.RDB$PROCEDURE_NAME.eq(getName()))
             .and(p.RDB$PARAMETER_TYPE.eq((short) 1))
             .orderBy(p.RDB$PARAMETER_NUMBER)) {
-
       DefaultDataTypeDefinition type =
           new DefaultDataTypeDefinition(
               getDatabase(),
@@ -117,7 +111,6 @@ public class FirebirdTableValuedFunction extends AbstractTableDefinition {
               record.get("FIELD_SCALE", Integer.class),
               record.get(p.RDB$NULL_FLAG) == 0,
               record.get(p.RDB$DEFAULT_SOURCE));
-
       result.add(
           new DefaultColumnDefinition(
               getDatabase().getTable(getSchema(), getName()),
@@ -127,7 +120,6 @@ public class FirebirdTableValuedFunction extends AbstractTableDefinition {
               false,
               null));
     }
-
     return result;
   }
 

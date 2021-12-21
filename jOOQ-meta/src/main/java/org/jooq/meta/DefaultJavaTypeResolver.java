@@ -38,9 +38,10 @@
 package org.jooq.meta;
 
 final class DefaultJavaTypeResolver implements JavaTypeResolver {
+
   // [#10553] TODO: This was introduced as a dummy implementation
-  //          to make [#10534] work. jOOQ-meta should not have any
-  //          such implementation
+  // to make [#10534] work. jOOQ-meta should not have any
+  // such implementation
   @Override
   public String resolve(DataTypeDefinition type) {
     return "java.lang.Object";

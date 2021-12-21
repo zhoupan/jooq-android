@@ -56,8 +56,11 @@ public abstract class AbstractTableDefinition
     extends AbstractElementContainerDefinition<ColumnDefinition> implements TableDefinition {
 
   private List<ParameterDefinition> parameters;
+
   private TableDefinition parentTable;
+
   private final List<TableDefinition> childTables;
+
   private final TableType tableType;
 
   public AbstractTableDefinition(SchemaDefinition schema, String name, String comment) {
@@ -67,7 +70,6 @@ public abstract class AbstractTableDefinition
   public AbstractTableDefinition(
       SchemaDefinition schema, String name, String comment, TableType tableType, String source) {
     super(schema, null, name, comment, source);
-
     this.parentTable = null;
     this.childTables = new ArrayList<>();
     this.tableType = tableType;
@@ -92,7 +94,6 @@ public abstract class AbstractTableDefinition
   public final UniqueKeyDefinition getPrimaryKey() {
     for (ColumnDefinition column : getColumns())
       if (column.getPrimaryKey() != null) return column.getPrimaryKey();
-
     return null;
   }
 
@@ -109,7 +110,6 @@ public abstract class AbstractTableDefinition
   @Override
   public final UniqueKeyDefinition getUniqueKey(String name) {
     for (UniqueKeyDefinition uk : getUniqueKeys()) if (uk.getInputName().equals(name)) return uk;
-
     return null;
   }
 
@@ -121,7 +121,6 @@ public abstract class AbstractTableDefinition
   @Override
   public final UniqueKeyDefinition getKey(String name) {
     for (UniqueKeyDefinition uk : getKeys()) if (uk.getInputName().equals(name)) return uk;
-
     return null;
   }
 
@@ -133,10 +132,8 @@ public abstract class AbstractTableDefinition
   @Override
   public final List<ForeignKeyDefinition> getForeignKeys(TableDefinition referenced) {
     List<ForeignKeyDefinition> result = new ArrayList<>();
-
     for (ForeignKeyDefinition key : getForeignKeys())
       if (referenced.equals(key.getReferencedTable())) result.add(key);
-
     return result;
   }
 
@@ -149,7 +146,6 @@ public abstract class AbstractTableDefinition
   public final IdentityDefinition getIdentity() {
     for (ColumnDefinition column : getColumns())
       if (column.isIdentity()) return new DefaultIdentityDefinition(column);
-
     return null;
   }
 
@@ -195,7 +191,6 @@ public abstract class AbstractTableDefinition
   @Override
   public final List<ParameterDefinition> getParameters() {
     if (parameters == null) parameters = getParameters0();
-
     return parameters;
   }
 

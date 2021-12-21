@@ -102,6 +102,7 @@ import org.jooq.conf.Settings;
 import org.jooq.conf.SettingsTools;
 import org.jooq.exception.DataAccessException;
 import org.jooq.exception.DataTypeException;
+import org.jooq.exception.FeatureNotSupportedException;
 import org.jooq.impl.DefaultRenderContext.Rendered;
 import org.jooq.impl.ThreadGuard.Guard;
 import org.jooq.tools.JooqLogger;
@@ -471,7 +472,7 @@ final class R2DBC {
           // [#1371] [#2139] Don't bind variables directly onto statement, bind them through the
           // collected params
           // list to preserve type information
-          // [#3547]         The original query may have no Params specified - e.g. when it was
+          // [#3547] The original query may have no Params specified - e.g. when it was
           // constructed with
           // plain SQL. In that case, infer the bind value type directly from the bind value
           visitAll(
@@ -1106,6 +1107,11 @@ final class R2DBC {
                   + uType
                   + ". Please report an issue here: https://github.com/jOOQ/jOOQ/issues/new. As a workaround, you can implement a ConverterProvider.");
         else return converter.from(o);
+      }
+
+      @Override
+      public RowMetadata getMetadata() {
+        throw new FeatureNotSupportedException();
       }
     }
   }

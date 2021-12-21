@@ -46,7 +46,9 @@ public class DefaultForeignKeyDefinition extends AbstractConstraintDefinition
     implements ForeignKeyDefinition {
 
   private final List<ColumnDefinition> fkColumns;
+
   private final List<ColumnDefinition> ukColumns;
+
   private final UniqueKeyDefinition uk;
 
   public DefaultForeignKeyDefinition(
@@ -61,7 +63,6 @@ public class DefaultForeignKeyDefinition extends AbstractConstraintDefinition
       UniqueKeyDefinition uk,
       boolean enforced) {
     super(schema, table, name, enforced);
-
     this.fkColumns = new ArrayList<>();
     this.ukColumns = new ArrayList<>();
     this.uk = uk;
@@ -100,10 +101,8 @@ public class DefaultForeignKeyDefinition extends AbstractConstraintDefinition
   @Override
   public int countSimilarReferences() {
     Set<String> keys = new HashSet<>();
-
     for (ForeignKeyDefinition key : getDatabase().getRelations().getForeignKeys(getTable()))
       if (key.getReferencedTable().equals(getReferencedTable())) keys.add(key.getName());
-
     return keys.size();
   }
 }

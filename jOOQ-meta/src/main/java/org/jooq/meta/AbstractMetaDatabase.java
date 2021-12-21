@@ -60,6 +60,7 @@ import org.jooq.impl.DSL;
 public abstract class AbstractMetaDatabase extends AbstractDatabase {
 
   private List<Catalog> catalogs;
+
   private List<Schema> schemas;
 
   @Override
@@ -76,14 +77,11 @@ public abstract class AbstractMetaDatabase extends AbstractDatabase {
   protected void loadUniqueKeys(DefaultRelations relations) throws SQLException {
     for (Schema schema : getSchemasFromMeta()) {
       SchemaDefinition s = getSchema(schema.getName());
-
       if (s != null) {
         for (Table<?> table : schema.getTables()) {
           TableDefinition t = getTable(s, table.getName());
-
           if (t != null) {
             UniqueKey<?> key = table.getPrimaryKey();
-
             if (key != null)
               for (Field<?> field : key.getFields())
                 relations.addPrimaryKey(
@@ -98,31 +96,23 @@ public abstract class AbstractMetaDatabase extends AbstractDatabase {
   protected void loadForeignKeys(DefaultRelations relations) throws SQLException {
     for (Schema referencingS : getSchemasFromMeta()) {
       SchemaDefinition referencingSD = getSchema(referencingS.getName());
-
       if (referencingSD != null) {
         for (Table<?> referencingT : referencingS.getTables()) {
           TableDefinition referencingTD = getTable(referencingSD, referencingT.getName());
-
           if (referencingTD != null) {
             for (ForeignKey<?, ?> fk : referencingT.getReferences()) {
-
               UniqueKey<?> uk = fk.getKey();
               if (uk != null) {
                 Table<?> referencedT = uk.getTable();
-
                 if (referencedT != null) {
                   Schema referencedS = referencedT.getSchema();
-
                   if (referencedS == null) referencedS = referencingS;
-
                   SchemaDefinition referencedSD = getSchema(referencedS.getName());
                   TableDefinition referencedTD = getTable(referencedSD, referencedT.getName());
-
                   addForeignKey:
                   if (referencedTD != null) {
                     for (Field<?> fkField : fk.getFields())
                       if (referencingTD.getColumn(fkField.getName()) == null) break addForeignKey;
-
                     for (Field<?> fkField : fk.getFields())
                       relations.addForeignKey(
                           fk.getName(),
@@ -146,57 +136,46 @@ public abstract class AbstractMetaDatabase extends AbstractDatabase {
   @Override
   protected List<CatalogDefinition> getCatalogs0() throws SQLException {
     List<CatalogDefinition> result = new ArrayList<>();
-
     for (Catalog catalog : getCatalogsFromMeta())
       result.add(new CatalogDefinition(this, catalog.getName(), ""));
-
     result.sort(COMP);
     return result;
   }
 
   private List<Catalog> getCatalogsFromMeta() {
     if (catalogs == null) catalogs = new ArrayList<>(getMeta0().getCatalogs());
-
     return catalogs;
   }
 
   @Override
   protected List<SchemaDefinition> getSchemata0() throws SQLException {
     List<SchemaDefinition> result = new ArrayList<>();
-
     for (Schema schema : getSchemasFromMeta()) {
       if (schema.getCatalog() != null) {
         CatalogDefinition catalog = getCatalog(schema.getCatalog().getName());
-
         if (catalog != null) result.add(new SchemaDefinition(this, schema.getName(), "", catalog));
       } else result.add(new SchemaDefinition(this, schema.getName(), ""));
     }
-
     result.sort(COMP);
     return result;
   }
 
   private List<Schema> getSchemasFromMeta() {
     if (schemas == null) schemas = new ArrayList<>(getMeta0().getSchemas());
-
     return schemas;
   }
 
   @Override
   protected List<SequenceDefinition> getSequences0() throws SQLException {
     List<SequenceDefinition> result = new ArrayList<>();
-
     for (Schema schema : getSchemasFromMeta()) {
       for (Sequence<?> sequence : schema.getSequences()) {
         SchemaDefinition sd = getSchema(schema.getName());
-
         DataTypeDefinition type =
             new DefaultDataTypeDefinition(this, sd, sequence.getDataType().getTypeName());
-
         result.add(new DefaultSequenceDefinition(sd, sequence.getName(), type));
       }
     }
-
     result.sort(COMP);
     return result;
   }
@@ -204,15 +183,12 @@ public abstract class AbstractMetaDatabase extends AbstractDatabase {
   @Override
   protected List<TableDefinition> getTables0() throws SQLException {
     List<TableDefinition> result = new ArrayList<>();
-
     for (Schema schema : getSchemasFromMeta()) {
       SchemaDefinition sd = getSchema(schema.getName());
-
       if (sd != null)
         for (Table<?> table : schema.getTables())
           result.add(new DefaultMetaTableDefinition(sd, table));
     }
-
     result.sort(COMP);
     return result;
   }

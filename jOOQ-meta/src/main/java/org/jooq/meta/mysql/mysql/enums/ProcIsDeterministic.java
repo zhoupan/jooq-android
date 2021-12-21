@@ -45,7 +45,6 @@ import org.jooq.Schema;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public enum ProcIsDeterministic implements EnumType {
   YES("YES"),
-
   NO("NO");
 
   private final String literal;

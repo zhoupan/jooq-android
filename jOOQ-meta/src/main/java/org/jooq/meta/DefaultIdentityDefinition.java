@@ -50,7 +50,6 @@ public class DefaultIdentityDefinition extends AbstractDefinition implements Ide
 
   public DefaultIdentityDefinition(ColumnDefinition column) {
     super(column.getDatabase(), column.getSchema(), column.getName());
-
     this.column = column;
   }
 

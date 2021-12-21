@@ -60,6 +60,7 @@ public class MatchersCatalogType implements Serializable, XMLAppendable {
   protected String expression;
 
   protected MatcherRule catalogClass;
+
   protected MatcherRule catalogIdentifier;
 
   @XmlJavaTypeAdapter(StringAdapter.class)

@@ -48,23 +48,20 @@ public class Keys {
   // -------------------------------------------------------------------------
   // IDENTITY definitions
   // -------------------------------------------------------------------------
-
   // -------------------------------------------------------------------------
   // UNIQUE and PRIMARY KEY definitions
   // -------------------------------------------------------------------------
-
   public static final org.jooq.UniqueKey<org.jooq.Record> DB_SERIAL__PK_DB_SERIAL_NAME =
       UniqueKeys0.DB_SERIAL__PK_DB_SERIAL_NAME;
 
   // -------------------------------------------------------------------------
   // FOREIGN KEY definitions
   // -------------------------------------------------------------------------
-
   // -------------------------------------------------------------------------
   // [#1459] distribute members to avoid static initialisers > 64kb
   // -------------------------------------------------------------------------
-
   private static class UniqueKeys0 extends org.jooq.impl.AbstractKeys {
+
     public static final org.jooq.UniqueKey<org.jooq.Record> DB_SERIAL__PK_DB_SERIAL_NAME =
         createUniqueKey(
             org.jooq.meta.cubrid.dba.tables.DbSerial.DB_SERIAL,

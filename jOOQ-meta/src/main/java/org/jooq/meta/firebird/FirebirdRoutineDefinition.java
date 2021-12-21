@@ -70,7 +70,6 @@ public class FirebirdRoutineDefinition extends AbstractRoutineDefinition {
   public FirebirdRoutineDefinition(
       SchemaDefinition schema, String name, String dataType, Number precision, Number scale) {
     super(schema, null, name, null, null, false);
-
     if (!StringUtils.isBlank(dataType)) {
       DataTypeDefinition type =
           new DefaultDataTypeDefinition(
@@ -82,7 +81,6 @@ public class FirebirdRoutineDefinition extends AbstractRoutineDefinition {
               scale,
               null,
               (String) null);
-
       this.returnValue = new DefaultParameterDefinition(this, "RETURN_VALUE", -1, type);
     }
   }
@@ -93,7 +91,6 @@ public class FirebirdRoutineDefinition extends AbstractRoutineDefinition {
     Rdb$functionArguments a = RDB$FUNCTION_ARGUMENTS.as("a");
     Rdb$fields f = RDB$FIELDS.as("f");
     int i = 0;
-
     for (Record record :
         returnValue == null
             ? create()
@@ -131,7 +128,6 @@ public class FirebirdRoutineDefinition extends AbstractRoutineDefinition {
                 .where(a.RDB$FUNCTION_NAME.eq(getName()))
                 .and(a.RDB$ARGUMENT_POSITION.gt(inline((short) 0)))
                 .orderBy(a.RDB$ARGUMENT_POSITION)) {
-
       DataTypeDefinition type =
           new DefaultDataTypeDefinition(
               getDatabase(),
@@ -142,10 +138,8 @@ public class FirebirdRoutineDefinition extends AbstractRoutineDefinition {
               record.get("FIELD_SCALE", Integer.class),
               record.get(p.RDB$NULL_FLAG) == 0,
               record.get(p.RDB$DEFAULT_SOURCE));
-
       ParameterDefinition parameter =
           new DefaultParameterDefinition(this, record.get(p.RDB$PARAMETER_NAME), i++, type);
-
       addParameter(
           record.get(p.RDB$PARAMETER_TYPE, int.class).equals(0)
               ? InOutDefinition.IN

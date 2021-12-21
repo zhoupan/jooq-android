@@ -48,9 +48,9 @@ import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.concurrent.Flow;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import org.java.util.concurrent.Flow;
 import org.jooq.BetweenAndStep;
 import org.jooq.BetweenAndStepR;
 import org.jooq.Comparator;
@@ -150,7 +150,12 @@ final class SelectImpl<
         T21,
         T22>
     extends AbstractDelegatingQuery<R, SelectQueryImpl<R>>
-    implements ResultQueryTrait<R>, // Cascading interface implementations for Select behaviour
+    implements ResultQueryTrait<R>, // Cascading
+        // interface
+        // implementations
+        // for
+        // Select
+        // behaviour
         SelectSelectStep<R>,
         SelectOptionalOnStep<R>,
         SelectOnConditionStep<R>,

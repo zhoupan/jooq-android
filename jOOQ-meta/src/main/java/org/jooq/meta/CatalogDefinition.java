@@ -65,7 +65,6 @@ public class CatalogDefinition extends AbstractDefinition {
   public final SchemaDefinition getSchema(String name) {
     for (SchemaDefinition schema : getSchemata())
       if (schema.getInputName().equals(name)) return schema;
-
     return null;
   }
 

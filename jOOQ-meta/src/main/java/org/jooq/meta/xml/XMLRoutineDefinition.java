@@ -58,6 +58,7 @@ import org.jooq.util.xml.jaxb.Routine;
 public class XMLRoutineDefinition extends AbstractRoutineDefinition {
 
   private final InformationSchema info;
+
   private final Name specificName;
 
   public XMLRoutineDefinition(
@@ -72,7 +73,6 @@ public class XMLRoutineDefinition extends AbstractRoutineDefinition {
       Routine routine,
       String comment) {
     super(schema, pkg, routine.getRoutineName(), comment, overload(info, routine));
-
     this.info = info;
     this.specificName =
         name(
@@ -80,7 +80,6 @@ public class XMLRoutineDefinition extends AbstractRoutineDefinition {
             routine.getSpecificSchema(),
             routine.getSpecificPackage(),
             routine.getSpecificName());
-
     if (!isBlank(routine.getDataType())) {
       DataTypeDefinition type =
           new DefaultDataTypeDefinition(
@@ -92,7 +91,6 @@ public class XMLRoutineDefinition extends AbstractRoutineDefinition {
               routine.getNumericScale(),
               null,
               (String) null);
-
       this.returnValue = new DefaultParameterDefinition(this, "RETURN_VALUE", -1, type);
     }
   }
@@ -104,10 +102,8 @@ public class XMLRoutineDefinition extends AbstractRoutineDefinition {
             routine.getRoutineSchema(),
             routine.getRoutinePackage(),
             routine.getRoutineName());
-
     String result = null;
     int count = 0;
-
     // TODO: Better algorithm by pre-calculating
     for (Routine r : info.getRoutines()) {
       Name rName =
@@ -116,18 +112,14 @@ public class XMLRoutineDefinition extends AbstractRoutineDefinition {
               r.getRoutineSchema(),
               r.getRoutinePackage(),
               r.getRoutineName());
-
       if (routineName.equals(rName)) {
         count++;
-
         if (routine == r) {
           result = "" + count;
         }
-
         if (count > 1 && result != null) break;
       }
     }
-
     return count > 1 ? result : null;
   }
 
@@ -140,7 +132,6 @@ public class XMLRoutineDefinition extends AbstractRoutineDefinition {
               parameter.getSpecificSchema(),
               parameter.getSpecificPackage(),
               parameter.getSpecificName());
-
       if (specificName.equals(parameterRoutineName)) {
         DataTypeDefinition type =
             new DefaultDataTypeDefinition(
@@ -152,7 +143,6 @@ public class XMLRoutineDefinition extends AbstractRoutineDefinition {
                 parameter.getNumericScale(),
                 null,
                 parameter.getParameterDefault());
-
         ParameterDefinition p =
             new DefaultParameterDefinition(
                 this,
@@ -162,7 +152,6 @@ public class XMLRoutineDefinition extends AbstractRoutineDefinition {
                 !StringUtils.isBlank(parameter.getParameterDefault()),
                 StringUtils.isBlank(parameter.getParameterName()),
                 parameter.getComment());
-
         switch (parameter.getParameterMode()) {
           case IN:
             addParameter(InOutDefinition.IN, p);

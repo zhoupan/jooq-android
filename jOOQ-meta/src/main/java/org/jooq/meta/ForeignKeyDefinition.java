@@ -51,7 +51,6 @@ public interface ForeignKeyDefinition extends ConstraintDefinition {
    *
    * @deprecated - [#9672] - jOOQ 3.13 - Use {@link ConstraintDefinition#getTable()} instead.
    */
-  @Deprecated
   TableDefinition getKeyTable();
 
   /** The list of columns making up the foreign key. */

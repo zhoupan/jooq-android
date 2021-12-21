@@ -155,7 +155,6 @@ public class PgIndex extends TableImpl<Record> {
    *     how this type should be handled. Deprecation can be turned off using {@literal
    *     <deprecationOnUnknownTypes/>} in your code generator configuration.
    */
-  @Deprecated
   public final TableField<Record, Object> INDEXPRS =
       createField(
           DSL.name("indexprs"),
@@ -168,7 +167,6 @@ public class PgIndex extends TableImpl<Record> {
    *     how this type should be handled. Deprecation can be turned off using {@literal
    *     <deprecationOnUnknownTypes/>} in your code generator configuration.
    */
-  @Deprecated
   public final TableField<Record, Object> INDPRED =
       createField(
           DSL.name("indpred"),
@@ -214,17 +212,16 @@ public class PgIndex extends TableImpl<Record> {
   }
 
   private transient PgClass _indexClass;
+
   private transient PgClass _tableClass;
 
   public PgClass indexClass() {
     if (_indexClass == null) _indexClass = new PgClass(this, Keys.PG_INDEX__INDEX_CLASS);
-
     return _indexClass;
   }
 
   public PgClass tableClass() {
     if (_tableClass == null) _tableClass = new PgClass(this, Keys.PG_INDEX__TABLE_CLASS);
-
     return _tableClass;
   }
 

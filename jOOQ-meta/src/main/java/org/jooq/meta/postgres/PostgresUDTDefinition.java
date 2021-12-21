@@ -64,7 +64,6 @@ public class PostgresUDTDefinition extends AbstractUDTDefinition {
   @Override
   protected List<AttributeDefinition> getElements0() throws SQLException {
     List<AttributeDefinition> result = new ArrayList<>();
-
     for (Record record :
         create()
             .select(
@@ -90,12 +89,9 @@ public class PostgresUDTDefinition extends AbstractUDTDefinition {
             .and(ATTRIBUTES.UDT_NAME.equal(getName()))
             .orderBy(ATTRIBUTES.ORDINAL_POSITION)
             .fetch()) {
-
       SchemaDefinition typeSchema = null;
-
       String schemaName = record.get(ATTRIBUTES.ATTRIBUTE_UDT_SCHEMA);
       if (schemaName != null) typeSchema = getDatabase().getSchema(schemaName);
-
       DataTypeDefinition type =
           new DefaultDataTypeDefinition(
               getDatabase(),
@@ -109,17 +105,14 @@ public class PostgresUDTDefinition extends AbstractUDTDefinition {
               name(
                   record.get(ATTRIBUTES.ATTRIBUTE_UDT_SCHEMA),
                   record.get(ATTRIBUTES.ATTRIBUTE_UDT_NAME)));
-
       AttributeDefinition column =
           new DefaultAttributeDefinition(
               this,
               record.get(ATTRIBUTES.ATTRIBUTE_NAME),
               record.get(ATTRIBUTES.ORDINAL_POSITION),
               type);
-
       result.add(column);
     }
-
     return result;
   }
 

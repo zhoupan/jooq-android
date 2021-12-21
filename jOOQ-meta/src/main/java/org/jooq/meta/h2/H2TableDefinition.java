@@ -81,21 +81,18 @@ public class H2TableDefinition extends AbstractTableDefinition {
   @Override
   public List<ColumnDefinition> getElements0() throws SQLException {
     List<ColumnDefinition> result = new ArrayList<>();
-
     // [#7206] H2 defaults to these precision/scale values when a DECIMAL/NUMERIC type
-    //         does not have any precision/scale. What works in H2 works in almost no
-    //         other database, which is relevant when using the DDLDatabase for instance,
-    //         which is based on the H2Database
+    // does not have any precision/scale. What works in H2 works in almost no
+    // other database, which is relevant when using the DDLDatabase for instance,
+    // which is based on the H2Database
     Param<Integer> maxP = inline(65535);
     Param<Integer> maxS = inline(32767);
-
     for (Record record :
         create()
             .select(
                 COLUMNS.COLUMN_NAME,
-                COLUMNS.ORDINAL_POSITION,
-
-                // [#2230] [#11733] Translate INTERVAL_TYPE to supported types
+                COLUMNS.ORDINAL_POSITION, // [#2230] [#11733] Translate INTERVAL_TYPE to supported
+                // types
                 (((H2Database) getDatabase()).is1_4_198()
                         ? (when(
                                 COLUMNS.INTERVAL_TYPE.like(
@@ -148,7 +145,6 @@ public class H2TableDefinition extends AbstractTableDefinition {
                         : COLUMNS.COLUMN_TYPE.notLike(inline("%INVISIBLE%"))
                     : noCondition())
             .orderBy(COLUMNS.ORDINAL_POSITION)) {
-
       // [#5331] AUTO_INCREMENT (MySQL style)
       // [#5331] DEFAULT nextval('sequence') (PostgreSQL style)
       // [#6332] [#6339] system-generated defaults shouldn't produce a default clause
@@ -158,17 +154,14 @@ public class H2TableDefinition extends AbstractTableDefinition {
                   .trim()
                   .toLowerCase()
                   .startsWith("nextval");
-
       // [#7644] H2 puts DATETIME_PRECISION in NUMERIC_SCALE column
       boolean isTimestamp =
           record.get(COLUMNS.TYPE_NAME).trim().toLowerCase().startsWith("timestamp");
-
       // [#681] Domain name if available
       Name userType =
           record.get(COLUMNS.DOMAIN_NAME) != null
               ? name(record.get(COLUMNS.DOMAIN_SCHEMA), record.get(COLUMNS.DOMAIN_NAME))
               : name(getSchema().getName(), getName() + "_" + record.get(COLUMNS.COLUMN_NAME));
-
       DataTypeDefinition type =
           new DefaultDataTypeDefinition(
               getDatabase(),
@@ -182,7 +175,6 @@ public class H2TableDefinition extends AbstractTableDefinition {
               record.get(COLUMNS.IS_NULLABLE, boolean.class),
               isIdentity ? null : record.get(COLUMNS.COLUMN_DEFAULT),
               userType);
-
       result.add(
           new DefaultColumnDefinition(
               getDatabase().getTable(getSchema(), getName()),
@@ -192,7 +184,6 @@ public class H2TableDefinition extends AbstractTableDefinition {
               isIdentity,
               record.get(COLUMNS.REMARKS)));
     }
-
     return result;
   }
 }

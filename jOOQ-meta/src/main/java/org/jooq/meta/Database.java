@@ -274,7 +274,6 @@ public interface Database extends AutoCloseable {
    *
    * @deprecated - 2.0.5 - This will be implemented in each {@link Definition#getOutputName()}
    */
-  @Deprecated
   String getOutputCatalog(String inputCatalog);
 
   /**
@@ -282,7 +281,6 @@ public interface Database extends AutoCloseable {
    *
    * @deprecated - 2.0.5 - This will be implemented in each {@link Definition#getOutputName()}
    */
-  @Deprecated
   String getOutputSchema(String inputSchema);
 
   /**
@@ -290,7 +288,6 @@ public interface Database extends AutoCloseable {
    *
    * @deprecated - 2.0.5 - This will be implemented in each {@link Definition#getOutputName()}
    */
-  @Deprecated
   String getOutputSchema(String inputCatalog, String inputSchema);
 
   /** The input and output catalogs. */
@@ -564,7 +561,6 @@ public interface Database extends AutoCloseable {
    * @deprecated - 3.14.0 - [#10588] - Use {@link #setConfiguredSyntheticKeys(SyntheticKeysType)}
    *     instead.
    */
-  @Deprecated
   void setSyntheticPrimaryKeys(String[] primaryKeys);
 
   /**
@@ -573,7 +569,6 @@ public interface Database extends AutoCloseable {
    *
    * @deprecated - 3.14.0 - [#10588] - Use {@link #getConfiguredSyntheticPrimaryKeys()} instead.
    */
-  @Deprecated
   String[] getSyntheticPrimaryKeys();
 
   /**
@@ -583,7 +578,6 @@ public interface Database extends AutoCloseable {
    * @deprecated - 3.14.0 - [#10588] - Use {@link #setConfiguredSyntheticKeys(SyntheticKeysType)}
    *     instead.
    */
-  @Deprecated
   void setOverridePrimaryKeys(String[] primaryKeys);
 
   /**
@@ -592,7 +586,6 @@ public interface Database extends AutoCloseable {
    *
    * @deprecated - 3.14.0 - [#10588] - Use {@link #getConfiguredSyntheticPrimaryKeys()} instead.
    */
-  @Deprecated
   String[] getOverridePrimaryKeys();
 
   /**
@@ -602,7 +595,6 @@ public interface Database extends AutoCloseable {
    * @deprecated - 3.14.0 - [#10588] - Use {@link #setConfiguredSyntheticKeys(SyntheticKeysType)}
    *     instead.
    */
-  @Deprecated
   void setSyntheticIdentities(String[] syntheticIdentities);
 
   /**
@@ -611,7 +603,6 @@ public interface Database extends AutoCloseable {
    *
    * @deprecated - 3.14.0 - [#10588] - Use {@link #getConfiguredSyntheticIdentities()} instead.
    */
-  @Deprecated
   String[] getSyntheticIdentities();
 
   /**
@@ -619,7 +610,6 @@ public interface Database extends AutoCloseable {
    *
    * @deprecated - 3.10.0 - [#5750] - Use {@link #getConfiguredForcedTypes()} only.
    */
-  @Deprecated
   void setConfiguredCustomTypes(List<CustomType> types);
 
   /**
@@ -627,7 +617,6 @@ public interface Database extends AutoCloseable {
    *
    * @deprecated - 3.10.0 - [#5750] - Use {@link #getConfiguredForcedTypes()} only.
    */
-  @Deprecated
   List<CustomType> getConfiguredCustomTypes();
 
   /**
@@ -635,7 +624,6 @@ public interface Database extends AutoCloseable {
    *
    * @deprecated - 3.10.0 - [#5750] - Use {@link #getConfiguredForcedTypes()} only.
    */
-  @Deprecated
   CustomType getConfiguredCustomType(String name);
 
   /** Database objects matching any of these field names will be generated as enum types. */

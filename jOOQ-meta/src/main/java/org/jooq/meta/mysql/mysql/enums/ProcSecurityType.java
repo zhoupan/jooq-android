@@ -45,7 +45,6 @@ import org.jooq.Schema;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public enum ProcSecurityType implements EnumType {
   INVOKER("INVOKER"),
-
   DEFINER("DEFINER");
 
   private final String literal;

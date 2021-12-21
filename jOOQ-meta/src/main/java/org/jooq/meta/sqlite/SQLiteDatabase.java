@@ -108,15 +108,12 @@ public class SQLiteDatabase extends AbstractDatabase {
   private static final JooqLogger log = JooqLogger.getLogger(SQLiteDatabase.class);
 
   public SQLiteDatabase() {
-
     // SQLite doesn't know schemata
     SchemaMappingType schema = new SchemaMappingType();
     schema.setInputSchema("");
     schema.setOutputSchema("");
-
     List<SchemaMappingType> schemata = new ArrayList<>();
     schemata.add(schema);
-
     setConfiguredSchemata(schemata);
   }
 
@@ -128,12 +125,10 @@ public class SQLiteDatabase extends AbstractDatabase {
   @Override
   protected List<IndexDefinition> getIndexes0() throws SQLException {
     final List<IndexDefinition> result = new ArrayList<>();
-
     final Field<String> fIndexName = field("il.name", String.class).as("index_name");
     final Field<Boolean> fUnique = field("il.\"unique\"", boolean.class).as("unique");
     final Field<Integer> fSeqno = field("ii.seqno", int.class).add(one()).as("seqno");
     final Field<String> fColumnName = field("ii.name", String.class).as("column_name");
-
     Map<Record, Result<Record>> indexes =
         create()
             .select(SQLiteMaster.NAME, fIndexName, fUnique, fSeqno, fColumnName)
@@ -150,28 +145,23 @@ public class SQLiteDatabase extends AbstractDatabase {
             .fetchGroups(
                 new Field[] {SQLiteMaster.NAME, fIndexName, fUnique},
                 new Field[] {fColumnName, fSeqno});
-
     indexLoop:
     for (Entry<Record, Result<Record>> entry : indexes.entrySet()) {
       final Record index = entry.getKey();
       final Result<Record> columns = entry.getValue();
-
       final SchemaDefinition tableSchema = getSchemata().get(0);
       if (tableSchema == null) continue indexLoop;
-
       final String indexName = index.get(fIndexName);
       final String tableName = index.get(SQLiteMaster.NAME);
       final TableDefinition table = getTable(tableSchema, tableName);
       if (table == null) continue indexLoop;
-
       final boolean unique = index.get(fUnique);
-
       // [#6310] [#6620] Function-based indexes are not yet supported
       for (Record column : columns)
         if (table.getColumn(column.get(fColumnName)) == null) continue indexLoop;
-
       result.add(
           new AbstractIndexDefinition(tableSchema, indexName, table, unique) {
+
             List<IndexColumnDefinition> indexColumns = new ArrayList<>();
 
             {
@@ -191,20 +181,16 @@ public class SQLiteDatabase extends AbstractDatabase {
             }
           });
     }
-
     return result;
   }
 
   @Override
   protected void loadPrimaryKeys(DefaultRelations relations) throws SQLException {
-
     // [#11294] Cannot use Meta.getPrimaryKeys() here, yet
     for (Table<?> t : snapshot().getTables()) {
       UniqueKey<?> pk = t.getPrimaryKey();
-
       if (pk != null) {
         TableDefinition table = getTable(getSchemata().get(0), pk.getTable().getName());
-
         if (table != null)
           for (Field<?> f : pk.getFields())
             relations.addPrimaryKey(pk.getName(), table, table.getColumn(f.getName()));
@@ -214,12 +200,10 @@ public class SQLiteDatabase extends AbstractDatabase {
 
   @Override
   protected void loadUniqueKeys(DefaultRelations relations) throws SQLException {
-
     // [#11294] Cannot use Meta.getUniqueKeys() here, yet
     for (Table<?> t : snapshot().getTables()) {
       for (UniqueKey<?> uk : t.getUniqueKeys()) {
         TableDefinition table = getTable(getSchemata().get(0), uk.getTable().getName());
-
         if (table != null)
           for (Field<?> f : uk.getFields())
             relations.addUniqueKey(uk.getName(), table, table.getColumn(f.getName()));
@@ -229,35 +213,27 @@ public class SQLiteDatabase extends AbstractDatabase {
 
   @Override
   protected void loadForeignKeys(DefaultRelations relations) throws SQLException {
-
     // [#11294] Cannot use Meta.getUniqueKeys() here, yet
     for (Table<?> t : snapshot().getTables()) {
-
       fkLoop:
       for (ForeignKey<?, ?> fk : t.getReferences()) {
         UniqueKey<?> uk = fk.getKey();
-
         if (uk == null) continue fkLoop;
-
         // SQLite mixes up cases from the actual declaration and the
         // reference definition! It's possible that a table is declared
         // in lower case, and the foreign key in upper case. Hence,
         // correct the foreign key
         TableDefinition fkTable = getTable(getSchemata().get(0), fk.getTable().getName(), true);
         TableDefinition ukTable = getTable(getSchemata().get(0), uk.getTable().getName(), true);
-
         if (fkTable == null || ukTable == null) continue fkLoop;
-
         String ukName =
             StringUtils.isBlank(uk.getName()) ? "pk_" + ukTable.getName() : uk.getName();
         String fkName =
             StringUtils.isBlank(fk.getName())
                 ? "fk_" + fkTable.getName() + "_" + ukName
                 : fk.getName();
-
         TableField<?, ?>[] fkFields = fk.getFieldsArray();
         TableField<?, ?>[] ukFields = fk.getKeyFieldsArray();
-
         for (int i = 0; i < fkFields.length; i++) {
           relations.addForeignKey(
               fkName,
@@ -279,23 +255,17 @@ public class SQLiteDatabase extends AbstractDatabase {
             .configuration()
             .deriveSettings(s -> s.withInterpreterDelayForeignKeyDeclarations(true))
             .dsl();
-
     SchemaDefinition schema = getSchemata().get(0);
-
     for (Record record :
         ctx.select(SQLiteMaster.TBL_NAME, SQLiteMaster.SQL)
             .from(SQLITE_MASTER)
             .where(SQLiteMaster.SQL.likeIgnoreCase("%CHECK%"))
             .orderBy(SQLiteMaster.TBL_NAME)) {
-
       TableDefinition table = getTable(schema, record.get(SQLiteMaster.TBL_NAME));
-
       if (table != null) {
         String sql = record.get(SQLiteMaster.SQL);
-
         try {
           Query query = ctx.parser().parseQuery(sql);
-
           for (Table<?> t : ctx.meta(query).getTables(table.getName())) {
             for (Check<?> check : t.getChecks()) {
               r.addCheckConstraint(
@@ -340,7 +310,6 @@ public class SQLiteDatabase extends AbstractDatabase {
   @Override
   protected List<TableDefinition> getTables0() throws SQLException {
     List<TableDefinition> result = new ArrayList<>();
-
     CommonTableExpression<Record1<String>> virtualTables =
         name("virtual_tables")
             .fields("name")
@@ -348,7 +317,6 @@ public class SQLiteDatabase extends AbstractDatabase {
                 select(coalesce(SQLiteMaster.NAME, inline("")))
                     .from(SQLITE_MASTER)
                     .where(SQLiteMaster.SQL.likeIgnoreCase(inline("%create virtual table%"))));
-
     for (Record record :
         create()
             .with(virtualTables)
@@ -408,14 +376,11 @@ public class SQLiteDatabase extends AbstractDatabase {
                                     replace(SQLiteMaster.NAME, inline("_stat"))
                                         .notIn(selectFrom(virtualTables)))))
             .orderBy(SQLiteMaster.NAME)) {
-
       String name = record.get(SQLiteMaster.NAME);
       TableType tableType = record.get("table_type", TableType.class);
       String source = record.get(SQLiteMaster.SQL);
-
       result.add(new SQLiteTableDefinition(getSchemata().get(0), name, "", tableType, source));
     }
-
     return result;
   }
 
@@ -459,7 +424,6 @@ public class SQLiteDatabase extends AbstractDatabase {
 
   Meta snapshot() {
     if (snapshot == null) snapshot = create().meta().snapshot();
-
     return snapshot;
   }
 }

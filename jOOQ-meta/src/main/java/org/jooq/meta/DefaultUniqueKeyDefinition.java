@@ -45,10 +45,15 @@ public class DefaultUniqueKeyDefinition extends AbstractConstraintDefinition
     implements UniqueKeyDefinition {
 
   private static final JooqLogger log = JooqLogger.getLogger(DefaultUniqueKeyDefinition.class);
+
   private final List<ForeignKeyDefinition> foreignKeys;
+
   private final List<ColumnDefinition> keyColumns;
+
   private final boolean isPrimaryKey;
+
   private transient boolean resolvedUKCalculated;
+
   private transient UniqueKeyDefinition resolvedUK;
 
   public DefaultUniqueKeyDefinition(
@@ -63,7 +68,6 @@ public class DefaultUniqueKeyDefinition extends AbstractConstraintDefinition
       boolean isPrimaryKey,
       boolean enforced) {
     super(schema, table, name, enforced);
-
     this.foreignKeys = new ArrayList<>();
     this.keyColumns = new ArrayList<>();
     this.isPrimaryKey = isPrimaryKey;
@@ -88,7 +92,6 @@ public class DefaultUniqueKeyDefinition extends AbstractConstraintDefinition
   public final UniqueKeyDefinition resolveReferencedKey() {
     if (!resolvedUKCalculated) {
       resolvedUKCalculated = true;
-
       ForeignKeyDefinition candidate = null;
       for (ForeignKeyDefinition fk : getTable().getForeignKeys()) {
         if (keyColumns.equals(fk.getKeyColumns())) {
@@ -106,10 +109,8 @@ public class DefaultUniqueKeyDefinition extends AbstractConstraintDefinition
           }
         }
       }
-
       resolvedUK = candidate == null ? this : candidate.resolveReferencedKey();
     }
-
     return resolvedUK;
   }
 }

@@ -131,10 +131,8 @@ public class XMLDatabase extends AbstractDatabase {
 
   private InformationSchema info() {
     if (info == null) {
-
       // [#8118] Regardless of failure, prevent NPEs from subsequent calls
       info = new InformationSchema();
-
       // [#8115] Support old property name style for backwards compatibility reasons
       final String xml =
           getProperties()
@@ -144,9 +142,7 @@ public class XMLDatabase extends AbstractDatabase {
       final String xsl =
           getProperties().getProperty("xslFile", getProperties().getProperty("xsl-file"));
       final String sort = getProperties().getProperty("sort", "semantic").toLowerCase();
-
       if (xml == null) throw new RuntimeException("Must provide an xmlFile property");
-
       try {
         new FilePattern()
             .basedir(new File(getBasedir()))
@@ -156,20 +152,16 @@ public class XMLDatabase extends AbstractDatabase {
                 source -> {
                   String content;
                   Reader reader = null;
-
                   try {
                     if (StringUtils.isBlank(xsl)) {
-
                       // [#7414] Default to reading UTF-8
                       content = source.readString();
-
                       // [#7414] Alternatively, read the encoding from the XML file
                       try {
                         XMLStreamReader xmlReader =
                             XMLInputFactory.newInstance()
                                 .createXMLStreamReader(new StringReader(content));
                         String encoding = xmlReader.getCharacterEncodingScheme();
-
                         // Returned encoding can be null in the presence of a BOM
                         // See https://stackoverflow.com/a/27147259/521799
                         if (encoding != null && !"UTF-8".equals(encoding))
@@ -181,17 +173,13 @@ public class XMLDatabase extends AbstractDatabase {
                       }
                     } else {
                       InputStream xslIs = null;
-
                       try {
                         log.info("Using XSL file", xsl);
-
                         xslIs = XMLDatabase.class.getResourceAsStream(xsl);
                         if (xslIs == null) xslIs = new FileInputStream(xsl);
-
                         StringWriter writer = new StringWriter();
                         TransformerFactory factory = TransformerFactory.newInstance();
                         Transformer transformer = factory.newTransformer(new StreamSource(xslIs));
-
                         transformer.transform(new StreamSource(reader), new StreamResult(writer));
                         content = writer.getBuffer().toString();
                       } catch (java.io.IOException e3) {
@@ -207,18 +195,15 @@ public class XMLDatabase extends AbstractDatabase {
                   } finally {
                     JDBCUtils.safeClose(reader);
                   }
-
                   // TODO [#1201] Add better error handling here
                   content =
                       content.replaceAll(
                           "<(\\w+:)?information_schema xmlns(:\\w+)?=\"http://www.jooq.org/xsd/jooq-meta-\\d+\\.\\d+\\.\\d+.xsd\">",
                           "<$1information_schema xmlns$2=\"" + Constants.NS_META + "\">");
-
                   content =
                       content.replace(
                           "<information_schema>",
                           "<information_schema xmlns=\"" + Constants.NS_META + "\">");
-
                   info =
                       MiniJAXB.append(info, MiniJAXB.unmarshal(content, InformationSchema.class));
                 });
@@ -226,35 +211,29 @@ public class XMLDatabase extends AbstractDatabase {
         throw new RuntimeException("Error while opening files " + xml + " or " + xsl, e);
       }
     }
-
     return info;
   }
 
   @Override
   protected DSLContext create0() {
     SQLDialect dialect = SQLDialect.DEFAULT;
-
     try {
       dialect = SQLDialect.valueOf(getProperties().getProperty("dialect"));
     } catch (Exception ignore) {
     }
-
     // [#6493] Data types are better discovered from the family, not the dialect. This affects the
     // XMLDatabase,
-    //         for instance. Other databases are currently not affected by the family / dialect
-    // distinction
+    // for instance. Other databases are currently not affected by the family / dialect distinction
     return DSL.using(dialect.family());
   }
 
   @Override
   protected List<IndexDefinition> getIndexes0() throws SQLException {
     List<IndexDefinition> result = new ArrayList<>();
-
     final Map<Name, SortedSet<IndexColumnUsage>> indexColumnUsage = new HashMap<>();
     for (IndexColumnUsage ic : info().getIndexColumnUsages()) {
       Name name =
           name(ic.getIndexCatalog(), ic.getIndexSchema(), ic.getTableName(), ic.getIndexName());
-
       SortedSet<IndexColumnUsage> list =
           indexColumnUsage.computeIfAbsent(
               name,
@@ -262,44 +241,34 @@ public class XMLDatabase extends AbstractDatabase {
                   new TreeSet<>(
                       (o1, o2) -> {
                         int r = 0;
-
                         r =
                             defaultIfNull(o1.getIndexCatalog(), "")
                                 .compareTo(defaultIfNull(o2.getIndexCatalog(), ""));
                         if (r != 0) return r;
-
                         r =
                             defaultIfNull(o1.getIndexSchema(), "")
                                 .compareTo(defaultIfNull(o2.getIndexSchema(), ""));
                         if (r != 0) return r;
-
                         r =
                             defaultIfNull(o1.getTableName(), "")
                                 .compareTo(defaultIfNull(o2.getTableName(), ""));
                         if (r != 0) return r;
-
                         r =
                             defaultIfNull(o1.getIndexName(), "")
                                 .compareTo(defaultIfNull(o2.getIndexName(), ""));
                         if (r != 0) return r;
-
                         return Integer.compare(o1.getOrdinalPosition(), o2.getOrdinalPosition());
                       }));
-
       list.add(ic);
     }
-
     indexLoop:
     for (Index i : info().getIndexes()) {
       if (getInputSchemata().contains(i.getTableSchema())) {
         final SchemaDefinition schema = getSchema(i.getTableSchema());
         final TableDefinition table = getTable(schema, i.getTableName());
-
         if (table == null) continue indexLoop;
-
         final Name name =
             name(i.getIndexCatalog(), i.getIndexSchema(), i.getTableName(), i.getIndexName());
-
         IndexDefinition index =
             new AbstractIndexDefinition(
                 schema,
@@ -307,16 +276,15 @@ public class XMLDatabase extends AbstractDatabase {
                 table,
                 Boolean.TRUE.equals(i.isIsUnique()),
                 i.getComment()) {
+
               private final List<IndexColumnDefinition> indexColumns;
 
               {
                 indexColumns = new ArrayList<>();
                 SortedSet<IndexColumnUsage> list = indexColumnUsage.get(name);
-
                 if (list != null)
                   for (IndexColumnUsage ic : list) {
                     ColumnDefinition column = table.getColumn(ic.getColumnName());
-
                     if (column != null)
                       indexColumns.add(
                           new DefaultIndexColumnDefinition(
@@ -339,11 +307,9 @@ public class XMLDatabase extends AbstractDatabase {
                 return indexColumns;
               }
             };
-
         result.add(index);
       }
     }
-
     return result;
   }
 
@@ -354,7 +320,6 @@ public class XMLDatabase extends AbstractDatabase {
       String key = usage.getConstraintName();
       String tableName = usage.getTableName();
       String columnName = usage.getColumnName();
-
       TableConstraint tc =
           tableConstraint(
               usage.getConstraintCatalog(), usage.getConstraintSchema(), usage.getConstraintName());
@@ -372,7 +337,6 @@ public class XMLDatabase extends AbstractDatabase {
       String key = usage.getConstraintName();
       String tableName = usage.getTableName();
       String columnName = usage.getColumnName();
-
       TableConstraint tc =
           tableConstraint(
               usage.getConstraintCatalog(), usage.getConstraintSchema(), usage.getConstraintName());
@@ -385,7 +349,6 @@ public class XMLDatabase extends AbstractDatabase {
 
   private List<KeyColumnUsage> keyColumnUsage(TableConstraintType constraintType) {
     List<KeyColumnUsage> result = new ArrayList<>();
-
     for (TableConstraint constraint : info().getTableConstraints())
       if (constraintType == constraint.getConstraintType()
           && getInputSchemata().contains(constraint.getConstraintSchema()))
@@ -399,29 +362,23 @@ public class XMLDatabase extends AbstractDatabase {
               && StringUtils.equals(
                   defaultIfNull(constraint.getConstraintName(), ""),
                   defaultIfNull(usage.getConstraintName(), ""))) result.add(usage);
-
     result.sort(
         (o1, o2) -> {
           int r = 0;
-
           r =
               defaultIfNull(o1.getConstraintCatalog(), "")
                   .compareTo(defaultIfNull(o2.getConstraintCatalog(), ""));
           if (r != 0) return r;
-
           r =
               defaultIfNull(o1.getConstraintSchema(), "")
                   .compareTo(defaultIfNull(o2.getConstraintSchema(), ""));
           if (r != 0) return r;
-
           r =
               defaultIfNull(o1.getConstraintName(), "")
                   .compareTo(defaultIfNull(o2.getConstraintName(), ""));
           if (r != 0) return r;
-
           return Integer.compare(o1.getOrdinalPosition(), o2.getOrdinalPosition());
         });
-
     return result;
   }
 
@@ -439,10 +396,8 @@ public class XMLDatabase extends AbstractDatabase {
               && StringUtils.equals(
                   defaultIfNull(fk.getConstraintName(), ""),
                   defaultIfNull(usage.getConstraintName(), ""))) {
-
             SchemaDefinition foreignKeySchema = getSchema(fk.getConstraintSchema());
             SchemaDefinition uniqueKeySchema = getSchema(fk.getUniqueConstraintSchema());
-
             String foreignKey = usage.getConstraintName();
             String foreignKeyTableName = usage.getTableName();
             String foreignKeyColumn = usage.getColumnName();
@@ -455,11 +410,9 @@ public class XMLDatabase extends AbstractDatabase {
                     fk.getUniqueConstraintCatalog(),
                     fk.getUniqueConstraintSchema(),
                     fk.getUniqueConstraintName());
-
             if (fktc != null && uktc != null) {
               TableDefinition foreignKeyTable = getTable(foreignKeySchema, foreignKeyTableName);
               TableDefinition uniqueKeyTable = getTable(uniqueKeySchema, uktc.getTableName());
-
               if (foreignKeyTable != null && uniqueKeyTable != null)
                 relations.addForeignKey(
                     foreignKey,
@@ -485,28 +438,22 @@ public class XMLDatabase extends AbstractDatabase {
           && StringUtils.equals(
               defaultIfNull(constraintName, ""), defaultIfNull(uk.getConstraintName(), "")))
         return uk;
-
     return null;
   }
 
   @Override
   protected void loadCheckConstraints(DefaultRelations r) {
-
     constraintLoop:
     for (CheckConstraint check : info().getCheckConstraints()) {
       if (!getInputSchemata().contains(check.getConstraintSchema())) continue constraintLoop;
-
       SchemaDefinition schema = getSchema(check.getConstraintSchema());
       if (schema == null) continue constraintLoop;
-
       TableConstraint tc =
           tableConstraint(
               check.getConstraintCatalog(), check.getConstraintSchema(), check.getConstraintName());
       if (tc == null) continue constraintLoop;
-
       TableDefinition table = getTable(schema, tc.getTableName());
       if (table == null) continue constraintLoop;
-
       r.addCheckConstraint(
           table,
           new DefaultCheckConstraintDefinition(
@@ -528,25 +475,21 @@ public class XMLDatabase extends AbstractDatabase {
   @Override
   protected List<SchemaDefinition> getSchemata0() {
     List<SchemaDefinition> result = new ArrayList<>();
-
     for (Schema schema : info().getSchemata()) {
       String schemaName = schema.getSchemaName();
       result.add(
           new SchemaDefinition(
               this, StringUtils.defaultIfNull(schemaName, ""), schema.getComment()));
     }
-
     return result;
   }
 
   @Override
   protected List<SequenceDefinition> getSequences0() {
     List<SequenceDefinition> result = new ArrayList<>();
-
     for (Sequence sequence : info().getSequences()) {
       if (getInputSchemata().contains(sequence.getSequenceSchema())) {
         SchemaDefinition schema = getSchema(sequence.getSequenceSchema());
-
         DataTypeDefinition type =
             new DefaultDataTypeDefinition(
                 this,
@@ -557,7 +500,6 @@ public class XMLDatabase extends AbstractDatabase {
                 sequence.getNumericScale(),
                 false,
                 (String) null);
-
         result.add(
             new DefaultSequenceDefinition(
                 schema,
@@ -572,20 +514,16 @@ public class XMLDatabase extends AbstractDatabase {
                 sequence.getCache()));
       }
     }
-
     return result;
   }
 
   @Override
   protected List<TableDefinition> getTables0() {
     List<TableDefinition> result = new ArrayList<>();
-
     for (Table table : info().getTables()) {
       if (getInputSchemata().contains(table.getTableSchema())) {
         SchemaDefinition schema = getSchema(table.getTableSchema());
-
         TableType tableType;
-
         switch (table.getTableType()) {
           case GLOBAL_TEMPORARY:
             tableType = TableType.TEMPORARY;
@@ -598,11 +536,8 @@ public class XMLDatabase extends AbstractDatabase {
             tableType = TableType.TABLE;
             break;
         }
-
         String source = null;
-
         if (tableType == TableType.VIEW) {
-
           viewLoop:
           for (View view : info().getViews()) {
             if (StringUtils.equals(
@@ -614,18 +549,15 @@ public class XMLDatabase extends AbstractDatabase {
                 && StringUtils.equals(
                     defaultIfNull(table.getTableName(), ""),
                     defaultIfNull(view.getTableName(), ""))) {
-
               source = view.getViewDefinition();
               break viewLoop;
             }
           }
         }
-
         result.add(
             new XMLTableDefinition(schema, info(), table, table.getComment(), tableType, source));
       }
     }
-
     return result;
   }
 
@@ -656,41 +588,33 @@ public class XMLDatabase extends AbstractDatabase {
   @Override
   protected List<RoutineDefinition> getRoutines0() {
     List<RoutineDefinition> result = new ArrayList<>();
-
     for (Routine routine : info().getRoutines()) {
       if (isBlank(routine.getSpecificPackage()) && isBlank(routine.getRoutinePackage())) {
         String schemaName = defaultIfBlank(routine.getSpecificSchema(), routine.getRoutineSchema());
-
         if (getInputSchemata().contains(schemaName)) {
           SchemaDefinition schema = getSchema(schemaName);
-
           result.add(new XMLRoutineDefinition(schema, null, info(), routine, routine.getComment()));
         }
       }
     }
-
     return result;
   }
 
   @Override
   protected List<PackageDefinition> getPackages0() {
     List<PackageDefinition> result = new ArrayList<>();
-
     Set<String> packages = new HashSet<>();
     for (Routine routine : info().getRoutines()) {
       String schemaName = defaultIfBlank(routine.getSpecificSchema(), routine.getRoutineSchema());
-
       if (getInputSchemata().contains(schemaName)) {
         SchemaDefinition schema = getSchema(schemaName);
         String packageName =
             defaultIfBlank(routine.getSpecificPackage(), routine.getRoutinePackage());
-
         if (!isBlank(packageName) && packages.add(packageName)) {
           result.add(new XMLPackageDefinition(schema, info(), packageName));
         }
       }
     }
-
     return result;
   }
 

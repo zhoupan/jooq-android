@@ -74,7 +74,6 @@ public class MySQLTableDefinition extends AbstractTableDefinition {
   @Override
   public List<ColumnDefinition> getElements0() throws SQLException {
     List<ColumnDefinition> result = new ArrayList<>();
-
     for (Record record :
         create()
             .select(
@@ -85,10 +84,8 @@ public class MySQLTableDefinition extends AbstractTableDefinition {
                 COLUMNS.DATA_TYPE,
                 COLUMNS.IS_NULLABLE,
                 COLUMNS.COLUMN_DEFAULT,
-                COLUMNS.CHARACTER_MAXIMUM_LENGTH,
-
-                // [#10856] Some older versions of MySQL 5.7 don't have the DATETIME_PRECISION
-                // column yet
+                COLUMNS.CHARACTER_MAXIMUM_LENGTH, // [#10856] Some older versions of MySQL 5.7 don't
+                // have the DATETIME_PRECISION column yet
                 getDatabase().exists(COLUMNS.DATETIME_PRECISION)
                     ? coalesce(COLUMNS.NUMERIC_PRECISION, COLUMNS.DATETIME_PRECISION)
                         .as(COLUMNS.NUMERIC_PRECISION)
@@ -96,33 +93,26 @@ public class MySQLTableDefinition extends AbstractTableDefinition {
                 COLUMNS.NUMERIC_SCALE,
                 COLUMNS.EXTRA)
             .from(COLUMNS)
-            // [#5213] Duplicate schema value to work around MySQL issue
+            . // [#5213] Duplicate schema value to work around MySQL issue
             // https://bugs.mysql.com/bug.php?id=86022
-            .where(COLUMNS.TABLE_SCHEMA.in(getSchema().getName(), getSchema().getName()))
+            where(COLUMNS.TABLE_SCHEMA.in(getSchema().getName(), getSchema().getName()))
             .and(COLUMNS.TABLE_NAME.equal(getName()))
             .orderBy(COLUMNS.ORDINAL_POSITION)) {
-
       String dataType = record.get(COLUMNS.DATA_TYPE);
-
       // [#519] Some types have unsigned versions
       boolean unsigned = getDatabase().supportsUnsignedTypes();
-
       // [#7719]
       boolean displayWidths = getDatabase().integerDisplayWidths();
-
       columnTypeFix:
       if (unsigned || displayWidths) {
         if (asList("tinyint", "smallint", "mediumint", "int", "bigint")
             .contains(dataType.toLowerCase())) {
           String columnType = record.get(COLUMNS.COLUMN_TYPE).toLowerCase();
-
           Matcher matcher = COLUMN_TYPE.matcher(columnType);
-
           if (matcher.find()) {
             String mType = matcher.group(1);
             String mPrecision = matcher.group(2);
             String mUnsigned = matcher.group(3);
-
             dataType =
                 mType
                     + (unsigned && mUnsigned != null ? mUnsigned : "")
@@ -130,7 +120,6 @@ public class MySQLTableDefinition extends AbstractTableDefinition {
           }
         }
       }
-
       DataTypeDefinition type =
           new DefaultDataTypeDefinition(
               getDatabase(),
@@ -142,7 +131,6 @@ public class MySQLTableDefinition extends AbstractTableDefinition {
               record.get(COLUMNS.IS_NULLABLE, boolean.class),
               record.get(COLUMNS.COLUMN_DEFAULT),
               name(getSchema().getName(), getName() + "_" + record.get(COLUMNS.COLUMN_NAME)));
-
       result.add(
           new DefaultColumnDefinition(
               getDatabase().getTable(getSchema(), getName()),
@@ -152,7 +140,6 @@ public class MySQLTableDefinition extends AbstractTableDefinition {
               "auto_increment".equalsIgnoreCase(record.get(COLUMNS.EXTRA)),
               record.get(COLUMNS.COLUMN_COMMENT)));
     }
-
     return result;
   }
 }

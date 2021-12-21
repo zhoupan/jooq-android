@@ -40,7 +40,6 @@ package org.jooq.meta;
 import java.util.List;
 
 // ...
-
 /**
  * An interface defining a column of a table.
  *

@@ -89,7 +89,6 @@ public class PostgresMaterializedViewDefinition extends AbstractTableDefinition 
   @Override
   public List<ColumnDefinition> getElements0() throws SQLException {
     List<ColumnDefinition> result = new ArrayList<>();
-
     Columns col = COLUMNS;
     PgAttribute a = PG_ATTRIBUTE.as("a");
     PgAttrdef ad = PG_ATTRDEF.as("ad");
@@ -101,7 +100,6 @@ public class PostgresMaterializedViewDefinition extends AbstractTableDefinition 
     PgNamespace nc = PG_NAMESPACE.as("nc");
     PgNamespace nbt = PG_NAMESPACE.as("nbt");
     PgNamespace nco = PG_NAMESPACE.as("nco");
-
     for (Record record :
         create()
             .select(
@@ -203,12 +201,9 @@ public class PostgresMaterializedViewDefinition extends AbstractTableDefinition 
                     .and(nc.NSPNAME.in(getSchema().getName()))
                     .and(c.RELNAME.eq(getName())))
             .orderBy(a.ATTNUM)) {
-
       SchemaDefinition typeSchema = null;
-
       String schemaName = record.get(COLUMNS.UDT_SCHEMA);
       if (schemaName != null) typeSchema = getDatabase().getSchema(schemaName);
-
       DataTypeDefinition type =
           new DefaultDataTypeDefinition(
               getDatabase(),
@@ -220,7 +215,6 @@ public class PostgresMaterializedViewDefinition extends AbstractTableDefinition 
               record.get(COLUMNS.IS_NULLABLE, boolean.class),
               record.get(COLUMNS.COLUMN_DEFAULT),
               name(record.get(COLUMNS.UDT_SCHEMA), record.get(COLUMNS.UDT_NAME)));
-
       result.add(
           new DefaultColumnDefinition(
               getDatabase().getTable(getSchema(), getName()),
@@ -230,7 +224,6 @@ public class PostgresMaterializedViewDefinition extends AbstractTableDefinition 
               defaultString(record.get(COLUMNS.COLUMN_DEFAULT)).startsWith("nextval"),
               record.get(PG_DESCRIPTION.DESCRIPTION)));
     }
-
     return result;
   }
 }

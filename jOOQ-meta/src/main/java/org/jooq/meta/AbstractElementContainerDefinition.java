@@ -85,18 +85,14 @@ public abstract class AbstractElementContainerDefinition<E extends TypedElementD
   protected final List<E> getElements() {
     if (elements == null) {
       elements = new ArrayList<>();
-
       try {
         Database db = getDatabase();
         List<E> e = getElements0();
-
         // [#5335] Warn if a table definition contains several identity columns
         if (this instanceof TableDefinition) {
           boolean hasIdentity = false;
-
           for (E c : e) {
             boolean isIdentity = ((ColumnDefinition) c).isIdentity();
-
             if (isIdentity) {
               if (hasIdentity) {
                 log.warn(
@@ -106,24 +102,20 @@ public abstract class AbstractElementContainerDefinition<E extends TypedElementD
                         + " has multiple identity columns. Only the first one is considered.");
                 break;
               }
-
               hasIdentity = true;
             }
           }
         }
-
         // [#2603] Filter exclude / include also for table columns
         if (this instanceof TableDefinition && db.getIncludeExcludeColumns()) {
           elements = db.filterExcludeInclude(e);
           log.info("Columns fetched", fetchedSize(e, elements));
         } else elements = e;
-
         db.sort(elements);
       } catch (Exception e) {
         log.error("Error while initialising type", e);
       }
     }
-
     return elements;
   }
 
@@ -144,28 +136,24 @@ public abstract class AbstractElementContainerDefinition<E extends TypedElementD
   protected Number parsePrecision(String typeName) {
     if (typeName.contains("(")) {
       Matcher m = PRECISION_SCALE.matcher(typeName);
-
       if (m.find()) {
         if (!StringUtils.isBlank(m.group(1))) {
           return Integer.valueOf(m.group(1));
         }
       }
     }
-
     return 0;
   }
 
   protected Number parseScale(String typeName) {
     if (typeName.contains("(")) {
       Matcher m = PRECISION_SCALE.matcher(typeName);
-
       if (m.find()) {
         if (!StringUtils.isBlank(m.group(2))) {
           return Integer.valueOf(m.group(2));
         }
       }
     }
-
     return 0;
   }
 

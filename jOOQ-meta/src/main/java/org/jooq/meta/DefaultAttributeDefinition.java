@@ -50,7 +50,6 @@ public class DefaultAttributeDefinition extends AbstractTypedElementDefinition<U
   public DefaultAttributeDefinition(
       UDTDefinition udt, String name, int position, DataTypeDefinition type) {
     super(udt, name, position, type, null);
-
     this.position = position;
   }
 

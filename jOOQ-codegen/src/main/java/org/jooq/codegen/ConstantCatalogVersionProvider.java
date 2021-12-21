@@ -41,11 +41,11 @@ import org.jooq.meta.CatalogDefinition;
 import org.jooq.meta.CatalogVersionProvider;
 
 /** @author Lukas Eder */
-class ConstantCatalogVersionProvider implements CatalogVersionProvider {
+public class ConstantCatalogVersionProvider implements CatalogVersionProvider {
 
   private String constant;
 
-  ConstantCatalogVersionProvider(String constant) {
+  public ConstantCatalogVersionProvider(String constant) {
     this.constant = constant;
   }
 

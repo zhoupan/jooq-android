@@ -56,7 +56,6 @@ public class Count2 extends AbstractRoutine<Long> {
   /** Create a new routine call instance */
   public Count2() {
     super("count", PgCatalog.PG_CATALOG, SQLDataType.BIGINT);
-
     setReturnParameter(RETURN_VALUE);
     setOverloaded(true);
   }

@@ -65,13 +65,17 @@ public abstract class AbstractTypedElementDefinition<T extends Definition>
     extends AbstractDefinition implements TypedElementDefinition<T> {
 
   private static final JooqLogger log = JooqLogger.getLogger(AbstractTypedElementDefinition.class);
+
   private static final Pattern LENGTH_PRECISION_SCALE_PATTERN =
       Pattern.compile(
           "[\\w\\s]+(?:\\(\\s*?(\\d+)\\s*?\\)|\\(\\s*?(\\d+)\\s*?,\\s*?(\\d+)\\s*?\\))");
 
   private final T container;
+
   private final DataTypeDefinition definedType;
+
   private transient DataTypeDefinition type;
+
   private transient DataTypeDefinition resolvedType;
 
   public AbstractTypedElementDefinition(
@@ -92,14 +96,12 @@ public abstract class AbstractTypedElementDefinition<T extends Definition>
         protectName(container, name, position),
         comment,
         overload);
-
     this.container = container;
     this.definedType = definedType;
   }
 
   private static final String protectName(Definition container, String name, int position) {
     if (name == null) {
-
       // [#6654] Specific error messages per type
       if (container instanceof TableDefinition)
         log.info(
@@ -121,10 +123,8 @@ public abstract class AbstractTypedElementDefinition<T extends Definition>
         log.info(
             "Missing name",
             "Object " + container + " holds an element without a name at position " + position);
-
       return "_" + position;
     }
-
     return name;
   }
 
@@ -136,10 +136,8 @@ public abstract class AbstractTypedElementDefinition<T extends Definition>
   @Override
   public List<Definition> getDefinitionPath() {
     List<Definition> result = new ArrayList<>();
-
     result.addAll(getContainer().getDefinitionPath());
     result.add(this);
-
     return result;
   }
 
@@ -147,14 +145,12 @@ public abstract class AbstractTypedElementDefinition<T extends Definition>
   public DataTypeDefinition getType() {
     if (type == null)
       type = mapDefinedType(container, this, definedType, new DefaultJavaTypeResolver());
-
     return type;
   }
 
   @Override
   public DataTypeDefinition getType(JavaTypeResolver resolver) {
     if (resolvedType == null) resolvedType = mapDefinedType(container, this, definedType, resolver);
-
     return resolvedType;
   }
 
@@ -164,7 +160,6 @@ public abstract class AbstractTypedElementDefinition<T extends Definition>
   }
 
   public static final DataType<?> getDataType(Database db, String t, int p, int s) {
-
     // [#8493] Synthetic SQLDataType aliases used by the code generator only
     if ("OFFSETDATETIME".equalsIgnoreCase(t)) return SQLDataType.OFFSETDATETIME.precision(p);
     else if ("OFFSETTIME".equalsIgnoreCase(t)) return SQLDataType.OFFSETTIME.precision(p);
@@ -173,11 +168,9 @@ public abstract class AbstractTypedElementDefinition<T extends Definition>
     else if ("LOCALTIME".equalsIgnoreCase(t)) return SQLDataType.LOCALTIME.precision(p);
     else if (db.getForceIntegerTypesOnZeroScaleDecimals())
       return DefaultDataType.getDataType(db.getDialect(), t, p, s);
-
     DataType<?> result = DefaultDataType.getDataType(db.getDialect(), t);
     if (result.getType() == BigDecimal.class && s == 0)
       DefaultDataType.getDataType(db.getDialect(), BigInteger.class);
-
     return result;
   }
 
@@ -188,28 +181,21 @@ public abstract class AbstractTypedElementDefinition<T extends Definition>
       JavaTypeResolver resolver) {
     DataTypeDefinition result = definedType;
     Database db = container.getDatabase();
-
     log.debug("Type mapping", child + " with type " + definedType.getType());
-
     // [#976] Mapping DATE as TIMESTAMP
     if (db.dateAsTimestamp()) {
       DataType<?> dataType = null;
-
       try {
         dataType = getDataType(db, result.getType(), 0, 0);
       } catch (SQLDialectNotSupportedException ignore) {
       }
-
       if (dataType != null) {
-
         // [#5239] [#5762] [#6453] Don't rely on getSQLType()
         if (SQLDataType.DATE.equals(dataType.getSQLDataType())) {
           DataType<?> forcedDataType = getDataType(db, SQLDataType.TIMESTAMP.getTypeName(), 0, 0);
           String binding = DateAsTimestampBinding.class.getName();
-
           if (db.javaTimeTypes())
             binding = org.jooq.impl.LocalDateAsLocalDateTimeBinding.class.getName();
-
           result =
               new DefaultDataTypeDefinition(
                   db,
@@ -228,21 +214,18 @@ public abstract class AbstractTypedElementDefinition<T extends Definition>
         }
       }
     }
-
     // [#677] Forced types for matching regular expressions
     ForcedType forcedType = db.getConfiguredForcedType(child, definedType);
     if (forcedType != null) {
       String uType = forcedType.getName();
       String converter = null;
       String binding = result.getBinding();
-
       CustomType customType = customType(db, forcedType);
       if (customType != null) {
         uType =
             (!StringUtils.isBlank(customType.getType()))
                 ? customType.getType()
                 : customType.getName();
-
         // [#5877] [#6567] EnumConverters profit from simplified configuration
         if (Boolean.TRUE.equals(customType.isEnumConverter())
             || EnumConverter.class.getName().equals(customType.getConverter())) {
@@ -279,24 +262,18 @@ public abstract class AbstractTypedElementDefinition<T extends Definition>
         } else if (!StringUtils.isBlank(customType.getConverter())) {
           converter = customType.getConverter();
         }
-
         if (!StringUtils.isBlank(customType.getBinding())) binding = customType.getBinding();
       }
-
       if (uType != null) {
         db.markUsed(forcedType);
         log.info("Forcing type", child + " to " + forcedType);
-
         DataType<?> forcedDataType = null;
-
         boolean n = result.isNullable();
         String d = result.getDefaultValue();
         boolean i = result.isIdentity();
-
         int l = 0;
         int p = 0;
         int s = 0;
-
         // [#2486] Allow users to override length, precision, and scale
         Matcher matcher = LENGTH_PRECISION_SCALE_PATTERN.matcher(uType);
         if (matcher.find()) {
@@ -307,15 +284,12 @@ public abstract class AbstractTypedElementDefinition<T extends Definition>
             s = convert(matcher.group(3), int.class);
           }
         }
-
         try {
           forcedDataType = getDataType(db, uType, p, s);
         } catch (SQLDialectNotSupportedException ignore) {
         }
-
         // [#677] SQLDataType matches are actual type-rewrites
         if (forcedDataType != null) {
-
           // [#3704] When <forcedType/> matches a custom type AND a data type rewrite, the rewrite
           // was usually accidental.
           if (customType != null)
@@ -327,7 +301,6 @@ public abstract class AbstractTypedElementDefinition<T extends Definition>
                     + " forced by "
                     + forcedType
                     + " but a data type rewrite applies");
-
           result =
               new DefaultDataTypeDefinition(
                   db,
@@ -343,10 +316,8 @@ public abstract class AbstractTypedElementDefinition<T extends Definition>
                   converter,
                   binding,
                   null);
-        }
-
-        // Other forced types are UDT's, enums, etc.
-        else if (customType != null) {
+        } else // Other forced types are UDT's, enums, etc.
+        if (customType != null) {
           l = result.getLength();
           p = result.getPrecision();
           s = result.getScale();
@@ -355,13 +326,10 @@ public abstract class AbstractTypedElementDefinition<T extends Definition>
           result =
               new DefaultDataTypeDefinition(
                   db, definedType.getSchema(), t, l, p, s, n, d, i, u, converter, binding, uType);
-        }
-
-        // [#4597] If we don't have a type-rewrite (forcedDataType) or a
-        //         matching customType, the user probably malconfigured
-        //         their <forcedTypes/> or <customTypes/>
-        else {
-
+        } else // [#4597] If we don't have a type-rewrite (forcedDataType) or a
+        // matching customType, the user probably malconfigured
+        // their <forcedTypes/> or <customTypes/>
+        {
           // [#7373] [#10944] Refer to <customType/> only if someone is still using the feature
           if (db.getConfiguredCustomTypes().isEmpty())
             log.warn(
@@ -378,14 +346,12 @@ public abstract class AbstractTypedElementDefinition<T extends Definition>
         }
       }
     }
-
     return result;
   }
 
   private static final String tType(
       Database db, JavaTypeResolver resolver, DataTypeDefinition definedType) {
     if (resolver != null) return resolver.resolve(definedType);
-
     try {
       return getDataType(
               db, definedType.getType(), definedType.getPrecision(), definedType.getScale())
@@ -399,18 +365,15 @@ public abstract class AbstractTypedElementDefinition<T extends Definition>
   @SuppressWarnings("deprecation")
   public static final CustomType customType(Database db, ForcedType forcedType) {
     String name = forcedType.getName();
-
     // [#4598] Legacy use-case where a <forcedType/> referes to a <customType/>
-    //         element by name.
+    // element by name.
     if (StringUtils.isBlank(forcedType.getUserType())) {
       if (name != null)
         for (CustomType type : db.getConfiguredCustomTypes())
           if (name.equals(type.getName())) return type;
-    }
-
-    // [#4598] New default use-case where <forcedType/> embeds <customType/>
-    //         information for convenience.
-    else {
+    } else // [#4598] New default use-case where <forcedType/> embeds <customType/>
+    // information for convenience.
+    {
       return new CustomType()
           .withBinding(forcedType.getBinding())
           .withEnumConverter(forcedType.isEnumConverter())
@@ -419,7 +382,6 @@ public abstract class AbstractTypedElementDefinition<T extends Definition>
           .withName(name)
           .withType(forcedType.getUserType());
     }
-
     return null;
   }
 

@@ -37,7 +37,7 @@
  */
 package org.jooq;
 
-import java.util.concurrent.Flow;
+import org.java.util.concurrent.Flow;
 import org.reactivestreams.FlowAdapters;
 
 /**

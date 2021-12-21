@@ -52,7 +52,9 @@ import org.jooq.Result;
 final class Statements {
 
   private DSLContext ctx;
+
   private final Map<String, Result<?>> sqlCache;
+
   private final Map<String, Set<?>> sqlCacheSingleColumnSet;
 
   Statements() {

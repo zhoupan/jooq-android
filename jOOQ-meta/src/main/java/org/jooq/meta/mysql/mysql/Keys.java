@@ -52,25 +52,25 @@ public class Keys {
   // -------------------------------------------------------------------------
   // UNIQUE and PRIMARY KEY definitions
   // -------------------------------------------------------------------------
-
   public static final UniqueKey<Record> KEY_PROC_PRIMARY = UniqueKeys0.KEY_PROC_PRIMARY;
+
   public static final UniqueKey<Record> KEY_PROCS_PRIV_PRIMARY = UniqueKeys0.KEY_PROCS_PRIV_PRIMARY;
 
   // -------------------------------------------------------------------------
   // FOREIGN KEY definitions
   // -------------------------------------------------------------------------
-
   // -------------------------------------------------------------------------
   // [#1459] distribute members to avoid static initialisers > 64kb
   // -------------------------------------------------------------------------
-
   private static class UniqueKeys0 {
+
     static final UniqueKey<Record> KEY_PROC_PRIMARY =
         Internal.createUniqueKey(
             Proc.PROC,
             DSL.name("KEY_proc_PRIMARY"),
             new TableField[] {Proc.PROC.DB, Proc.PROC.NAME, Proc.PROC.TYPE},
             true);
+
     static final UniqueKey<Record> KEY_PROCS_PRIV_PRIMARY =
         Internal.createUniqueKey(
             ProcsPriv.PROCS_PRIV,

@@ -54,7 +54,6 @@ public class DefaultCheckConstraintDefinition extends AbstractConstraintDefiniti
       String checkClause,
       boolean enforced) {
     super(schema, table, name, enforced);
-
     this.checkClause = checkClause;
   }
 

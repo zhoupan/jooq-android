@@ -53,20 +53,16 @@ import java.util.Map;
 import java.util.Optional;
 
 /**
- * A wrapper for an {@link Object} or {@link Class} upon which reflective calls
- * can be made.
+ * A wrapper for an {@link Object} or {@link Class} upon which reflective calls can be made.
  * <p>
- * An example of using <code>Reflect</code> is <code><pre>
- * // Static import all reflection methods to decrease verbosity
- * import static org.joor.Reflect.*;
+ * An example of using <code>Reflect</code> is <code>
  *
- * // Wrap an Object / Class / class name with the on() method:
- * on("java.lang.String")
- * // Invoke constructors using the create() method:
- * .create("Hello World")
- * // Invoke methods using the call() method:
- * .call("toString")
- * // Retrieve the wrapped object
+ * <pre>
+ * // Static import all reflection methods to decrease verbosity import static org.joor.Reflect.*;
+ *
+ * // Wrap an Object / Class / class name with the on() method: on("java.lang.String") // Invoke
+ * constructors using the create() method: .create("Hello World") // Invoke methods using the call()
+ * method: .call("toString") // Retrieve the wrapped object
  *
  * @author Lukas Eder
  * @author Irek Matysiewicz
@@ -709,21 +705,8 @@ public class Reflect {
               }
               if (method.isDefault()) {
                 Lookup proxyLookup = null;
-                // Java 9 version
-                if (CACHED_LOOKUP_CONSTRUCTOR == null) {
-                  proxyLookup =
-                      MethodHandles.privateLookupIn(proxyType, MethodHandles.lookup())
-                          .in(proxyType);
-                  // Java 9 version for Java 8 distribution (jOOQ Open Source Edition)
-                  if (proxyLookup == null)
-                    proxyLookup =
-                        onClass(MethodHandles.class)
-                            .call("privateLookupIn", proxyType, MethodHandles.lookup())
-                            .call("in", proxyType)
-                            .<Lookup>get();
-                } else
-                  // Java 8 version
-                  proxyLookup = CACHED_LOOKUP_CONSTRUCTOR.newInstance(proxyType);
+                // Java 8 version
+                proxyLookup = CACHED_LOOKUP_CONSTRUCTOR.newInstance(proxyType);
                 return proxyLookup
                     .unreflectSpecial(method, proxyType)
                     .bindTo(proxy)

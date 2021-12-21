@@ -60,6 +60,7 @@ public class MatchersRoutineType implements Serializable, XMLAppendable {
   protected String expression;
 
   protected MatcherRule routineClass;
+
   protected MatcherRule routineMethod;
 
   @XmlJavaTypeAdapter(StringAdapter.class)

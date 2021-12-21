@@ -81,7 +81,6 @@ public class PostgresTableDefinition extends AbstractTableDefinition {
   @Override
   public List<ColumnDefinition> getElements0() throws SQLException {
     List<ColumnDefinition> result = new ArrayList<>();
-
     PostgresDatabase database = (PostgresDatabase) getDatabase();
     Field<String> dataType =
         when(
@@ -95,25 +94,22 @@ public class PostgresTableDefinition extends AbstractTableDefinition {
     Field<String> udtSchema = COLUMNS.UDT_SCHEMA;
     Field<Integer> precision = nvl(COLUMNS.DATETIME_PRECISION, COLUMNS.NUMERIC_PRECISION);
     Field<String> serialColumnDefault = inline("nextval('%_seq'::regclass)");
-
     Condition isSerial = lower(COLUMNS.COLUMN_DEFAULT).likeIgnoreCase(serialColumnDefault);
     Condition isIdentity10 = COLUMNS.IS_IDENTITY.eq(inline("YES"));
-
     // [#9200] only use COLUMN_DEFAULT for ColumnDefinition#isIdentity() if
     // table has no column with IS_IDENTITY = 'YES'
     Condition isIdentity =
         database.is10()
             ? isIdentity10.or(count().filterWhere(isIdentity10).over().eq(inline(0)).and(isSerial))
             : isSerial;
-
     for (Record record :
         create()
             .select(
                 COLUMNS.COLUMN_NAME,
                 COLUMNS.ORDINAL_POSITION,
-                dataType.as(COLUMNS.DATA_TYPE),
-
-                // [#8067] [#11658] A more robust / sophisticated decoding might be available
+                dataType.as(
+                    COLUMNS.DATA_TYPE), // [#8067] [#11658] A more robust / sophisticated decoding
+                // might be available
                 nvl(
                         COLUMNS.CHARACTER_MAXIMUM_LENGTH,
                         when(
@@ -145,12 +141,9 @@ public class PostgresTableDefinition extends AbstractTableDefinition {
             .where(COLUMNS.TABLE_SCHEMA.equal(getSchema().getName()))
             .and(COLUMNS.TABLE_NAME.equal(getName()))
             .orderBy(COLUMNS.ORDINAL_POSITION)) {
-
       SchemaDefinition typeSchema = null;
-
       String schemaName = record.get(COLUMNS.UDT_SCHEMA);
       if (schemaName != null) typeSchema = getDatabase().getSchema(schemaName);
-
       DataTypeDefinition type =
           new DefaultDataTypeDefinition(
               getDatabase(),
@@ -162,7 +155,6 @@ public class PostgresTableDefinition extends AbstractTableDefinition {
               record.get(COLUMNS.IS_NULLABLE, boolean.class),
               record.get(COLUMNS.COLUMN_DEFAULT),
               name(record.get(COLUMNS.UDT_SCHEMA), record.get(COLUMNS.UDT_NAME)));
-
       ColumnDefinition column =
           new DefaultColumnDefinition(
               getDatabase().getTable(getSchema(), getName()),
@@ -171,10 +163,8 @@ public class PostgresTableDefinition extends AbstractTableDefinition {
               type,
               record.get(COLUMNS.IS_IDENTITY, boolean.class),
               record.get(PG_DESCRIPTION.DESCRIPTION));
-
       result.add(column);
     }
-
     return result;
   }
 }

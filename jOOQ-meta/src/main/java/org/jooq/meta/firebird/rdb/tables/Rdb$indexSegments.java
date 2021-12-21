@@ -126,7 +126,6 @@ public class Rdb$indexSegments extends TableImpl<Record> {
   public Rdb$indices rdb$indices() {
     if (_rdb$indices == null)
       _rdb$indices = new Rdb$indices(this, Keys.SYNTHETIC_FK_RDB$INDEX_SEGMENTS__RDB$INDEX_5);
-
     return _rdb$indices;
   }
 

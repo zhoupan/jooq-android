@@ -45,12 +45,12 @@ public class AbstractConstraintDefinition extends AbstractDefinition
     implements ConstraintDefinition {
 
   private final TableDefinition table;
+
   private final boolean enforced;
 
   public AbstractConstraintDefinition(
       SchemaDefinition schema, TableDefinition table, String name, boolean enforced) {
     super(schema.getDatabase(), schema, name, null);
-
     this.table = table;
     this.enforced = enforced;
   }
@@ -58,10 +58,8 @@ public class AbstractConstraintDefinition extends AbstractDefinition
   @Override
   public List<Definition> getDefinitionPath() {
     List<Definition> result = new ArrayList<>();
-
     result.addAll(getSchema().getDefinitionPath());
     result.add(this);
-
     return result;
   }
 

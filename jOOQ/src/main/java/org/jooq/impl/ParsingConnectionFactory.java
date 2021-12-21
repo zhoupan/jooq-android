@@ -53,6 +53,7 @@ import io.r2dbc.spi.Result;
 import io.r2dbc.spi.Statement;
 import io.r2dbc.spi.TransactionDefinition;
 import io.r2dbc.spi.ValidationDepth;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import org.jooq.Configuration;
@@ -204,6 +205,16 @@ final class ParsingConnectionFactory implements ConnectionFactory {
     @Override
     public final Statement createStatement(String sql) {
       return new ParsingR2DBCStatement(delegate, sql);
+    }
+
+    @Override
+    public Publisher<Void> setLockWaitTimeout(Duration timeout) {
+      return this.delegate.setLockWaitTimeout(timeout);
+    }
+
+    @Override
+    public Publisher<Void> setStatementTimeout(Duration timeout) {
+      return this.delegate.setStatementTimeout(timeout);
     }
   }
 

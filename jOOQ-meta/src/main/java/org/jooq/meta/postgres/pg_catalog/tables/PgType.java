@@ -186,7 +186,6 @@ public class PgType extends TableImpl<Record> {
    *     how this type should be handled. Deprecation can be turned off using {@literal
    *     <deprecationOnUnknownTypes/>} in your code generator configuration.
    */
-  @Deprecated
   public final TableField<Record, Object> TYPDEFAULTBIN =
       createField(
           DSL.name("typdefaultbin"),
@@ -250,7 +249,6 @@ public class PgType extends TableImpl<Record> {
     if (_pgNamespace == null)
       _pgNamespace =
           new PgNamespace(this, Keys.PG_TYPE__SYNTHETIC_FK_PG_TYPE__SYNTHETIC_PK_PG_NAMESPACE);
-
     return _pgNamespace;
   }
 

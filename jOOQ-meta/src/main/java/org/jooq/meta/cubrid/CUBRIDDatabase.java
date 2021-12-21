@@ -87,7 +87,6 @@ public class CUBRIDDatabase extends AbstractDatabase {
       String key = record.get("constraint_name", String.class);
       String tableName = record.get(DB_CLASS.CLASS_NAME);
       String columnName = record.get(DB_INDEX_KEY.KEY_ATTR_NAME);
-
       TableDefinition table = getTable(getSchemata().get(0), tableName);
       if (table != null) relations.addUniqueKey(key, table, table.getColumn(columnName));
     }
@@ -99,7 +98,6 @@ public class CUBRIDDatabase extends AbstractDatabase {
       String key = record.get("constraint_name", String.class);
       String tableName = record.get(DB_CLASS.CLASS_NAME);
       String columnName = record.get(DB_INDEX_KEY.KEY_ATTR_NAME);
-
       TableDefinition table = getTable(getSchemata().get(0), tableName);
       if (table != null) relations.addPrimaryKey(key, table, table.getColumn(columnName));
     }
@@ -131,14 +129,12 @@ public class CUBRIDDatabase extends AbstractDatabase {
         .connection(
             connection -> {
               DatabaseMetaData meta = connection.getMetaData();
-
               for (String table :
                   create()
                       .selectDistinct(DB_INDEX.CLASS_NAME)
                       .from(DB_INDEX)
                       .where(DB_INDEX.IS_FOREIGN_KEY.isTrue())
                       .collect(intoList())) {
-
                 for (Record record : create().fetch(meta.getImportedKeys(null, null, table))) {
                   String foreignKeyName =
                       record.get("FKTABLE_NAME", String.class)
@@ -151,12 +147,10 @@ public class CUBRIDDatabase extends AbstractDatabase {
                           + "__"
                           + record.get("PK_NAME", String.class);
                   String uniqueKeyTableName = record.get("PKTABLE_NAME", String.class);
-
                   TableDefinition foreignKeyTable =
                       getTable(getSchemata().get(0), foreignKeyTableName);
                   TableDefinition uniqueKeyTable =
                       getTable(getSchemata().get(0), uniqueKeyTableName);
-
                   if (foreignKeyTable != null && uniqueKeyTable != null)
                     relations.addForeignKey(
                         foreignKeyName,
@@ -191,46 +185,37 @@ public class CUBRIDDatabase extends AbstractDatabase {
   @Override
   protected List<SequenceDefinition> getSequences0() throws SQLException {
     List<SequenceDefinition> result = new ArrayList<>();
-
     for (Record record :
         create().select(DB_SERIAL.NAME, DB_SERIAL.MAX_VAL).from(DB_SERIAL).fetch()) {
-
       BigInteger value =
           defaultIfNull(
               record.get(DB_SERIAL.MAX_VAL, BigInteger.class), BigInteger.valueOf(Long.MAX_VALUE));
       DataTypeDefinition type = getDataTypeForMAX_VAL(getSchemata().get(0), value);
-
       result.add(
           new DefaultSequenceDefinition(getSchemata().get(0), record.get(DB_SERIAL.NAME), type));
     }
-
     return result;
   }
 
   @Override
   protected List<TableDefinition> getTables0() throws SQLException {
     List<TableDefinition> result = new ArrayList<>();
-
     for (Record record :
         create()
             .select(DB_CLASS.CLASS_NAME)
             .from(DB_CLASS)
             .orderBy(DB_CLASS.CLASS_NAME.asc())
             .fetch()) {
-
       String name = record.get(DB_CLASS.CLASS_NAME);
-
       CUBRIDTableDefinition table = new CUBRIDTableDefinition(getSchemata().get(0), name, null);
       result.add(table);
     }
-
     return result;
   }
 
   @Override
   protected List<EnumDefinition> getEnums0() throws SQLException {
     List<EnumDefinition> result = new ArrayList<>();
-
     for (TableDefinition tableDefinition : getTables(getSchemata().get(0))) {
       for (Record record :
           create()
@@ -241,9 +226,7 @@ public class CUBRIDDatabase extends AbstractDatabase {
         String column = record.get("Field", String.class);
         String columnType = record.get("Type", String.class);
         String name = table + "_" + column;
-
         ColumnDefinition columnDefinition = tableDefinition.getColumn(column);
-
         // [#1137] Avoid generating enum classes for enum types that
         // are explicitly forced to another type
         if (getConfiguredForcedType(columnDefinition) == null) {
@@ -252,12 +235,10 @@ public class CUBRIDDatabase extends AbstractDatabase {
           for (String string : columnType.replaceAll("ENUM\\(|\\)", "").split(",")) {
             definition.addLiteral(string.trim().replaceAll("'", ""));
           }
-
           result.add(definition);
         }
       }
     }
-
     return result;
   }
 

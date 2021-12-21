@@ -71,6 +71,7 @@ public class ForcedType implements Serializable, XMLAppendable {
   protected String converter;
 
   protected Boolean enumConverter;
+
   protected LambdaConverter lambdaConverter;
 
   @XmlJavaTypeAdapter(StringAdapter.class)

@@ -53,6 +53,7 @@ import java.util.List;
 final class SortedList<E> extends AbstractList<E> {
 
   final List<E> delegate;
+
   final Comparator<? super E> comparator;
 
   SortedList(List<E> delegate, Comparator<? super E> comparator) {

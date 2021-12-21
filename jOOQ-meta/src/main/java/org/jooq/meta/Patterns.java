@@ -52,6 +52,7 @@ import org.jooq.meta.jaxb.RegexFlag;
 public final class Patterns {
 
   private final Map<String, Pattern> patterns;
+
   private List<RegexFlag> regexFlags;
 
   public Patterns() {
@@ -60,14 +61,10 @@ public final class Patterns {
 
   public final Pattern pattern(String regex) {
     if (regex == null) return null;
-
     Pattern pattern = patterns.get(regex);
-
     if (pattern == null) {
       int flags = 0;
-
       List<RegexFlag> list = new ArrayList<>(getRegexFlags());
-
       // [#3860] This should really be handled by JAXB, but apparently, @XmlList and
       // @XmlElement(defaultValue=...)
       // cannot be combined: http://stackoverflow.com/q/27528698/521799
@@ -75,7 +72,6 @@ public final class Patterns {
         list.add(RegexFlag.COMMENTS);
         list.add(RegexFlag.CASE_INSENSITIVE);
       }
-
       for (RegexFlag flag : list) {
         switch (flag) {
           case CANON_EQ:
@@ -99,19 +95,18 @@ public final class Patterns {
           case UNICODE_CASE:
             flags |= Pattern.UNICODE_CASE;
             break;
+            // Pattern.UNICODE_CHARACTER_CLASS: Java 1.7 only
           case UNICODE_CHARACTER_CLASS:
             flags |= 0x100;
-            break; // Pattern.UNICODE_CHARACTER_CLASS: Java 1.7 only
+            break;
           case UNIX_LINES:
             flags |= Pattern.UNIX_LINES;
             break;
         }
       }
-
       pattern = Pattern.compile(regex, flags);
       patterns.put(regex, pattern);
     }
-
     return pattern;
   }
 
@@ -122,7 +117,6 @@ public final class Patterns {
 
   public List<RegexFlag> getRegexFlags() {
     if (regexFlags == null) regexFlags = new ArrayList<>();
-
     return regexFlags;
   }
 }

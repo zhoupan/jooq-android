@@ -48,17 +48,25 @@ public abstract class AbstractRoutineDefinition extends AbstractDefinition
     implements RoutineDefinition {
 
   private static final JooqLogger log = JooqLogger.getLogger(AbstractRoutineDefinition.class);
+
   private static final String INOUT = "(?i:(IN|OUT|INOUT)\\s+?)?";
+
   private static final String PARAM_NAME = "(?:(\\S+?)\\s+?)";
+
   private static final String PARAM_TYPE = "([^\\s(]+)(?:\\s*\\((\\d+)(?:\\s*,\\s*(\\d+))?\\))?";
+
   private static final String PARAMETER = "(" + INOUT + PARAM_NAME + PARAM_TYPE + ")";
 
   protected static final Pattern PARAMETER_PATTERN = Pattern.compile(PARAMETER);
+
   protected static final Pattern TYPE_PATTERN = Pattern.compile(PARAM_TYPE);
 
   protected List<ParameterDefinition> inParameters;
+
   protected List<ParameterDefinition> outParameters;
+
   protected ParameterDefinition returnValue;
+
   protected List<ParameterDefinition> allParameters;
 
   private final boolean aggregate;
@@ -87,10 +95,8 @@ public abstract class AbstractRoutineDefinition extends AbstractDefinition
     inParameters = new ArrayList<>();
     outParameters = new ArrayList<>();
     allParameters = new ArrayList<>();
-
     try {
       if (returnValue != null) addParameter(InOutDefinition.RETURN, returnValue);
-
       init0();
     } catch (Exception e) {
       log.error("Error while initialising routine", e);
@@ -102,21 +108,18 @@ public abstract class AbstractRoutineDefinition extends AbstractDefinition
   @Override
   public final List<ParameterDefinition> getInParameters() {
     if (inParameters == null) init();
-
     return inParameters;
   }
 
   @Override
   public final List<ParameterDefinition> getOutParameters() {
     if (outParameters == null) init();
-
     return outParameters;
   }
 
   @Override
   public final List<ParameterDefinition> getAllParameters() {
     if (allParameters == null) init();
-
     return allParameters;
   }
 
@@ -125,7 +128,6 @@ public abstract class AbstractRoutineDefinition extends AbstractDefinition
     if (allParameters == null) {
       init();
     }
-
     return returnValue;
   }
 
@@ -153,7 +155,6 @@ public abstract class AbstractRoutineDefinition extends AbstractDefinition
 
   protected final void addParameter(InOutDefinition inOut, ParameterDefinition parameter) {
     allParameters.add(parameter);
-
     switch (inOut) {
       case IN:
         inParameters.add(parameter);

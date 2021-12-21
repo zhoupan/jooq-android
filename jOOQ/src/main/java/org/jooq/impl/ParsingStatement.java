@@ -580,7 +580,6 @@ final class ParsingStatement implements CallableStatement {
   // -------------------------------------------------------------------------
   private static final byte[] readBytes(InputStream x, int length) {
     try {
-      if (true) return x.readNBytes(length);
       // Legacy Java 8 implementation
       ByteArrayOutputStream out = new ByteArrayOutputStream(length);
       long total = 0;

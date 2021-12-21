@@ -62,14 +62,12 @@ public class DerbyTableDefinition extends AbstractTableDefinition {
   public DerbyTableDefinition(
       SchemaDefinition schema, String name, String tableid, TableType tableType, String source) {
     super(schema, name, "", tableType, source);
-
     this.tableid = tableid;
   }
 
   @Override
   public List<ColumnDefinition> getElements0() throws SQLException {
     List<ColumnDefinition> result = new ArrayList<>();
-
     for (Record record :
         create()
             .select(
@@ -80,19 +78,16 @@ public class DerbyTableDefinition extends AbstractTableDefinition {
                     .as(SYSCOLUMNS.COLUMNDEFAULT),
                 SYSCOLUMNS.AUTOINCREMENTINC)
             .from(SYSCOLUMNS)
-            // [#1241] Suddenly, bind values didn't work any longer, here...
+            . // [#1241] Suddenly, bind values didn't work any longer, here...
             // [#6797] The cast is necessary if a non-standard collation is used
-            .where(SYSCOLUMNS.REFERENCEID.cast(VARCHAR(32672)).equal(inline(tableid)))
+            where(SYSCOLUMNS.REFERENCEID.cast(VARCHAR(32672)).equal(inline(tableid)))
             .orderBy(SYSCOLUMNS.COLUMNNUMBER)) {
-
       String columnDataType = record.get(SYSCOLUMNS.COLUMNDATATYPE, String.class);
       String typeName = parseTypeName(columnDataType);
-
       // [#9945] Derby timestamps always have a precision of 9
       Number precision =
           "TIMESTAMP".equalsIgnoreCase(typeName) ? 9 : parsePrecision(columnDataType);
       Number scale = parseScale(columnDataType);
-
       DataTypeDefinition type =
           new DefaultDataTypeDefinition(
               getDatabase(),
@@ -103,7 +98,6 @@ public class DerbyTableDefinition extends AbstractTableDefinition {
               scale,
               !parseNotNull(columnDataType),
               record.get(SYSCOLUMNS.COLUMNDEFAULT));
-
       result.add(
           new DefaultColumnDefinition(
               getDatabase().getTable(getSchema(), getName()),
@@ -113,7 +107,6 @@ public class DerbyTableDefinition extends AbstractTableDefinition {
               null != record.get(SYSCOLUMNS.AUTOINCREMENTINC),
               null));
     }
-
     return result;
   }
 }

@@ -60,6 +60,7 @@ public class MatchersTableType implements Serializable, XMLAppendable {
   protected String expression;
 
   protected MatcherRule tableClass;
+
   protected MatcherRule tableIdentifier;
 
   @XmlJavaTypeAdapter(StringAdapter.class)

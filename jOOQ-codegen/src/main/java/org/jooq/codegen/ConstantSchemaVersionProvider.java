@@ -41,11 +41,11 @@ import org.jooq.meta.SchemaDefinition;
 import org.jooq.meta.SchemaVersionProvider;
 
 /** @author Lukas Eder */
-class ConstantSchemaVersionProvider implements SchemaVersionProvider {
+public class ConstantSchemaVersionProvider implements SchemaVersionProvider {
 
   private String constant;
 
-  ConstantSchemaVersionProvider(String constant) {
+  public ConstantSchemaVersionProvider(String constant) {
     this.constant = constant;
   }
 

@@ -54,12 +54,12 @@ import org.jooq.meta.SchemaDefinition;
 public class HSQLDBTableValuedFunction extends AbstractTableDefinition {
 
   private final HSQLDBRoutineDefinition routine;
+
   private final String source;
 
   public HSQLDBTableValuedFunction(
       SchemaDefinition schema, String name, String specificName, String comment, String source) {
     super(schema, name, comment, TableType.FUNCTION, source);
-
     this.routine = new HSQLDBRoutineDefinition(schema, name, specificName, "ROW", 0, 0);
     this.source = source;
   }
@@ -67,7 +67,6 @@ public class HSQLDBTableValuedFunction extends AbstractTableDefinition {
   @Override
   public List<ColumnDefinition> getElements0() throws SQLException {
     List<ColumnDefinition> result = new ArrayList<>();
-
     Field<?>[] fields =
         create()
             .meta(source.replaceAll(".*? RETURNS TABLE(.*)SPECIFIC .*", "CREATE TABLE X $1"))
@@ -76,7 +75,6 @@ public class HSQLDBTableValuedFunction extends AbstractTableDefinition {
             .fields();
     for (int i = 0; i < fields.length; i++) {
       Field<?> field = fields[i];
-
       DataTypeDefinition type =
           new DefaultDataTypeDefinition(
               getDatabase(),
@@ -87,7 +85,6 @@ public class HSQLDBTableValuedFunction extends AbstractTableDefinition {
               field.getDataType().scale(),
               field.getDataType().nullable(),
               (String) null);
-
       result.add(
           new DefaultColumnDefinition(
               getDatabase().getTable(getSchema(), getName()),
@@ -97,7 +94,6 @@ public class HSQLDBTableValuedFunction extends AbstractTableDefinition {
               false,
               null));
     }
-
     return result;
   }
 

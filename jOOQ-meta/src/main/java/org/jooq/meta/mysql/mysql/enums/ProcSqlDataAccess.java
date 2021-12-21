@@ -45,11 +45,8 @@ import org.jooq.Schema;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public enum ProcSqlDataAccess implements EnumType {
   CONTAINS_SQL("CONTAINS_SQL"),
-
   NO_SQL("NO_SQL"),
-
   READS_SQL_DATA("READS_SQL_DATA"),
-
   MODIFIES_SQL_DATA("MODIFIES_SQL_DATA");
 
   private final String literal;

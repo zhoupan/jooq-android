@@ -44,13 +44,14 @@ public class DefaultIndexColumnDefinition extends AbstractTypedElementDefinition
     implements IndexColumnDefinition {
 
   private final ColumnDefinition column;
+
   private final SortOrder sortOrder;
+
   private final int position;
 
   public DefaultIndexColumnDefinition(
       IndexDefinition container, ColumnDefinition column, SortOrder sortOrder, int position) {
     super(container, column.getInputName(), position, column.getDefinedType(), "");
-
     this.column = column;
     this.sortOrder = sortOrder;
     this.position = position;

@@ -49,6 +49,7 @@ public abstract class AbstractUDTDefinition
     extends AbstractElementContainerDefinition<AttributeDefinition> implements UDTDefinition {
 
   private List<RoutineDefinition> routines;
+
   private final boolean synthetic;
 
   public AbstractUDTDefinition(SchemaDefinition schema, String name, String comment) {
@@ -67,7 +68,6 @@ public abstract class AbstractUDTDefinition
       boolean synthetic,
       String comment) {
     super(schema, pkg, name, comment);
-
     this.synthetic = synthetic;
   }
 
@@ -89,7 +89,6 @@ public abstract class AbstractUDTDefinition
   @Override
   public final List<RoutineDefinition> getRoutines() {
     if (routines == null) routines = getRoutines0();
-
     return routines;
   }
 

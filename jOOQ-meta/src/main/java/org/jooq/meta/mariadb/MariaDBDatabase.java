@@ -66,6 +66,7 @@ import org.jooq.meta.mysql.MySQLDatabase;
 public class MariaDBDatabase extends MySQLDatabase {
 
   private static final long DEFAULT_SEQUENCE_MAXVALUE = Long.MAX_VALUE - 1;
+
   private static final long DEFAULT_SEQUENCE_CACHE = 1000L;
 
   @Override
@@ -89,7 +90,6 @@ public class MariaDBDatabase extends MySQLDatabase {
               Boolean,
               Long>>
       sequences(List<String> schemas) {
-
     // [#10844] [#10854] TODO We need a way to create a dynamic FROM clause in order to group the
     // below sequences in a single one
     return null;
@@ -98,20 +98,16 @@ public class MariaDBDatabase extends MySQLDatabase {
   @Override
   protected List<SequenceDefinition> getSequences0() throws SQLException {
     List<SequenceDefinition> result = new ArrayList<>();
-
     for (Record record :
         create()
             .select(TABLES.TABLE_SCHEMA, TABLES.TABLE_NAME)
             .from(TABLES)
             .where(TABLES.TABLE_TYPE.eq("SEQUENCE"))) {
-
       SchemaDefinition schema = getSchema(record.get(TABLES.TABLE_SCHEMA));
       if (schema != null) {
         String name = record.get(TABLES.TABLE_NAME);
-
         DefaultDataTypeDefinition type =
             new DefaultDataTypeDefinition(this, schema, BIGINT.getTypeName());
-
         Field<Long> startWith = nullif(field("start_value", BIGINT), inline(1L));
         Field<Long> incrementBy = nullif(field("increment", BIGINT), inline(1L));
         Field<Long> minValue = inline(field("minimum_value", BIGINT), inline(1L));
@@ -119,13 +115,11 @@ public class MariaDBDatabase extends MySQLDatabase {
             nullif(field("maximum_value", BIGINT), inline(DEFAULT_SEQUENCE_MAXVALUE));
         Field<Boolean> cycle = field("cycle_option", BOOLEAN);
         Field<Long> cache = nullif(field("cache_size", BIGINT), inline(DEFAULT_SEQUENCE_CACHE));
-
         Record flags =
             create()
                 .select(startWith, incrementBy, minValue, maxValue, cycle, cache)
                 .from(name(schema.getName(), name))
                 .fetchOne();
-
         result.add(
             new DefaultSequenceDefinition(
                 schema,
@@ -140,7 +134,6 @@ public class MariaDBDatabase extends MySQLDatabase {
                 flags.get(cache)));
       }
     }
-
     return result;
   }
 }

@@ -54,6 +54,7 @@ import org.jooq.tools.JooqLogger;
 public class BufferedLog implements Log {
 
   private static final Queue<Message> messages = new ConcurrentLinkedQueue<>();
+
   private final JooqLogger delegate;
 
   public static BufferedLog getLogger(Class<?> type) {
@@ -67,12 +68,10 @@ public class BufferedLog implements Log {
   /** Perform the actual logging. */
   public static synchronized void flush() {
     JooqLogger delegate = JooqLogger.getLogger(BufferedLog.class);
-
     if (!messages.isEmpty()) {
       delegate.warn("Buffered warning and error messages:");
       delegate.warn("------------------------------------");
     }
-
     for (Message m : messages)
       switch (m.level) {
         case DEBUG:
@@ -92,7 +91,6 @@ public class BufferedLog implements Log {
           delegate.error(m.message, m.details, m.throwable);
           break;
       }
-
     messages.clear();
   }
 
@@ -113,9 +111,13 @@ public class BufferedLog implements Log {
   }
 
   private static class Message {
+
     final Level level;
+
     final Object message;
+
     final Object details;
+
     final Throwable throwable;
 
     Message(Level level, Object message, Object details, Throwable throwable) {

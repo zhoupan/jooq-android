@@ -61,7 +61,6 @@ public class CUBRIDTableDefinition extends AbstractTableDefinition {
   @Override
   public List<ColumnDefinition> getElements0() throws SQLException {
     List<ColumnDefinition> result = new ArrayList<>();
-
     for (Record record :
         create()
             .select(
@@ -82,9 +81,7 @@ public class CUBRIDTableDefinition extends AbstractTableDefinition {
                     .and(DB_ATTRIBUTE.CLASS_NAME.equal(DB_SERIAL.CLASS_NAME)))
             .where(DB_ATTRIBUTE.CLASS_NAME.equal(getName()))
             .orderBy(DB_ATTRIBUTE.DEF_ORDER)) {
-
       String dataType = record.get(DB_ATTRIBUTE.DATA_TYPE);
-
       DataTypeDefinition type =
           new DefaultDataTypeDefinition(
               getDatabase(),
@@ -96,7 +93,6 @@ public class CUBRIDTableDefinition extends AbstractTableDefinition {
               record.get(DB_ATTRIBUTE.IS_NULLABLE, boolean.class),
               record.get(DB_ATTRIBUTE.DEFAULT_VALUE),
               getName() + "_" + record.get(DB_ATTRIBUTE.ATTR_NAME));
-
       result.add(
           new DefaultColumnDefinition(
               getDatabase().getTable(getSchema(), getName()),
@@ -106,7 +102,6 @@ public class CUBRIDTableDefinition extends AbstractTableDefinition {
               record.get(DB_SERIAL.NAME) != null,
               null));
     }
-
     return result;
   }
 }

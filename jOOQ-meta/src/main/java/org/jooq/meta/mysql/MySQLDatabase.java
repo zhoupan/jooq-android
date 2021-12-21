@@ -109,18 +109,18 @@ import org.jooq.tools.csv.CSVReader;
 public class MySQLDatabase extends AbstractDatabase implements ResultQueryDatabase {
 
   private Boolean is8;
+
   private Boolean is8_0_16;
 
   @Override
   protected List<IndexDefinition> getIndexes0() throws SQLException {
     List<IndexDefinition> result = new ArrayList<>();
-
     // Same implementation as in H2Database and HSQLDBDatabase
     Map<Record, Result<Record>> indexes =
         create()
-            // [#2059] In MemSQL primary key indexes are typically duplicated
+            . // [#2059] In MemSQL primary key indexes are typically duplicated
             // (once with INDEX_TYPE = 'SHARD' and once with INDEX_TYPE = 'BTREE)
-            .selectDistinct(
+            selectDistinct(
                 STATISTICS.TABLE_SCHEMA,
                 STATISTICS.TABLE_NAME,
                 STATISTICS.INDEX_NAME,
@@ -152,28 +152,23 @@ public class MySQLDatabase extends AbstractDatabase implements ResultQueryDataba
                   STATISTICS.NON_UNIQUE
                 },
                 new Field[] {STATISTICS.COLUMN_NAME, STATISTICS.SEQ_IN_INDEX});
-
     indexLoop:
     for (Entry<Record, Result<Record>> entry : indexes.entrySet()) {
       final Record index = entry.getKey();
       final Result<Record> columns = entry.getValue();
-
       final SchemaDefinition tableSchema = getSchema(index.get(STATISTICS.TABLE_SCHEMA));
       if (tableSchema == null) continue indexLoop;
-
       final String indexName = index.get(STATISTICS.INDEX_NAME);
       final String tableName = index.get(STATISTICS.TABLE_NAME);
       final TableDefinition table = getTable(tableSchema, tableName);
       if (table == null) continue indexLoop;
-
       final boolean unique = !index.get(STATISTICS.NON_UNIQUE, boolean.class);
-
       // [#6310] [#6620] Function-based indexes are not yet supported
       for (Record column : columns)
         if (table.getColumn(column.get(STATISTICS.COLUMN_NAME)) == null) continue indexLoop;
-
       result.add(
           new AbstractIndexDefinition(tableSchema, indexName, table, unique) {
+
             List<IndexColumnDefinition> indexColumns = new ArrayList<>();
 
             {
@@ -193,7 +188,6 @@ public class MySQLDatabase extends AbstractDatabase implements ResultQueryDataba
             }
           });
     }
-
     return result;
   }
 
@@ -204,10 +198,8 @@ public class MySQLDatabase extends AbstractDatabase implements ResultQueryDataba
       String constraintName = record.get(STATISTICS.INDEX_NAME);
       String tableName = record.get(STATISTICS.TABLE_NAME);
       String columnName = record.get(STATISTICS.COLUMN_NAME);
-
       String key = getKeyName(tableName, constraintName);
       TableDefinition table = getTable(schema, tableName);
-
       if (table != null) relations.addPrimaryKey(key, table, table.getColumn(columnName));
     }
   }
@@ -219,10 +211,8 @@ public class MySQLDatabase extends AbstractDatabase implements ResultQueryDataba
       String constraintName = record.get(STATISTICS.INDEX_NAME);
       String tableName = record.get(STATISTICS.TABLE_NAME);
       String columnName = record.get(STATISTICS.COLUMN_NAME);
-
       String key = getKeyName(tableName, constraintName);
       TableDefinition table = getTable(schema, tableName);
-
       if (table != null) relations.addUniqueKey(key, table, table.getColumn(columnName));
     }
   }
@@ -232,23 +222,19 @@ public class MySQLDatabase extends AbstractDatabase implements ResultQueryDataba
   }
 
   protected boolean is8() {
-
     // [#6602] The mysql.proc table got removed in MySQL 8.0
     if (is8 == null)
       is8 = configuredDialectIsNotFamilyAndSupports(asList(MYSQL), () -> !exists(PROC));
-
     return is8;
   }
 
   protected boolean is8_0_16() {
-
     // [#7639] The information_schema.check_constraints table was added in MySQL 8.0.16 only
     if (is8_0_16 == null)
       is8_0_16 =
           configuredDialectIsNotFamilyAndSupports(asList(MYSQL), () -> exists(CHECK_CONSTRAINTS))
               || configuredDialectIsNotFamilyAndSupports(
                   asList(MARIADB), () -> exists(CHECK_CONSTRAINTS));
-
     return is8_0_16;
   }
 
@@ -266,15 +252,12 @@ public class MySQLDatabase extends AbstractDatabase implements ResultQueryDataba
 
   private ResultQuery<Record6<String, String, String, String, String, Integer>> keys(
       List<String> inputSchemata, boolean primary) {
-
     // [#3560] It has been shown that querying the STATISTICS table is much faster on
     // very large databases than going through TABLE_CONSTRAINTS and KEY_COLUMN_USAGE
     // [#2059] In MemSQL primary key indexes are typically duplicated
     // (once with INDEX_TYPE = 'SHARD' and once with INDEX_TYPE = 'BTREE)
     return create()
-        .selectDistinct(
-
-            // Don't use the actual catalog value, which is meaningless.
+        .selectDistinct( // Don't use the actual catalog value, which is meaningless.
             // Besides, MetaImpl will rely on the TABLE_SCHEMA acting as the catalog.
             inline(null, STATISTICS.TABLE_CATALOG).as(STATISTICS.TABLE_CATALOG),
             STATISTICS.TABLE_SCHEMA,
@@ -322,21 +305,17 @@ public class MySQLDatabase extends AbstractDatabase implements ResultQueryDataba
                 KEY_COLUMN_USAGE.CONSTRAINT_NAME.asc(),
                 KEY_COLUMN_USAGE.ORDINAL_POSITION.asc())
             .fetch()) {
-
       SchemaDefinition foreignKeySchema =
           getSchema(record.get(REFERENTIAL_CONSTRAINTS.CONSTRAINT_SCHEMA));
       SchemaDefinition uniqueKeySchema =
           getSchema(record.get(REFERENTIAL_CONSTRAINTS.UNIQUE_CONSTRAINT_SCHEMA));
-
       String foreignKey = record.get(REFERENTIAL_CONSTRAINTS.CONSTRAINT_NAME);
       String foreignKeyColumn = record.get(KEY_COLUMN_USAGE.COLUMN_NAME);
       String foreignKeyTableName = record.get(REFERENTIAL_CONSTRAINTS.TABLE_NAME);
       String uniqueKey = record.get(REFERENTIAL_CONSTRAINTS.UNIQUE_CONSTRAINT_NAME);
       String uniqueKeyTableName = record.get(REFERENTIAL_CONSTRAINTS.REFERENCED_TABLE_NAME);
-
       TableDefinition foreignKeyTable = getTable(foreignKeySchema, foreignKeyTableName);
       TableDefinition uniqueKeyTable = getTable(uniqueKeySchema, uniqueKeyTableName);
-
       if (foreignKeyTable != null)
         relations.addForeignKey(
             foreignKey,
@@ -356,9 +335,8 @@ public class MySQLDatabase extends AbstractDatabase implements ResultQueryDataba
                   TABLE_CONSTRAINTS.TABLE_SCHEMA,
                   TABLE_CONSTRAINTS.TABLE_NAME,
                   CHECK_CONSTRAINTS.CONSTRAINT_NAME,
-                  CHECK_CONSTRAINTS.CHECK_CLAUSE,
-
-                  // We need this additional, useless projection. See:
+                  CHECK_CONSTRAINTS
+                      .CHECK_CLAUSE, // We need this additional, useless projection. See:
                   // https://jira.mariadb.org/browse/MDEV-21201
                   TABLE_CONSTRAINTS.CONSTRAINT_CATALOG,
                   TABLE_CONSTRAINTS.CONSTRAINT_SCHEMA)
@@ -368,8 +346,8 @@ public class MySQLDatabase extends AbstractDatabase implements ResultQueryDataba
                   this instanceof MariaDBDatabase
                       ? new Field[] {
                         TABLE_CONSTRAINTS.CONSTRAINT_CATALOG,
-                        TABLE_CONSTRAINTS.CONSTRAINT_SCHEMA,
-                        // MariaDB has this column, but not MySQL
+                        TABLE_CONSTRAINTS
+                            .CONSTRAINT_SCHEMA, // MariaDB has this column, but not MySQL
                         TABLE_CONSTRAINTS.TABLE_NAME,
                         TABLE_CONSTRAINTS.CONSTRAINT_NAME
                       }
@@ -383,10 +361,8 @@ public class MySQLDatabase extends AbstractDatabase implements ResultQueryDataba
                   TABLE_CONSTRAINTS.TABLE_SCHEMA,
                   TABLE_CONSTRAINTS.TABLE_NAME,
                   TABLE_CONSTRAINTS.CONSTRAINT_NAME)) {
-
         SchemaDefinition schema = getSchema(record.get(TABLE_CONSTRAINTS.TABLE_SCHEMA));
         TableDefinition table = getTable(schema, record.get(TABLE_CONSTRAINTS.TABLE_NAME));
-
         if (table != null) {
           relations.addCheckConstraint(
               table,
@@ -443,7 +419,6 @@ public class MySQLDatabase extends AbstractDatabase implements ResultQueryDataba
   @Override
   protected List<TableDefinition> getTables0() throws SQLException {
     List<TableDefinition> result = new ArrayList<>();
-
     for (Record record :
         create()
             .select(
@@ -465,30 +440,31 @@ public class MySQLDatabase extends AbstractDatabase implements ResultQueryDataba
             .on(TABLES.TABLE_SCHEMA.eq(VIEWS.TABLE_SCHEMA))
             .and(TABLES.TABLE_NAME.eq(VIEWS.TABLE_NAME))
             .where(TABLES.TABLE_SCHEMA.in(workaroundFor5213(getInputSchemata())))
-
-            // [#9291] MariaDB treats sequences as tables
-            .and(TABLES.TABLE_TYPE.ne(inline("SEQUENCE")))
+            . // [#9291] MariaDB treats sequences as tables
+            and(TABLES.TABLE_TYPE.ne(inline("SEQUENCE")))
             .orderBy(TABLES.TABLE_SCHEMA, TABLES.TABLE_NAME)) {
-
       SchemaDefinition schema = getSchema(record.get(TABLES.TABLE_SCHEMA));
       String name = record.get(TABLES.TABLE_NAME);
       String comment = record.get(TABLES.TABLE_COMMENT);
       TableType tableType = record.get("table_type", TableType.class);
       String source = record.get(VIEWS.VIEW_DEFINITION);
-
       MySQLTableDefinition table =
           new MySQLTableDefinition(schema, name, comment, tableType, source);
       result.add(table);
     }
-
     return result;
   }
 
-  static final /* record */ class ColumnRecord {
+  static final class /* record */ ColumnRecord {
+
     private final String schema;
+
     private final String table;
+
     private final String column;
+
     private final String type;
+
     private final String comment;
 
     public ColumnRecord(String schema, String table, String column, String type, String comment) {
@@ -557,7 +533,6 @@ public class MySQLDatabase extends AbstractDatabase implements ResultQueryDataba
   @Override
   protected List<EnumDefinition> getEnums0() throws SQLException {
     List<EnumDefinition> result = new ArrayList<>();
-
     for (ColumnRecord r :
         create()
             .select(
@@ -576,40 +551,29 @@ public class MySQLDatabase extends AbstractDatabase implements ResultQueryDataba
                 COLUMNS.TABLE_SCHEMA.asc(), COLUMNS.TABLE_NAME.asc(), COLUMNS.COLUMN_NAME.asc())
             .fetch(mapping(ColumnRecord::new))) {
       SchemaDefinition schema = getSchema(r.schema);
-
       String name = r.table + "_" + r.column;
-
       // [#1237] Don't generate enum classes for columns in MySQL tables
       // that are excluded from code generation
       TableDefinition tableDefinition = getTable(schema, r.table);
       if (tableDefinition != null) {
         ColumnDefinition columnDefinition = tableDefinition.getColumn(r.column);
-
         if (columnDefinition != null) {
-
           // [#1137] Avoid generating enum classes for enum types that
           // are explicitly forced to another type
           if (getConfiguredForcedType(columnDefinition, columnDefinition.getType()) == null) {
             DefaultEnumDefinition definition = new DefaultEnumDefinition(schema, name, r.comment);
-
             CSVReader reader =
                 new CSVReader(
-                    new StringReader(r.type.replaceAll("(^enum\\()|(\\)$)", "")),
-                    ',' // Separator
-                    ,
-                    '\'' // Quote character
-                    ,
-                    true // Strict quotes
-                    );
-
+                    new StringReader(r.type.replaceAll("(^enum\\()|(\\)$)", "")), // Separator
+                    ',', // Quote character
+                    '\'', // Strict quotes
+                    true);
             for (String string : reader.next()) definition.addLiteral(string);
-
             result.add(definition);
           }
         }
       }
     }
-
     return result;
   }
 
@@ -634,7 +598,6 @@ public class MySQLDatabase extends AbstractDatabase implements ResultQueryDataba
   @Override
   protected List<RoutineDefinition> getRoutines0() throws SQLException {
     List<RoutineDefinition> result = new ArrayList<>();
-
     Result<Record6<String, String, String, byte[], byte[], ProcType>> records =
         is8()
             ? create()
@@ -661,10 +624,8 @@ public class MySQLDatabase extends AbstractDatabase implements ResultQueryDataba
                 .where(PROC.DB.in(getInputSchemata()))
                 .orderBy(1, 2, 6)
                 .fetch();
-
     Map<Record, Result<Record6<String, String, String, byte[], byte[], ProcType>>> groups =
         records.intoGroups(new Field[] {ROUTINES.ROUTINE_SCHEMA, ROUTINES.ROUTINE_NAME});
-
     // [#1908] This indirection is necessary as MySQL allows for overloading
     // procedures and functions with the same signature.
     groups.forEach(
@@ -678,7 +639,6 @@ public class MySQLDatabase extends AbstractDatabase implements ResultQueryDataba
                 String returns = is8() ? "" : new String(record.get(PROC.RETURNS));
                 ProcType type =
                     record.get(ROUTINES.ROUTINE_TYPE.coerce(PROC.TYPE).as(ROUTINES.ROUTINE_TYPE));
-
                 if (overloads.size() > 1)
                   result.add(
                       new MySQLRoutineDefinition(
@@ -689,7 +649,6 @@ public class MySQLDatabase extends AbstractDatabase implements ResultQueryDataba
                           schema, name, comment, params, returns, type, null));
               });
         });
-
     return result;
   }
 
@@ -718,14 +677,10 @@ public class MySQLDatabase extends AbstractDatabase implements ResultQueryDataba
   private List<Field<String>> workaroundFor5213(List<String> inputSchemata) {
     // [#5213] Add a dummy schema to single element lists to work around MySQL issue
     // https://bugs.mysql.com/bug.php?id=86022
-
     List<Field<String>> schemas = new ArrayList<>();
-
     for (String schema : inputSchemata) schemas.add(DSL.val(schema));
-
     // Random UUID generated by fair dice roll
     if (schemas.size() == 1) schemas.add(DSL.inline("ee7f6174-34f2-484b-8d81-20a4d9fc866d"));
-
     return schemas;
   }
 }

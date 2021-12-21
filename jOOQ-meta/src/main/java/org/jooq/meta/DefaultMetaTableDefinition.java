@@ -52,17 +52,14 @@ public class DefaultMetaTableDefinition extends AbstractTableDefinition {
 
   public DefaultMetaTableDefinition(SchemaDefinition schema, Table<?> table) {
     super(schema, table.getName(), table.getComment(), table.getType(), null);
-
     this.table = table;
   }
 
   @Override
   public List<ColumnDefinition> getElements0() throws SQLException {
     List<ColumnDefinition> result = new ArrayList<>();
-
     for (Field<?> field : table.fields()) {
       DataType<?> dataType = field.getDataType();
-
       DataTypeDefinition type =
           new DefaultDataTypeDefinition(
               getDatabase(),
@@ -74,7 +71,6 @@ public class DefaultMetaTableDefinition extends AbstractTableDefinition {
               dataType.nullable(),
               dataType.defaulted() ? create().renderInlined(dataType.defaultValue()) : null,
               (Name) null);
-
       result.add(
           new DefaultColumnDefinition(
               getDatabase().getTable(getSchema(), getName()),
@@ -84,7 +80,6 @@ public class DefaultMetaTableDefinition extends AbstractTableDefinition {
               dataType.identity(),
               field.getComment()));
     }
-
     return result;
   }
 }

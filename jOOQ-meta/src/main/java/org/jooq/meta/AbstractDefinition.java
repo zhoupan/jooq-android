@@ -55,19 +55,28 @@ import org.jooq.tools.StringUtils;
 public abstract class AbstractDefinition implements Definition {
 
   private final Database database;
+
   private final SchemaDefinition schema;
+
   private final PackageDefinition pkg;
+
   private final String name;
+
   private final String schemaComment;
 
   private final String overload;
+
   private final String source;
 
   // [#2238] Some caches for strings that are heavy to calculate in large schemas
   private transient String qualifiedInputName;
+
   private transient String qualifiedOutputName;
+
   private transient Name qualifiedInputNamePart;
+
   private transient Name qualifiedOutputNamePart;
+
   private transient Integer hashCode;
 
   public AbstractDefinition(Database database, SchemaDefinition schema, String name) {
@@ -103,7 +112,6 @@ public abstract class AbstractDefinition implements Definition {
       String overload,
       String source) {
     this.database = database;
-
     // The subclass constructor cannot pass "this" to the super constructor
     this.schema =
         (schema == null && this instanceof SchemaDefinition) ? (SchemaDefinition) this : schema;
@@ -117,9 +125,7 @@ public abstract class AbstractDefinition implements Definition {
   @Override
   public List<Definition> getDefinitionPath() {
     List<Definition> result = new ArrayList<>(getSchema().getDefinitionPath());
-
     if (getPackage() != null) result.add(getPackage());
-
     result.add(this);
     return result;
   }
@@ -166,7 +172,6 @@ public abstract class AbstractDefinition implements Definition {
 
   @Override
   public final String getComment() {
-
     return schemaComment;
   }
 
@@ -179,24 +184,18 @@ public abstract class AbstractDefinition implements Definition {
   public final String getQualifiedInputName() {
     if (qualifiedInputName == null) {
       StringBuilder sb = new StringBuilder();
-
       String separator = "";
       for (Definition part : getDefinitionPath()) {
-
         // [#6855] Some databases (e.g. SQLite) might not have a schema
         String input = part.getInputName();
-
         if (!StringUtils.isEmpty(input)) {
           sb.append(separator);
           sb.append(part.getInputName());
-
           separator = ".";
         }
       }
-
       qualifiedInputName = sb.toString();
     }
-
     return qualifiedInputName;
   }
 
@@ -204,23 +203,18 @@ public abstract class AbstractDefinition implements Definition {
   public final String getQualifiedOutputName() {
     if (qualifiedOutputName == null) {
       StringBuilder sb = new StringBuilder();
-
       String separator = "";
       for (Definition part : getDefinitionPath()) {
         if (part instanceof CatalogDefinition && ((CatalogDefinition) part).isDefaultCatalog())
           continue;
         else if (part instanceof SchemaDefinition && ((SchemaDefinition) part).isDefaultSchema())
           continue;
-
         sb.append(separator);
         sb.append(part.getOutputName());
-
         separator = ".";
       }
-
       qualifiedOutputName = sb.toString();
     }
-
     return qualifiedOutputName;
   }
 
@@ -233,12 +227,9 @@ public abstract class AbstractDefinition implements Definition {
   public final Name getQualifiedInputNamePart() {
     if (qualifiedInputNamePart == null) {
       List<String> list = new ArrayList<>();
-
       for (Definition part : getDefinitionPath()) list.add(part.getInputName());
-
       qualifiedInputNamePart = name(list);
     }
-
     return qualifiedInputNamePart;
   }
 
@@ -246,19 +237,15 @@ public abstract class AbstractDefinition implements Definition {
   public final Name getQualifiedOutputNamePart() {
     if (qualifiedOutputNamePart == null) {
       List<String> list = new ArrayList<>();
-
       for (Definition part : getDefinitionPath()) {
         if (part instanceof CatalogDefinition && ((CatalogDefinition) part).isDefaultCatalog())
           continue;
         else if (part instanceof SchemaDefinition && ((SchemaDefinition) part).isDefaultSchema())
           continue;
-
         list.add(part.getOutputName());
       }
-
       qualifiedOutputNamePart = name(list);
     }
-
     return qualifiedOutputNamePart;
   }
 
@@ -279,19 +266,16 @@ public abstract class AbstractDefinition implements Definition {
   @Override
   public boolean equals(Object obj) {
     if (this == obj) return true;
-
     if (obj instanceof Definition) {
       Definition that = (Definition) obj;
       return that.getQualifiedName().equals(getQualifiedName());
     }
-
     return false;
   }
 
   @Override
   public int hashCode() {
     if (hashCode == null) hashCode = getQualifiedName().hashCode();
-
     return hashCode;
   }
 

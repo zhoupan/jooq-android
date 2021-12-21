@@ -43,6 +43,7 @@ public class DefaultEmbeddableColumnDefinition
     implements EmbeddableColumnDefinition {
 
   private final ColumnDefinition referencingColumn;
+
   private final int position;
 
   public DefaultEmbeddableColumnDefinition(
@@ -56,7 +57,6 @@ public class DefaultEmbeddableColumnDefinition
         position,
         referencingColumn.getDefinedType(),
         referencingColumn.getComment());
-
     this.referencingColumn = referencingColumn;
     this.position = position;
   }
@@ -99,9 +99,7 @@ public class DefaultEmbeddableColumnDefinition
   @Override
   public boolean equals(Object obj) {
     if (!super.equals(obj)) return false;
-
     if (!(obj instanceof EmbeddableColumnDefinition)) return false;
-
     EmbeddableColumnDefinition other = (EmbeddableColumnDefinition) obj;
     return getReferencingColumn().equals(other.getReferencingColumn());
   }

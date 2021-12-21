@@ -45,13 +45,13 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
-import javax.persistence.Column;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.exception.DataTypeException;
 import org.jooq.exception.MappingException;
 import org.jooq.impl.DefaultRecordMapper;
 import org.jooq.impl.DefaultRecordMapperProvider;
+import org.jooq.util.xml.jaxb.Column;
 
 /**
  * A database result record.

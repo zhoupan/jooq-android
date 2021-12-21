@@ -40,7 +40,9 @@ package org.jooq.meta;
 public class DefaultArrayDefinition extends AbstractDefinition implements ArrayDefinition {
 
   private final DataTypeDefinition definedType;
+
   private transient DataTypeDefinition type;
+
   private transient DataTypeDefinition resolvedType;
 
   public DefaultArrayDefinition(SchemaDefinition schema, String name, DataTypeDefinition type) {
@@ -50,7 +52,6 @@ public class DefaultArrayDefinition extends AbstractDefinition implements ArrayD
   public DefaultArrayDefinition(
       SchemaDefinition schema, PackageDefinition pkg, String name, DataTypeDefinition type) {
     super(schema.getDatabase(), schema, pkg, name, "", null);
-
     this.definedType = type;
   }
 
@@ -59,7 +60,6 @@ public class DefaultArrayDefinition extends AbstractDefinition implements ArrayD
     if (type == null) {
       type = AbstractTypedElementDefinition.mapDefinedType(this, this, definedType, null);
     }
-
     return type;
   }
 
@@ -69,7 +69,6 @@ public class DefaultArrayDefinition extends AbstractDefinition implements ArrayD
       resolvedType =
           AbstractTypedElementDefinition.mapDefinedType(this, this, definedType, resolver);
     }
-
     return resolvedType;
   }
 }

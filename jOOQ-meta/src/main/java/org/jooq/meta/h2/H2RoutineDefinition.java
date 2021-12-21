@@ -79,12 +79,10 @@ public class H2RoutineDefinition extends AbstractRoutineDefinition {
       Number scale,
       String overload) {
     super(schema, null, name, comment, overload);
-
     if (!StringUtils.isBlank(typeName)) {
       DataTypeDefinition type =
           new DefaultDataTypeDefinition(
               getDatabase(), schema, typeName, precision, precision, scale, null, (String) null);
-
       this.returnValue = new DefaultParameterDefinition(this, "RETURN_VALUE", -1, type);
     }
   }
@@ -104,10 +102,9 @@ public class H2RoutineDefinition extends AbstractRoutineDefinition {
             .from(FUNCTION_COLUMNS)
             .where(FUNCTION_COLUMNS.ALIAS_SCHEMA.equal(getSchema().getName()))
             .and(FUNCTION_COLUMNS.ALIAS_NAME.equal(getName()))
-
-            // [#4193] recent versions of H2 produce a row for the function
+            . // [#4193] recent versions of H2 produce a row for the function
             // return value at position 0
-            .and(FUNCTION_COLUMNS.POS.gt(0))
+            and(FUNCTION_COLUMNS.POS.gt(0))
             .and(
                 getOverload() == null
                     ? noCondition()
@@ -115,7 +112,6 @@ public class H2RoutineDefinition extends AbstractRoutineDefinition {
                         FUNCTION_COLUMNS.COLUMN_COUNT.getDataType().convert(getOverload())))
             .orderBy(FUNCTION_COLUMNS.POS.asc())
             .fetch()) {
-
       String paramName = record.get(FUNCTION_COLUMNS.COLUMN_NAME);
       String typeName = record.get(FUNCTION_COLUMNS.TYPE_NAME);
       Integer precision = record.get(FUNCTION_COLUMNS.PRECISION);
@@ -123,14 +119,12 @@ public class H2RoutineDefinition extends AbstractRoutineDefinition {
       int position = record.get(FUNCTION_COLUMNS.POS);
       boolean nullable = record.get(FUNCTION_COLUMNS.NULLABLE, boolean.class);
       String defaultValue = record.get(FUNCTION_COLUMNS.COLUMN_DEFAULT);
-
       // VERY special case for H2 alias/function parameters. The first parameter
       // may be a java.sql.Connection object and in such cases it should NEVER be used.
       // It is only used internally by H2 to provide a connection to the current database.
       if (position == 0 && H2DataType.OTHER.getTypeName().equalsIgnoreCase(typeName)) {
         continue;
       }
-
       DataTypeDefinition type =
           new DefaultDataTypeDefinition(
               getDatabase(),
@@ -141,7 +135,6 @@ public class H2RoutineDefinition extends AbstractRoutineDefinition {
               scale,
               nullable,
               defaultValue);
-
       ParameterDefinition parameter =
           new DefaultParameterDefinition(this, paramName, position, type);
       addParameter(InOutDefinition.IN, parameter);

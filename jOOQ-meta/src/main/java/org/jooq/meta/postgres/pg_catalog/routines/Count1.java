@@ -59,14 +59,12 @@ public class Count1 extends AbstractRoutine<Long> {
    *     how this type should be handled. Deprecation can be turned off using {@literal
    *     <deprecationOnUnknownTypes/>} in your code generator configuration.
    */
-  @Deprecated
   public static final Parameter<Object> _1 =
       Internal.createParameter("_1", SQLDataType.OTHER, false, true);
 
   /** Create a new routine call instance */
   public Count1() {
     super("count", PgCatalog.PG_CATALOG, SQLDataType.BIGINT);
-
     setReturnParameter(RETURN_VALUE);
     addInParameter(_1);
     setOverloaded(true);

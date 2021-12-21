@@ -59,6 +59,7 @@ import org.jooq.util.xml.jaxb.Table;
 public class XMLTableDefinition extends AbstractTableDefinition {
 
   private final InformationSchema info;
+
   private final Table table;
 
   public XMLTableDefinition(SchemaDefinition schema, InformationSchema info, Table table) {
@@ -78,7 +79,6 @@ public class XMLTableDefinition extends AbstractTableDefinition {
       TableType tableType,
       String source) {
     super(schema, table.getTableName(), comment, tableType, source);
-
     this.info = info;
     this.table = table;
   }
@@ -86,7 +86,6 @@ public class XMLTableDefinition extends AbstractTableDefinition {
   @Override
   protected List<ColumnDefinition> getElements0() throws SQLException {
     List<ColumnDefinition> result = new ArrayList<>();
-
     for (Column column : info.getColumns()) {
       if (StringUtils.equals(
               defaultIfNull(table.getTableCatalog(), ""),
@@ -95,9 +94,7 @@ public class XMLTableDefinition extends AbstractTableDefinition {
               defaultIfNull(table.getTableSchema(), ""), defaultIfNull(column.getTableSchema(), ""))
           && StringUtils.equals(
               defaultIfNull(table.getTableName(), ""), defaultIfNull(column.getTableName(), ""))) {
-
         SchemaDefinition schema = getDatabase().getSchema(column.getTableSchema());
-
         DataTypeDefinition type =
             new DefaultDataTypeDefinition(
                 getDatabase(),
@@ -108,7 +105,6 @@ public class XMLTableDefinition extends AbstractTableDefinition {
                 unbox(column.getNumericScale()),
                 column.isIsNullable(),
                 column.getColumnDefault());
-
         result.add(
             new DefaultColumnDefinition(
                 this,
@@ -119,7 +115,6 @@ public class XMLTableDefinition extends AbstractTableDefinition {
                 column.getComment()));
       }
     }
-
     return result;
   }
 }

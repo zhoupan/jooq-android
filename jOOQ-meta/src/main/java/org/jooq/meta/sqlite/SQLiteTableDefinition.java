@@ -73,7 +73,9 @@ import org.jooq.tools.JooqLogger;
 public class SQLiteTableDefinition extends AbstractTableDefinition {
 
   private static final JooqLogger log = JooqLogger.getLogger(SQLiteTableDefinition.class);
+
   private static Boolean existsSqliteSequence;
+
   private Table<?> interpretedTable;
 
   public SQLiteTableDefinition(SchemaDefinition schema, String name, String comment) {
@@ -91,7 +93,6 @@ public class SQLiteTableDefinition extends AbstractTableDefinition {
         Configuration c = create().configuration().derive();
         c.settings().withParseWithMetaLookups(THROW_ON_FAILURE);
         Query query = create().parser().parseQuery(getSource());
-
         for (Table<?> t : create().meta(query).getTables(getInputName()))
           return interpretedTable = t;
       } catch (ParserException e) {
@@ -100,42 +101,34 @@ public class SQLiteTableDefinition extends AbstractTableDefinition {
         log.info("Cannot interpret SQL: " + getSource(), e);
       }
     }
-
     return interpretedTable;
   }
 
   @Override
   public List<ColumnDefinition> getElements0() throws SQLException {
     List<ColumnDefinition> result = new ArrayList<>();
-
     Field<String> fName = field(name("name"), String.class);
     Field<String> fType = field(name("type"), String.class);
     Field<Boolean> fNotnull = field(name("notnull"), boolean.class);
     Field<String> fDefaultValue = field(name("dflt_value"), String.class);
     Field<Integer> fPk = field(name("pk"), int.class);
-
     for (Record record :
         create()
             .select(fName, fType, fNotnull, fDefaultValue, fPk)
             .from("pragma_table_info({0})", inline(getName()))) {
-
       String name = record.get(fName);
       String dataType = record.get(fType).replaceAll("\\(\\d+(\\s*,\\s*\\d+)?\\)", "");
       Number precision = parsePrecision(record.get(fType));
       Number scale = parseScale(record.get(fType));
-
       // SQLite identities are primary keys whose tables are mentioned in
       // sqlite_sequence
       int pk = record.get(fPk);
       boolean identity = false;
-
       // [#8278] [#11172] SQLite doesn't store the data type for all views or virtual tables
       if (isBlank(dataType) || "other".equals(dataType)) {
         Table<?> t = interpretedTable();
-
         if (t != null) {
           Field<?> f = t.field(name);
-
           if (f != null) {
             dataType = f.getDataType().getName();
             precision = f.getDataType().precision();
@@ -143,22 +136,18 @@ public class SQLiteTableDefinition extends AbstractTableDefinition {
           }
         }
       }
-
       if (pk > 0) {
-
         // [#6854] sqlite_sequence only contains identity information once a table contains records.
         identity |=
             existsSqliteSequence()
                 && create()
                     .fetchOne("select count(*) from sqlite_sequence where name = ?", getName())
                     .get(0, Boolean.class);
-
         if (!identity && !create().fetchExists(selectOne().from("{0}", DSL.name(getName()))))
           identity =
               getSource()
                   .matches("(?s:.*\\b" + getName() + "\\b[^,]*(?i:\\bautoincrement\\b)[^,]*.*)");
       }
-
       DefaultDataTypeDefinition type =
           new DefaultDataTypeDefinition(
               getDatabase(),
@@ -169,7 +158,6 @@ public class SQLiteTableDefinition extends AbstractTableDefinition {
               scale,
               !record.get(fNotnull),
               record.get(fDefaultValue));
-
       result.add(
           new DefaultColumnDefinition(
               getDatabase().getTable(getSchema(), getName()),
@@ -179,7 +167,6 @@ public class SQLiteTableDefinition extends AbstractTableDefinition {
               identity,
               null));
     }
-
     return result;
   }
 
@@ -192,7 +179,6 @@ public class SQLiteTableDefinition extends AbstractTableDefinition {
               .where(SQLiteMaster.NAME.lower().eq("sqlite_sequence"))
               .fetchOne(0, boolean.class);
     }
-
     return existsSqliteSequence;
   }
 }

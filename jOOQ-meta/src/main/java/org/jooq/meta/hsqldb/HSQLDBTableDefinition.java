@@ -74,16 +74,15 @@ public class HSQLDBTableDefinition extends AbstractTableDefinition {
   @Override
   public List<ColumnDefinition> getElements0() throws SQLException {
     List<ColumnDefinition> result = new ArrayList<>();
-
     for (Record record :
         create()
             .select(
                 COLUMNS.COLUMN_NAME,
                 COLUMNS.ORDINAL_POSITION,
                 nvl(
-                        ELEMENT_TYPES.COLLECTION_TYPE_IDENTIFIER,
-
-                        // [#2230] Translate INTERVAL_TYPE to supported types
+                        ELEMENT_TYPES
+                            .COLLECTION_TYPE_IDENTIFIER, // [#2230] Translate INTERVAL_TYPE to
+                        // supported types
                         when(
                                 COLUMNS.INTERVAL_TYPE.like(
                                     any(inline("%YEAR%"), inline("%MONTH%"))),
@@ -126,7 +125,6 @@ public class HSQLDBTableDefinition extends AbstractTableDefinition {
             .where(COLUMNS.TABLE_SCHEMA.equal(getSchema().getName()))
             .and(COLUMNS.TABLE_NAME.equal(getName()))
             .orderBy(COLUMNS.ORDINAL_POSITION)) {
-
       DataTypeDefinition type =
           new DefaultDataTypeDefinition(
               getDatabase(),
@@ -138,7 +136,6 @@ public class HSQLDBTableDefinition extends AbstractTableDefinition {
               record.get(COLUMNS.IS_NULLABLE, boolean.class),
               record.get(COLUMNS.COLUMN_DEFAULT),
               DSL.name(record.get(COLUMNS.UDT_SCHEMA), record.get(COLUMNS.UDT_NAME)));
-
       result.add(
           new DefaultColumnDefinition(
               getDatabase().getTable(getSchema(), getName()),
@@ -148,7 +145,6 @@ public class HSQLDBTableDefinition extends AbstractTableDefinition {
               null != record.get(COLUMNS.IDENTITY_GENERATION),
               record.get(SYSTEM_COLUMNS.REMARKS)));
     }
-
     return result;
   }
 }

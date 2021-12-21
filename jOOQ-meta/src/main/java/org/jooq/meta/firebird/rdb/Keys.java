@@ -63,19 +63,20 @@ public class Keys {
   // -------------------------------------------------------------------------
   // UNIQUE and PRIMARY KEY definitions
   // -------------------------------------------------------------------------
-
   public static final UniqueKey<Record> RDB$INDEX_2 =
       Internal.createUniqueKey(
           Rdb$fields.RDB$FIELDS,
           DSL.name("RDB$INDEX_2"),
           new TableField[] {Rdb$fields.RDB$FIELDS.RDB$FIELD_NAME},
           true);
+
   public static final UniqueKey<Record> RDB$INDEX_53 =
       Internal.createUniqueKey(
           Rdb$functions.RDB$FUNCTIONS,
           DSL.name("RDB$INDEX_53"),
           new TableField[] {Rdb$functions.RDB$FUNCTIONS.RDB$FUNCTION_ID},
           true);
+
   public static final UniqueKey<Record> RDB$INDEX_9 =
       Internal.createUniqueKey(
           Rdb$functions.RDB$FUNCTIONS,
@@ -85,24 +86,28 @@ public class Keys {
             Rdb$functions.RDB$FUNCTIONS.RDB$FUNCTION_NAME
           },
           true);
+
   public static final UniqueKey<Record> RDB$INDEX_11 =
       Internal.createUniqueKey(
           Rdb$generators.RDB$GENERATORS,
           DSL.name("RDB$INDEX_11"),
           new TableField[] {Rdb$generators.RDB$GENERATORS.RDB$GENERATOR_NAME},
           true);
+
   public static final UniqueKey<Record> RDB$INDEX_46 =
       Internal.createUniqueKey(
           Rdb$generators.RDB$GENERATORS,
           DSL.name("RDB$INDEX_46"),
           new TableField[] {Rdb$generators.RDB$GENERATORS.RDB$GENERATOR_ID},
           true);
+
   public static final UniqueKey<Record> RDB$INDEX_5 =
       Internal.createUniqueKey(
           Rdb$indices.RDB$INDICES,
           DSL.name("RDB$INDEX_5"),
           new TableField[] {Rdb$indices.RDB$INDICES.RDB$INDEX_NAME},
           true);
+
   public static final UniqueKey<Record> RDB$INDEX_18 =
       Internal.createUniqueKey(
           Rdb$procedureParameters.RDB$PROCEDURE_PARAMETERS,
@@ -113,6 +118,7 @@ public class Keys {
             Rdb$procedureParameters.RDB$PROCEDURE_PARAMETERS.RDB$PARAMETER_NAME
           },
           true);
+
   public static final UniqueKey<Record> RDB$INDEX_21 =
       Internal.createUniqueKey(
           Rdb$procedures.RDB$PROCEDURES,
@@ -122,24 +128,28 @@ public class Keys {
             Rdb$procedures.RDB$PROCEDURES.RDB$PROCEDURE_NAME
           },
           true);
+
   public static final UniqueKey<Record> RDB$INDEX_22 =
       Internal.createUniqueKey(
           Rdb$procedures.RDB$PROCEDURES,
           DSL.name("RDB$INDEX_22"),
           new TableField[] {Rdb$procedures.RDB$PROCEDURES.RDB$PROCEDURE_ID},
           true);
+
   public static final UniqueKey<Record> RDB$INDEX_13 =
       Internal.createUniqueKey(
           Rdb$refConstraints.RDB$REF_CONSTRAINTS,
           DSL.name("RDB$INDEX_13"),
           new TableField[] {Rdb$refConstraints.RDB$REF_CONSTRAINTS.RDB$CONSTRAINT_NAME},
           true);
+
   public static final UniqueKey<Record> RDB$INDEX_12 =
       Internal.createUniqueKey(
           Rdb$relationConstraints.RDB$RELATION_CONSTRAINTS,
           DSL.name("RDB$INDEX_12"),
           new TableField[] {Rdb$relationConstraints.RDB$RELATION_CONSTRAINTS.RDB$CONSTRAINT_NAME},
           true);
+
   public static final UniqueKey<Record> RDB$INDEX_15 =
       Internal.createUniqueKey(
           Rdb$relationFields.RDB$RELATION_FIELDS,
@@ -149,12 +159,14 @@ public class Keys {
             Rdb$relationFields.RDB$RELATION_FIELDS.RDB$RELATION_NAME
           },
           true);
+
   public static final UniqueKey<Record> RDB$INDEX_0 =
       Internal.createUniqueKey(
           Rdb$relations.RDB$RELATIONS,
           DSL.name("RDB$INDEX_0"),
           new TableField[] {Rdb$relations.RDB$RELATIONS.RDB$RELATION_NAME},
           true);
+
   public static final UniqueKey<Record> RDB$INDEX_8 =
       Internal.createUniqueKey(
           Rdb$triggers.RDB$TRIGGERS,
@@ -165,7 +177,6 @@ public class Keys {
   // -------------------------------------------------------------------------
   // FOREIGN KEY definitions
   // -------------------------------------------------------------------------
-
   public static final ForeignKey<Record, Record> SYNTHETIC_FK_RDB$INDEX_SEGMENTS__RDB$INDEX_5 =
       Internal.createForeignKey(
           Rdb$indexSegments.RDB$INDEX_SEGMENTS,

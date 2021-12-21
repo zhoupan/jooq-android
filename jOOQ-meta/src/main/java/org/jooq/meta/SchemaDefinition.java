@@ -58,7 +58,6 @@ public class SchemaDefinition extends AbstractDefinition {
   public SchemaDefinition(
       Database database, String name, String comment, CatalogDefinition catalog) {
     super(database, null, name, comment);
-
     this.catalog = catalog == null ? new CatalogDefinition(database, "", "") : catalog;
   }
 

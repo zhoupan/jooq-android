@@ -57,7 +57,6 @@ public class Keys {
   // -------------------------------------------------------------------------
   // UNIQUE and PRIMARY KEY definitions
   // -------------------------------------------------------------------------
-
   public static final UniqueKey<Record> SYNTHETIC_PK_CONSTRAINTS =
       Internal.createUniqueKey(
           Constraints.CONSTRAINTS,
@@ -68,6 +67,7 @@ public class Keys {
             Constraints.CONSTRAINTS.CONSTRAINT_NAME
           },
           true);
+
   public static final UniqueKey<Record> UNIQUE_INDEX_NAME =
       Internal.createUniqueKey(
           Constraints.CONSTRAINTS,
@@ -78,6 +78,7 @@ public class Keys {
             Constraints.CONSTRAINTS.UNIQUE_INDEX_NAME
           },
           true);
+
   public static final UniqueKey<Record> SYNTHETIC_PK_DOMAINS =
       Internal.createUniqueKey(
           Domains.DOMAINS,
@@ -88,12 +89,14 @@ public class Keys {
             Domains.DOMAINS.DOMAIN_NAME
           },
           true);
+
   public static final UniqueKey<Record> SYNTHETIC_PK_SCHEMATA =
       Internal.createUniqueKey(
           Schemata.SCHEMATA,
           DSL.name("SYNTHETIC_PK_SCHEMATA"),
           new TableField[] {Schemata.SCHEMATA.CATALOG_NAME, Schemata.SCHEMATA.SCHEMA_NAME},
           true);
+
   public static final UniqueKey<Record> SYNTHETIC_PK_SEQUENCES =
       Internal.createUniqueKey(
           Sequences.SEQUENCES,
@@ -104,6 +107,7 @@ public class Keys {
             Sequences.SEQUENCES.SEQUENCE_NAME
           },
           true);
+
   public static final UniqueKey<Record> SYNTHETIC_PK_TABLES =
       Internal.createUniqueKey(
           Tables.TABLES,
@@ -116,7 +120,6 @@ public class Keys {
   // -------------------------------------------------------------------------
   // FOREIGN KEY definitions
   // -------------------------------------------------------------------------
-
   public static final ForeignKey<Record, Record> REFERENCED_CONSTRAINT =
       Internal.createForeignKey(
           CrossReferences.CROSS_REFERENCES,
@@ -133,6 +136,7 @@ public class Keys {
             Constraints.CONSTRAINTS.UNIQUE_INDEX_NAME
           },
           true);
+
   public static final ForeignKey<Record, Record> REFERENCING_CONSTRAINT =
       Internal.createForeignKey(
           CrossReferences.CROSS_REFERENCES,

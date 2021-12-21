@@ -65,7 +65,6 @@ public class FormatType extends AbstractRoutine<String> {
   /** Create a new routine call instance */
   public FormatType() {
     super("format_type", PgCatalog.PG_CATALOG, SQLDataType.CLOB);
-
     setReturnParameter(RETURN_VALUE);
     addInParameter(_1);
     addInParameter(_2);

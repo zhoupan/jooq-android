@@ -140,20 +140,19 @@ public class PgSequence extends TableImpl<Record> {
   }
 
   private transient PgClass _pgClass;
+
   private transient PgType _pgType;
 
   public PgClass pgClass() {
     if (_pgClass == null)
       _pgClass =
           new PgClass(this, Keys.PG_SEQUENCE__SYNTHETIC_FK_PG_SEQUENCE__SYNTHETIC_PK_PG_CLASS);
-
     return _pgClass;
   }
 
   public PgType pgType() {
     if (_pgType == null)
       _pgType = new PgType(this, Keys.PG_SEQUENCE__SYNTHETIC_FK_PG_SEQUENCE__SYNTHETIC_PK_PG_TYPE);
-
     return _pgType;
   }
 

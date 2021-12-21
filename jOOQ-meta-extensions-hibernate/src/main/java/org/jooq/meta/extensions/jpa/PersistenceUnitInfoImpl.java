@@ -59,7 +59,7 @@ import org.hibernate.jpa.HibernatePersistenceProvider;
  * @author Vlad Mihalcea
  * @author Lukas Eder
  */
-final class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
+public final class PersistenceUnitInfoImpl implements PersistenceUnitInfo {
 
   private final String persistenceUnitName;
   private PersistenceUnitTransactionType transactionType =

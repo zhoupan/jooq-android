@@ -56,12 +56,16 @@ public class SQLiteMaster extends TableImpl<Record> {
 
   public static final TableField<Record, String> TYPE =
       createField("type", SQLiteDataType.VARCHAR, SQLITE_MASTER);
+
   public static final TableField<Record, String> NAME =
       createField("name", SQLiteDataType.VARCHAR, SQLITE_MASTER);
+
   public static final TableField<Record, String> TBL_NAME =
       createField("tbl_name", SQLiteDataType.VARCHAR, SQLITE_MASTER);
+
   public static final TableField<Record, Integer> ROOTPAGE =
       createField("rootpage", SQLiteDataType.INTEGER, SQLITE_MASTER);
+
   public static final TableField<Record, String> SQL =
       createField("sql", SQLiteDataType.VARCHAR, SQLITE_MASTER);
 

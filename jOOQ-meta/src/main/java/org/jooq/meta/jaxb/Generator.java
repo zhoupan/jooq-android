@@ -62,8 +62,11 @@ public class Generator implements Serializable, XMLAppendable {
   protected String name = "org.jooq.codegen.DefaultGenerator";
 
   protected Strategy strategy;
+
   protected Database database;
+
   protected Generate generate;
+
   protected Target target;
 
   /**

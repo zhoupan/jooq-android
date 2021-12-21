@@ -47,23 +47,35 @@ import java.util.Set;
 import org.jooq.Name;
 import org.jooq.SQLDialect;
 import org.jooq.tools.StringUtils;
-// ...
 
+// ...
 /** @author Lukas Eder */
 public class DefaultDataTypeDefinition implements DataTypeDefinition {
 
   private final Database database;
+
   private final SchemaDefinition schema;
+
   private final String type;
+
   private final Name userType;
+
   private final String javaType;
+
   private final String converter;
+
   private final String binding;
+
   private final boolean nullable;
+
   private boolean isIdentity;
+
   private final String defaultValue;
+
   private final int length;
+
   private final int precision;
+
   private final int scale;
 
   private static final String defaultValue(Boolean defaultable) {
@@ -78,7 +90,6 @@ public class DefaultDataTypeDefinition implements DataTypeDefinition {
    * @deprecated - [#4841] - 3.8.0 - Use {@link #DefaultDataTypeDefinition(Database,
    *     SchemaDefinition, String, Number, Number, Number, Boolean, String)} instead.
    */
-  @Deprecated
   public DefaultDataTypeDefinition(
       Database database,
       SchemaDefinition schema,
@@ -127,7 +138,6 @@ public class DefaultDataTypeDefinition implements DataTypeDefinition {
    * @deprecated - [#4841] - 3.8.0 - Use {@link #DefaultDataTypeDefinition(Database,
    *     SchemaDefinition, String, Number, Number, Number, Boolean, String, String)} instead.
    */
-  @Deprecated
   public DefaultDataTypeDefinition(
       Database database,
       SchemaDefinition schema,
@@ -155,7 +165,6 @@ public class DefaultDataTypeDefinition implements DataTypeDefinition {
    * @deprecated - [#330] - 3.9.0 - Use {@link #DefaultDataTypeDefinition(Database,
    *     SchemaDefinition, String, Number, Number, Number, Boolean, String, Name)} instead.
    */
-  @Deprecated
   public DefaultDataTypeDefinition(
       Database database,
       SchemaDefinition schema,
@@ -182,7 +191,6 @@ public class DefaultDataTypeDefinition implements DataTypeDefinition {
    * @deprecated - [#330] - 3.9.0 - Use {@link #DefaultDataTypeDefinition(Database,
    *     SchemaDefinition, String, Number, Number, Number, Boolean, String, Name)} instead.
    */
-  @Deprecated
   public DefaultDataTypeDefinition(
       Database database,
       SchemaDefinition schema,
@@ -233,7 +241,6 @@ public class DefaultDataTypeDefinition implements DataTypeDefinition {
    *     SchemaDefinition, String, Number, Number, Number, Boolean, String, String, String)}
    *     instead.
    */
-  @Deprecated
   public DefaultDataTypeDefinition(
       Database database,
       SchemaDefinition schema,
@@ -263,7 +270,6 @@ public class DefaultDataTypeDefinition implements DataTypeDefinition {
    * @deprecated - [#330] - 3.9.0 - Use {@link #DefaultDataTypeDefinition(Database,
    *     SchemaDefinition, String, Number, Number, Number, Boolean, String, Name, String)} instead.
    */
-  @Deprecated
   public DefaultDataTypeDefinition(
       Database database,
       SchemaDefinition schema,
@@ -318,7 +324,6 @@ public class DefaultDataTypeDefinition implements DataTypeDefinition {
    *     SchemaDefinition, String, Number, Number, Number, Boolean, String, String, String, String)}
    *     instead.
    */
-  @Deprecated
   public DefaultDataTypeDefinition(
       Database database,
       SchemaDefinition schema,
@@ -351,7 +356,6 @@ public class DefaultDataTypeDefinition implements DataTypeDefinition {
    *     SchemaDefinition, String, Number, Number, Number, Boolean, String, Name, String, String)}
    *     instead.
    */
-  @Deprecated
   public DefaultDataTypeDefinition(
       Database database,
       SchemaDefinition schema,
@@ -411,7 +415,6 @@ public class DefaultDataTypeDefinition implements DataTypeDefinition {
    *     SchemaDefinition, String, Number, Number, Number, Boolean, String, String, String, String,
    *     String)} instead.
    */
-  @Deprecated
   public DefaultDataTypeDefinition(
       Database database,
       SchemaDefinition schema,
@@ -445,7 +448,6 @@ public class DefaultDataTypeDefinition implements DataTypeDefinition {
    *     SchemaDefinition, String, Number, Number, Number, Boolean, String, Name, String, String,
    *     String)} instead.
    */
-  @Deprecated
   public DefaultDataTypeDefinition(
       Database database,
       SchemaDefinition schema,
@@ -519,20 +521,17 @@ public class DefaultDataTypeDefinition implements DataTypeDefinition {
       String javaType) {
     this.database = database;
     this.schema = schema;
-
     // [#3420] Some databases report NULL as a data type, e.g. Oracle for (some) AQ tables
     this.type = typeName == null ? "OTHER" : typeName;
     this.userType = userType;
     this.javaType = javaType;
     this.converter = converter;
     this.binding = binding;
-
     // Some dialects do not distinguish between length and precision...
     if (length != null
         && precision != null
         && length.intValue() != 0
         && precision.intValue() != 0) {
-
       // [#650] TODO Use the central type registry to find the right
       // data type instead of pattern matching
       if (this.type.toLowerCase().matches(".*?(char|text|lob|xml|graphic|string).*?")) {
@@ -542,7 +541,6 @@ public class DefaultDataTypeDefinition implements DataTypeDefinition {
         length = null;
       }
     }
-
     this.length = length == null ? 0 : length.intValue();
     this.precision = precision == null ? 0 : precision.intValue();
     this.scale = scale == null ? 0 : scale.intValue();
@@ -593,14 +591,12 @@ public class DefaultDataTypeDefinition implements DataTypeDefinition {
   @Override
   public final boolean isUDT() {
     if (userType == null) return false;
-
     return getDatabase().getUDT(schema, userType) != null;
   }
 
   @Override
   public final boolean isArray() {
     if (userType == null) return false;
-
     return getDatabase().getArray(schema, userType) != null;
   }
 
@@ -666,7 +662,6 @@ public class DefaultDataTypeDefinition implements DataTypeDefinition {
 
   @Override
   public final boolean isGenericNumberType() {
-
     return false;
   }
 
@@ -674,21 +669,17 @@ public class DefaultDataTypeDefinition implements DataTypeDefinition {
   public List<String> getMatchNames() {
     Set<String> result = new LinkedHashSet<>();
     result.add(getType());
-
     if (getLength() != 0) result.add(getType() + "(" + getLength() + ")");
     if (getScale() == 0) result.add(getType() + "(" + getPrecision() + ")");
-
     result.add(getType() + "(" + getPrecision() + "," + getScale() + ")");
     result.add(getType() + "(" + getPrecision() + ", " + getScale() + ")");
-
     // [#5872] We should match user-defined types as well, in case of which the type might be
     // reported
-    //         as USER-DEFINED (in PostgreSQL)
+    // as USER-DEFINED (in PostgreSQL)
     if (!StringUtils.isBlank(getUserType())) {
       result.add(getUserType());
       result.add(getQualifiedUserType().unquotedName().toString());
     }
-
     return new ArrayList<>(result);
   }
 
@@ -704,26 +695,19 @@ public class DefaultDataTypeDefinition implements DataTypeDefinition {
   @Override
   public boolean equals(Object obj) {
     if (this == obj) return true;
-
     if (obj instanceof DefaultDataTypeDefinition) {
       DefaultDataTypeDefinition other = (DefaultDataTypeDefinition) obj;
-
       if (!normalise(type).equals(normalise(other.type))) return false;
-
       if (userType == null && other.userType == null) return true;
-
       if (userType == null || other.userType == null) return false;
-
       return normalise(userType.last()).equals(normalise(other.userType.last()));
     }
-
     return false;
   }
 
   @Override
   public final String toString() {
     StringBuilder sb = new StringBuilder();
-
     sb.append("DataType [ t=");
     sb.append(type);
     sb.append("; p=");
@@ -735,7 +719,6 @@ public class DefaultDataTypeDefinition implements DataTypeDefinition {
     sb.append("; j=");
     sb.append(javaType);
     sb.append(" ]");
-
     return sb.toString();
   }
 }

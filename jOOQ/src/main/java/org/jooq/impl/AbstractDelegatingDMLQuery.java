@@ -37,7 +37,7 @@
  */
 package org.jooq.impl;
 
-import java.util.concurrent.Flow;
+import org.java.util.concurrent.Flow;
 import org.jooq.Record;
 import org.jooq.RowCountQuery;
 

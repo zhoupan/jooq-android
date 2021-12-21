@@ -69,6 +69,7 @@ import org.jooq.tools.StringUtils;
 public class PostgresRoutineDefinition extends AbstractRoutineDefinition {
 
   private static final JooqLogger log = JooqLogger.getLogger(PostgresRoutineDefinition.class);
+
   private final String specificName;
 
   public PostgresRoutineDefinition(Database database, Record record) {
@@ -79,13 +80,10 @@ public class PostgresRoutineDefinition extends AbstractRoutineDefinition {
         null,
         record.get("overload", String.class),
         record.get("is_agg", boolean.class));
-
     if (!Arrays.asList("void", "record").contains(record.get("data_type"))) {
       SchemaDefinition typeSchema = null;
-
       String schemaName = record.get(ROUTINES.TYPE_UDT_SCHEMA);
       if (schemaName != null) typeSchema = getDatabase().getSchema(schemaName);
-
       DataTypeDefinition type =
           new DefaultDataTypeDefinition(
               getDatabase(),
@@ -99,10 +97,8 @@ public class PostgresRoutineDefinition extends AbstractRoutineDefinition {
               null,
               (String) null,
               name(record.get(ROUTINES.TYPE_UDT_SCHEMA), record.get(ROUTINES.TYPE_UDT_NAME)));
-
       returnValue = new DefaultParameterDefinition(this, "RETURN_VALUE", -1, type);
     }
-
     specificName = record.get(ROUTINES.SPECIFIC_NAME);
   }
 
@@ -110,7 +106,6 @@ public class PostgresRoutineDefinition extends AbstractRoutineDefinition {
   // otherwise
   PostgresRoutineDefinition(Database database, String schema, String name, String specificName) {
     super(database.getSchema(schema), null, name, null, null);
-
     this.specificName = specificName;
   }
 
@@ -122,7 +117,6 @@ public class PostgresRoutineDefinition extends AbstractRoutineDefinition {
             .filterWhere(p.PARAMETER_NAME.ne(inline("")))
             .over(partitionBy(p.SPECIFIC_NAME, p.PARAMETER_NAME));
     Field<Integer> c = count.as("c");
-
     for (Record record :
         create()
             .select(
@@ -143,14 +137,11 @@ public class PostgresRoutineDefinition extends AbstractRoutineDefinition {
             .where(p.SPECIFIC_SCHEMA.equal(getSchema().getName()))
             .and(p.SPECIFIC_NAME.equal(specificName))
             .orderBy(p.ORDINAL_POSITION.asc())) {
-
       String parameterName = record.get(p.PARAMETER_NAME);
       String inOut = record.get(p.PARAMETER_MODE);
       SchemaDefinition typeSchema = null;
-
       String schemaName = record.get(p.UDT_SCHEMA);
       if (schemaName != null) typeSchema = getDatabase().getSchema(schemaName);
-
       DataTypeDefinition type =
           new DefaultDataTypeDefinition(
               getDatabase(),
@@ -162,7 +153,6 @@ public class PostgresRoutineDefinition extends AbstractRoutineDefinition {
               null,
               record.get(p.PARAMETER_DEFAULT),
               name(record.get(p.UDT_SCHEMA), record.get(p.UDT_NAME)));
-
       ParameterDefinition parameter =
           new DefaultParameterDefinition(
               this,
@@ -173,14 +163,12 @@ public class PostgresRoutineDefinition extends AbstractRoutineDefinition {
               StringUtils.isBlank(parameterName),
               "",
               record.get(c) > 1 ? record.get(p.ORDINAL_POSITION, String.class) : null);
-
       addParameter(InOutDefinition.getFromString(inOut), parameter);
     }
   }
 
   static Field<Integer> pNumericPrecision(Parameters p) {
     // [#12048] [#12612] TODO: Maintain whether we know the precision or not
-
     return when(
             p.NUMERIC_PRECISION
                 .isNull()

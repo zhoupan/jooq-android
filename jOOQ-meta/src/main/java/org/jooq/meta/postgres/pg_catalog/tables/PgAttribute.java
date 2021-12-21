@@ -166,7 +166,6 @@ public class PgAttribute extends TableImpl<Record> {
    *     how this type should be handled. Deprecation can be turned off using {@literal
    *     <deprecationOnUnknownTypes/>} in your code generator configuration.
    */
-  @Deprecated
   public final TableField<Record, Object> ATTMISSINGVAL =
       createField(
           DSL.name("attmissingval"),

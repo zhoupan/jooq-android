@@ -126,7 +126,6 @@ public class PgEnum extends TableImpl<Record> {
   public PgType pgType() {
     if (_pgType == null)
       _pgType = new PgType(this, Keys.PG_ENUM__SYNTHETIC_FK_PG_ENUM__SYNTHETIC_PK_PG_TYPE);
-
     return _pgType;
   }
 

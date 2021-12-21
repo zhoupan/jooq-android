@@ -126,7 +126,6 @@ public class HSQLDBDatabase extends AbstractDatabase implements ResultQueryDatab
   @Override
   protected List<IndexDefinition> getIndexes0() throws SQLException {
     List<IndexDefinition> result = new ArrayList<>();
-
     // Same implementation as in H2Database and MySQLDatabase
     Map<Record, Result<Record>> indexes =
         create()
@@ -161,28 +160,23 @@ public class HSQLDBDatabase extends AbstractDatabase implements ResultQueryDatab
                   SYSTEM_INDEXINFO.ORDINAL_POSITION,
                   SYSTEM_INDEXINFO.ASC_OR_DESC
                 });
-
     indexLoop:
     for (Entry<Record, Result<Record>> entry : indexes.entrySet()) {
       final Record index = entry.getKey();
       final Result<Record> cols = entry.getValue();
-
       final SchemaDefinition tableSchema = getSchema(index.get(SYSTEM_INDEXINFO.TABLE_SCHEM));
       if (tableSchema == null) continue indexLoop;
-
       final String indexName = index.get(SYSTEM_INDEXINFO.INDEX_NAME);
       final String tableName = index.get(SYSTEM_INDEXINFO.TABLE_NAME);
       final TableDefinition table = getTable(tableSchema, tableName);
       if (table == null) continue indexLoop;
-
       final boolean unique = !index.get(SYSTEM_INDEXINFO.NON_UNIQUE, boolean.class);
-
       // [#6310] [#6620] Function-based indexes are not yet supported
       for (Record column : cols)
         if (table.getColumn(column.get(SYSTEM_INDEXINFO.COLUMN_NAME)) == null) continue indexLoop;
-
       result.add(
           new AbstractIndexDefinition(tableSchema, indexName, table, unique) {
+
             List<IndexColumnDefinition> indexColumns = new ArrayList<>();
 
             {
@@ -204,7 +198,6 @@ public class HSQLDBDatabase extends AbstractDatabase implements ResultQueryDatab
             }
           });
     }
-
     return result;
   }
 
@@ -215,7 +208,6 @@ public class HSQLDBDatabase extends AbstractDatabase implements ResultQueryDatab
       String key = record.get(KEY_COLUMN_USAGE.CONSTRAINT_NAME);
       String tableName = record.get(KEY_COLUMN_USAGE.TABLE_NAME);
       String columnName = record.get(KEY_COLUMN_USAGE.COLUMN_NAME);
-
       TableDefinition table = getTable(schema, tableName);
       if (table != null) relations.addPrimaryKey(key, table, table.getColumn(columnName));
     }
@@ -228,7 +220,6 @@ public class HSQLDBDatabase extends AbstractDatabase implements ResultQueryDatab
       String key = record.get(KEY_COLUMN_USAGE.CONSTRAINT_NAME);
       String tableName = record.get(KEY_COLUMN_USAGE.TABLE_NAME);
       String columnName = record.get(KEY_COLUMN_USAGE.COLUMN_NAME);
-
       TableDefinition table = getTable(schema, tableName);
       if (table != null) relations.addUniqueKey(key, table, table.getColumn(columnName));
     }
@@ -270,7 +261,6 @@ public class HSQLDBDatabase extends AbstractDatabase implements ResultQueryDatab
   protected void loadForeignKeys(DefaultRelations relations) throws SQLException {
     KeyColumnUsage fkKcu = KEY_COLUMN_USAGE.as("fk_kcu");
     KeyColumnUsage pkKcu = KEY_COLUMN_USAGE.as("pk_kcu");
-
     Result<?> result =
         create()
             .select(
@@ -304,22 +294,18 @@ public class HSQLDBDatabase extends AbstractDatabase implements ResultQueryDatab
                 fkKcu.CONSTRAINT_NAME.asc(),
                 fkKcu.ORDINAL_POSITION.asc())
             .fetch();
-
     for (Record record : result) {
       SchemaDefinition foreignKeySchema = getSchema(record.get(fkKcu.TABLE_SCHEMA));
       SchemaDefinition uniqueKeySchema =
           getSchema(record.get(REFERENTIAL_CONSTRAINTS.UNIQUE_CONSTRAINT_SCHEMA));
-
       String foreignKey = record.get(fkKcu.CONSTRAINT_NAME);
       String foreignKeyTableName = record.get(fkKcu.TABLE_NAME);
       String foreignKeyColumn = record.get(fkKcu.COLUMN_NAME);
       String uniqueKey = record.get(REFERENTIAL_CONSTRAINTS.UNIQUE_CONSTRAINT_NAME);
       String uniqueKeyTableName = record.get(TABLE_CONSTRAINTS.TABLE_NAME);
       String uniqueKeyColumn = record.get(pkKcu.COLUMN_NAME);
-
       TableDefinition foreignKeyTable = getTable(foreignKeySchema, foreignKeyTableName);
       TableDefinition uniqueKeyTable = getTable(uniqueKeySchema, uniqueKeyTableName);
-
       if (foreignKeyTable != null && uniqueKeyTable != null)
         relations.addForeignKey(
             foreignKey,
@@ -336,10 +322,8 @@ public class HSQLDBDatabase extends AbstractDatabase implements ResultQueryDatab
   protected void loadCheckConstraints(DefaultRelations relations) throws SQLException {
     CheckConstraints cc = CHECK_CONSTRAINTS.as("cc");
     Columns c = COLUMNS.as("c");
-
     // [#2808] [#3019] Workaround for bad handling of JOIN .. USING
     Field<String> constraintName = field(name(cc.CONSTRAINT_NAME.getName()), String.class);
-
     for (Record record :
         create()
             .select(
@@ -356,9 +340,7 @@ public class HSQLDBDatabase extends AbstractDatabase implements ResultQueryDatab
                         .CONSTRAINT_NAME
                         .notLike("SYS!_CT!_%", '!')
                         .or(
-                            cc.CHECK_CLAUSE.notIn(
-
-                                // TODO: Should we ever quote these?
+                            cc.CHECK_CLAUSE.notIn( // TODO: Should we ever quote these?
                                 select(
                                         c.TABLE_SCHEMA
                                             .concat(inline('.'))
@@ -369,10 +351,8 @@ public class HSQLDBDatabase extends AbstractDatabase implements ResultQueryDatab
                                     .from(c)
                                     .where(c.TABLE_SCHEMA.eq(cc.tableConstraints().TABLE_SCHEMA))
                                     .and(c.TABLE_NAME.eq(cc.tableConstraints().TABLE_NAME)))))) {
-
       SchemaDefinition schema = getSchema(record.get(cc.tableConstraints().TABLE_SCHEMA));
       TableDefinition table = getTable(schema, record.get(cc.tableConstraints().TABLE_NAME));
-
       if (table != null) {
         relations.addCheckConstraint(
             table,
@@ -436,23 +416,18 @@ public class HSQLDBDatabase extends AbstractDatabase implements ResultQueryDatab
   @Override
   protected List<SequenceDefinition> getSequences0() throws SQLException {
     List<SequenceDefinition> result = new ArrayList<>();
-
     for (Record record : sequences(getInputSchemata())) {
       SchemaDefinition schema = getSchema(record.get(SEQUENCES.SEQUENCE_SCHEMA));
-
       DataTypeDefinition type =
           new DefaultDataTypeDefinition(this, schema, record.get(SEQUENCES.DATA_TYPE));
-
       result.add(new DefaultSequenceDefinition(schema, record.get(SEQUENCES.SEQUENCE_NAME), type));
     }
-
     return result;
   }
 
   @Override
   protected List<TableDefinition> getTables0() throws SQLException {
     List<TableDefinition> result = new ArrayList<>();
-
     for (Record record :
         create()
             .select(
@@ -499,19 +474,16 @@ public class HSQLDBDatabase extends AbstractDatabase implements ResultQueryDatab
                         .where(falseCondition()))
             .orderBy(SYSTEM_TABLES.TABLE_SCHEM, SYSTEM_TABLES.TABLE_NAME)
             .fetch()) {
-
       SchemaDefinition schema = getSchema(record.get(SYSTEM_TABLES.TABLE_SCHEM));
       String name = record.get(SYSTEM_TABLES.TABLE_NAME);
       String specificName = record.get(ROUTINES.SPECIFIC_NAME);
       String comment = record.get(SYSTEM_TABLES.REMARKS);
       TableType tableType = record.get("table_type", TableType.class);
       String source = record.get(VIEWS.VIEW_DEFINITION);
-
       if (tableType == TableType.FUNCTION)
         result.add(new HSQLDBTableValuedFunction(schema, name, specificName, comment, source));
       else result.add(new HSQLDBTableDefinition(schema, name, comment, tableType, source));
     }
-
     return result;
   }
 
@@ -524,9 +496,7 @@ public class HSQLDBDatabase extends AbstractDatabase implements ResultQueryDatab
   @Override
   protected List<DomainDefinition> getDomains0() throws SQLException {
     List<DomainDefinition> result = new ArrayList<>();
-
     DomainConstraints dc = DOMAIN_CONSTRAINTS.as("dc");
-
     for (Record record :
         create()
             .select(
@@ -542,7 +512,6 @@ public class HSQLDBDatabase extends AbstractDatabase implements ResultQueryDatab
             .where(dc.domains().DOMAIN_SCHEMA.in(getInputSchemata()))
             .orderBy(dc.domains().DOMAIN_SCHEMA, dc.domains().DOMAIN_NAME)) {
       SchemaDefinition schema = getSchema(record.get(dc.domains().DOMAIN_SCHEMA));
-
       DataTypeDefinition baseType =
           new DefaultDataTypeDefinition(
               this,
@@ -553,16 +522,12 @@ public class HSQLDBDatabase extends AbstractDatabase implements ResultQueryDatab
               record.get(dc.domains().NUMERIC_SCALE),
               true,
               record.get(dc.domains().DOMAIN_DEFAULT));
-
       DefaultDomainDefinition domain =
           new DefaultDomainDefinition(schema, record.get(dc.domains().DOMAIN_NAME), baseType);
-
       if (!StringUtils.isBlank(record.get(dc.checkConstraints().CHECK_CLAUSE)))
         domain.addCheckClause(record.get(dc.checkConstraints().CHECK_CLAUSE));
-
       result.add(domain);
     }
-
     return result;
   }
 
@@ -581,7 +546,6 @@ public class HSQLDBDatabase extends AbstractDatabase implements ResultQueryDatab
   @Override
   protected List<RoutineDefinition> getRoutines0() throws SQLException {
     List<RoutineDefinition> result = new ArrayList<>();
-
     for (Record record :
         create()
             .select(
@@ -607,15 +571,12 @@ public class HSQLDBDatabase extends AbstractDatabase implements ResultQueryDatab
                     : noCondition())
             .orderBy(ROUTINES.ROUTINE_SCHEMA, ROUTINES.ROUTINE_NAME)
             .fetch()) {
-
       String datatype = record.get("datatype", String.class);
-
       // [#3285] We currently do not recognise HSQLDB table-valued functions as such.
       if (datatype != null && datatype.toUpperCase().startsWith("ROW")) {
         JooqLogger.getLogger(getClass()).info("A row : " + datatype);
         datatype = "ROW";
       }
-
       result.add(
           new HSQLDBRoutineDefinition(
               getSchema(record.get(ROUTINES.ROUTINE_SCHEMA)),
@@ -626,7 +587,6 @@ public class HSQLDBDatabase extends AbstractDatabase implements ResultQueryDatab
               record.get(ROUTINES.NUMERIC_SCALE),
               record.get("aggregate", boolean.class)));
     }
-
     return result;
   }
 

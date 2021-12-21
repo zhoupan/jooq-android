@@ -362,27 +362,4 @@ public class DefaultStatement extends JDBC41Statement implements Statement {
   public long executeLargeUpdate(String sql, String[] columnNames) throws SQLException {
     return getDelegate().executeLargeUpdate(sql, columnNames);
   }
-
-  // ------------------------------------------------------------------------
-  // JDBC 4.3
-  // ------------------------------------------------------------------------
-  @Override
-  public String enquoteLiteral(String val) throws SQLException {
-    return getDelegate().enquoteLiteral(val);
-  }
-
-  @Override
-  public String enquoteIdentifier(String identifier, boolean alwaysQuote) throws SQLException {
-    return getDelegate().enquoteIdentifier(identifier, alwaysQuote);
-  }
-
-  @Override
-  public boolean isSimpleIdentifier(String identifier) throws SQLException {
-    return getDelegate().isSimpleIdentifier(identifier);
-  }
-
-  @Override
-  public String enquoteNCharLiteral(String val) throws SQLException {
-    return getDelegate().enquoteNCharLiteral(val);
-  }
 }

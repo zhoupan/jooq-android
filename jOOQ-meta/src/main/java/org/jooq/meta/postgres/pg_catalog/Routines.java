@@ -53,11 +53,9 @@ public class Routines {
    *     how this type should be handled. Deprecation can be turned off using {@literal
    *     <deprecationOnUnknownTypes/>} in your code generator configuration.
    */
-  @Deprecated
   public static AggregateFunction<Long> count1(Object __1) {
     Count1 f = new Count1();
     f.set__1(__1);
-
     return f.asAggregateFunction();
   }
 
@@ -66,18 +64,15 @@ public class Routines {
    *     how this type should be handled. Deprecation can be turned off using {@literal
    *     <deprecationOnUnknownTypes/>} in your code generator configuration.
    */
-  @Deprecated
   public static AggregateFunction<Long> count1(Field<Object> __1) {
     Count1 f = new Count1();
     f.set__1(__1);
-
     return f.asAggregateFunction();
   }
 
   /** Get <code>pg_catalog.count</code> as a field. */
   public static AggregateFunction<Long> count2() {
     Count2 f = new Count2();
-
     return f.asAggregateFunction();
   }
 
@@ -86,7 +81,6 @@ public class Routines {
     FormatType f = new FormatType();
     f.set__1(__1);
     f.set__2(__2);
-
     f.execute(configuration);
     return f.getReturnValue();
   }
@@ -96,7 +90,6 @@ public class Routines {
     FormatType f = new FormatType();
     f.set__1(__1);
     f.set__2(__2);
-
     return f.asField();
   }
 
@@ -105,7 +98,6 @@ public class Routines {
     FormatType f = new FormatType();
     f.set__1(__1);
     f.set__2(__2);
-
     return f.asField();
   }
 }

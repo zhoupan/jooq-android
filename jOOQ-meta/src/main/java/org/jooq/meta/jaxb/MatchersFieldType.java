@@ -60,8 +60,11 @@ public class MatchersFieldType implements Serializable, XMLAppendable {
   protected String expression;
 
   protected MatcherRule fieldIdentifier;
+
   protected MatcherRule fieldMember;
+
   protected MatcherRule fieldSetter;
+
   protected MatcherRule fieldGetter;
 
   /**

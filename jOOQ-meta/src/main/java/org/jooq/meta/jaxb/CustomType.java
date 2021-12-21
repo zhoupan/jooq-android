@@ -52,7 +52,6 @@ import org.jooq.util.jaxb.tools.XMLBuilder;
 @XmlType(
     name = "CustomType",
     propOrder = {})
-@Deprecated
 @SuppressWarnings({"all"})
 public class CustomType implements Serializable, XMLAppendable {
 
@@ -69,43 +68,38 @@ public class CustomType implements Serializable, XMLAppendable {
   protected String converter;
 
   protected Boolean enumConverter;
+
   protected LambdaConverter lambdaConverter;
 
   @XmlJavaTypeAdapter(StringAdapter.class)
   protected String binding;
 
   /** @deprecated Use ForcedType only */
-  @Deprecated
   public String getName() {
     return name;
   }
 
   /** @deprecated Use ForcedType only */
-  @Deprecated
   public void setName(String value) {
     this.name = value;
   }
 
   /** @deprecated Use ForcedType only */
-  @Deprecated
   public String getType() {
     return type;
   }
 
   /** @deprecated Use ForcedType only */
-  @Deprecated
   public void setType(String value) {
     this.type = value;
   }
 
   /** @deprecated Use ForcedType only */
-  @Deprecated
   public String getConverter() {
     return converter;
   }
 
   /** @deprecated Use ForcedType only */
-  @Deprecated
   public void setConverter(String value) {
     this.converter = value;
   }
@@ -114,7 +108,6 @@ public class CustomType implements Serializable, XMLAppendable {
    * @deprecated Use ForcedType only
    * @return possible object is {@link Boolean }
    */
-  @Deprecated
   public Boolean isEnumConverter() {
     return enumConverter;
   }
@@ -124,51 +117,43 @@ public class CustomType implements Serializable, XMLAppendable {
    *
    * @param value allowed object is {@link Boolean }
    */
-  @Deprecated
   public void setEnumConverter(Boolean value) {
     this.enumConverter = value;
   }
 
   /** @deprecated Use ForcedType only */
-  @Deprecated
   public LambdaConverter getLambdaConverter() {
     return lambdaConverter;
   }
 
   /** @deprecated Use ForcedType only */
-  @Deprecated
   public void setLambdaConverter(LambdaConverter value) {
     this.lambdaConverter = value;
   }
 
   /** @deprecated Use ForcedType only */
-  @Deprecated
   public String getBinding() {
     return binding;
   }
 
   /** @deprecated Use ForcedType only */
-  @Deprecated
   public void setBinding(String value) {
     this.binding = value;
   }
 
   /** @deprecated Use ForcedType only */
-  @Deprecated
   public CustomType withName(String value) {
     setName(value);
     return this;
   }
 
   /** @deprecated Use ForcedType only */
-  @Deprecated
   public CustomType withType(String value) {
     setType(value);
     return this;
   }
 
   /** @deprecated Use ForcedType only */
-  @Deprecated
   public CustomType withConverter(String value) {
     setConverter(value);
     return this;
@@ -180,14 +165,12 @@ public class CustomType implements Serializable, XMLAppendable {
   }
 
   /** @deprecated Use ForcedType only */
-  @Deprecated
   public CustomType withLambdaConverter(LambdaConverter value) {
     setLambdaConverter(value);
     return this;
   }
 
   /** @deprecated Use ForcedType only */
-  @Deprecated
   public CustomType withBinding(String value) {
     setBinding(value);
     return this;

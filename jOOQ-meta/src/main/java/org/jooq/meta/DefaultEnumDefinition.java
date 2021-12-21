@@ -45,6 +45,7 @@ import java.util.List;
 public class DefaultEnumDefinition extends AbstractDefinition implements EnumDefinition {
 
   private final List<String> literals;
+
   private final boolean isSynthetic;
 
   public DefaultEnumDefinition(SchemaDefinition schema, String name, String comment) {
@@ -54,7 +55,6 @@ public class DefaultEnumDefinition extends AbstractDefinition implements EnumDef
   public DefaultEnumDefinition(
       SchemaDefinition schema, String name, String comment, boolean isSynthetic) {
     super(schema.getDatabase(), schema, name, comment);
-
     this.literals = new ArrayList<>();
     this.isSynthetic = isSynthetic;
   }
@@ -62,10 +62,8 @@ public class DefaultEnumDefinition extends AbstractDefinition implements EnumDef
   @Override
   public List<Definition> getDefinitionPath() {
     List<Definition> result = new ArrayList<>();
-
     result.addAll(getSchema().getDefinitionPath());
     result.add(this);
-
     return result;
   }
 

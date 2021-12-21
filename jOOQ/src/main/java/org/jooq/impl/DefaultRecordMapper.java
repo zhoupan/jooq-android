@@ -51,7 +51,6 @@ import static org.jooq.impl.Tools.getMatchingMembers;
 import static org.jooq.impl.Tools.getMatchingSetters;
 import static org.jooq.impl.Tools.getPropertyName;
 import static org.jooq.impl.Tools.hasColumnAnnotations;
-import static org.jooq.impl.Tools.map;
 import static org.jooq.impl.Tools.newRecord;
 import static org.jooq.impl.Tools.recordType;
 import static org.jooq.impl.Tools.row0;
@@ -83,7 +82,6 @@ import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import javax.persistence.Column;
 import org.jooq.Attachable;
 import org.jooq.Configuration;
 import org.jooq.Field;
@@ -101,6 +99,7 @@ import org.jooq.exception.MappingException;
 import org.jooq.tools.StringUtils;
 import org.jooq.tools.reflect.Reflect;
 import org.jooq.tools.reflect.ReflectException;
+import org.jooq.util.xml.jaxb.Column;
 
 /**
  * This is the default implementation for <code>RecordMapper</code> types, which applies to {@link

@@ -50,17 +50,14 @@ public class DefaultDomainDefinition extends AbstractTypedElementDefinition<Sche
   public DefaultDomainDefinition(
       SchemaDefinition schema, String name, DataTypeDefinition baseType) {
     super(schema, name, -1, baseType, "");
-
     this.checkClauses = new ArrayList<>();
   }
 
   @Override
   public List<Definition> getDefinitionPath() {
     List<Definition> result = new ArrayList<>();
-
     result.addAll(getSchema().getDefinitionPath());
     result.add(this);
-
     return result;
   }
 

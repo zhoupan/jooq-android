@@ -112,6 +112,7 @@ public class Generate implements Serializable, XMLAppendable {
   protected Boolean constructorPropertiesAnnotation = false;
 
   protected Boolean constructorPropertiesAnnotationOnPojos;
+
   protected Boolean constructorPropertiesAnnotationOnRecords;
 
   @XmlElement(defaultValue = "true")
@@ -444,7 +445,6 @@ public class Generate implements Serializable, XMLAppendable {
    * @deprecated
    * @return possible object is {@link Boolean }
    */
-  @Deprecated
   public Boolean isInstanceFields() {
     return instanceFields;
   }
@@ -454,7 +454,6 @@ public class Generate implements Serializable, XMLAppendable {
    *
    * @param value allowed object is {@link Boolean }
    */
-  @Deprecated
   public void setInstanceFields(Boolean value) {
     this.instanceFields = value;
   }
@@ -838,7 +837,6 @@ public class Generate implements Serializable, XMLAppendable {
    * @deprecated Activate the legacy Scala sealed trait enum emulation
    * @return possible object is {@link Boolean }
    */
-  @Deprecated
   public Boolean isEnumsAsScalaSealedTraits() {
     return enumsAsScalaSealedTraits;
   }
@@ -848,7 +846,6 @@ public class Generate implements Serializable, XMLAppendable {
    *
    * @param value allowed object is {@link Boolean }
    */
-  @Deprecated
   public void setEnumsAsScalaSealedTraits(Boolean value) {
     this.enumsAsScalaSealedTraits = value;
   }

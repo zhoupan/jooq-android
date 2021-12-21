@@ -56,24 +56,20 @@ public class XMLPackageDefinition extends AbstractPackageDefinition {
 
   public XMLPackageDefinition(SchemaDefinition schema, InformationSchema info, String packageName) {
     super(schema, packageName, "");
-
     this.info = info;
   }
 
   @Override
   protected List<RoutineDefinition> getRoutines0() throws SQLException {
     List<RoutineDefinition> result = new ArrayList<>();
-
     for (Routine routine : info.getRoutines()) {
       String routineName =
           defaultIfBlank(routine.getSpecificPackage(), routine.getRoutinePackage());
-
       if (getName().equals(routineName)) {
         result.add(
             new XMLRoutineDefinition(getSchema(), this, info, routine, routine.getComment()));
       }
     }
-
     return result;
   }
 

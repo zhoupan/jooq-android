@@ -60,6 +60,7 @@ public class MatchersSchemaType implements Serializable, XMLAppendable {
   protected String expression;
 
   protected MatcherRule schemaClass;
+
   protected MatcherRule schemaIdentifier;
 
   @XmlJavaTypeAdapter(StringAdapter.class)

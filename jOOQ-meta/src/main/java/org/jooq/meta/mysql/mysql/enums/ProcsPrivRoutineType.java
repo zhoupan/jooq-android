@@ -45,7 +45,6 @@ import org.jooq.Schema;
 @SuppressWarnings({"all", "unchecked", "rawtypes"})
 public enum ProcsPrivRoutineType implements EnumType {
   FUNCTION("FUNCTION"),
-
   PROCEDURE("PROCEDURE");
 
   private final String literal;

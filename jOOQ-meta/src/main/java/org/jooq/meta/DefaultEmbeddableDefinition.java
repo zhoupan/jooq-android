@@ -48,12 +48,19 @@ public class DefaultEmbeddableDefinition
     implements EmbeddableDefinition {
 
   private static final JooqLogger log = JooqLogger.getLogger(DefaultEmbeddableDefinition.class);
+
   private final TableDefinition definingTable;
+
   private final List<String> definingColumnNames;
+
   private final String referencingName;
+
   private final String referencingComment;
+
   private final TableDefinition referencingTable;
+
   private final List<EmbeddableColumnDefinition> embeddableColumns;
+
   private final boolean replacesFields;
 
   @SuppressWarnings("unused")
@@ -69,23 +76,19 @@ public class DefaultEmbeddableDefinition
       List<ColumnDefinition> referencingColumns,
       boolean replacesFields) {
     super(definingSchema, definingName, definingComment);
-
     this.definingColumnNames = definingColumnNames;
     this.definingTable = definingTable;
     this.referencingName = referencingName;
     this.referencingComment = referencingComment;
     this.referencingTable = referencingTable;
     this.embeddableColumns = new ArrayList<>();
-
     if (replacesFields) {
       log.info(
           "Commercial feature",
           "Embeddables replacing fields is a commercial only feature. Please upgrade to the jOOQ Professional Edition");
       replacesFields = false;
     }
-
     this.replacesFields = replacesFields;
-
     for (int i = 0; i < referencingColumns.size(); i++)
       embeddableColumns.add(
           new DefaultEmbeddableColumnDefinition(
@@ -161,12 +164,10 @@ public class DefaultEmbeddableDefinition
   public final EmbeddableColumnDefinition getReferencingColumn(
       String columnName, boolean ignoreCase) {
     if (columnName == null) return null;
-
     for (EmbeddableColumnDefinition column : getColumns())
       if ((ignoreCase && column.getReferencingColumn().getName().equalsIgnoreCase(columnName))
           || (!ignoreCase && column.getReferencingColumn().getName().equals(columnName)))
         return column;
-
     return null;
   }
 
@@ -183,9 +184,7 @@ public class DefaultEmbeddableDefinition
   @Override
   public boolean equals(Object obj) {
     if (!super.equals(obj)) return false;
-
     if (!(obj instanceof EmbeddableDefinition)) return false;
-
     EmbeddableDefinition other = (EmbeddableDefinition) obj;
     return getReferencingTable().equals(other.getReferencingTable())
         && getColumns().equals(other.getColumns());

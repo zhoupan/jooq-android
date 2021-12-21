@@ -59,19 +59,20 @@ public class Keys {
   // -------------------------------------------------------------------------
   // UNIQUE and PRIMARY KEY definitions
   // -------------------------------------------------------------------------
-
   public static final UniqueKey<Record> SYNTHETIC_PK_ROUTINES =
       Internal.createUniqueKey(
           Routines.ROUTINES,
           DSL.name("SYNTHETIC_PK_ROUTINES"),
           new TableField[] {Routines.ROUTINES.SPECIFIC_NAME},
           true);
+
   public static final UniqueKey<Record> SYNTHETIC_PK_SCHEMATA =
       Internal.createUniqueKey(
           Schemata.SCHEMATA,
           DSL.name("SYNTHETIC_PK_SCHEMATA"),
           new TableField[] {Schemata.SCHEMATA.CATALOG_NAME, Schemata.SCHEMATA.SCHEMA_NAME},
           true);
+
   public static final UniqueKey<Record> SYNTHETIC_PK_TABLE_CONSTRAINTS =
       Internal.createUniqueKey(
           TableConstraints.TABLE_CONSTRAINTS,
@@ -82,6 +83,7 @@ public class Keys {
             TableConstraints.TABLE_CONSTRAINTS.CONSTRAINT_NAME
           },
           true);
+
   public static final UniqueKey<Record> SYNTHETIC_PK_TABLES =
       Internal.createUniqueKey(
           Tables.TABLES,
@@ -94,7 +96,6 @@ public class Keys {
   // -------------------------------------------------------------------------
   // FOREIGN KEY definitions
   // -------------------------------------------------------------------------
-
   public static final ForeignKey<Record, Record>
       SYNTHETIC_FK_CHECK_CONSTRAINTS__SYNTHETIC_PK_TABLE_CONSTRAINTS =
           Internal.createForeignKey(
@@ -112,6 +113,7 @@ public class Keys {
                 TableConstraints.TABLE_CONSTRAINTS.CONSTRAINT_NAME
               },
               true);
+
   public static final ForeignKey<Record, Record>
       SYNTHETIC_FK_KEY_COLUMN_USAGE__SYNTHETIC_PK_TABLE_CONSTRAINTS =
           Internal.createForeignKey(
@@ -129,6 +131,7 @@ public class Keys {
                 TableConstraints.TABLE_CONSTRAINTS.CONSTRAINT_NAME
               },
               true);
+
   public static final ForeignKey<Record, Record> REFERENCED_CONSTRAINT =
       Internal.createForeignKey(
           ReferentialConstraints.REFERENTIAL_CONSTRAINTS,
@@ -145,6 +148,7 @@ public class Keys {
             TableConstraints.TABLE_CONSTRAINTS.CONSTRAINT_NAME
           },
           true);
+
   public static final ForeignKey<Record, Record> REFERENCING_CONSTRAINT =
       Internal.createForeignKey(
           ReferentialConstraints.REFERENTIAL_CONSTRAINTS,
@@ -161,6 +165,7 @@ public class Keys {
             TableConstraints.TABLE_CONSTRAINTS.CONSTRAINT_NAME
           },
           true);
+
   public static final ForeignKey<Record, Record> SYNTHETIC_FK_VIEWS__SYNTHETIC_PK_TABLES =
       Internal.createForeignKey(
           Views.VIEWS,

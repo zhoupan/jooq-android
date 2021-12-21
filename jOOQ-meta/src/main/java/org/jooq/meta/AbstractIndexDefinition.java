@@ -45,7 +45,9 @@ public abstract class AbstractIndexDefinition extends AbstractDefinition
     implements IndexDefinition {
 
   private final TableDefinition table;
+
   private final boolean unique;
+
   private List<IndexColumnDefinition> indexColumns;
 
   public AbstractIndexDefinition(
@@ -56,7 +58,6 @@ public abstract class AbstractIndexDefinition extends AbstractDefinition
   public AbstractIndexDefinition(
       SchemaDefinition schema, String name, TableDefinition table, boolean unique, String comment) {
     super(schema.getDatabase(), schema, name, comment);
-
     this.table = table;
     this.unique = unique;
   }
@@ -64,12 +65,10 @@ public abstract class AbstractIndexDefinition extends AbstractDefinition
   @Override
   public List<Definition> getDefinitionPath() {
     List<Definition> result = new ArrayList<>();
-
     switch (getDialect().family()) {
       default:
         result.addAll(getSchema().getDefinitionPath());
     }
-
     result.add(this);
     return result;
   }
@@ -84,7 +83,6 @@ public abstract class AbstractIndexDefinition extends AbstractDefinition
     if (indexColumns == null) {
       indexColumns = getIndexColumns0();
     }
-
     return indexColumns;
   }
 

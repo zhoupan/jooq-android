@@ -202,7 +202,6 @@ public class PgClass extends TableImpl<Record> {
    *     how this type should be handled. Deprecation can be turned off using {@literal
    *     <deprecationOnUnknownTypes/>} in your code generator configuration.
    */
-  @Deprecated
   public final TableField<Record, Object> RELPARTBOUND =
       createField(
           DSL.name("relpartbound"),
@@ -258,7 +257,6 @@ public class PgClass extends TableImpl<Record> {
     if (_pgNamespace == null)
       _pgNamespace =
           new PgNamespace(this, Keys.PG_CLASS__SYNTHETIC_FK_PG_CLASS__SYNTHETIC_PK_PG_NAMESPACE);
-
     return _pgNamespace;
   }
 

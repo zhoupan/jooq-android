@@ -136,15 +136,12 @@ public class FirebirdDatabase extends AbstractDatabase implements ResultQueryDat
   private Boolean is30;
 
   public FirebirdDatabase() {
-
     // Firebird doesn't know schemata
     SchemaMappingType schema = new SchemaMappingType();
     schema.setInputSchema("");
     schema.setOutputSchema("");
-
     List<SchemaMappingType> schemata = new ArrayList<>();
     schemata.add(schema);
-
     setConfiguredSchemata(schemata);
   }
 
@@ -154,7 +151,6 @@ public class FirebirdDatabase extends AbstractDatabase implements ResultQueryDat
       String tableName = record.get(RDB$RELATION_CONSTRAINTS.RDB$RELATION_NAME);
       String fieldName = record.get(RDB$INDEX_SEGMENTS.RDB$FIELD_NAME);
       String key = record.get(RDB$RELATION_CONSTRAINTS.RDB$CONSTRAINT_NAME);
-
       TableDefinition td = getTable(this.getSchemata().get(0), tableName);
       if (td != null) r.addPrimaryKey(key, td, td.getColumn(fieldName));
     }
@@ -166,7 +162,6 @@ public class FirebirdDatabase extends AbstractDatabase implements ResultQueryDat
       String tableName = record.get(RDB$RELATION_CONSTRAINTS.RDB$RELATION_NAME);
       String fieldName = record.get(RDB$INDEX_SEGMENTS.RDB$FIELD_NAME);
       String key = record.get(RDB$RELATION_CONSTRAINTS.RDB$CONSTRAINT_NAME);
-
       TableDefinition td = getTable(this.getSchemata().get(0), tableName);
       if (td != null) r.addUniqueKey(key, td, td.getColumn(fieldName));
     }
@@ -216,7 +211,6 @@ public class FirebirdDatabase extends AbstractDatabase implements ResultQueryDat
     Rdb$refConstraints rc = RDB$REF_CONSTRAINTS.as("rc");
     Rdb$indexSegments isp = RDB$INDEX_SEGMENTS.as("isp");
     Rdb$indexSegments isf = RDB$INDEX_SEGMENTS.as("isf");
-
     for (Record record :
         create()
             .selectDistinct(
@@ -237,17 +231,13 @@ public class FirebirdDatabase extends AbstractDatabase implements ResultQueryDat
             .where(isp.RDB$FIELD_POSITION.eq(isf.RDB$FIELD_POSITION))
             .orderBy(fk.RDB$CONSTRAINT_NAME.asc(), isf.RDB$FIELD_POSITION.asc())
             .fetch()) {
-
       String pkName = record.get("pk", String.class);
       String pkTable = record.get("pkTable", String.class);
-
       String fkName = record.get("fk", String.class);
       String fkTable = record.get("fkTable", String.class);
       String fkField = record.get("fkField", String.class);
-
       TableDefinition foreignKeyTable = getTable(getSchemata().get(0), fkTable, true);
       TableDefinition primaryKeyTable = getTable(getSchemata().get(0), pkTable, true);
-
       if (primaryKeyTable != null && foreignKeyTable != null)
         relations.addForeignKey(
             fkName, foreignKeyTable, foreignKeyTable.getColumn(fkField), pkName, primaryKeyTable);
@@ -259,9 +249,8 @@ public class FirebirdDatabase extends AbstractDatabase implements ResultQueryDat
     Rdb$relationConstraints r = RDB$RELATION_CONSTRAINTS.as("r");
     Rdb$checkConstraints c = RDB$CHECK_CONSTRAINTS.as("c");
     Rdb$triggers t = RDB$TRIGGERS.as("t");
-
     // [#7639] RDB$TRIGGERS is not in 3NF. The RDB$TRIGGER_SOURCE is repeated
-    //         for RDB$TRIGGER_TYPE 1 (before insert) and 3 (before update)
+    // for RDB$TRIGGER_TYPE 1 (before insert) and 3 (before update)
     for (Record record :
         create()
             .select(
@@ -278,7 +267,6 @@ public class FirebirdDatabase extends AbstractDatabase implements ResultQueryDat
             .orderBy(r.RDB$RELATION_NAME, r.RDB$CONSTRAINT_NAME)) {
       SchemaDefinition schema = getSchemata().get(0);
       TableDefinition table = getTable(schema, record.get(r.RDB$RELATION_NAME));
-
       if (table != null) {
         relations.addCheckConstraint(
             table,
@@ -294,11 +282,9 @@ public class FirebirdDatabase extends AbstractDatabase implements ResultQueryDat
   @Override
   protected List<IndexDefinition> getIndexes0() throws SQLException {
     final List<IndexDefinition> result = new ArrayList<>();
-
     final Rdb$relationConstraints c = RDB$RELATION_CONSTRAINTS.as("c");
     final Rdb$indices i = RDB$INDICES.as("i");
     final Rdb$indexSegments s = RDB$INDEX_SEGMENTS.as("s");
-
     Map<Record, Result<Record>> indexes =
         create()
             .select(
@@ -316,26 +302,22 @@ public class FirebirdDatabase extends AbstractDatabase implements ResultQueryDat
             .fetchGroups(
                 new Field[] {i.RDB$RELATION_NAME, i.RDB$INDEX_NAME, i.RDB$UNIQUE_FLAG},
                 new Field[] {s.RDB$FIELD_NAME, s.RDB$FIELD_POSITION});
-
     indexLoop:
     for (Entry<Record, Result<Record>> entry : indexes.entrySet()) {
       final Record index = entry.getKey();
       final Result<Record> columns = entry.getValue();
       final SchemaDefinition schema = getSchemata().get(0);
-
       final String indexName = index.get(i.RDB$INDEX_NAME);
       final String tableName = index.get(i.RDB$RELATION_NAME);
       final TableDefinition table = getTable(schema, tableName);
       if (table == null) continue indexLoop;
-
       final boolean unique = index.get(i.RDB$UNIQUE_FLAG, boolean.class);
-
       // [#6310] [#6620] Function-based indexes are not yet supported
       for (Record column : columns)
         if (table.getColumn(column.get(s.RDB$FIELD_NAME)) == null) continue indexLoop;
-
       result.add(
           new AbstractIndexDefinition(schema, indexName, table, unique) {
+
             List<IndexColumnDefinition> indexColumns = new ArrayList<>();
 
             {
@@ -355,7 +337,6 @@ public class FirebirdDatabase extends AbstractDatabase implements ResultQueryDat
             }
           });
     }
-
     return result;
   }
 
@@ -421,12 +402,10 @@ public class FirebirdDatabase extends AbstractDatabase implements ResultQueryDat
   @Override
   protected List<SequenceDefinition> getSequences0() throws SQLException {
     List<SequenceDefinition> result = new ArrayList<>();
-
     for (Record record : sequences(getInputSchemata())) {
       SchemaDefinition schema = getSchemata().get(0);
       DataTypeDefinition type =
           new DefaultDataTypeDefinition(this, schema, FirebirdDataType.BIGINT.getTypeName());
-
       result.add(
           new DefaultSequenceDefinition(
               schema,
@@ -440,14 +419,12 @@ public class FirebirdDatabase extends AbstractDatabase implements ResultQueryDat
               false,
               null));
     }
-
     return result;
   }
 
   @Override
   protected List<TableDefinition> getTables0() throws SQLException {
     List<TableDefinition> result = new ArrayList<>();
-
     for (Record4<String, String, String, String> record :
         create()
             .select(
@@ -476,14 +453,11 @@ public class FirebirdDatabase extends AbstractDatabase implements ResultQueryDat
                         inline(TableType.FUNCTION.name()).trim(),
                         inline(""))
                     .from(RDB$PROCEDURES)
-
-                    // "selectable" procedures
-                    .where(RDB$PROCEDURES.RDB$PROCEDURE_TYPE.eq((short) 1))
+                    . // "selectable" procedures
+                    where(RDB$PROCEDURES.RDB$PROCEDURE_TYPE.eq((short) 1))
                     .and(tableValuedFunctions() ? noCondition() : falseCondition()))
             .orderBy(1)) {
-
       TableType tableType = record.get("table_type", TableType.class);
-
       if (TableType.FUNCTION == tableType)
         result.add(new FirebirdTableValuedFunction(getSchemata().get(0), record.value1(), ""));
       else
@@ -495,7 +469,6 @@ public class FirebirdDatabase extends AbstractDatabase implements ResultQueryDat
                 tableType,
                 record.value4()));
     }
-
     return result;
   }
 
@@ -505,7 +478,6 @@ public class FirebirdDatabase extends AbstractDatabase implements ResultQueryDat
     Rdb$functions fu = RDB$FUNCTIONS.as("fu");
     Rdb$functionArguments fa = RDB$FUNCTION_ARGUMENTS.as("fa");
     Rdb$fields fi = RDB$FIELDS.as("fi");
-
     return create()
         .select(
             p.RDB$PROCEDURE_NAME.trim(),
@@ -513,9 +485,8 @@ public class FirebirdDatabase extends AbstractDatabase implements ResultQueryDat
             inline(null, SMALLINT).as("p"),
             inline(null, SMALLINT).as("s"))
         .from(p)
-
-        // "executable" procedures
-        .where(p.RDB$PROCEDURE_TYPE.eq((short) 2))
+        . // "executable" procedures
+        where(p.RDB$PROCEDURE_TYPE.eq((short) 2))
         .union(
             is30()
                 ? select(
@@ -524,11 +495,10 @@ public class FirebirdDatabase extends AbstractDatabase implements ResultQueryDat
                         coalesce(CHARACTER_LENGTH(fi), fi.RDB$FIELD_PRECISION).as("p"),
                         FIELD_SCALE(fi).as("s"))
                     .from(fu)
-
-                    // [#11784] Procedures and functions live in different
+                    . // [#11784] Procedures and functions live in different
                     // namespaces in Firebird. For now, such "overloads" are
                     // not yet supported.
-                    .leftAntiJoin(p)
+                    leftAntiJoin(p)
                     .on(fu.RDB$FUNCTION_NAME.eq(p.RDB$PROCEDURE_NAME))
                     .join(fa)
                     .on(fu.RDB$FUNCTION_NAME.eq(fa.RDB$FUNCTION_NAME))
@@ -565,9 +535,7 @@ public class FirebirdDatabase extends AbstractDatabase implements ResultQueryDat
   @Override
   protected List<DomainDefinition> getDomains0() throws SQLException {
     List<DomainDefinition> result = new ArrayList<>();
-
     Rdb$fields f = RDB$FIELDS;
-
     for (Record record :
         create()
             .select(
@@ -584,7 +552,6 @@ public class FirebirdDatabase extends AbstractDatabase implements ResultQueryDat
             .where(f.RDB$FIELD_NAME.notLike(any("RDB$%", "SEC$%", "MON$%")))
             .orderBy(f.RDB$FIELD_NAME)) {
       SchemaDefinition schema = getSchemata().get(0);
-
       DataTypeDefinition baseType =
           new DefaultDataTypeDefinition(
               this,
@@ -597,16 +564,12 @@ public class FirebirdDatabase extends AbstractDatabase implements ResultQueryDat
               record.get(f.RDB$DEFAULT_SOURCE) == null
                   ? null
                   : record.get(f.RDB$DEFAULT_SOURCE).replaceAll("(?i:default )", ""));
-
       DefaultDomainDefinition domain =
           new DefaultDomainDefinition(schema, record.get(f.RDB$FIELD_NAME), baseType);
-
       if (!StringUtils.isBlank(record.get(f.RDB$VALIDATION_SOURCE)))
         domain.addCheckClause(record.get(f.RDB$VALIDATION_SOURCE).replaceAll("(?i:check )", ""));
-
       result.add(domain);
     }
-
     return result;
   }
 
@@ -686,13 +649,11 @@ public class FirebirdDatabase extends AbstractDatabase implements ResultQueryDat
   }
 
   boolean is30() {
-
     // [#4254] RDB$GENERATORS.RDB$INITIAL_VALUE was added in Firebird 3.0 only
     if (is30 == null)
       is30 =
           configuredDialectIsNotFamilyAndSupports(
               asList(FIREBIRD), () -> exists(RDB$GENERATORS.RDB$INITIAL_VALUE));
-
     return is30;
   }
 }

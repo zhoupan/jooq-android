@@ -51,6 +51,7 @@ public abstract class AbstractPackageDefinition extends AbstractDefinition
   private static final JooqLogger log = JooqLogger.getLogger(AbstractPackageDefinition.class);
 
   private List<RoutineDefinition> routines;
+
   private List<AttributeDefinition> constants;
 
   public AbstractPackageDefinition(SchemaDefinition schema, String name, String comment) {
@@ -60,10 +61,8 @@ public abstract class AbstractPackageDefinition extends AbstractDefinition
   @Override
   public List<Definition> getDefinitionPath() {
     List<Definition> result = new ArrayList<>();
-
     result.addAll(getSchema().getDefinitionPath());
     result.add(this);
-
     return result;
   }
 
@@ -71,11 +70,9 @@ public abstract class AbstractPackageDefinition extends AbstractDefinition
   public final List<RoutineDefinition> getRoutines() {
     if (routines == null) {
       routines = new ArrayList<>();
-
       if (getDatabase().getIncludePackageRoutines()) {
         try {
           List<RoutineDefinition> r = getRoutines0();
-
           // [#12093] Filter exclude / include also for package routines
           if (getDatabase().getIncludeExcludePackageRoutines()) {
             routines = getDatabase().filterExcludeInclude(r);
@@ -86,7 +83,6 @@ public abstract class AbstractPackageDefinition extends AbstractDefinition
         }
       }
     }
-
     return routines;
   }
 
@@ -101,7 +97,6 @@ public abstract class AbstractPackageDefinition extends AbstractDefinition
   public final List<AttributeDefinition> getConstants() {
     if (constants == null) {
       constants = new ArrayList<>();
-
       if (getDatabase().getIncludePackageConstants()) {
         try {
           constants = getConstants0();
@@ -110,7 +105,6 @@ public abstract class AbstractPackageDefinition extends AbstractDefinition
         }
       }
     }
-
     return constants;
   }
 

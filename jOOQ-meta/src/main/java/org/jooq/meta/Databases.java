@@ -49,11 +49,11 @@ import org.jooq.meta.mariadb.MariaDBDatabase;
 import org.jooq.meta.mysql.MySQLDatabase;
 import org.jooq.meta.postgres.PostgresDatabase;
 import org.jooq.meta.sqlite.SQLiteDatabase;
-// ...
-// ...
-// ...
-// ...
 
+// ...
+// ...
+// ...
+// ...
 /**
  * A common utility class that provides access to various {@link Database} implementations and
  * {@link SQLDialect}s.
@@ -65,7 +65,6 @@ public class Databases {
   /** Get a reference to a {@link Database} class for a given {@link SQLDialect}. */
   public static final Class<? extends Database> databaseClass(SQLDialect dialect) {
     Class<? extends Database> result = JDBCDatabase.class;
-
     switch (dialect.family()) {
       case CUBRID:
         result = CUBRIDDatabase.class;
@@ -97,13 +96,11 @@ public class Databases {
       case SQLITE:
         result = SQLiteDatabase.class;
         break;
-
       case DEFAULT:
       case SQL99:
         result = JDBCDatabase.class;
         break;
     }
-
     return result;
   }
 

@@ -46,8 +46,11 @@ public class DefaultParameterDefinition extends AbstractTypedElementDefinition<R
     implements ParameterDefinition {
 
   private final int position;
+
   private final boolean isDefaulted;
+
   private final boolean isUnnamed;
+
   private final boolean isSynthetic;
 
   public DefaultParameterDefinition(
@@ -108,7 +111,6 @@ public class DefaultParameterDefinition extends AbstractTypedElementDefinition<R
       String overload,
       boolean isSynthetic) {
     super(routine, name, position, type, comment, overload);
-
     this.position = position;
     this.isDefaulted = isDefaulted;
     this.isUnnamed = isUnnamed;

@@ -42,10 +42,15 @@ public class DefaultSequenceDefinition extends AbstractTypedElementDefinition<Sc
     implements SequenceDefinition {
 
   private Number startWith;
+
   private Number incrementBy;
+
   private Number minValue;
+
   private Number maxValue;
+
   private boolean cycle;
+
   private Number cache;
 
   public DefaultSequenceDefinition(SchemaDefinition schema, String name, DataTypeDefinition type) {
@@ -69,7 +74,6 @@ public class DefaultSequenceDefinition extends AbstractTypedElementDefinition<Sc
       boolean cycle,
       Number cache) {
     super(schema, name, -1, type, comment);
-
     this.startWith = startWith;
     this.incrementBy = incrementBy;
     this.minValue = minValue;

@@ -48,6 +48,7 @@ import io.r2dbc.spi.IsolationLevel;
 import io.r2dbc.spi.Statement;
 import io.r2dbc.spi.TransactionDefinition;
 import io.r2dbc.spi.ValidationDepth;
+import java.time.Duration;
 import org.jooq.exception.DetachedException;
 import org.reactivestreams.Publisher;
 
@@ -173,6 +174,16 @@ final class DefaultConnectionFactory implements ConnectionFactory {
     @Override
     public Publisher<Boolean> validate(ValidationDepth depth) {
       return connectionOrThrow().validate(depth);
+    }
+
+    @Override
+    public Publisher<Void> setLockWaitTimeout(Duration timeout) {
+      return connectionOrThrow().setLockWaitTimeout(timeout);
+    }
+
+    @Override
+    public Publisher<Void> setStatementTimeout(Duration timeout) {
+      return connectionOrThrow().setStatementTimeout(timeout);
     }
   }
 }

@@ -178,23 +178,29 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
   private static final JooqLogger log = JooqLogger.getLogger(PostgresDatabase.class);
 
   private Boolean is84;
+
   private Boolean is94;
+
   private Boolean is10;
+
   private Boolean is11;
+
   private Boolean is12;
+
   private Boolean canUseRoutines;
+
   private Boolean canCastToEnumType;
+
   private Boolean canCombineArrays;
+
   private Boolean canUseTupleInPredicates;
 
   @Override
   protected List<IndexDefinition> getIndexes0() throws SQLException {
     List<IndexDefinition> result = new ArrayList<>();
-
     PgIndex i = PG_INDEX.as("i");
     PgClass trel = PG_CLASS.as("trel");
     PgConstraint c = PG_CONSTRAINT.as("c");
-
     indexLoop:
     for (Record6<String, String, String, Boolean, String[], Integer[]> record :
         create()
@@ -222,44 +228,37 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
                     : row(trel.pgNamespace().NSPNAME, i.indexClass().RELNAME)
                         .notIn(select(c.pgNamespace().NSPNAME, c.CONNAME).from(c)))
             .orderBy(1, 2, 3)) {
-
       final SchemaDefinition tableSchema = getSchema(record.get(trel.pgNamespace().NSPNAME));
       if (tableSchema == null) continue indexLoop;
-
       final String indexName = record.get(i.indexClass().RELNAME);
       final String tableName = record.get(trel.RELNAME);
       final String[] columns = record.value5();
       final Integer[] options = record.value6();
       final TableDefinition table = getTable(tableSchema, tableName);
       if (table == null) continue indexLoop;
-
       final boolean unique = record.get(i.INDISUNIQUE);
-
-      for (int k = 0; k < columns.length; k++)
-
-        // [#6310] [#6620] Function-based indexes are not yet supported
+      for (int k = 0;
+          k < columns.length;
+          k++) // [#6310] [#6620] Function-based indexes are not yet supported
         // [#11047]        Even without supporting function-based indexes, we might have to parse
-        //                 the column expression, because it might be quoted
+        // the column expression, because it might be quoted
         if (table.getColumn(columns[k]) == null
             && table.getColumn(columns[k] = tryParseColumnName(columns[k])) == null)
           continue indexLoop;
-
-        // [#10466] Neither are INCLUDE columns, which are reported as
-        //          columns without options
-        else if (k >= options.length) continue indexLoop;
-
+        else // [#10466] Neither are INCLUDE columns, which are reported as
+        // columns without options
+        if (k >= options.length) continue indexLoop;
       result.add(
           new AbstractIndexDefinition(tableSchema, indexName, table, unique) {
+
             List<IndexColumnDefinition> indexColumns = new ArrayList<>();
 
             {
               for (int ordinal = 0; ordinal < columns.length; ordinal++) {
                 ColumnDefinition column = table.getColumn(columns[ordinal]);
-
                 // [#6307] Some background info on this bitwise operation here:
                 // https://stackoverflow.com/a/18128104/521799
                 SortOrder order = (options[ordinal] & 1) == 1 ? SortOrder.DESC : SortOrder.ASC;
-
                 indexColumns.add(
                     new DefaultIndexColumnDefinition(this, column, order, ordinal + 1));
               }
@@ -271,7 +270,6 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
             }
           });
     }
-
     return result;
   }
 
@@ -297,7 +295,6 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
       String key = record.get(KEY_COLUMN_USAGE.CONSTRAINT_NAME);
       String tableName = record.get(KEY_COLUMN_USAGE.TABLE_NAME);
       String columnName = record.get(KEY_COLUMN_USAGE.COLUMN_NAME);
-
       TableDefinition table = getTable(schema, tableName);
       if (table != null) relations.addPrimaryKey(key, table, table.getColumn(columnName));
     }
@@ -310,7 +307,6 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
       String key = record.get(KEY_COLUMN_USAGE.CONSTRAINT_NAME);
       String tableName = record.get(KEY_COLUMN_USAGE.TABLE_NAME);
       String columnName = record.get(KEY_COLUMN_USAGE.COLUMN_NAME);
-
       TableDefinition table = getTable(schema, tableName);
       if (table != null) relations.addUniqueKey(key, table, table.getColumn(columnName));
     }
@@ -332,7 +328,6 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
       List<String> schemas, Field<String> constraintType) {
     KeyColumnUsage k = KEY_COLUMN_USAGE.as("k");
     PgConstraint c = PG_CONSTRAINT.as("c");
-
     return create()
         .select(
             k.TABLE_CATALOG,
@@ -358,7 +353,6 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
 
   @Override
   protected void loadForeignKeys(DefaultRelations relations) throws SQLException {
-
     // [#3520] PostgreSQL INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS contains incomplete information
     // about foreign keys
     // The (CONSTRAINT_CATALOG, CONSTRAINT_SCHEMA, CONSTRAINT_NAME) tuple is non-unique, in case two
@@ -373,24 +367,19 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
             .sortAsc("fk_name")
             .sortAsc("fktable_name")
             .sortAsc("fktable_schem");
-
     resultLoop:
     for (Record record : result) {
       SchemaDefinition foreignKeySchema = getSchema(record.get("fktable_schem", String.class));
       SchemaDefinition uniqueKeySchema = getSchema(record.get("pktable_schem", String.class));
-
       if (foreignKeySchema == null || uniqueKeySchema == null) continue resultLoop;
-
       String foreignKey = record.get("fk_name", String.class);
       String foreignKeyTableName = record.get("fktable_name", String.class);
       String foreignKeyColumn = record.get("fkcolumn_name", String.class);
       String uniqueKey = record.get("pk_name", String.class);
       String uniqueKeyTableName = record.get("pktable_name", String.class);
       String uniqueKeyColumn = record.get("pkcolumn_name", String.class);
-
       TableDefinition foreignKeyTable = getTable(foreignKeySchema, foreignKeyTableName);
       TableDefinition uniqueKeyTable = getTable(uniqueKeySchema, uniqueKeyTableName);
-
       if (foreignKeyTable != null && uniqueKeyTable != null)
         relations.addForeignKey(
             foreignKey,
@@ -406,10 +395,8 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
   @Override
   protected void loadCheckConstraints(DefaultRelations relations) throws SQLException {
     CheckConstraints cc = CHECK_CONSTRAINTS.as("cc");
-
     // [#10940] [#10992] Workaround for issue caused by re-using implicit join paths
     PgConstraint pc = PG_CONSTRAINT.as("pc");
-
     for (Record record :
         create()
             .select(
@@ -453,7 +440,6 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
             .orderBy(1, 2, 3)) {
       SchemaDefinition schema = getSchema(record.get(pc.pgClass().pgNamespace().NSPNAME));
       TableDefinition table = getTable(schema, record.get(pc.pgClass().RELNAME));
-
       if (table != null) {
         relations.addCheckConstraint(
             table,
@@ -467,11 +453,9 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
   protected List<TableDefinition> getTables0() throws SQLException {
     List<TableDefinition> result = new ArrayList<>();
     Map<Name, PostgresTableDefinition> map = new HashMap<>();
-
     Select<Record6<String, String, String, String, String, String>> empty =
         select(inline(""), inline(""), inline(""), inline(""), inline(""), inline(""))
             .where(falseCondition());
-
     for (Record record :
         create()
             .select()
@@ -498,10 +482,9 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
                     .on(TABLES.TABLE_SCHEMA.eq(VIEWS.TABLE_SCHEMA))
                     .and(TABLES.TABLE_NAME.eq(VIEWS.TABLE_NAME))
                     .where(TABLES.TABLE_SCHEMA.in(getInputSchemata()))
-
-                    // To stay on the safe side, if the INFORMATION_SCHEMA ever
+                    . // To stay on the safe side, if the INFORMATION_SCHEMA ever
                     // includes materialised views, let's exclude them from here
-                    .and(
+                    and(
                         canUseTupleInPredicates()
                             ? row(TABLES.TABLE_SCHEMA, TABLES.TABLE_NAME)
                                 .notIn(
@@ -511,12 +494,11 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
                                         .on(PG_CLASS.RELNAMESPACE.eq(oid(PG_NAMESPACE)))
                                         .where(PG_CLASS.RELKIND.eq(inline("m"))))
                             : noCondition())
-
-                    // [#3254] Materialised views are reported only in PG_CLASS, not
-                    //         in INFORMATION_SCHEMA.TABLES
+                    . // [#3254] Materialised views are reported only in PG_CLASS, not
+                    // in INFORMATION_SCHEMA.TABLES
                     // [#8478] CockroachDB cannot compare "sql_identifier" types (varchar)
-                    //         from information_schema with "name" types from pg_catalog
-                    .unionAll(
+                    // from information_schema with "name" types from pg_catalog
+                    unionAll(
                         select(
                                 field(
                                     "{0}::varchar",
@@ -538,9 +520,8 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
                             .and(PG_DESCRIPTION.OBJSUBID.eq(0))
                             .where(PG_NAMESPACE.NSPNAME.in(getInputSchemata()))
                             .and(PG_CLASS.RELKIND.eq(inline("m"))))
-
-                    // [#3375] [#3376] Include table-valued functions in the set of tables
-                    .unionAll(
+                    . // [#3375] [#3376] Include table-valued functions in the set of tables
+                    unionAll(
                         tableValuedFunctions()
                             ? select(
                                     ROUTINES.ROUTINE_SCHEMA,
@@ -566,16 +547,13 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
                     .asTable("tables"))
             .orderBy(1, 2)
             .fetch()) {
-
       SchemaDefinition schema = getSchema(record.get(TABLES.TABLE_SCHEMA));
       String name = record.get(TABLES.TABLE_NAME);
       String comment = record.get(PG_DESCRIPTION.DESCRIPTION, String.class);
       TableType tableType = record.get("table_type", TableType.class);
       String source = record.get(VIEWS.VIEW_DEFINITION);
-
       if (source != null && !source.toLowerCase().startsWith("create"))
         source = "create view \"" + name + "\" as " + source;
-
       switch (tableType) {
         case FUNCTION:
           result.add(
@@ -593,13 +571,11 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
           break;
       }
     }
-
     PgClass ct = PG_CLASS.as("ct");
     PgNamespace cn = PG_NAMESPACE.as("cn");
     PgInherits i = PG_INHERITS.as("i");
     PgClass pt = PG_CLASS.as("pt");
     PgNamespace pn = PG_NAMESPACE.as("pn");
-
     // [#2916] If window functions are not supported (prior to PostgreSQL 8.4), then
     // don't execute the following query:
     if (is84()) {
@@ -623,10 +599,8 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
               .where(cn.NSPNAME.in(getInputSchemata()))
               .and(pn.NSPNAME.in(getInputSchemata()))
               .fetch()) {
-
         Name child = name(inheritance.value1(), inheritance.value2());
         Name parent = name(inheritance.value3(), inheritance.value4());
-
         if (inheritance.value5() > 1) {
           log.info(
               "Multiple inheritance",
@@ -637,7 +611,6 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
         } else {
           PostgresTableDefinition childTable = map.get(child);
           PostgresTableDefinition parentTable = map.get(parent);
-
           if (childTable != null && parentTable != null) {
             childTable.setParentTable(parentTable);
             parentTable.getChildTables().add(childTable);
@@ -645,7 +618,6 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
         }
       }
     }
-
     return result;
   }
 
@@ -658,7 +630,6 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
 
   @Override
   protected List<SchemaDefinition> getSchemata0() throws SQLException {
-
     // [#1409] Shouldn't select from INFORMATION_SCHEMA.SCHEMATA, as that
     // would only return schemata of which CURRENT_USER is the owner
     return create()
@@ -688,7 +659,6 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
         name("schemas")
             .fields("schema")
             .as(selectFrom(values(schemas.stream().collect(toRowArray(DSL::val)))));
-
     return create()
         .with(s)
         .select(
@@ -754,9 +724,7 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
                         inline(null, VARCHAR),
                         PG_SEQUENCE.pgClass().pgNamespace().NSPNAME,
                         PG_SEQUENCE.pgClass().RELNAME,
-                        PG_SEQUENCE.pgType().TYPNAME,
-
-                        // See
+                        PG_SEQUENCE.pgType().TYPNAME, // See
                         // https://github.com/postgres/postgres/blob/master/src/backend/catalog/information_schema.sql
                         field(
                             "information_schema._pg_numeric_precision({0}, {1})",
@@ -785,9 +753,9 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
                                             field(
                                                 "'pg_class'::regclass",
                                                 PG_DEPEND.CLASSID.getDataType())))))
-                // AND NOT EXISTS (SELECT 1 FROM pg_depend WHERE classid = 'pg_class'::regclass AND
-                // objid = c.oid AND deptype = 'i')
-                : select(
+                : // AND NOT EXISTS (SELECT 1 FROM pg_depend WHERE classid = 'pg_class'::regclass
+                // AND objid = c.oid AND deptype = 'i')
+                select(
                         inline(""),
                         inline(""),
                         inline(""),
@@ -807,10 +775,8 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
   @Override
   protected List<SequenceDefinition> getSequences0() throws SQLException {
     List<SequenceDefinition> result = new ArrayList<>();
-
     for (Record record : sequences(getInputSchemata())) {
       SchemaDefinition schema = getSchema(record.get(SEQUENCES.SEQUENCE_SCHEMA));
-
       DataTypeDefinition type =
           new DefaultDataTypeDefinition(
               this,
@@ -821,7 +787,6 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
               record.get(SEQUENCES.NUMERIC_SCALE),
               false,
               (String) null);
-
       result.add(
           new DefaultSequenceDefinition(
               schema,
@@ -832,16 +797,18 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
               record.get(SEQUENCES.INCREMENT, BigInteger.class),
               record.get(SEQUENCES.MINIMUM_VALUE, BigInteger.class),
               record.get(SEQUENCES.MAXIMUM_VALUE, BigInteger.class),
-              record.get(SEQUENCES.CYCLE_OPTION, Boolean.class),
-              null // [#9442] The CACHE flag is not available from SEQUENCES
-              ));
+              record.get(
+                  SEQUENCES.CYCLE_OPTION,
+                  Boolean.class), // [#9442] The CACHE flag is not available from SEQUENCES
+              null));
     }
-
     return result;
   }
 
-  static final /* record */ class Identifier {
+  static final class /* record */ Identifier {
+
     private final String schema;
+
     private final String name;
 
     public Identifier(String schema, String name) {
@@ -886,10 +853,8 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
   @Override
   protected List<EnumDefinition> getEnums0() throws SQLException {
     List<EnumDefinition> result = new ArrayList<>();
-
     // [#2736] This table is unavailable in Amazon Redshift
     if (exists(PG_ENUM)) {
-
       // [#2707] Fetch all enum type names first, in order to be able to
       // perform enumlabel::[typname] casts in the subsequent query for
       // cross-version compatible enum literal ordering
@@ -902,37 +867,30 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
               .orderBy(PG_TYPE.pgNamespace().NSPNAME, PG_TYPE.TYPNAME)
               .fetch(mapping(Identifier::new))) {
         DefaultEnumDefinition definition = null;
-
         for (String label : enumLabels(type.schema, type.name)) {
           SchemaDefinition schema = getSchema(type.schema);
           String typeName = String.valueOf(type.name);
-
           if (definition == null || !definition.getName().equals(typeName)) {
             definition = new DefaultEnumDefinition(schema, typeName, null);
             result.add(definition);
           }
-
           definition.addLiteral(label);
         }
       }
     }
-
     return result;
   }
 
   @Override
   protected List<DomainDefinition> getDomains0() throws SQLException {
     List<DomainDefinition> result = new ArrayList<>();
-
     if (existAll(PG_CONSTRAINT, PG_TYPE)) {
       PgNamespace n = PG_NAMESPACE.as("n");
       PgConstraint c = PG_CONSTRAINT.as("c");
       PgType d = PG_TYPE.as("d");
       PgType b = PG_TYPE.as("b");
-
       Field<String[]> src = field(name("domains", "src"), String[].class);
       Field<String> constraintDef = field("pg_get_constraintdef({0})", VARCHAR, oid(c));
-
       for (Record record :
           create()
               .withRecursive("domains", "domain_id", "base_id", "typbasetype", "src")
@@ -967,9 +925,7 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
                   d.TYPNAME,
                   d.TYPNOTNULL,
                   d.TYPDEFAULT,
-                  b.TYPNAME,
-
-                  // See
+                  b.TYPNAME, // See
                   // https://github.com/postgres/postgres/blob/master/src/backend/catalog/information_schema.sql
                   field(
                           "information_schema._pg_char_max_length({0}, {1})",
@@ -995,9 +951,7 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
               .where(d.TYPTYPE.eq("d"))
               .and(n.NSPNAME.in(getInputSchemata()))
               .orderBy(n.NSPNAME, d.TYPNAME)) {
-
         SchemaDefinition schema = getSchema(record.get(n.NSPNAME));
-
         DataTypeDefinition baseType =
             new DefaultDataTypeDefinition(
                 this,
@@ -1009,22 +963,18 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
                 !record.get(d.TYPNOTNULL, boolean.class),
                 record.get(d.TYPDEFAULT),
                 name(record.get(n.NSPNAME), record.get(b.TYPNAME)));
-
         DefaultDomainDefinition domain =
             new DefaultDomainDefinition(schema, record.get(d.TYPNAME), baseType);
-
         domain.addCheckClause(record.get(src));
         result.add(domain);
       }
     }
-
     return result;
   }
 
   @Override
   protected List<UDTDefinition> getUDTs0() throws SQLException {
     List<UDTDefinition> result = new ArrayList<>();
-
     // [#2736] This table is unavailable in Amazon Redshift
     if (exists(ATTRIBUTES)) {
       for (Identifier udt :
@@ -1034,13 +984,10 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
               .where(ATTRIBUTES.UDT_SCHEMA.in(getInputSchemata()))
               .orderBy(ATTRIBUTES.UDT_SCHEMA, ATTRIBUTES.UDT_NAME)
               .fetch(mapping(Identifier::new))) {
-
         SchemaDefinition schema = getSchema(udt.schema);
-
         if (schema != null) result.add(new PostgresUDTDefinition(schema, udt.name, null));
       }
     }
-
     return result;
   }
 
@@ -1053,25 +1000,19 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
   @Override
   protected List<RoutineDefinition> getRoutines0() throws SQLException {
     List<RoutineDefinition> result = new ArrayList<>();
-
     if (!canUseRoutines()) return result;
-
     Routines r1 = ROUTINES.as("r1");
-
     // [#7785] The pg_proc.proisagg column has been replaced incompatibly in PostgreSQL 11
     Field<Boolean> isAgg =
         (is11()
                 ? field(PG_PROC.PROKIND.eq(inline("a")))
                 : field("{0}.proisagg", SQLDataType.BOOLEAN, PG_PROC))
             .as("is_agg");
-
     return create()
         .select(
             r1.ROUTINE_SCHEMA,
             r1.ROUTINE_NAME,
-            r1.SPECIFIC_NAME,
-
-            // Ignore the data type when there is at least one out parameter
+            r1.SPECIFIC_NAME, // Ignore the data type when there is at least one out parameter
             canCombineArrays()
                 ? when(
                         condition("{0} && ARRAY['o','b']::\"char\"[]", PG_PROC.PROARGMODES),
@@ -1079,9 +1020,8 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
                     .otherwise(r1.DATA_TYPE)
                     .as("data_type")
                 : r1.DATA_TYPE.as("data_type"),
-            r1.CHARACTER_MAXIMUM_LENGTH,
-
-            // [#12048] TODO: Maintain whether we know the precision or not
+            r1.CHARACTER_MAXIMUM_LENGTH, // [#12048] TODO: Maintain whether we know the precision or
+            // not
             when(
                     r1.NUMERIC_PRECISION
                         .isNull()
@@ -1100,27 +1040,22 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
                 .as(r1.NUMERIC_PRECISION),
             r1.NUMERIC_SCALE,
             r1.TYPE_UDT_SCHEMA,
-            r1.TYPE_UDT_NAME,
-
-            // Calculate overload index if applicable
+            r1.TYPE_UDT_NAME, // Calculate overload index if applicable
             when(
                     count().over(partitionBy(r1.ROUTINE_SCHEMA, r1.ROUTINE_NAME)).gt(one()),
                     rowNumber()
                         .over(
                             partitionBy(r1.ROUTINE_SCHEMA, r1.ROUTINE_NAME)
-                                .orderBy(
-
-                                    // [#9754] To stabilise overload calculation, we use the type
-                                    // signature
+                                .orderBy( // [#9754] To stabilise overload calculation, we use the
+                                    // type signature
                                     // replace(field("pg_get_function_arguments({0})", VARCHAR,
                                     // oid(PG_PROC)), inline('"'), inline("")),
                                     r1.SPECIFIC_NAME)))
                 .as("overload"),
             isAgg)
         .from(r1)
-
-        // [#3375] Exclude table-valued functions as they're already generated as tables
-        .join(PG_NAMESPACE)
+        . // [#3375] Exclude table-valued functions as they're already generated as tables
+        join(PG_NAMESPACE)
         .on(PG_NAMESPACE.NSPNAME.eq(r1.SPECIFIC_SCHEMA))
         .join(PG_PROC)
         .on(PG_PROC.PRONAMESPACE.eq(oid(PG_NAMESPACE)))
@@ -1157,57 +1092,47 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
           configuredDialectIsNotFamilyAndSupports(
               asList(POSTGRES),
               () -> {
-
                 // [#2916] Window functions were introduced with PostgreSQL 9.0
                 try {
                   create(true).select(count().over()).fetch();
-
                   return true;
                 } catch (DataAccessException e) {
                   return false;
                 }
               });
     }
-
     return is84;
   }
 
   boolean is94() {
-
     // [#4254] INFORMATION_SCHEMA.PARAMETERS.PARAMETER_DEFAULT was added
     // in PostgreSQL 9.4 only
     if (is94 == null)
       is94 =
           configuredDialectIsNotFamilyAndSupports(
               asList(POSTGRES), () -> exists(PARAMETERS.PARAMETER_DEFAULT));
-
     return is94;
   }
 
   boolean is10() {
-
     // [#7785] pg_sequence was added in PostgreSQL 10 only
     if (is10 == null)
       is10 =
           configuredDialectIsNotFamilyAndSupports(
               asList(POSTGRES), () -> exists(PG_SEQUENCE.SEQRELID));
-
     return is10;
   }
 
   boolean is11() {
-
     // [#7785] pg_proc.prokind was added in PostgreSQL 11 only, and
-    //         pg_proc.proisagg was removed, incompatibly
+    // pg_proc.proisagg was removed, incompatibly
     if (is11 == null)
       is11 =
           configuredDialectIsNotFamilyAndSupports(asList(POSTGRES), () -> exists(PG_PROC.PROKIND));
-
     return is11;
   }
 
   boolean is12() {
-
     // [#11325] nameconcatoid was added in PostgreSQL 12 only
     if (is12 == null)
       is12 =
@@ -1218,7 +1143,6 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
                       table(
                           select(field("nameconcatoid({0}, {1})", PG_PROC.PRONAME, oid(PG_PROC)))
                               .from(PG_PROC))));
-
     return is12;
   }
 
@@ -1234,9 +1158,8 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
 
   boolean canCombineArrays() {
     if (canCombineArrays == null) {
-
       // [#7270] The ARRAY && ARRAY operator is not implemented in all PostgreSQL
-      //         style databases, e.g. CockroachDB
+      // style databases, e.g. CockroachDB
       try {
         create(true).select(field("array[1, 2] && array[2, 3]")).fetch();
         canCombineArrays = true;
@@ -1244,15 +1167,13 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
         canCombineArrays = false;
       }
     }
-
     return canCombineArrays;
   }
 
   boolean canUseTupleInPredicates() {
     if (canUseTupleInPredicates == null) {
-
       // [#7270] The tuple in predicate is not implemented in all PostgreSQL
-      //         style databases, e.g. CockroachDB
+      // style databases, e.g. CockroachDB
       // [#8072] Some database versions might support in, but not not in
       try {
         create(true).select(field("(1, 2) in (select 1, 2)")).fetch();
@@ -1262,32 +1183,25 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
         canUseTupleInPredicates = false;
       }
     }
-
     return canUseTupleInPredicates;
   }
 
   boolean canUseRoutines() {
-
     // [#7892] The information_schema.routines table is not available in all PostgreSQL
-    //         style databases, e.g. CockroachDB
+    // style databases, e.g. CockroachDB
     if (canUseRoutines == null) canUseRoutines = exists(ROUTINES);
-
     return canUseRoutines;
   }
 
   private List<String> enumLabels(String nspname, String typname) {
-
     // [#10821] Avoid the cast if pg_enum.enumsortorder is available (PG 9.1+)
     Field<?> orderBy =
         exists(PG_ENUM.ENUMSORTORDER)
             ? PG_ENUM.ENUMSORTORDER
-
-            // [#9511] [#9917] Workaround for regression introduced by avoiding quoting names
+            : // [#9511] [#9917] Workaround for regression introduced by avoiding quoting names
             // everywhere
-            : field("{0}::{1}", PG_ENUM.ENUMLABEL, sql(name(nspname, typname) + ""));
-
+            field("{0}::{1}", PG_ENUM.ENUMLABEL, sql(name(nspname, typname) + ""));
     if (canCastToEnumType == null) {
-
       // [#2917] Older versions of PostgreSQL don't support the above cast
       try {
         canCastToEnumType = true;
@@ -1296,7 +1210,6 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
         canCastToEnumType = false;
       }
     }
-
     return canCastToEnumType
         ? enumLabels(nspname, typname, orderBy)
         : enumLabels(nspname, typname, PG_ENUM.ENUMLABEL);

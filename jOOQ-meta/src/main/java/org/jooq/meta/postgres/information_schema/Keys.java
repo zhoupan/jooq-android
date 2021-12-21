@@ -57,7 +57,6 @@ public class Keys {
   // -------------------------------------------------------------------------
   // UNIQUE and PRIMARY KEY definitions
   // -------------------------------------------------------------------------
-
   public static final UniqueKey<Record> SYNTHETIC_PK_CHECK_CONSTRAINTS =
       Internal.createUniqueKey(
           CheckConstraints.CHECK_CONSTRAINTS,
@@ -68,6 +67,7 @@ public class Keys {
             CheckConstraints.CHECK_CONSTRAINTS.CONSTRAINT_NAME
           },
           true);
+
   public static final UniqueKey<Record> SYNTHETIC_PK_DOMAINS =
       Internal.createUniqueKey(
           Domains.DOMAINS,
@@ -78,12 +78,14 @@ public class Keys {
             Domains.DOMAINS.DOMAIN_NAME
           },
           true);
+
   public static final UniqueKey<Record> SYNTHETIC_PK_SCHEMATA =
       Internal.createUniqueKey(
           Schemata.SCHEMATA,
           DSL.name("SYNTHETIC_PK_schemata"),
           new TableField[] {Schemata.SCHEMATA.CATALOG_NAME, Schemata.SCHEMATA.SCHEMA_NAME},
           true);
+
   public static final UniqueKey<Record> SYNTHETIC_PK_SEQUENCES =
       Internal.createUniqueKey(
           Sequences.SEQUENCES,
@@ -94,6 +96,7 @@ public class Keys {
             Sequences.SEQUENCES.SEQUENCE_NAME
           },
           true);
+
   public static final UniqueKey<Record> SYNTHETIC_PK_TABLES =
       Internal.createUniqueKey(
           Tables.TABLES,
@@ -106,7 +109,6 @@ public class Keys {
   // -------------------------------------------------------------------------
   // FOREIGN KEY definitions
   // -------------------------------------------------------------------------
-
   public static final ForeignKey<Record, Record>
       SEQUENCES__SYNTHETIC_FK_SEQUENCES__SYNTHETIC_PK_SCHEMATA =
           Internal.createForeignKey(
@@ -118,6 +120,7 @@ public class Keys {
               Keys.SYNTHETIC_PK_SCHEMATA,
               new TableField[] {Schemata.SCHEMATA.CATALOG_NAME, Schemata.SCHEMATA.SCHEMA_NAME},
               true);
+
   public static final ForeignKey<Record, Record> VIEWS__SYNTHETIC_FK_VIEWS__SYNTHETIC_PK_TABLES =
       Internal.createForeignKey(
           Views.VIEWS,
