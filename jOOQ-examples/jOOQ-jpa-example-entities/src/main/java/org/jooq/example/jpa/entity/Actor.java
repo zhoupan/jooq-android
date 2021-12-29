@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,7 +42,6 @@ import static javax.persistence.GenerationType.IDENTITY;
 
 import java.util.HashSet;
 import java.util.Set;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -53,24 +52,21 @@ import javax.persistence.ManyToMany;
 @Entity
 public class Actor {
 
-    @Id
-    @GeneratedValue(strategy = IDENTITY)
-    public Integer actorId;
+  @Id
+  @GeneratedValue(strategy = IDENTITY)
+  public Integer actorId;
 
-    @Column
-    public String firstName;
+  @Column public String firstName;
 
-    @Column
-    public String lastName;
+  @Column public String lastName;
 
+  @ManyToMany(fetch = LAZY, mappedBy = "actors", cascade = CascadeType.ALL)
+  public Set<Film> films = new HashSet<>();
 
-    @ManyToMany(fetch = LAZY, mappedBy = "actors", cascade = CascadeType.ALL)
-    public Set<Film> films = new HashSet<>();
+  public Actor() {}
 
-    public Actor() {}
-
-    public Actor(String firstName, String lastName) {
-        this.firstName = firstName;
-        this.lastName = lastName;
-    }
+  public Actor(String firstName, String lastName) {
+    this.firstName = firstName;
+    this.lastName = lastName;
+  }
 }

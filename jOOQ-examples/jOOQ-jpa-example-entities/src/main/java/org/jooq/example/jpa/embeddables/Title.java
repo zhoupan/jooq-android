@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,24 +40,22 @@ package org.jooq.example.jpa.embeddables;
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 @Embeddable
 public class Title {
 
-    @Column(name = "TITLE")
-    public final String value;
+  @Column(name = "TITLE")
+  public final String value;
 
-    public static final Title of(String value) {
-        return new Title(value);
-    }
+  public static final Title of(String value) {
+    return new Title(value);
+  }
 
-    private Title() {
-        this(null);
-    }
+  private Title() {
+    this(null);
+  }
 
-    private Title(String value) {
-        this.value = value;
-    }
+  private Title(String value) {
+    this.value = value;
+  }
 }

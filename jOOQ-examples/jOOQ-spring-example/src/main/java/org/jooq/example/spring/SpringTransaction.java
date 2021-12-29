@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,13 +38,12 @@
 package org.jooq.example.spring;
 
 import org.jooq.Transaction;
-
 import org.springframework.transaction.TransactionStatus;
 
 class SpringTransaction implements Transaction {
-    final TransactionStatus tx;
+  final TransactionStatus tx;
 
-    SpringTransaction(TransactionStatus tx) {
-        this.tx = tx;
-    }
+  SpringTransaction(TransactionStatus tx) {
+    this.tx = tx;
+  }
 }

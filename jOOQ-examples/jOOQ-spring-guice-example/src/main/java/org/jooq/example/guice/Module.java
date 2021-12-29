@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,29 +40,27 @@ package org.jooq.example.guice;
 import static com.google.inject.matcher.Matchers.annotatedWith;
 import static com.google.inject.matcher.Matchers.any;
 
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Singleton;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
- * The module is used to programmatically configure all Guice annotation
- * interceptor.
+ * The module is used to programmatically configure all Guice annotation interceptor.
  *
  * @author Lukas Eder
  */
 public class Module extends AbstractModule {
 
-    @Override
-    protected void configure() {
-        bind(Service.class).in(Singleton.class);
+  @Override
+  protected void configure() {
+    bind(Service.class).in(Singleton.class);
 
-        TransactionalMethodInterceptor interceptor = new TransactionalMethodInterceptor();
-        requestInjection(interceptor);
+    TransactionalMethodInterceptor interceptor = new TransactionalMethodInterceptor();
+    requestInjection(interceptor);
 
-        bindInterceptor(annotatedWith(Transactional.class), any(), interceptor);
-        bindInterceptor(any(), annotatedWith(Transactional.class), interceptor);
+    bindInterceptor(annotatedWith(Transactional.class), any(), interceptor);
+    bindInterceptor(any(), annotatedWith(Transactional.class), interceptor);
 
-        install(new DataSources());
-    }
+    install(new DataSources());
+  }
 }

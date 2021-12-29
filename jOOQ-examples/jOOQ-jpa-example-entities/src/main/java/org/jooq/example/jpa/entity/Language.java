@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,22 +44,19 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 @Entity
 public class Language {
 
-    @Id
-    @GeneratedValue(strategy = IDENTITY)
-    public Integer languageId;
+  @Id
+  @GeneratedValue(strategy = IDENTITY)
+  public Integer languageId;
 
-    @Column
-    public String name;
+  @Column public String name;
 
-    public Language() {}
+  public Language() {}
 
-    public Language(String name) {
-        this.name = name;
-    }
+  public Language(String name) {
+    this.name = name;
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -40,20 +40,19 @@ package org.jooq.example.spring;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * This Book Service (or DAO or Repository) is used by this example to interact
- * with the library's T_BOOK table.
+ * This Book Service (or DAO or Repository) is used by this example to interact with the library's
+ * T_BOOK table.
  *
  * @author Lukas Eder
  */
 public interface BookService {
 
-    /**
-     * Create a new book.
-     * <p>
-     * The implementation of this method has a bug, which causes this method to
-     * fail and roll back the transaction.
-     */
-    @Transactional
-    void create(int id, int authorId, String title);
-
+  /**
+   * Create a new book.
+   *
+   * <p>The implementation of this method has a bug, which causes this method to fail and roll back
+   * the transaction.
+   */
+  @Transactional
+  void create(int id, int authorId, String title);
 }

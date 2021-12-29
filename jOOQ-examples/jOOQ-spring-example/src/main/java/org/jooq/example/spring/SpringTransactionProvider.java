@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -42,46 +42,45 @@ import static org.springframework.transaction.TransactionDefinition.PROPAGATION_
 import org.jooq.TransactionContext;
 import org.jooq.TransactionProvider;
 import org.jooq.tools.JooqLogger;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 /**
- * An example <code>TransactionProvider</code> implementing the
- * {@link TransactionProvider} contract for use with Spring.
+ * An example <code>TransactionProvider</code> implementing the {@link TransactionProvider} contract
+ * for use with Spring.
  *
  * @author Lukas Eder
  */
 public class SpringTransactionProvider implements TransactionProvider {
 
-    private static final JooqLogger log = JooqLogger.getLogger(SpringTransactionProvider.class);
+  private static final JooqLogger log = JooqLogger.getLogger(SpringTransactionProvider.class);
 
-    @Autowired
-    DataSourceTransactionManager txMgr;
+  @Autowired DataSourceTransactionManager txMgr;
 
-    @Override
-    public void begin(TransactionContext ctx) {
-        log.info("Begin transaction");
+  @Override
+  public void begin(TransactionContext ctx) {
+    log.info("Begin transaction");
 
-        // This TransactionProvider behaves like jOOQ's DefaultTransactionProvider,
-        // which supports nested transactions using Savepoints
-        TransactionStatus tx = txMgr.getTransaction(new DefaultTransactionDefinition(PROPAGATION_NESTED));
-        ctx.transaction(new SpringTransaction(tx));
-    }
+    // This TransactionProvider behaves like jOOQ's DefaultTransactionProvider,
+    // which supports nested transactions using Savepoints
+    TransactionStatus tx =
+        txMgr.getTransaction(new DefaultTransactionDefinition(PROPAGATION_NESTED));
+    ctx.transaction(new SpringTransaction(tx));
+  }
 
-    @Override
-    public void commit(TransactionContext ctx) {
-        log.info("commit transaction");
+  @Override
+  public void commit(TransactionContext ctx) {
+    log.info("commit transaction");
 
-        txMgr.commit(((SpringTransaction) ctx.transaction()).tx);
-    }
+    txMgr.commit(((SpringTransaction) ctx.transaction()).tx);
+  }
 
-    @Override
-    public void rollback(TransactionContext ctx) {
-        log.info("rollback transaction");
+  @Override
+  public void rollback(TransactionContext ctx) {
+    log.info("rollback transaction");
 
-        txMgr.rollback(((SpringTransaction) ctx.transaction()).tx);
-    }
+    txMgr.rollback(((SpringTransaction) ctx.transaction()).tx);
+  }
 }

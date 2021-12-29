@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -37,65 +37,59 @@
  */
 package org.jooq.example.guice;
 
-import java.util.Properties;
-
-import javax.sql.DataSource;
-
-import org.springframework.jdbc.datasource.DataSourceTransactionManager;
-import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.jolbox.bonecp.BoneCPDataSource;
+import java.util.Properties;
+import javax.sql.DataSource;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
 /**
  * A static utility providing a {@link DataSource} for this example.
- * <p>
- * Your actual data source might originate from a container, or from Spring.
- * Also, your transaction manager might be more sophisticated than this.
+ *
+ * <p>Your actual data source might originate from a container, or from Spring. Also, your
+ * transaction manager might be more sophisticated than this.
  *
  * @author Lukas Eder
  */
 public class DataSources extends AbstractModule {
 
-    @Override
-    protected void configure() {}
+  @Override
+  protected void configure() {}
 
-    @Provides
-    @Singleton
-    DataSource provideDataSource() {
-        return DATA_SOURCE;
+  @Provides
+  @Singleton
+  DataSource provideDataSource() {
+    return DATA_SOURCE;
+  }
+
+  @Provides
+  @Singleton
+  DataSourceTransactionManager provideDataSourceTransactionManager() {
+    return new DataSourceTransactionManager(new TransactionAwareDataSourceProxy(DATA_SOURCE));
+  }
+
+  /** The singleton instance */
+  private static final DataSource DATA_SOURCE;
+
+  static {
+    try {
+      // We're using BoneCP here to configure a connection pool
+      Properties p = new Properties();
+      p.load(DataSources.class.getResourceAsStream("/config.properties"));
+
+      BoneCPDataSource result = new BoneCPDataSource();
+      result.setDriverClass(p.getProperty("db.driver"));
+      result.setJdbcUrl(p.getProperty("db.url"));
+      result.setUsername(p.getProperty("db.username"));
+      result.setPassword(p.getProperty("db.password"));
+      result.setDefaultAutoCommit(false);
+
+      DATA_SOURCE = result;
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     }
-
-    @Provides
-    @Singleton
-    DataSourceTransactionManager provideDataSourceTransactionManager() {
-        return new DataSourceTransactionManager(new TransactionAwareDataSourceProxy(DATA_SOURCE));
-    }
-
-    /**
-     * The singleton instance
-     */
-    private static final DataSource DATA_SOURCE;
-
-    static {
-        try {
-            // We're using BoneCP here to configure a connection pool
-            Properties p = new Properties();
-            p.load(DataSources.class.getResourceAsStream("/config.properties"));
-
-            BoneCPDataSource result = new BoneCPDataSource();
-            result.setDriverClass(p.getProperty("db.driver"));
-            result.setJdbcUrl(p.getProperty("db.url"));
-            result.setUsername(p.getProperty("db.username"));
-            result.setPassword(p.getProperty("db.password"));
-            result.setDefaultAutoCommit(false);
-
-            DATA_SOURCE = result;
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+  }
 }

@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,21 +38,18 @@
 package org.jooq.example.jpa.converters;
 
 import java.time.Year;
-
 import javax.persistence.AttributeConverter;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 public class YearConverter implements AttributeConverter<Year, Integer> {
 
-    @Override
-    public Integer convertToDatabaseColumn(Year attribute) {
-        return attribute == null ? null : attribute.getValue();
-    }
+  @Override
+  public Integer convertToDatabaseColumn(Year attribute) {
+    return attribute == null ? null : attribute.getValue();
+  }
 
-    @Override
-    public Year convertToEntityAttribute(Integer dbData) {
-        return dbData == null ? null : Year.of(dbData);
-    }
+  @Override
+  public Year convertToEntityAttribute(Integer dbData) {
+    return dbData == null ? null : Year.of(dbData);
+  }
 }

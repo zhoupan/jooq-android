@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -44,55 +44,53 @@ import static org.junit.Assert.fail;
 import org.jooq.example.db.h2.tables.pojos.Author;
 import org.jooq.example.guice.Module;
 import org.jooq.example.guice.Service;
-
 import org.junit.Test;
 import org.springframework.dao.DataAccessException;
 
-/**
- * @author Lukas Eder
- */
+/** @author Lukas Eder */
 public class Tests {
 
-    Service service = createInjector(new Module()).getInstance(Service.class);
+  Service service = createInjector(new Module()).getInstance(Service.class);
 
-    @Test
-    public void testSize() {
-        assertEquals(2, service.getAuthors().size());
-    }
+  @Test
+  public void testSize() {
+    assertEquals(2, service.getAuthors().size());
+  }
 
-    @Test
-    public void testName() {
-        Author author = service.getAuthor(1);
-        assertEquals("George", author.getFirstName());
-        assertEquals("Orwell", author.getLastName());
-    }
+  @Test
+  public void testName() {
+    Author author = service.getAuthor(1);
+    assertEquals("George", author.getFirstName());
+    assertEquals("Orwell", author.getLastName());
+  }
 
-    @Test
-    public void testTransaction() {
-        try {
-            service.transactional(() -> {
+  @Test
+  public void testTransaction() {
+    try {
+      service.transactional(
+          () -> {
 
-                // This should work normally
-                Author author = service.getAuthor(1);
-                author.setFirstName("John");
-                author.setLastName("Smith");
-                assertEquals(1, service.mergeNames(author));
+            // This should work normally
+            Author author = service.getAuthor(1);
+            author.setFirstName("John");
+            author.setLastName("Smith");
+            assertEquals(1, service.mergeNames(author));
 
-                author = service.getAuthor(1);
-                assertEquals("John", author.getFirstName());
-                assertEquals("Smith", author.getLastName());
+            author = service.getAuthor(1);
+            assertEquals("John", author.getFirstName());
+            assertEquals("Smith", author.getLastName());
 
-                // But this shouldn't work. Authors have books, and there is no cascade delete
-                service.deleteAuthor(1);
-                fail();
-            });
-
+            // But this shouldn't work. Authors have books, and there is no cascade delete
+            service.deleteAuthor(1);
             fail();
-        }
-        catch (DataAccessException expected) {}
+          });
 
-        // The database should be at its original state
-        testSize();
-        testName();
+      fail();
+    } catch (DataAccessException expected) {
     }
+
+    // The database should be at its original state
+    testSize();
+    testName();
+  }
 }

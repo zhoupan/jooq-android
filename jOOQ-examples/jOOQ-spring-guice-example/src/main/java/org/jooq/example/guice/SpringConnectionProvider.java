@@ -1,4 +1,4 @@
-/*
+/* 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -38,37 +38,33 @@
 package org.jooq.example.guice;
 
 import java.sql.Connection;
-
 import javax.sql.DataSource;
-
 import org.jooq.ConnectionProvider;
-
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.datasource.DataSourceUtils;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 
 /**
- * This connection provider uses Spring to extract the
- * {@link TransactionAwareDataSourceProxy} from our BoneCP pooled connection
- * {@link DataSource}.
+ * This connection provider uses Spring to extract the {@link TransactionAwareDataSourceProxy} from
+ * our BoneCP pooled connection {@link DataSource}.
  *
  * @author Lukas Eder
  */
 public class SpringConnectionProvider implements ConnectionProvider {
 
-    private final DataSource dataSource;
+  private final DataSource dataSource;
 
-    public SpringConnectionProvider(DataSource dataSource) {
-        this.dataSource = dataSource;
-    }
+  public SpringConnectionProvider(DataSource dataSource) {
+    this.dataSource = dataSource;
+  }
 
-    @Override
-    public Connection acquire() throws DataAccessException {
-        return DataSourceUtils.getConnection(dataSource);
-    }
+  @Override
+  public Connection acquire() throws DataAccessException {
+    return DataSourceUtils.getConnection(dataSource);
+  }
 
-    @Override
-    public void release(Connection connection) throws DataAccessException {
-        DataSourceUtils.releaseConnection(connection, dataSource);
-    }
+  @Override
+  public void release(Connection connection) throws DataAccessException {
+    DataSourceUtils.releaseConnection(connection, dataSource);
+  }
 }
