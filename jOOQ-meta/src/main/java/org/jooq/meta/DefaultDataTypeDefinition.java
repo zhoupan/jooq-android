@@ -78,6 +78,8 @@ public class DefaultDataTypeDefinition implements DataTypeDefinition {
 
   private final int scale;
 
+  private String generatedAlwaysAs;
+
   private static final String defaultValue(Boolean defaultable) {
     return defaultable != null && defaultable ? "NULL" : null;
   }
@@ -663,6 +665,15 @@ public class DefaultDataTypeDefinition implements DataTypeDefinition {
   @Override
   public final boolean isGenericNumberType() {
     return false;
+  }
+
+  public final String getGeneratedAlwaysAs() {
+    return generatedAlwaysAs;
+  }
+
+  public final DefaultDataTypeDefinition generatedAlwaysAs(String g) {
+    this.generatedAlwaysAs = g;
+    return this;
   }
 
   @Override
