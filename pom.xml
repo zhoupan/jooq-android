@@ -61,13 +61,13 @@
   </license>
  </licenses>
  <scm>
-  <developerConnection>https://github.com/jOOQ/jOOQ.git</developerConnection>
-  <url>https://github.com/jOOQ/jOOQ.git</url>
-  <connection>git://github.com/jOOQ/jOOQ.git</connection>
+  <developerConnection>https://github.com/zhoupan/jooq-android.git</developerConnection>
+  <url>https://github.com/zhoupan/jooq-android.git</url>
+  <connection>https://github.com/zhoupan/jooq-android.git</connection>
  </scm>
  <issueManagement>
   <system>GitHub</system>
-  <url>http://github.com/jOOQ/jOOQ/issues</url>
+  <url>https://github.com/zhoupan/jooq-android/issues</url>
  </issueManagement>
  <dependencyManagement>
   <dependencies>
