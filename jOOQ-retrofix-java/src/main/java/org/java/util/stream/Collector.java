@@ -37,7 +37,10 @@
  */
 package org.java.util.stream;
 
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.Set;
+import org.java.util.Objects;
 import org.java.util.function.BiConsumer;
 import org.java.util.function.BinaryOperator;
 import org.java.util.function.Function;
@@ -88,18 +91,21 @@ import org.java.util.function.Supplier;
  * result. That is, for any input elements {@code t1} and {@code t2}, the results {@code r1} and
  * {@code r2} in the computation below must be equivalent:
  *
- * <pre>{@code
- * A a1 = supplier.get();
- * accumulator.accept(a1, t1);
- * accumulator.accept(a1, t2);
- * R r1 = finisher.apply(a1);  // result without splitting
+ * <pre>
+ * {
+ *   &#64;code
+ *   A a1 = supplier.get();
+ *   accumulator.accept(a1, t1);
+ *   accumulator.accept(a1, t2);
+ *   R r1 = finisher.apply(a1); // result without splitting
  *
- * A a2 = supplier.get();
- * accumulator.accept(a2, t1);
- * A a3 = supplier.get();
- * accumulator.accept(a3, t2);
- * R r2 = finisher.apply(combiner.apply(a2, a3));  // result with splitting
- * }</pre>
+ *   A a2 = supplier.get();
+ *   accumulator.accept(a2, t1);
+ *   A a3 = supplier.get();
+ *   accumulator.accept(a3, t2);
+ *   R r2 = finisher.apply(combiner.apply(a2, a3)); // result with splitting
+ * }
+ * </pre>
  *
  * <p>For collectors that do not have the {@code UNORDERED} characteristic, two accumulated results
  * {@code a1} and {@code a2} are equivalent if {@code
@@ -141,11 +147,16 @@ import org.java.util.function.Supplier;
  * Collector.Characteristics...)} can be used to construct collectors. For example, you could create
  * a collector that accumulates widgets into a {@code TreeSet} with:
  *
- * <pre>{@code
- * Collector<Widget, ?, TreeSet<Widget>> intoSet =
- *     Collector.of(TreeSet::new, TreeSet::add,
- *                  (left, right) -> { left.addAll(right); return left; });
- * }</pre>
+ * <pre>
+ * {
+ *   &#64;code
+ *   Collector<Widget, ?, TreeSet<Widget>> intoSet = Collector.of(TreeSet::new, TreeSet::add,
+ *       (left, right) -> {
+ *         left.addAll(right);
+ *         return left;
+ *       });
+ * }
+ * </pre>
  *
  * (This behavior is also implemented by the predefined collector {@link
  * Collectors#toCollection(Supplier)}).
@@ -153,12 +164,15 @@ import org.java.util.function.Supplier;
  * <p><b>API Note:</b><br>
  * Performing a reduction operation with a {@code Collector} should produce a result equivalent to:
  *
- * <pre>{@code
- * A container = collector.supplier().get();
- * for (T t : data)
+ * <pre>
+ * {
+ *   &#64;code
+ *   A container = collector.supplier().get();
+ *   for (T t : data)
  *     collector.accumulator().accept(container, t);
- * return collector.finisher().apply(container);
- * }</pre>
+ *   return collector.finisher().apply(container);
+ * }
+ * </pre>
  *
  * <p>However, the library is free to partition the input, perform the reduction on the partitions,
  * and then use the combiner function to combine the partial results to achieve a parallel
@@ -177,10 +191,13 @@ import org.java.util.function.Supplier;
  * If we wanted to create a collector to tabulate the sum of salaries by department, we could reuse
  * the "sum of salaries" logic using {@link Collectors#groupingBy(Function, Collector)}:
  *
- * <pre>{@code
- * Collector<Employee, ?, Map<Department, Integer>> summingSalariesByDept
- *     = Collectors.groupingBy(Employee::getDepartment, summingSalaries);
- * }</pre>
+ * <pre>
+ * {
+ *   &#64;code
+ *   Collector<Employee, ?, Map<Department, Integer>> summingSalariesByDept = Collectors
+ *       .groupingBy(Employee::getDepartment, summingSalaries);
+ * }
+ * </pre>
  *
  * @see Stream#collect(Collector)
  * @see Collectors
@@ -232,6 +249,73 @@ public interface Collector<T, A, R> {
    * @return an immutable set of collector characteristics
    */
   Set<Characteristics> characteristics();
+
+  /**
+   * Returns a new {@code Collector} described by the given {@code supplier}, {@code accumulator},
+   * and {@code combiner} functions. The resulting {@code Collector} has the {@code
+   * Collector.Characteristics.IDENTITY_FINISH} characteristic.
+   *
+   * @param supplier The supplier function for the new collector
+   * @param accumulator The accumulator function for the new collector
+   * @param combiner The combiner function for the new collector
+   * @param characteristics The collector characteristics for the new collector
+   * @param <T> The type of input elements for the new collector
+   * @param <R> The type of intermediate accumulation result, and final result, for the new
+   *     collector
+   * @throws NullPointerException if any argument is null
+   * @return the new {@code Collector}
+   */
+  public static <T, R> Collector<T, R, R> of(
+      Supplier<R> supplier,
+      BiConsumer<R, T> accumulator,
+      BinaryOperator<R> combiner,
+      Characteristics... characteristics) {
+    Objects.requireNonNull(supplier);
+    Objects.requireNonNull(accumulator);
+    Objects.requireNonNull(combiner);
+    Objects.requireNonNull(characteristics);
+    Set<Characteristics> cs =
+        (characteristics.length == 0)
+            ? Collectors.CH_ID
+            : Collections.unmodifiableSet(
+                EnumSet.of(Collector.Characteristics.IDENTITY_FINISH, characteristics));
+    return new Collectors.CollectorImpl<>(supplier, accumulator, combiner, cs);
+  }
+
+  /**
+   * Returns a new {@code Collector} described by the given {@code supplier}, {@code accumulator},
+   * {@code combiner}, and {@code finisher} functions.
+   *
+   * @param supplier The supplier function for the new collector
+   * @param accumulator The accumulator function for the new collector
+   * @param combiner The combiner function for the new collector
+   * @param finisher The finisher function for the new collector
+   * @param characteristics The collector characteristics for the new collector
+   * @param <T> The type of input elements for the new collector
+   * @param <A> The intermediate accumulation type of the new collector
+   * @param <R> The final result type of the new collector
+   * @throws NullPointerException if any argument is null
+   * @return the new {@code Collector}
+   */
+  public static <T, A, R> Collector<T, A, R> of(
+      Supplier<A> supplier,
+      BiConsumer<A, T> accumulator,
+      BinaryOperator<A> combiner,
+      Function<A, R> finisher,
+      Characteristics... characteristics) {
+    Objects.requireNonNull(supplier);
+    Objects.requireNonNull(accumulator);
+    Objects.requireNonNull(combiner);
+    Objects.requireNonNull(finisher);
+    Objects.requireNonNull(characteristics);
+    Set<Characteristics> cs = Collectors.CH_NOID;
+    if (characteristics.length > 0) {
+      cs = EnumSet.noneOf(Characteristics.class);
+      Collections.addAll(cs, characteristics);
+      cs = Collections.unmodifiableSet(cs);
+    }
+    return new Collectors.CollectorImpl<>(supplier, accumulator, combiner, finisher, cs);
+  }
 
   /**
    * Characteristics indicating properties of a {@code Collector}, which can be used to optimize
