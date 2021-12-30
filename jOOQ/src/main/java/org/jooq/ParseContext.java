@@ -38,8 +38,8 @@
 package org.jooq;
 
 import java.util.List;
-import java.util.function.Function;
-import java.util.function.Predicate;
+import org.java.util.function.Function;
+import org.java.util.function.Predicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.conf.Settings;

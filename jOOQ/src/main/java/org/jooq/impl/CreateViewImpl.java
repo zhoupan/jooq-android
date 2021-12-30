@@ -59,7 +59,7 @@ import static org.jooq.impl.Tools.map;
 import static org.jooq.impl.Tools.tryCatch;
 
 import java.util.Set;
-import java.util.function.BiFunction;
+import org.java.util.function.BiFunction;
 import org.jooq.Clause;
 import org.jooq.Configuration;
 import org.jooq.Context;

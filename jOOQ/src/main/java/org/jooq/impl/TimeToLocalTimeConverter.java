@@ -40,6 +40,7 @@ package org.jooq.impl;
 import java.sql.Time;
 import java.time.LocalTime;
 import org.jooq.Converter;
+import org.jooq.tools.DateTimeUtils;
 
 /**
  * @author Lukas Eder
@@ -55,11 +56,11 @@ public final class TimeToLocalTimeConverter extends AbstractConverter<Time, Loca
 
   @Override
   public final LocalTime from(Time t) {
-    return t == null ? null : t.toLocalTime();
+    return t == null ? null : DateTimeUtils.toLocalTime(t);
   }
 
   @Override
   public final Time to(LocalTime u) {
-    return u == null ? null : Time.valueOf(u);
+    return u == null ? null : DateTimeUtils.toSqlTime(u);
   }
 }

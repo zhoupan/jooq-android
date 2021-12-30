@@ -42,7 +42,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLWarning;
 import java.sql.Statement;
-import java.util.function.Supplier;
+import org.java.util.function.Supplier;
 
 /**
  * A default JDBC Statement implementation delegating all JDBC 4.0 calls to an internal delegate.

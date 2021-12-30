@@ -65,7 +65,7 @@ import static org.jooq.impl.Tools.map;
 import static org.jooq.impl.Tools.row0;
 
 import java.util.Set;
-import java.util.function.Consumer;
+import org.java.util.function.Consumer;
 import org.jooq.Configuration;
 import org.jooq.Context;
 import org.jooq.Field;

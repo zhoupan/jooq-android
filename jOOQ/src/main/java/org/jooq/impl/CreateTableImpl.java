@@ -94,7 +94,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Consumer;
+import org.java.util.function.Consumer;
 import org.jooq.Comment;
 import org.jooq.Condition;
 import org.jooq.Configuration;

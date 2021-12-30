@@ -38,12 +38,12 @@
 package org.jooq.impl;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.Collector;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import org.java.util.Optional;
+import org.java.util.Spliterator;
+import org.java.util.Spliterators;
+import org.java.util.stream.Collector;
+import org.java.util.stream.Stream;
+import org.java.util.stream.StreamSupport;
 import org.jooq.Configuration;
 import org.jooq.Cursor;
 import org.jooq.Record;
@@ -168,7 +168,7 @@ abstract class AbstractCursor<R extends Record> extends AbstractResult<R> implem
 
   @Override
   public final <H extends RecordHandler<? super R>> H fetchInto(H handler) {
-    forEach(handler);
+    forEach((t) -> handler.accept(t));
     return handler;
   }
 

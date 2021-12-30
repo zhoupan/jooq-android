@@ -38,7 +38,7 @@
 package org.jooq;
 
 import java.util.Collection;
-import java.util.function.Function;
+import org.java.util.function.Function;
 import org.jetbrains.annotations.NotNull;
 
 /**

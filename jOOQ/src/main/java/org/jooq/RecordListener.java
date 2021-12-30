@@ -38,7 +38,7 @@
 package org.jooq;
 
 import java.util.EventListener;
-import java.util.function.Consumer;
+import org.java.util.function.Consumer;
 import org.jooq.impl.CallbackRecordListener;
 
 /**

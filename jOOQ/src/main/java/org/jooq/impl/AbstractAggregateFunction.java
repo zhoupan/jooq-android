@@ -37,7 +37,7 @@
  */
 package org.jooq.impl;
 
-import static java.util.function.Function.identity;
+import static org.java.util.function.Function.identity;
 import static org.jooq.SQLDialect.H2;
 import static org.jooq.SQLDialect.HSQLDB;
 import static org.jooq.SQLDialect.POSTGRES;
@@ -58,7 +58,7 @@ import static org.jooq.impl.Tools.isEmpty;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Set;
-import java.util.function.Function;
+import org.java.util.function.Function;
 import org.jooq.AggregateFunction;
 import org.jooq.ArrayAggOrderByStep;
 import org.jooq.Condition;

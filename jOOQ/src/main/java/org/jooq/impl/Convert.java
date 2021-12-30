@@ -84,11 +84,11 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
 import javax.xml.bind.JAXB;
+import org.java.util.Optional;
 import org.jooq.Converter;
 import org.jooq.ConverterProvider;
 import org.jooq.EnumType;
@@ -103,6 +103,7 @@ import org.jooq.SQLDialect;
 import org.jooq.XML;
 import org.jooq.XMLFormat;
 import org.jooq.exception.DataTypeException;
+import org.jooq.tools.DateTimeUtils;
 import org.jooq.tools.Ints;
 import org.jooq.tools.JooqLogger;
 import org.jooq.tools.Longs;
@@ -746,20 +747,20 @@ final class Convert {
         if (java.util.Date.class.isAssignableFrom(fromClass)) {
           // [#12225] Avoid losing precision if possible
           if (Timestamp.class == fromClass && LocalDateTime.class == toClass)
-            return (U) ((Timestamp) from).toLocalDateTime();
+            return (U) DateTimeUtils.toLocalDateTime((Timestamp) from);
           else if (Date.class == fromClass && LocalDate.class == toClass)
-            return (U) ((Date) from).toLocalDate();
+            return (U) DateTimeUtils.toLocalDate((Date) from);
           else if (Time.class == fromClass && LocalTime.class == toClass)
-            return (U) ((Time) from).toLocalTime();
+            return (U) DateTimeUtils.toLocalTime((Time) from);
           else return toDate(((java.util.Date) from).getTime(), toClass);
         } else if (Temporal.class.isAssignableFrom(fromClass)) {
           // [#12225] Avoid losing precision if possible
           if (LocalDateTime.class == fromClass && Timestamp.class == toClass)
-            return (U) Timestamp.valueOf((LocalDateTime) from);
+            return (U) DateTimeUtils.toSqlTimestamp((LocalDateTime) from);
           else if (LocalDate.class == fromClass && Date.class == toClass)
-            return (U) Date.valueOf((LocalDate) from);
+            return (U) DateTimeUtils.toDate((LocalDate) from);
           else if (LocalTime.class == fromClass && Time.class == toClass)
-            return (U) Time.valueOf((LocalTime) from);
+            return (U) DateTimeUtils.toSqlTime((LocalTime) from);
           else return toDate(convert(from, Long.class), toClass);
         } else // Long may also be converted into a date type
         if (wrapperFrom == Long.class && java.util.Date.class.isAssignableFrom(toClass)) {
@@ -790,7 +791,7 @@ final class Convert {
         } else if (fromClass == String.class && toClass == LocalDate.class) {
           // Try "lenient" ISO date formats first
           try {
-            return (U) java.sql.Date.valueOf((String) from).toLocalDate();
+            return (U) DateTimeUtils.toLocalDate(java.sql.Date.valueOf((String) from));
           } catch (IllegalArgumentException e1) {
             try {
               return (U) LocalDate.parse((String) from);
@@ -808,8 +809,7 @@ final class Convert {
           // Try "local" ISO date formats first
           try {
             return (U)
-                java.sql.Time.valueOf((String) from)
-                    .toLocalTime()
+                DateTimeUtils.toLocalTime(java.sql.Time.valueOf((String) from))
                     .atOffset(OffsetTime.now().getOffset());
           } catch (IllegalArgumentException e1) {
             try {
@@ -828,8 +828,7 @@ final class Convert {
           // Try "local" ISO date formats first
           try {
             return (U)
-                java.sql.Timestamp.valueOf((String) from)
-                    .toLocalDateTime()
+                DateTimeUtils.toLocalDateTime(java.sql.Timestamp.valueOf((String) from))
                     .atOffset(OffsetDateTime.now().getOffset());
           } catch (IllegalArgumentException e1) {
             try {
@@ -842,8 +841,7 @@ final class Convert {
           // Try "local" ISO date formats first
           try {
             return (U)
-                java.sql.Timestamp.valueOf((String) from)
-                    .toLocalDateTime()
+                DateTimeUtils.toLocalDateTime(java.sql.Timestamp.valueOf((String) from))
                     .atOffset(OffsetDateTime.now().getOffset())
                     .toInstant();
           } catch (IllegalArgumentException e1) {
@@ -1107,23 +1105,28 @@ final class Convert {
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(time);
         return (X) calendar;
-      } else if (toClass == LocalDate.class) return (X) new Date(time).toLocalDate();
-      else if (toClass == LocalTime.class) return (X) new Time(time).toLocalTime();
+      } else if (toClass == LocalDate.class) return (X) DateTimeUtils.toLocalDate(new Date(time));
+      else if (toClass == LocalTime.class) return (X) DateTimeUtils.toLocalTime(new Time(time));
       else if (toClass == OffsetTime.class)
-        return (X) new Time(time).toLocalTime().atOffset(OffsetTime.now().getOffset());
-      else if (toClass == LocalDateTime.class) return (X) new Timestamp(time).toLocalDateTime();
+        return (X) DateTimeUtils.toLocalTime(new Time(time)).atOffset(OffsetTime.now().getOffset());
+      else if (toClass == LocalDateTime.class)
+        return (X) DateTimeUtils.toLocalDateTime(new Timestamp(time));
       else if (toClass == OffsetDateTime.class)
-        return (X) new Timestamp(time).toLocalDateTime().atOffset(OffsetDateTime.now().getOffset());
+        return (X)
+            DateTimeUtils.toLocalDateTime(new Timestamp(time))
+                .atOffset(OffsetDateTime.now().getOffset());
       else if (toClass == Instant.class) return (X) Instant.ofEpochMilli(time);
       throw fail(time, toClass);
     }
 
     private static final long millis(Temporal temporal) {
       // java.sql.* temporal types:
-      if (temporal instanceof LocalDate) return Date.valueOf((LocalDate) temporal).getTime();
-      else if (temporal instanceof LocalTime) return Time.valueOf((LocalTime) temporal).getTime();
+      if (temporal instanceof LocalDate)
+        return DateTimeUtils.toDate((LocalDate) temporal).getTime();
+      else if (temporal instanceof LocalTime)
+        return DateTimeUtils.toSqlTime((LocalTime) temporal).getTime();
       else if (temporal instanceof LocalDateTime)
-        return Timestamp.valueOf((LocalDateTime) temporal).getTime();
+        return DateTimeUtils.toSqlTimestamp((LocalDateTime) temporal).getTime();
       else // OffsetDateTime
       if (temporal.isSupported(INSTANT_SECONDS))
         return 1000 * temporal.getLong(INSTANT_SECONDS) + temporal.getLong(MILLI_OF_SECOND);

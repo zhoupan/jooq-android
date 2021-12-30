@@ -44,7 +44,7 @@ import static org.jooq.impl.ExpressionOperator.SUBTRACT;
 import static org.jooq.impl.Tools.nullSafe;
 
 import java.lang.reflect.Array;
-import java.util.function.Consumer;
+import org.java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.Binding;
 import org.jooq.Check;

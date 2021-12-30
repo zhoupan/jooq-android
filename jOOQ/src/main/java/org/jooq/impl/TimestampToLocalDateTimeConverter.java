@@ -40,6 +40,7 @@ package org.jooq.impl;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import org.jooq.Converter;
+import org.jooq.tools.DateTimeUtils;
 
 /**
  * @author Lukas Eder
@@ -57,11 +58,11 @@ public final class TimestampToLocalDateTimeConverter
 
   @Override
   public final LocalDateTime from(Timestamp t) {
-    return t == null ? null : t.toLocalDateTime();
+    return t == null ? null : DateTimeUtils.toLocalDateTime(t);
   }
 
   @Override
   public final Timestamp to(LocalDateTime u) {
-    return u == null ? null : Timestamp.valueOf(u);
+    return u == null ? null : DateTimeUtils.toSqlTimestamp(u);
   }
 }

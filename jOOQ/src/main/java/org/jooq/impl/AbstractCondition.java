@@ -42,7 +42,7 @@ import static org.jooq.impl.DSL.condition;
 import static org.jooq.impl.DSL.exists;
 import static org.jooq.impl.DSL.notExists;
 
-import java.util.function.BiFunction;
+import org.java.util.function.BiFunction;
 import org.jooq.Clause;
 import org.jooq.Condition;
 import org.jooq.Context;

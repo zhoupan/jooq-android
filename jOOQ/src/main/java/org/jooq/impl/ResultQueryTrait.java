@@ -37,8 +37,8 @@
  */
 package org.jooq.impl;
 
-import static java.util.stream.Collectors.mapping;
-import static java.util.stream.Collectors.toList;
+import static org.java.util.stream.Collectors.mapping;
+import static org.java.util.stream.Collectors.toList;
 import static org.jooq.Records.intoArray;
 import static org.jooq.Records.intoGroups;
 import static org.jooq.Records.intoList;
@@ -49,7 +49,6 @@ import static org.jooq.conf.SettingsTools.fetchIntermediateResult;
 import static org.jooq.impl.DelayedArrayCollector.patch;
 import static org.jooq.impl.Tools.blocking;
 import static org.jooq.impl.Tools.indexOrFail;
-import static org.jooq.tools.jdbc.JDBCUtils.safeClose;
 
 import io.r2dbc.spi.ConnectionFactory;
 import java.lang.reflect.Array;
@@ -61,17 +60,18 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
-import java.util.Spliterator;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
-import java.util.stream.Collector;
-import java.util.stream.Stream;
-import java.util.stream.StreamSupport;
+import org.java.util.Optional;
+import org.java.util.Spliterator;
+import org.java.util.SpliteratorUtils;
+import org.java.util.function.SupplierUtils;
+import org.java.util.stream.Collector;
+import org.java.util.stream.Stream;
+import org.java.util.stream.StreamSupport;
 import org.jooq.Configuration;
 import org.jooq.Converter;
 import org.jooq.Cursor;
@@ -114,6 +114,7 @@ import org.jooq.exception.DataAccessException;
 import org.jooq.impl.R2DBC.BlockingRecordSubscription;
 import org.jooq.impl.R2DBC.QuerySubscription;
 import org.jooq.impl.R2DBC.ResultSubscriber;
+import org.jooq.tools.jdbc.JDBCUtils;
 import org.reactivestreams.Subscriber;
 
 /**
@@ -762,12 +763,13 @@ interface ResultQueryTrait<R extends Record>
   @Override
   default CompletionStage<Result<R>> fetchAsync(Executor executor) {
     return ExecutorProviderCompletionStage.of(
-        CompletableFuture.supplyAsync(blocking(this::fetch), executor), () -> executor);
+        CompletableFuture.supplyAsync(SupplierUtils.java(blocking(this::fetch)), executor),
+        () -> executor);
   }
 
   @Override
   default Stream<R> fetchStream() {
-    if (fetchIntermediateResult(Tools.configuration(this))) return fetch().stream();
+    if (fetchIntermediateResult(Tools.configuration(this))) return Stream.stream(fetch());
     // [#11895] Don't use the Stream.of(1).flatMap(i -> fetchLazy().stream())
     // trick, because flatMap() will consume the entire result set
     AtomicReference<Cursor<R>> r = new AtomicReference<>();
@@ -777,13 +779,13 @@ interface ResultQueryTrait<R extends Record>
             () -> {
               Cursor<R> c = fetchLazy();
               r.set(c);
-              return c.spliterator();
+              return SpliteratorUtils.org(c.spliterator());
             },
             Spliterator.IMMUTABLE | Spliterator.NONNULL | Spliterator.ORDERED,
             false)
         .onClose(
             () -> {
-              safeClose(r.get());
+              JDBCUtils.safeClose(r.get());
             });
   }
 
@@ -1918,12 +1920,11 @@ interface ResultQueryTrait<R extends Record>
 
   @Override
   default <H extends RecordHandler<? super R>> H fetchInto(H handler) {
-    forEach(handler);
+    forEach((t) -> handler.accept(t));
     return handler;
   }
 
-  @Override
-  default void forEach(Consumer<? super R> action) {
+  default void forEach(java.util.function.Consumer<? super R> action) {
     if (fetchIntermediateResult(Tools.configuration(this))) {
       fetch().forEach(action);
     } else

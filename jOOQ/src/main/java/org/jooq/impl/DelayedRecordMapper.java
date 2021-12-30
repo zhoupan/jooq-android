@@ -37,7 +37,7 @@
  */
 package org.jooq.impl;
 
-import java.util.function.Function;
+import org.java.util.function.Function;
 import org.jooq.Record;
 import org.jooq.RecordMapper;
 import org.jooq.RecordType;

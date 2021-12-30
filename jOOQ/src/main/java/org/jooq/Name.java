@@ -50,8 +50,8 @@ import static org.jooq.SQLDialect.MYSQL;
 import static org.jooq.SQLDialect.POSTGRES;
 import static org.jooq.SQLDialect.SQLITE;
 
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import org.java.util.function.BiFunction;
+import org.java.util.function.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.conf.RenderQuotedNames;

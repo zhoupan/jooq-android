@@ -37,10 +37,10 @@
  */
 package org.jooq.impl;
 
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import org.java.util.function.BiFunction;
+import org.java.util.function.Consumer;
+import org.java.util.function.Function;
+import org.java.util.function.Supplier;
 
 /*
  * This file contains a few functional interfaces that are missing from the JDK.

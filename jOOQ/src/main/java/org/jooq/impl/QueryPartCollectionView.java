@@ -50,7 +50,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Function;
+import org.java.util.function.Function;
 import org.jooq.Context;
 import org.jooq.QueryPart;
 import org.jooq.QueryPartInternal;

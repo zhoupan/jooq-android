@@ -41,7 +41,7 @@ import static java.util.Arrays.asList;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.function.Function;
+import org.java.util.function.Function;
 import org.jooq.QueryPart;
 
 /** @author Lukas Eder */

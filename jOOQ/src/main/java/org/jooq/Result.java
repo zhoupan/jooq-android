@@ -42,9 +42,9 @@ import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
-import java.util.stream.Collector;
-import java.util.stream.Stream;
+import org.java.util.function.Consumer;
+import org.java.util.stream.Collector;
+import org.java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.exception.DataAccessException;
@@ -74,7 +74,7 @@ public interface Result<R extends Record> extends Fields, List<R>, Attachable, F
    * @param field The value's field
    * @return The value
    * @throws IndexOutOfBoundsException if the index is out of range ( <tt>index &lt; 0 || index
-   *     &gt;= size()</tt>)
+   *     &gt;= size()</tt> )
    * @throws IllegalArgumentException If the argument field is not contained in {@link #fieldsRow()}
    */
   <T> T getValue(int index, Field<T> field)
@@ -87,7 +87,7 @@ public interface Result<R extends Record> extends Fields, List<R>, Attachable, F
    * @param fieldIndex The value's field index
    * @return The value
    * @throws IndexOutOfBoundsException if the index is out of range ( <tt>index &lt; 0 || index
-   *     &gt;= size()</tt>)
+   *     &gt;= size()</tt> )
    * @throws IllegalArgumentException If the argument fieldIndex is not contained in {@link
    *     #fieldsRow()}
    */
@@ -102,7 +102,7 @@ public interface Result<R extends Record> extends Fields, List<R>, Attachable, F
    * @param fieldName The value's field name
    * @return The value
    * @throws IndexOutOfBoundsException if the index is out of range ( <tt>index &lt; 0 || index
-   *     &gt;= size()</tt>)
+   *     &gt;= size()</tt> )
    * @throws IllegalArgumentException If the argument fieldName is not contained in {@link
    *     #fieldsRow()}
    */

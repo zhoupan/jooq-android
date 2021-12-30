@@ -40,7 +40,7 @@ package org.jooq.impl;
 import static org.jooq.impl.Tools.map;
 
 import java.util.List;
-import java.util.function.Function;
+import org.java.util.function.Function;
 import org.jooq.Condition;
 import org.jooq.Field;
 import org.jooq.QueryPart;

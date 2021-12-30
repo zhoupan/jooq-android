@@ -57,7 +57,7 @@ import static org.jooq.impl.Tools.selectQueryImpl;
 import static org.jooq.tools.StringUtils.defaultIfNull;
 
 import java.util.Set;
-import java.util.function.Predicate;
+import org.java.util.function.Predicate;
 import org.jooq.Configuration;
 import org.jooq.QueryPart;
 import org.jooq.SQLDialect;

@@ -39,7 +39,7 @@ package org.jooq.impl;
 
 import static java.lang.Math.max;
 import static java.lang.Math.min;
-import static java.util.stream.Collectors.joining;
+import static org.java.util.stream.Collectors.joining;
 import static org.jooq.XMLFormat.RecordFormat.COLUMN_NAME_ELEMENTS;
 import static org.jooq.XMLFormat.RecordFormat.VALUE_ELEMENTS_WITH_FIELD_ATTRIBUTE;
 import static org.jooq.conf.SettingsTools.renderLocale;
@@ -56,7 +56,6 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.Iterator;
@@ -66,6 +65,7 @@ import javax.xml.bind.DatatypeConverter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import org.java.util.stream.Stream;
 import org.jooq.CSVFormat;
 import org.jooq.ChartFormat;
 import org.jooq.ChartFormat.Display;
@@ -1014,18 +1014,19 @@ abstract class AbstractResult<R extends Record> extends AbstractFormattable
     } else if (value.getClass().isArray()) {
       // [#6545] Nested arrays are handled recursively
       formatted +=
-          Arrays.stream((Object[]) value)
+          Stream.stream((Object[]) value)
               .map(f -> format0(f, false, visual))
               .collect(joining(", ", "[", "]"));
     } else if (value instanceof EnumType) {
       formatted += ((EnumType) value).getLiteral();
     } else if (value instanceof List) {
       formatted +=
-          ((List<?>) value)
-              .stream().map(f -> format0(f, false, visual)).collect(joining(", ", "[", "]"));
+          Stream.stream((List<?>) value)
+              .map(f -> format0(f, false, visual))
+              .collect(joining(", ", "[", "]"));
     } else if (value instanceof Record) {
       formatted +=
-          Arrays.stream(((Record) value).valuesRow().fields())
+          Stream.stream(((Record) value).valuesRow().fields())
               .map(f -> format0(f, false, visual))
               .collect(joining(", ", "(", ")"));
     } else // [#6080] Support formatting of nested ROWs

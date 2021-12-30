@@ -47,7 +47,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Predicate;
+import org.java.util.function.Predicate;
 import org.jooq.Catalog;
 import org.jooq.Configuration;
 import org.jooq.Meta;

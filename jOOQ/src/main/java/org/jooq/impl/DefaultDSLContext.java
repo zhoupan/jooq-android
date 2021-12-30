@@ -80,188 +80,16 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
-import java.util.function.BiFunction;
-import java.util.function.Function;
-import java.util.stream.Stream;
 import javax.sql.DataSource;
-import org.jooq.AlterTableStep;
-import org.jooq.Attachable;
-import org.jooq.Batch;
-import org.jooq.BatchBindStep;
-import org.jooq.BatchedCallable;
-import org.jooq.BatchedRunnable;
-import org.jooq.BindContext;
-import org.jooq.Block;
-import org.jooq.Catalog;
-import org.jooq.Commit;
-import org.jooq.Commits;
-import org.jooq.CommonTableExpression;
-import org.jooq.Condition;
-import org.jooq.Configuration;
-import org.jooq.ConnectionCallable;
-import org.jooq.ConnectionProvider;
-import org.jooq.ConnectionRunnable;
-import org.jooq.ContextTransactionalCallable;
-import org.jooq.ContextTransactionalRunnable;
-import org.jooq.CreateTableColumnStep;
-import org.jooq.CreateTypeStep;
-import org.jooq.CreateViewAsStep;
-import org.jooq.Cursor;
-import org.jooq.DDLExportConfiguration;
-import org.jooq.DDLFlag;
-import org.jooq.DSLContext;
-import org.jooq.DataType;
-import org.jooq.DeleteQuery;
-import org.jooq.DeleteUsingStep;
-import org.jooq.Domain;
-import org.jooq.DropTypeStep;
-import org.jooq.ExecuteContext;
-import org.jooq.ExecuteListener;
-import org.jooq.Explain;
-import org.jooq.Field;
-import org.jooq.Index;
-import org.jooq.InsertQuery;
-import org.jooq.InsertSetStep;
-import org.jooq.InsertValuesStep1;
-import org.jooq.InsertValuesStep10;
-import org.jooq.InsertValuesStep11;
-import org.jooq.InsertValuesStep12;
-import org.jooq.InsertValuesStep13;
-import org.jooq.InsertValuesStep14;
-import org.jooq.InsertValuesStep15;
-import org.jooq.InsertValuesStep16;
-import org.jooq.InsertValuesStep17;
-import org.jooq.InsertValuesStep18;
-import org.jooq.InsertValuesStep19;
-import org.jooq.InsertValuesStep2;
-import org.jooq.InsertValuesStep20;
-import org.jooq.InsertValuesStep21;
-import org.jooq.InsertValuesStep22;
-import org.jooq.InsertValuesStep3;
-import org.jooq.InsertValuesStep4;
-import org.jooq.InsertValuesStep5;
-import org.jooq.InsertValuesStep6;
-import org.jooq.InsertValuesStep7;
-import org.jooq.InsertValuesStep8;
-import org.jooq.InsertValuesStep9;
-import org.jooq.InsertValuesStepN;
-import org.jooq.LoaderOptionsStep;
-import org.jooq.MergeKeyStep1;
-import org.jooq.MergeKeyStep10;
-import org.jooq.MergeKeyStep11;
-import org.jooq.MergeKeyStep12;
-import org.jooq.MergeKeyStep13;
-import org.jooq.MergeKeyStep14;
-import org.jooq.MergeKeyStep15;
-import org.jooq.MergeKeyStep16;
-import org.jooq.MergeKeyStep17;
-import org.jooq.MergeKeyStep18;
-import org.jooq.MergeKeyStep19;
-import org.jooq.MergeKeyStep2;
-import org.jooq.MergeKeyStep20;
-import org.jooq.MergeKeyStep21;
-import org.jooq.MergeKeyStep22;
-import org.jooq.MergeKeyStep3;
-import org.jooq.MergeKeyStep4;
-import org.jooq.MergeKeyStep5;
-import org.jooq.MergeKeyStep6;
-import org.jooq.MergeKeyStep7;
-import org.jooq.MergeKeyStep8;
-import org.jooq.MergeKeyStep9;
-import org.jooq.MergeKeyStepN;
-import org.jooq.MergeUsingStep;
-import org.jooq.Meta;
-import org.jooq.Migration;
-import org.jooq.Name;
-import org.jooq.Param;
-import org.jooq.Parser;
-import org.jooq.Privilege;
-import org.jooq.Queries;
-import org.jooq.Query;
-import org.jooq.QueryPart;
-import org.jooq.Record;
-import org.jooq.Record1;
-import org.jooq.Record10;
-import org.jooq.Record11;
-import org.jooq.Record12;
-import org.jooq.Record13;
-import org.jooq.Record14;
-import org.jooq.Record15;
-import org.jooq.Record16;
-import org.jooq.Record17;
-import org.jooq.Record18;
-import org.jooq.Record19;
-import org.jooq.Record2;
-import org.jooq.Record20;
-import org.jooq.Record21;
-import org.jooq.Record22;
-import org.jooq.Record3;
-import org.jooq.Record4;
-import org.jooq.Record5;
-import org.jooq.Record6;
-import org.jooq.Record7;
-import org.jooq.Record8;
-import org.jooq.Record9;
-import org.jooq.RenderContext;
-import org.jooq.Result;
-import org.jooq.ResultQuery;
-import org.jooq.Results;
-import org.jooq.RowCountQuery;
-import org.jooq.SQL;
-import org.jooq.SQLDialect;
-import org.jooq.Schema;
-import org.jooq.Select;
-import org.jooq.SelectField;
-import org.jooq.SelectFieldOrAsterisk;
-import org.jooq.SelectQuery;
-import org.jooq.SelectSelectStep;
-import org.jooq.SelectWhereStep;
-import org.jooq.Sequence;
-import org.jooq.Source;
-import org.jooq.Statement;
-import org.jooq.Stringly;
-import org.jooq.Table;
-import org.jooq.TableField;
-import org.jooq.TableLike;
-import org.jooq.TableRecord;
-import org.jooq.TransactionProvider;
-import org.jooq.TransactionalCallable;
-import org.jooq.TransactionalRunnable;
-import org.jooq.UDT;
-import org.jooq.UDTRecord;
-import org.jooq.UpdatableRecord;
-import org.jooq.UpdateQuery;
-import org.jooq.UpdateSetFirstStep;
-import org.jooq.Version;
-import org.jooq.Versions;
-import org.jooq.WithAsStep;
-import org.jooq.WithAsStep1;
-import org.jooq.WithAsStep10;
-import org.jooq.WithAsStep11;
-import org.jooq.WithAsStep12;
-import org.jooq.WithAsStep13;
-import org.jooq.WithAsStep14;
-import org.jooq.WithAsStep15;
-import org.jooq.WithAsStep16;
-import org.jooq.WithAsStep17;
-import org.jooq.WithAsStep18;
-import org.jooq.WithAsStep19;
-import org.jooq.WithAsStep2;
-import org.jooq.WithAsStep20;
-import org.jooq.WithAsStep21;
-import org.jooq.WithAsStep22;
-import org.jooq.WithAsStep3;
-import org.jooq.WithAsStep4;
-import org.jooq.WithAsStep5;
-import org.jooq.WithAsStep6;
-import org.jooq.WithAsStep7;
-import org.jooq.WithAsStep8;
-import org.jooq.WithAsStep9;
-import org.jooq.WithStep;
+import org.java.util.Optional;
+import org.java.util.function.BiFunction;
+import org.java.util.function.Function;
+import org.java.util.function.SupplierUtils;
+import org.java.util.stream.Stream;
+import org.jooq.*;
 import org.jooq.conf.Settings;
 import org.jooq.conf.SettingsTools;
 import org.jooq.exception.ConfigurationException;
@@ -1282,28 +1110,35 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
   @Override
   public CompletionStage<Result<Record>> fetchAsync(Executor executor, ResultSet rs) {
     return ExecutorProviderCompletionStage.of(
-        CompletableFuture.supplyAsync(blocking(() -> fetch(rs)), executor), () -> executor);
+        CompletableFuture.supplyAsync(SupplierUtils.java(blocking(() -> fetch(rs))), executor),
+        () -> executor);
   }
 
   @Override
   public CompletionStage<Result<Record>> fetchAsync(
       Executor executor, ResultSet rs, Field<?>... fields) {
     return ExecutorProviderCompletionStage.of(
-        CompletableFuture.supplyAsync(blocking(() -> fetch(rs, fields)), executor), () -> executor);
+        CompletableFuture.supplyAsync(
+            SupplierUtils.java(blocking(() -> fetch(rs, fields))), executor),
+        () -> executor);
   }
 
   @Override
   public CompletionStage<Result<Record>> fetchAsync(
       Executor executor, ResultSet rs, DataType<?>... types) {
     return ExecutorProviderCompletionStage.of(
-        CompletableFuture.supplyAsync(blocking(() -> fetch(rs, types)), executor), () -> executor);
+        CompletableFuture.supplyAsync(
+            SupplierUtils.java(blocking(() -> fetch(rs, types))), executor),
+        () -> executor);
   }
 
   @Override
   public CompletionStage<Result<Record>> fetchAsync(
       Executor executor, ResultSet rs, Class<?>... types) {
     return ExecutorProviderCompletionStage.of(
-        CompletableFuture.supplyAsync(blocking(() -> fetch(rs, types)), executor), () -> executor);
+        CompletableFuture.supplyAsync(
+            SupplierUtils.java(blocking(() -> fetch(rs, types))), executor),
+        () -> executor);
   }
 
   @Override
@@ -9496,7 +9331,8 @@ public class DefaultDSLContext extends AbstractScope implements DSLContext, Seri
   public <R extends Record> CompletionStage<Result<R>> fetchAsync(
       Executor executor, ResultQuery<R> query) {
     return ExecutorProviderCompletionStage.of(
-        CompletableFuture.supplyAsync(blocking(() -> fetch(query))), () -> executor);
+        CompletableFuture.supplyAsync(SupplierUtils.java(blocking(() -> fetch(query)))),
+        () -> executor);
   }
 
   @Override

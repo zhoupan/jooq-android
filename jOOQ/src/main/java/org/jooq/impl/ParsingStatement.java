@@ -76,7 +76,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
+import org.java.util.function.Supplier;
 import org.jooq.Param;
 import org.jooq.Source;
 

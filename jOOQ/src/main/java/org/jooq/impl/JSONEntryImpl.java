@@ -56,7 +56,7 @@ import static org.jooq.impl.Tools.emulateMultiset;
 
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Function;
+import org.java.util.function.Function;
 import org.jooq.Context;
 import org.jooq.DataType;
 import org.jooq.Field;

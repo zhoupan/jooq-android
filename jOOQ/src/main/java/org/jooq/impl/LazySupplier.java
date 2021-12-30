@@ -38,7 +38,7 @@
 package org.jooq.impl;
 
 import java.io.Serializable;
-import java.util.function.Supplier;
+import org.java.util.function.Supplier;
 import org.jooq.Internal;
 
 /** A lazy supplier */

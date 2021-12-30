@@ -68,7 +68,7 @@ import java.util.Calendar;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.function.Supplier;
+import org.java.util.function.Supplier;
 import org.jooq.BindingGetResultSetContext;
 import org.jooq.Converter;
 import org.jooq.ExecuteContext;

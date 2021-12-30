@@ -82,9 +82,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.BiFunction;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import org.java.util.function.BiFunction;
+import org.java.util.function.Consumer;
+import org.java.util.function.Function;
 import org.jooq.BindingGetResultSetContext;
 import org.jooq.Configuration;
 import org.jooq.Converter;
@@ -105,6 +105,7 @@ import org.jooq.exception.DataTypeException;
 import org.jooq.exception.FeatureNotSupportedException;
 import org.jooq.impl.DefaultRenderContext.Rendered;
 import org.jooq.impl.ThreadGuard.Guard;
+import org.jooq.tools.DateTimeUtils;
 import org.jooq.tools.JooqLogger;
 import org.jooq.tools.jdbc.DefaultPreparedStatement;
 import org.jooq.tools.jdbc.DefaultResultSet;
@@ -845,17 +846,17 @@ final class R2DBC {
 
     @Override
     public final void setDate(int parameterIndex, Date x) throws SQLException {
-      bindNullable(parameterIndex, x, LocalDate.class, Date::toLocalDate);
+      bindNullable(parameterIndex, x, LocalDate.class, DateTimeUtils::toLocalDate);
     }
 
     @Override
     public final void setTime(int parameterIndex, Time x) throws SQLException {
-      bindNullable(parameterIndex, x, LocalTime.class, Time::toLocalTime);
+      bindNullable(parameterIndex, x, LocalTime.class, DateTimeUtils::toLocalTime);
     }
 
     @Override
     public final void setTimestamp(int parameterIndex, Timestamp x) throws SQLException {
-      bindNullable(parameterIndex, x, LocalDateTime.class, Timestamp::toLocalDateTime);
+      bindNullable(parameterIndex, x, LocalDateTime.class, DateTimeUtils::toLocalDateTime);
     }
 
     @SuppressWarnings("unchecked")
@@ -995,17 +996,17 @@ final class R2DBC {
 
     @Override
     public final Date getDate(int columnIndex) throws SQLException {
-      return nullable(columnIndex, LocalDate.class, Date::valueOf);
+      return nullable(columnIndex, LocalDate.class, DateTimeUtils::toSqlDate);
     }
 
     @Override
     public final Time getTime(int columnIndex) throws SQLException {
-      return nullable(columnIndex, LocalTime.class, Time::valueOf);
+      return nullable(columnIndex, LocalTime.class, DateTimeUtils::toSqlTime);
     }
 
     @Override
     public final Timestamp getTimestamp(int columnIndex) throws SQLException {
-      return nullable(columnIndex, LocalDateTime.class, Timestamp::valueOf);
+      return nullable(columnIndex, LocalDateTime.class, DateTimeUtils::toSqlTimestamp);
     }
 
     @Override

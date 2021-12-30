@@ -150,8 +150,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Function;
-import java.util.function.Supplier;
+import org.java.util.function.Function;
+import org.java.util.function.Supplier;
 import org.jooq.Attachable;
 import org.jooq.Binding;
 import org.jooq.BindingGetResultSetContext;
@@ -189,6 +189,7 @@ import org.jooq.exception.DataTypeException;
 import org.jooq.exception.MappingException;
 import org.jooq.exception.SQLDialectNotSupportedException;
 import org.jooq.impl.R2DBC.R2DBCPreparedStatement;
+import org.jooq.tools.DateTimeUtils;
 import org.jooq.tools.JooqLogger;
 import org.jooq.tools.Longs;
 import org.jooq.tools.StringUtils;
@@ -264,8 +265,8 @@ public class DefaultBinding<T, U> implements Binding<T, U> {
               Converter.ofNullable(
                   Date.class,
                   LocalDate.class,
-                  (Function<Date, LocalDate> & Serializable) Date::toLocalDate,
-                  (Function<LocalDate, Date> & Serializable) Date::valueOf),
+                  (Function<Date, LocalDate> & Serializable) DateTimeUtils::toLocalDate,
+                  (Function<LocalDate, Date> & Serializable) DateTimeUtils::toSqlDate),
               (Converter<LocalDate, U>) converter,
               c -> new DefaultDateBinding<>(DATE, c));
     else if (type == LocalDateTime.class)
@@ -275,8 +276,10 @@ public class DefaultBinding<T, U> implements Binding<T, U> {
               Converter.ofNullable(
                   Timestamp.class,
                   LocalDateTime.class,
-                  (Function<Timestamp, LocalDateTime> & Serializable) Timestamp::toLocalDateTime,
-                  (Function<LocalDateTime, Timestamp> & Serializable) Timestamp::valueOf),
+                  (Function<Timestamp, LocalDateTime> & Serializable)
+                      DateTimeUtils::toLocalDateTime,
+                  (Function<LocalDateTime, Timestamp> & Serializable)
+                      DateTimeUtils::toSqlTimestamp),
               (Converter<LocalDateTime, U>) converter,
               c -> new DefaultTimestampBinding<>(TIMESTAMP, c));
     else if (type == LocalTime.class)
@@ -286,8 +289,8 @@ public class DefaultBinding<T, U> implements Binding<T, U> {
               Converter.ofNullable(
                   Time.class,
                   LocalTime.class,
-                  (Function<Time, LocalTime> & Serializable) Time::toLocalTime,
-                  (Function<LocalTime, Time> & Serializable) Time::valueOf),
+                  (Function<Time, LocalTime> & Serializable) DateTimeUtils::toLocalTime,
+                  (Function<LocalTime, Time> & Serializable) DateTimeUtils::toSqlTime),
               (Converter<LocalTime, U>) converter,
               c -> new DefaultTimeBinding<>(TIME, c));
     else if (type == Long.class || type == long.class)
@@ -2700,7 +2703,8 @@ public class DefaultBinding<T, U> implements Binding<T, U> {
       else if (EnumType.class.isAssignableFrom(type))
         return (T) DefaultEnumTypeBinding.getEnumType((Class<EnumType>) type, string);
       else if (Record.class.isAssignableFrom(type)
-          && // [#11812] UDTRecords/TableRecords or InternalRecords that don't have an explicit
+          && // [#11812] UDTRecords/TableRecords or
+          // InternalRecords that don't have an explicit
           // converter
           (!InternalRecord.class.isAssignableFrom(type) || type == converter.fromType()))
         return (T) pgNewRecord(type, (AbstractRow<?>) field.getDataType().getRow(), string);

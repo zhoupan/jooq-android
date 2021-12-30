@@ -39,7 +39,7 @@ package org.jooq.impl;
 
 import static org.jooq.impl.ScopeMarker.TOP_LEVEL_CTE;
 
-import java.util.function.Consumer;
+import org.java.util.function.Consumer;
 import org.jooq.CommonTableExpression;
 import org.jooq.Context;
 

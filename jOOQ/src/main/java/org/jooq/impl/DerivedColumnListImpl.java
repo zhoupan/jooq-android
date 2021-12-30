@@ -39,7 +39,7 @@ package org.jooq.impl;
 
 import static org.jooq.impl.Tools.map;
 
-import java.util.function.BiFunction;
+import org.java.util.function.BiFunction;
 import org.jooq.CommonTableExpression;
 import org.jooq.Context;
 import org.jooq.DerivedColumnList;

@@ -41,7 +41,7 @@ import static org.jooq.impl.Internal.arrayType;
 import static org.jooq.tools.Convert.convertArray;
 
 import java.io.Serializable;
-import java.util.function.Function;
+import org.java.util.function.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.exception.DataTypeException;
 import org.jooq.impl.AbstractConverter;

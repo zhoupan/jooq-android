@@ -40,7 +40,7 @@ package org.jooq;
 import static org.jooq.SQLDialect.*;
 
 import java.util.Collection;
-import java.util.function.Function;
+import org.java.util.function.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.conf.Settings;
 import org.jooq.impl.DSL;

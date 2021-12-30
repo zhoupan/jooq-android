@@ -41,7 +41,7 @@ import static org.jooq.Converters.notImplemented;
 import static org.jooq.Converters.nullable;
 
 import java.io.Serializable;
-import java.util.function.Function;
+import org.java.util.function.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.impl.AbstractConverter;
 import org.jooq.impl.SQLDataType;

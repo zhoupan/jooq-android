@@ -37,7 +37,7 @@
  */
 package org.jooq.impl;
 
-import java.util.function.Consumer;
+import org.java.util.function.Consumer;
 import org.jooq.RecordContext;
 import org.jooq.RecordListener;
 

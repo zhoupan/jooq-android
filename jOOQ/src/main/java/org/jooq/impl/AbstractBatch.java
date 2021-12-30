@@ -42,6 +42,7 @@ import static org.jooq.impl.Tools.blocking;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
+import org.java.util.function.SupplierUtils;
 import org.jooq.Batch;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
@@ -73,6 +74,7 @@ abstract class AbstractBatch implements Batch {
   @Override
   public final CompletionStage<int[]> executeAsync(Executor executor) {
     return ExecutorProviderCompletionStage.of(
-        CompletableFuture.supplyAsync(blocking(this::execute), executor), () -> executor);
+        CompletableFuture.supplyAsync(SupplierUtils.java(blocking(this::execute)), executor),
+        () -> executor);
   }
 }

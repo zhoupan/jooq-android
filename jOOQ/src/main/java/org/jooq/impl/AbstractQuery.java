@@ -57,6 +57,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
+import org.java.util.function.SupplierUtils;
 import org.jooq.Configuration;
 import org.jooq.ExecuteContext;
 import org.jooq.ExecuteListener;
@@ -277,7 +278,8 @@ abstract class AbstractQuery<R extends Record> extends AbstractAttachableQueryPa
         // [#2414] Even if parameters are inlined here, child
         // QueryParts may override this behaviour!
         executePreparedStatements(c.settings())
-            && // [#1520] Renderers may enforce static statements, too
+            && // [#1520] Renderers may enforce static
+            // statements, too
             !TRUE.equals(ctx.data(DATA_FORCE_STATIC_STATEMENT))) {
           listener.bindStart(ctx);
           if (rendered.bindValues != null)
@@ -321,7 +323,8 @@ abstract class AbstractQuery<R extends Record> extends AbstractAttachableQueryPa
   @Override
   public final CompletionStage<Integer> executeAsync(Executor executor) {
     return ExecutorProviderCompletionStage.of(
-        CompletableFuture.supplyAsync(blocking(this::execute), executor), () -> executor);
+        CompletableFuture.supplyAsync(SupplierUtils.java(blocking(this::execute)), executor),
+        () -> executor);
   }
 
   /**

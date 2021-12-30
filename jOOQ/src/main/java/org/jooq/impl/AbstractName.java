@@ -38,8 +38,8 @@
 package org.jooq.impl;
 
 import java.util.Arrays;
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import org.java.util.function.BiFunction;
+import org.java.util.function.Function;
 import org.jooq.CommonTableExpression;
 import org.jooq.Field;
 import org.jooq.Name;

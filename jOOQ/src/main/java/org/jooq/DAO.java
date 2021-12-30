@@ -51,7 +51,7 @@ import static org.jooq.SQLDialect.SQLITE;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
+import org.java.util.Optional;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.conf.Settings;

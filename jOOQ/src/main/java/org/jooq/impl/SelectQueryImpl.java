@@ -38,8 +38,8 @@
 package org.jooq.impl;
 
 import static java.lang.Boolean.TRUE;
-import static java.util.function.Function.identity;
 import static java.util.stream.IntStream.range;
+import static org.java.util.function.Function.identity;
 import static org.jooq.Clause.SELECT;
 import static org.jooq.Clause.SELECT_EXCEPT;
 import static org.jooq.Clause.SELECT_EXCEPT_ALL;
@@ -143,8 +143,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import org.java.util.function.BiFunction;
+import org.java.util.function.Function;
 import org.jooq.Asterisk;
 import org.jooq.Clause;
 import org.jooq.Condition;

@@ -37,7 +37,7 @@
  */
 package org.jooq.impl;
 
-import java.util.function.Supplier;
+import org.java.util.function.Supplier;
 
 /**
  * This API acts as a "guard" to prevent the same code from being executed recursively within the

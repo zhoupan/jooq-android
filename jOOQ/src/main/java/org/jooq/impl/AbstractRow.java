@@ -41,7 +41,7 @@ import static org.jooq.Clause.FIELD_ROW;
 import static org.jooq.impl.QueryPartListView.wrap;
 
 import java.util.Collection;
-import java.util.stream.Stream;
+import org.java.util.stream.Stream;
 import org.jooq.Binding;
 import org.jooq.Clause;
 import org.jooq.Comment;

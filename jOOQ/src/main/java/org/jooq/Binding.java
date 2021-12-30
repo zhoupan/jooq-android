@@ -45,7 +45,7 @@ import java.sql.SQLException;
 import java.sql.SQLInput;
 import java.sql.SQLOutput;
 import java.sql.Timestamp;
-import java.util.function.Consumer;
+import org.java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.exception.DataAccessException;
 import org.jooq.impl.DefaultBinding;

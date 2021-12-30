@@ -46,7 +46,7 @@ import static org.jooq.impl.Tools.attachRecords;
 import static org.jooq.impl.Tools.map;
 
 import java.util.Arrays;
-import java.util.function.Supplier;
+import org.java.util.function.Supplier;
 import org.jooq.Configuration;
 import org.jooq.ExecuteType;
 import org.jooq.Record;

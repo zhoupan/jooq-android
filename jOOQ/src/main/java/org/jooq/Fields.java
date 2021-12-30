@@ -37,7 +37,7 @@
  */
 package org.jooq;
 
-import java.util.stream.Stream;
+import org.java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.impl.DSL;

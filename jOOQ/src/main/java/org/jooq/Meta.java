@@ -51,7 +51,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Predicate;
+import org.java.util.function.Predicate;
 import org.jetbrains.annotations.NotNull;
 import org.jooq.exception.DataAccessException;
 import org.jooq.util.xml.jaxb.InformationSchema;

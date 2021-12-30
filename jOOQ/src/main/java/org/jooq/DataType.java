@@ -54,7 +54,7 @@ import static org.jooq.SQLDialect.SQLITE;
 import java.sql.Types;
 import java.util.Collection;
 import java.util.List;
-import java.util.function.Function;
+import org.java.util.function.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.Converters.UnknownType;

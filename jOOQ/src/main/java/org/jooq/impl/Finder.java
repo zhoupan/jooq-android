@@ -38,7 +38,7 @@
 package org.jooq.impl;
 
 import java.sql.SQLException;
-import java.util.function.Predicate;
+import org.java.util.function.Predicate;
 import org.jooq.BindContext;
 import org.jooq.Configuration;
 import org.jooq.Context;

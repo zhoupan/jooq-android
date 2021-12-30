@@ -57,7 +57,7 @@ import static org.jooq.SQLDialect.SQLITE;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.Map;
-import java.util.function.Function;
+import org.java.util.function.Function;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.conf.Settings;

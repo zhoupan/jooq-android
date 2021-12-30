@@ -68,7 +68,7 @@ import static org.jooq.impl.Tools.toplevel;
 
 import java.util.Collection;
 import java.util.Set;
-import java.util.function.Consumer;
+import org.java.util.function.Consumer;
 import org.jooq.Block;
 import org.jooq.Configuration;
 import org.jooq.Context;

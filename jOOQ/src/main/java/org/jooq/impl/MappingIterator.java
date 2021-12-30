@@ -38,7 +38,7 @@
 package org.jooq.impl;
 
 import java.util.Iterator;
-import java.util.function.Function;
+import org.java.util.function.Function;
 
 /** @author Lukas Eder */
 final class MappingIterator<T, U> implements Iterator<U> {

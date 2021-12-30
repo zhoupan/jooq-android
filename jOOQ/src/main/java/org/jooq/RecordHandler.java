@@ -37,7 +37,7 @@
  */
 package org.jooq;
 
-import java.util.function.Consumer;
+import org.java.util.function.Consumer;
 
 /**
  * A <code>RecordHandler</code> is a handler that can receive {@link Record} objects, when fetching

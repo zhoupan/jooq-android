@@ -69,7 +69,7 @@ import static org.jooq.impl.Values.NO_SUPPORT_VALUES;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
+import org.java.util.function.Predicate;
 import org.jooq.Clause;
 import org.jooq.Context;
 import org.jooq.Field;

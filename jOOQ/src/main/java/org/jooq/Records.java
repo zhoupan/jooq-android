@@ -37,8 +37,8 @@
  */
 package org.jooq;
 
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.toCollection;
+import static org.java.util.stream.Collectors.collectingAndThen;
+import static org.java.util.stream.Collectors.toCollection;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
@@ -47,9 +47,10 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Function;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
+import org.checkerframework.checker.units.qual.K;
+import org.java.util.function.Function;
+import org.java.util.stream.Collector;
+import org.java.util.stream.Collectors;
 import org.jooq.exception.InvalidResultException;
 import org.jooq.impl.Internal;
 

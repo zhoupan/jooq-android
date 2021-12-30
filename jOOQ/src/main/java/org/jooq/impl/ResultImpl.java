@@ -51,7 +51,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collector;
+import org.java.util.stream.Stream;
 import org.jooq.Configuration;
 import org.jooq.Converter;
 import org.jooq.Field;
@@ -135,8 +135,8 @@ final class ResultImpl<R extends Record> extends AbstractResult<R> implements Re
   // XXX: Result API
   // -------------------------------------------------------------------------
   @Override
-  public final <X, A> X collect(Collector<? super R, A, X> collector) {
-    return stream().collect(collector);
+  public final <X, A> X collect(org.java.util.stream.Collector<? super R, A, X> collector) {
+    return Stream.stream(this).collect(collector);
   }
 
   @Override
@@ -1504,7 +1504,7 @@ final class ResultImpl<R extends Record> extends AbstractResult<R> implements Re
 
   @Override
   public final <H extends RecordHandler<? super R>> H into(H handler) {
-    forEach(handler);
+    forEach((t) -> handler.accept(t));
     return handler;
   }
 

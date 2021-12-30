@@ -38,7 +38,7 @@
 package org.jooq.impl;
 
 import java.util.List;
-import java.util.function.Predicate;
+import org.java.util.function.Predicate;
 import org.jooq.Clause;
 import org.jooq.Context;
 import org.jooq.Field;

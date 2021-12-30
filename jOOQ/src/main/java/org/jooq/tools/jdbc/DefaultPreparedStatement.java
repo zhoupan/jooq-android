@@ -60,7 +60,7 @@ import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.Calendar;
-import java.util.function.Supplier;
+import org.java.util.function.Supplier;
 
 /**
  * A default JDBC PreparedStatement implementation delegating all JDBC 4.0 calls to an internal

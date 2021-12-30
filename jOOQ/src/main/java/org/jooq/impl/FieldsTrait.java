@@ -37,7 +37,7 @@
  */
 package org.jooq.impl;
 
-import java.util.stream.Stream;
+import org.java.util.stream.Stream;
 import org.jooq.DataType;
 import org.jooq.Field;
 import org.jooq.Fields;

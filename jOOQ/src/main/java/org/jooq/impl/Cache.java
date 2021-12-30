@@ -42,7 +42,7 @@ import static org.jooq.tools.StringUtils.defaultIfNull;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Supplier;
+import org.java.util.function.Supplier;
 import org.jooq.Configuration;
 
 /**

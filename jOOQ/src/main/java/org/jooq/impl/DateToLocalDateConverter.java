@@ -40,6 +40,7 @@ package org.jooq.impl;
 import java.sql.Date;
 import java.time.LocalDate;
 import org.jooq.Converter;
+import org.jooq.tools.DateTimeUtils;
 
 /**
  * @author Lukas Eder
@@ -55,11 +56,11 @@ public final class DateToLocalDateConverter extends AbstractConverter<Date, Loca
 
   @Override
   public final LocalDate from(Date t) {
-    return t == null ? null : t.toLocalDate();
+    return t == null ? null : DateTimeUtils.toLocalDate(t);
   }
 
   @Override
   public final Date to(LocalDate u) {
-    return u == null ? null : Date.valueOf(u);
+    return u == null ? null : DateTimeUtils.toSqlDate(u);
   }
 }

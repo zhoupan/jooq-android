@@ -44,9 +44,9 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
+import org.java.util.function.Function;
+import org.java.util.function.Predicate;
+import org.java.util.function.Supplier;
 
 /**
  * A stack to register elements that are visible to a certain scope.

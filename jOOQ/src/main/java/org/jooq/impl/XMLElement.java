@@ -45,8 +45,8 @@ import static org.jooq.impl.Tools.BooleanDataKey.DATA_LIST_ALREADY_INDENTED;
 import static org.jooq.impl.Tools.aliased;
 
 import java.util.Collection;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import org.java.util.function.Consumer;
+import org.java.util.function.Function;
 import org.jooq.Context;
 import org.jooq.DataType;
 import org.jooq.Field;

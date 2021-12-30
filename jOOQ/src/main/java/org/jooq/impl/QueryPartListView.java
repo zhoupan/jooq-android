@@ -42,7 +42,7 @@ import static java.util.Arrays.asList;
 import java.util.Collection;
 import java.util.List;
 import java.util.ListIterator;
-import java.util.function.Function;
+import org.java.util.function.Function;
 import org.jooq.Context;
 import org.jooq.QueryPart;
 

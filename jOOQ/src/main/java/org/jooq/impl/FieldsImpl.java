@@ -47,7 +47,7 @@ import static org.jooq.impl.Tools.newRecord;
 import java.sql.SQLWarning;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.stream.Stream;
+import org.java.util.stream.Stream;
 import org.jooq.Configuration;
 import org.jooq.Context;
 import org.jooq.Converter;

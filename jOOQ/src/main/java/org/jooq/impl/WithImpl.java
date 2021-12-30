@@ -49,8 +49,8 @@ import static org.jooq.impl.Tools.EMPTY_NAME;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import org.java.util.function.BiFunction;
+import org.java.util.function.Function;
 import org.jooq.Clause;
 import org.jooq.CommonTableExpression;
 import org.jooq.Configuration;

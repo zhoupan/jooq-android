@@ -41,11 +41,11 @@ import static java.util.Collections.emptySet;
 
 import java.util.List;
 import java.util.Set;
-import java.util.function.BiConsumer;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collector;
+import org.java.util.function.BiConsumer;
+import org.java.util.function.BinaryOperator;
+import org.java.util.function.Function;
+import org.java.util.function.Supplier;
+import org.java.util.stream.Collector;
 import org.jooq.Fields;
 import org.jooq.Record;
 import org.jooq.Records;

@@ -37,8 +37,8 @@
  */
 package org.jooq;
 
-import java.util.function.BiFunction;
-import java.util.function.Function;
+import org.java.util.function.BiFunction;
+import org.java.util.function.Function;
 import org.jetbrains.annotations.NotNull;
 
 /**

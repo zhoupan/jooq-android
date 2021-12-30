@@ -39,11 +39,11 @@ package org.jooq;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import org.java.util.function.BinaryOperator;
+import org.java.util.function.Function;
+import org.java.util.stream.Collector;
+import org.java.util.stream.Collectors;
+import org.java.util.stream.Stream;
 import org.jooq.impl.DSL;
 
 /**

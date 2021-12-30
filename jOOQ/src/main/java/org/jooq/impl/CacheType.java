@@ -41,7 +41,7 @@ import static org.jooq.impl.CacheType.CacheCategory.PARSING_CONNECTION;
 import static org.jooq.impl.CacheType.CacheCategory.RECORD_MAPPER;
 import static org.jooq.impl.CacheType.CacheCategory.REFLECTION;
 
-import java.util.function.Predicate;
+import org.java.util.function.Predicate;
 import org.jooq.CacheProvider;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;

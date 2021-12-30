@@ -50,7 +50,7 @@ import java.lang.reflect.Proxy;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Optional;
+import org.java.util.Optional;
 
 /**
  * A wrapper for an {@link Object} or {@link Class} upon which reflective calls can be made.

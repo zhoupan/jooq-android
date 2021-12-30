@@ -39,7 +39,7 @@ package org.jooq.impl;
 
 import static org.jooq.impl.Tools.combine;
 
-import java.util.function.Supplier;
+import org.java.util.function.Supplier;
 import org.jooq.Configuration;
 import org.jooq.DiagnosticsListener;
 import org.jooq.DiagnosticsListenerProvider;

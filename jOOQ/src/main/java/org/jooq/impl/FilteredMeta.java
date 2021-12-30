@@ -42,7 +42,7 @@ import static org.jooq.impl.Tools.map;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Predicate;
+import org.java.util.function.Predicate;
 import org.jooq.Catalog;
 import org.jooq.Check;
 import org.jooq.Domain;

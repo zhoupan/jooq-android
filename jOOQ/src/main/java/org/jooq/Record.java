@@ -44,7 +44,7 @@ import java.sql.SQLData;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
+import org.java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.exception.DataTypeException;

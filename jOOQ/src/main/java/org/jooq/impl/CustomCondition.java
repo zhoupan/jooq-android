@@ -39,7 +39,7 @@ package org.jooq.impl;
 
 import static org.jooq.Clause.CUSTOM;
 
-import java.util.function.Consumer;
+import org.java.util.function.Consumer;
 import org.jooq.Clause;
 import org.jooq.Condition;
 import org.jooq.Context;

@@ -39,7 +39,7 @@ package org.jooq;
 
 import java.sql.PreparedStatement;
 import java.text.DecimalFormat;
-import java.util.function.Consumer;
+import org.java.util.function.Consumer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.RenderContext.CastMode;

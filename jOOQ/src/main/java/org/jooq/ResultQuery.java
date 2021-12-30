@@ -45,15 +45,16 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
-import java.util.Spliterator;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.Executor;
-import java.util.function.Consumer;
-import java.util.stream.Collector;
-import java.util.stream.Stream;
 import javax.sql.DataSource;
+import org.java.util.Optional;
+import org.java.util.Spliterator;
+import org.java.util.SpliteratorJava;
+import org.java.util.function.Consumer;
+import org.java.util.stream.Collector;
+import org.java.util.stream.Stream;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jooq.conf.Settings;
@@ -192,8 +193,8 @@ public interface ResultQuery<R extends Record> extends Fields, Query, Iterable<R
    */
   @NotNull
   @Override
-  default Spliterator<R> spliterator() {
-    return Iterable.super.spliterator();
+  default java.util.Spliterator<R> spliterator() {
+    return new SpliteratorJava<R>(org.java.util.Spliterators.spliteratorUnknownSize(iterator(), 0));
   }
 
   /**

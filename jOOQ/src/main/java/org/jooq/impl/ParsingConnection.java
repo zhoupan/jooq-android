@@ -51,7 +51,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
+import org.java.util.function.Supplier;
 import org.jooq.Configuration;
 import org.jooq.DSLContext;
 import org.jooq.Param;
