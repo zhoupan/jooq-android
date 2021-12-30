@@ -38,8 +38,8 @@
 package org.jooq.meta.mysql;
 
 import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.mapping;
-import static java.util.stream.Collectors.toList;
+import static org.java.util.stream.Collectors.mapping;
+import static org.java.util.stream.Collectors.toList;
 import static org.jooq.Records.mapping;
 import static org.jooq.SQLDialect.MARIADB;
 import static org.jooq.SQLDialect.MYSQL;

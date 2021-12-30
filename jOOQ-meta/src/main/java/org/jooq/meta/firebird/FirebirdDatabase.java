@@ -38,7 +38,7 @@
 package org.jooq.meta.firebird;
 
 import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.mapping;
+import static org.java.util.stream.Collectors.mapping;
 import static org.jooq.SQLDialect.FIREBIRD;
 import static org.jooq.impl.DSL.any;
 import static org.jooq.impl.DSL.choose;
@@ -81,7 +81,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collectors;
+import org.java.util.stream.Collectors;
 import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.Record;
@@ -453,7 +453,8 @@ public class FirebirdDatabase extends AbstractDatabase implements ResultQueryDat
                         inline(TableType.FUNCTION.name()).trim(),
                         inline(""))
                     .from(RDB$PROCEDURES)
-                    . // "selectable" procedures
+                    . // "selectable"
+                    // procedures
                     where(RDB$PROCEDURES.RDB$PROCEDURE_TYPE.eq((short) 1))
                     .and(tableValuedFunctions() ? noCondition() : falseCondition()))
             .orderBy(1)) {
@@ -485,7 +486,8 @@ public class FirebirdDatabase extends AbstractDatabase implements ResultQueryDat
             inline(null, SMALLINT).as("p"),
             inline(null, SMALLINT).as("s"))
         .from(p)
-        . // "executable" procedures
+        . // "executable"
+        // procedures
         where(p.RDB$PROCEDURE_TYPE.eq((short) 2))
         .union(
             is30()

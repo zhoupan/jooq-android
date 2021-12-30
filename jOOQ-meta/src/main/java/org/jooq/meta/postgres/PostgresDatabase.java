@@ -38,8 +38,8 @@
 package org.jooq.meta.postgres;
 
 import static java.util.Arrays.asList;
-import static java.util.stream.Collectors.mapping;
-import static java.util.stream.Collectors.toList;
+import static org.java.util.stream.Collectors.mapping;
+import static org.java.util.stream.Collectors.toList;
 import static org.jooq.Records.intoList;
 import static org.jooq.Records.mapping;
 import static org.jooq.Rows.toRowArray;
@@ -107,7 +107,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+import org.java.util.stream.Collectors;
+import org.java.util.stream.Stream;
 import org.jooq.CommonTableExpression;
 import org.jooq.DSLContext;
 import org.jooq.Field;
@@ -658,7 +659,7 @@ public class PostgresDatabase extends AbstractDatabase implements ResultQueryDat
     CommonTableExpression<Record1<String>> s =
         name("schemas")
             .fields("schema")
-            .as(selectFrom(values(schemas.stream().collect(toRowArray(DSL::val)))));
+            .as(selectFrom(values(Stream.stream(schemas).collect(toRowArray(DSL::val)))));
     return create()
         .with(s)
         .select(

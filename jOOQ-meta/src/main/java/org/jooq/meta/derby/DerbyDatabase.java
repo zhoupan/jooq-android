@@ -37,8 +37,8 @@
  */
 package org.jooq.meta.derby;
 
-import static java.util.stream.Collectors.mapping;
-import static java.util.stream.Collectors.toList;
+import static org.java.util.stream.Collectors.mapping;
+import static org.java.util.stream.Collectors.toList;
 import static org.jooq.impl.DSL.case_;
 import static org.jooq.impl.DSL.cast;
 import static org.jooq.impl.DSL.condition;
