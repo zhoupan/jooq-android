@@ -37,9 +37,12 @@
  */
 package org.java.util.stream;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import org.java.util.Optional;
+import org.java.util.Spliterator;
+import org.java.util.Spliterators;
 import org.java.util.function.BiConsumer;
 import org.java.util.function.BiFunction;
 import org.java.util.function.BinaryOperator;
@@ -59,12 +62,12 @@ import org.java.util.function.ToLongFunction;
  * A sequence of elements supporting sequential and parallel aggregate operations. The following
  * example illustrates an aggregate operation using {@link Stream} and {@link IntStream}:
  *
- * <pre>{@code
- * int sum = widgets.stream()
- *                  .filter(w -> w.getColor() == RED)
- *                  .mapToInt(w -> w.getWeight())
- *                  .sum();
- * }</pre>
+ * <pre>
+ * {
+ *   &#64;code
+ *   int sum = widgets.stream().filter(w -> w.getColor() == RED).mapToInt(w -> w.getWeight()).sum();
+ * }
+ * </pre>
  *
  * In this example, {@code widgets} is a {@code Collection<Widget>}. We create a stream of {@code
  * Widget} objects via {@link java.util.Collection#stream Collection.stream()}, filter it to produce
@@ -244,10 +247,13 @@ public interface Stream<T> extends BaseStream<T, Stream<T>> {
    * <p>If {@code path} is the path to a file, then the following produces a stream of the {@code
    * words} contained in that file:
    *
-   * <pre>{@code
-   * Stream<String> lines = Files.lines(path, StandardCharsets.UTF_8);
-   * Stream<String> words = lines.flatMap(line -> RefStreams.of(line.split(" +")));
-   * }</pre>
+   * <pre>
+   * {
+   *   &#64;code
+   *   Stream<String> lines = Files.lines(path, StandardCharsets.UTF_8);
+   *   Stream<String> words = lines.flatMap(line -> RefStreams.of(line.split(" +")));
+   * }
+   * </pre>
    *
    * The {@code mapper} function passed to {@code flatMap} splits a line, using a simple regular
    * expression, into an array of words, and then creates a stream of words from that array.
@@ -663,15 +669,17 @@ public interface Stream<T> extends BaseStream<T, Stream<T>> {
    * The following example will calculate as many probable primes as is possible, in parallel,
    * during 5 seconds:
    *
-   * <pre>{@code
-   * long t = System.currentTimeMillis();
-   * List<BigInteger> pps = RefStreams
-   *     .generate(() -> BigInteger.probablePrime(1024, ThreadLocalRandom.current()))
-   *     .parallel()
-   *     .takeWhile(e -> (System.currentTimeMillis() - t) < TimeUnit.SECONDS.toMillis(5))
-   *     .collect(toList());
+   * <pre>
+   * {
+   *   &#64;code
+   *   long t = System.currentTimeMillis();
+   *   List<BigInteger> pps = RefStreams
+   *       .generate(() -> BigInteger.probablePrime(1024, ThreadLocalRandom.current())).parallel()
+   *       .takeWhile(e -> (System.currentTimeMillis() - t) < TimeUnit.SECONDS.toMillis(5))
+   *       .collect(toList());
    *
-   * }</pre>
+   * }
+   * </pre>
    *
    * @param predicate a <a href="package-summary.html#NonInterference">non-interfering</a>, <a
    *     href="package-summary.html#Statelessness">stateless</a> predicate to apply to elements to
@@ -787,11 +795,12 @@ public interface Stream<T> extends BaseStream<T, Stream<T>> {
    * an array of the desired size. This can be concisely expressed with an array constructor
    * reference:
    *
-   * <pre>{@code
-   * Person[] men = people.stream()
-   *                      .filter(p -> p.getGender() == MALE)
-   *                      .toArray(Person[]::new);
-   * }</pre>
+   * <pre>
+   * {
+   *   &#64;code
+   *   Person[] men = people.stream().filter(p -> p.getGender() == MALE).toArray(Person[]::new);
+   * }
+   * </pre>
    *
    * @param <A> the component type of the resulting array
    * @param generator a function which produces a new array of the desired type and the provided
@@ -828,15 +837,21 @@ public interface Stream<T> extends BaseStream<T, Stream<T>> {
    * Sum, min, max, average, and string concatenation are all special cases of reduction. Summing a
    * stream of numbers can be expressed as:
    *
-   * <pre>{@code
-   * Integer sum = integers.reduce(0, (a, b) -> a+b);
-   * }</pre>
+   * <pre>
+   * {
+   *   &#64;code
+   *   Integer sum = integers.reduce(0, (a, b) -> a + b);
+   * }
+   * </pre>
    *
    * or:
    *
-   * <pre>{@code
-   * Integer sum = integers.reduce(0, Integer::sum);
-   * }</pre>
+   * <pre>
+   * {
+   *   &#64;code
+   *   Integer sum = integers.reduce(0, Integer::sum);
+   * }
+   * </pre>
    *
    * <p>While this may seem a more roundabout way to perform an aggregation compared to simply
    * mutating a running total in a loop, reduction operations parallelize more gracefully, without
@@ -959,18 +974,22 @@ public interface Stream<T> extends BaseStream<T, Stream<T>> {
    * references as arguments to {@code collect()}. For example, the following will accumulate
    * strings into an {@code ArrayList}:
    *
-   * <pre>{@code
-   * List<String> asList = stringStream.collect(ArrayList::new, ArrayList::add,
-   *                                            ArrayList::addAll);
-   * }</pre>
+   * <pre>
+   * {
+   *   &#64;code
+   *   List<String> asList = stringStream.collect(ArrayList::new, ArrayList::add, ArrayList::addAll);
+   * }
+   * </pre>
    *
    * <p>The following will take a stream of strings and concatenates them into a single string:
    *
-   * <pre>{@code
-   * String concat = stringStream.collect(StringBuilder::new, StringBuilder::append,
-   *                                      StringBuilder::append)
-   *                             .toString();
-   * }</pre>
+   * <pre>
+   * {
+   *   &#64;code
+   *   String concat = stringStream
+   *       .collect(StringBuilder::new, StringBuilder::append, StringBuilder::append).toString();
+   * }
+   * </pre>
    *
    * @param <R> the type of the mutable result container
    * @param supplier a function that creates a new mutable result container. For a parallel
@@ -1013,25 +1032,33 @@ public interface Stream<T> extends BaseStream<T, Stream<T>> {
    * <p><b>API Note:</b><br>
    * The following will accumulate strings into a List:
    *
-   * <pre>{@code
-   * List<String> asList = stringStream.collect(Collectors.toList());
-   * }</pre>
+   * <pre>
+   * {
+   *   &#64;code
+   *   List<String> asList = stringStream.collect(Collectors.toList());
+   * }
+   * </pre>
    *
    * <p>The following will classify {@code Person} objects by city:
    *
-   * <pre>{@code
-   * Map<String, List<Person>> peopleByCity
-   *     = personStream.collect(Collectors.groupingBy(Person::getCity));
-   * }</pre>
+   * <pre>
+   * {
+   *   &#64;code
+   *   Map<String, List<Person>> peopleByCity = personStream
+   *       .collect(Collectors.groupingBy(Person::getCity));
+   * }
+   * </pre>
    *
    * <p>The following will classify {@code Person} objects by state and city, cascading two {@code
    * Collector}s together:
    *
-   * <pre>{@code
-   * Map<String, Map<String, List<Person>>> peopleByStateAndCity
-   *     = personStream.collect(Collectors.groupingBy(Person::getState,
-   *                                                  Collectors.groupingBy(Person::getCity)));
-   * }</pre>
+   * <pre>
+   * {
+   *   &#64;code
+   *   Map<String, Map<String, List<Person>>> peopleByStateAndCity = personStream
+   *       .collect(Collectors.groupingBy(Person::getState, Collectors.groupingBy(Person::getCity)));
+   * }
+   * </pre>
    *
    * @param <R> the type of the result
    * @param <A> the intermediate accumulation type of the {@code Collector}
@@ -1124,10 +1151,13 @@ public interface Stream<T> extends BaseStream<T, Stream<T>> {
    * Behavioral parameters with side-effects, which are strongly discouraged except for harmless
    * cases such as debugging, may be affected. For example, consider the following stream:
    *
-   * <pre>{@code
-   * List<String> l = Arrays.asList("A", "B", "C", "D");
-   * long count = l.stream().peek(System.out::println).count();
-   * }</pre>
+   * <pre>
+   * {
+   *   &#64;code
+   *   List<String> l = Arrays.asList("A", "B", "C", "D");
+   *   long count = l.stream().peek(System.out::println).count();
+   * }
+   * </pre>
    *
    * The number of elements covered by the stream source, a {@code List}, is known and the
    * intermediate operation, {@code peek}, does not inject into or remove elements from the stream
@@ -1280,5 +1310,73 @@ public interface Stream<T> extends BaseStream<T, Stream<T>> {
      * @throws IllegalStateException if the builder has already transitioned to the built state
      */
     Stream<T> build();
+  }
+
+  /**
+   * Returns a sequential {@link Stream} with the specified array as its source.
+   *
+   * @param <T> The type of the array elements
+   * @param array The array, assumed to be unmodified during use
+   * @return a {@code Stream} for the array
+   * @since 1.8
+   */
+  public static <T> Stream<T> stream(T[] array) {
+    return stream(array, 0, array.length);
+  }
+
+  /**
+   * Returns a sequential {@link Stream} with the specified range of the specified array as its
+   * source.
+   *
+   * @param <T> the type of the array elements
+   * @param array the array, assumed to be unmodified during use
+   * @param startInclusive the first index to cover, inclusive
+   * @param endExclusive index immediately past the last index to cover
+   * @return a {@code Stream} for the array range
+   * @throws ArrayIndexOutOfBoundsException if {@code startInclusive} is negative, {@code
+   *     endExclusive} is less than {@code startInclusive}, or {@code endExclusive} is greater than
+   *     the array size
+   * @since 1.8
+   */
+  public static <T> Stream<T> stream(T[] array, int startInclusive, int endExclusive) {
+    return StreamSupport.stream(spliterator(array, startInclusive, endExclusive), false);
+  }
+
+  /**
+   * Returns a {@link Spliterator} covering the specified range of the specified array.
+   *
+   * <p>The spliterator reports {@link Spliterator#SIZED}, {@link Spliterator#SUBSIZED}, {@link
+   * Spliterator#ORDERED}, and {@link Spliterator#IMMUTABLE}.
+   *
+   * @param <T> type of elements
+   * @param array the array, assumed to be unmodified during use
+   * @param startInclusive the first index to cover, inclusive
+   * @param endExclusive index immediately past the last index to cover
+   * @return a spliterator for the array elements
+   * @throws ArrayIndexOutOfBoundsException if {@code startInclusive} is negative, {@code
+   *     endExclusive} is less than {@code startInclusive}, or {@code endExclusive} is greater than
+   *     the array size
+   * @since 1.8
+   */
+  public static <T> Spliterator<T> spliterator(T[] array, int startInclusive, int endExclusive) {
+    return Spliterators.spliterator(
+        array, startInclusive, endExclusive, Spliterator.ORDERED | Spliterator.IMMUTABLE);
+  }
+
+  /**
+   * Returns a sequential ordered stream whose elements are the specified values.
+   *
+   * @param <T> the type of stream elements
+   * @param values the elements of the new stream
+   * @return the new stream
+   */
+  @SafeVarargs
+  @SuppressWarnings("varargs") // Creating a stream from an array is safe
+  public static <T> Stream<T> of(T... values) {
+    return stream(values);
+  }
+
+  public static <T> Stream<T> stream(Collection<? extends T> c) {
+    return StreamSupport.stream(Spliterators.spliterator(c), false);
   }
 }
